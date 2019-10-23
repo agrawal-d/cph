@@ -3,6 +3,7 @@
   "displayName": "Competitive Programming Helper",
   "description": "Makes running testcases in competitve programming easy.",
   "version": "0.0.1",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"
   },
@@ -10,8 +11,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.runCodeforcesTestcases",
-    "onCommand:catCoding.start"
+    "*"
   ],
   "publisher": "DivyanshuAgrawal",
   "main": "./extension.js",
@@ -20,11 +20,6 @@
       {
         "command": "extension.runCodeforcesTestcases",
         "title": "Run Codeforces Testcases"
-      },
-      {
-        "command": "catCoding.start",
-        "title": "Start new cat coding session",
-        "category": "Cat Coding"
       }
     ]
   },

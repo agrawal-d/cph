@@ -1,14 +1,17 @@
 function getWebviewContent(results) {
-
+    if(results.length===0){
+        return "Error";
+    }
     var modf = "";
-    var count = 0;
+    var count = 1;
     for (var element of results) {
+        if(element.got.length>200){element.got="Too long to display"}
         modf += `
     <div class="case">
         <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"}</span> <span class="right time">Took ${element.time}ms</span></b></p>
         Input :
         <pre>
-${element.input}
+${element.input.trim()}
         </pre>
         Expected Output:
         <pre>

@@ -1,23 +1,33 @@
-# competitive-programming-helper README
+# Competitive Programming Helper
 
 This extension helps you to quickly run codeforces testcases for a given problem automatically. You can also add custom testcases to the generated ```.testcases``` file. If the file you are testing in ```A.cpp``` then the generated testcases file is ```A.cpp.testcases```, in which you can add your own testcases.
+
+![Extension Overview](screenshots/overall.png)
 
 
 ## Usage
 
-The first line of your C++ code should be a comment containing the URL of the codeforces page. The comment should be single line, ie,  start with ```//``` and not ```/*```
+Type ```Ctrl/Cmd + Shift + P``` and search for "*Run Codeforces Testcases Command*" or Click on the "*Run Testcases*" text on the bottom left of the VSCode ( the bottom statusbar ).
+
+* The first line of your C++ code should be a comment containing the URL of the codeforces page. The comment should be single line, ie,  start with ```//``` and not ```/*```
+* You can edit the generated .testcases file to add your own testcases.
 
 ![Use a comment as the first line](screenshots/1.png)
 
-Use a comment as the first line of your code as the URL of the problem
+↑ Use a comment as the first line of your code as the URL of the problem
 
-![Use a comment as the first line](screenshots/2.png)
 
-Automatically generates a .testcases file in the same folder which you can edit
 
-![Use a comment as the first line](screenshots/3.png)
+![Run Command ](screenshots/run-command.png)
 
-Evaulates testcases and runtime so you can check your speed too.
+↑ Press Ctrl/Cmd+Shift+P and type ```codeforces````
+
+
+
+
+![Use a comment as the first line](screenshots/example-result.png)
+
+↑ Rich analysis of your code
 
 ## About
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
