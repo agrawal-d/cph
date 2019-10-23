@@ -2,7 +2,7 @@
   "name": "competitive-programming-helper",
   "displayName": "Competitive Programming Helper",
   "description": "Makes running testcases in competitve programming easy.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"
@@ -14,7 +14,7 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "./extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -28,7 +28,11 @@
     "url": "https://github.com/agrawal-d/competitive-programming-helper"
   },
   "scripts": {
-    "test": "node ./test/runTest.js"
+    "test": "node ./test/runTest.js",
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -38,12 +42,13 @@
     "eslint": "^5.13.0",
     "glob": "^7.1.4",
     "mocha": "^6.1.4",
+    "ts-loader": "^6.2.1",
     "typescript": "^3.3.1",
-    "vscode-test": "^1.2.0"
+    "vscode-test": "^1.2.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9"
   },
   "dependencies": {
-    "needle": "^2.4.0",
-    "osmosis": "^1.1.10",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   }
