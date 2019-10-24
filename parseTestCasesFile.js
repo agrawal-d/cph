@@ -1,11 +1,11 @@
 /**
- * Parses a .testcases file and returns an object - containing inputs and outputs and no of testcases
+ * Parses a .tcs file and returns an object - containing inputs and outputs and no of testcases
  */
 
 const fs = require("fs");
 
 function parseTestCasesFile(sourceCodePath) {
-    var filePath = sourceCodePath + ".testcases";
+    var filePath = sourceCodePath + ".tcs";
     try { var txt = fs.readFileSync(filePath).toString() }
     catch (err) { console.error(err); return; }
     var tcNum = 0;

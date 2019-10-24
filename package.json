@@ -10,7 +10,7 @@
     "c++",
     "testcases"
   ],
-  "version": "0.0.6",
+  "version": "0.0.7",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"

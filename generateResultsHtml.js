@@ -35,13 +35,13 @@ ${element.got}</pre>
     <title>Document</title>
     <style>
         .case {
-            background: rgb(26, 26, 26);
+            background: rgba(0,0,0,0.1);
             padding: 10px;
             margin-bottom: 5px;
         }
 
         pre {
-            background: rgb(24, 24, 24);
+            background: rgba(0,0,0,0.2);
             color: bisque;
         }
 

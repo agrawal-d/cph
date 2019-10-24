@@ -1,6 +1,6 @@
 let fs = require("fs");
 /**
- * Creates a .testcases file in the given filepath with the given input and output arrays
+ * Creates a .tcs file in the given filepath with the given input and output arrays
  */
 function createTestCasesFile(inp, op, filepath) {
     console.log("Creating a file at", filepath);
@@ -16,7 +16,7 @@ function createTestCasesFile(inp, op, filepath) {
     }
 
     try {
-        fs.writeFileSync(filepath + ".testcases", strings);
+        fs.writeFileSync(filepath + ".tcs", strings);
     } catch (err) {
         console.log(err);
         return 1;

@@ -54,7 +54,7 @@ function executePrimaryTask() {
 
 	function runTestCases() {
 		try {
-			fs.accessSync(filepath + ".testcases")
+			fs.accessSync(filepath + ".tcs")
 		} catch (err) {
 			var html = downloadCodeforcesPage(codeforcesURL);
 			html.then(string => {
@@ -140,7 +140,7 @@ function executePrimaryTask() {
 			return html;
 		} else {
 			oc.clear();
-			oc.append("Error!\nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .testcases file containing the testcases. If your current filename is A.cpp then create a file A.cpp.testcases");
+			oc.append("Error!\nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .tcs file containing the testcases. If your current filename is A.cpp then create a file A.cpp.tcs");
 			oc.show();
 			return false;
 		}

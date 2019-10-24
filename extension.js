@@ -3,7 +3,7 @@
 const vscode = require('vscode');
 const request = require('request');
 var rp = require('request-promise-native');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const parseCodeforces = require("./parseCodeforces");
 const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
@@ -16,6 +16,8 @@ const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignmen
 statusBarItem.text = " ▶  Run Testcases";
 statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
+var oc = vscode.window.createOutputChannel("competitive");
+
 
 // main extension commands are in this function
 
@@ -26,13 +28,13 @@ function openTestcaseFile() {
 		return;
 	} else {
 		try {
-			fs.accessSync(filepath + ".testcases");
+			fs.accessSync(filepath + ".tcs");
 		} catch (err) {
 			testCasesHelper(filepath);
 			return;
 		}
 
-		vscode.workspace.openTextDocument(filepath + ".testcases").then(document => {
+		vscode.workspace.openTextDocument(filepath + ".tcs").then(document => {
 			vscode.window.showTextDocument(document, vscode.ViewColumn.Beside)
 		})
 
@@ -55,12 +57,15 @@ function startWebView() {
 	}
 }
 
-function appendProblemURLToFile(problemURL) {
+function appendProblemURLToFile(problemURL, callback) {
 	const editor = vscode.window.activeTextEditor;
 	vscode.window.activeTextEditor.edit(editBuilder => {
 		const document = editor.document;
 		const position = new vscode.Position(0, 0);
 		editBuilder.insert(position, "//" + problemURL + "\n");
+		vscode.commands.executeCommand("workbench.action.files.save").then((response) => {
+			callback();
+		})
 	})
 }
 
@@ -70,26 +75,28 @@ function testCasesHelper(filepath) {
 	}
 	vscode
 		.window.
-		showQuickPick(["Download testcases from Codeforces", "Create a new .testcases file"], {
+		showQuickPick(["Download testcases from Codeforces", "Create a new .tcs testcase file"], {
 			placeHolder: "Choose one of the options to get testcases"
 		})
-		.then(selection => {
+		.then((selection) => {
 			if (selection === "Download testcases from Codeforces") {
 				vscode.window.showInputBox({
 					placeHolder: "Enter the complete URL of the codeforces problem"
-				}).then((problemURL) => {
-					appendProblemURLToFile(problemURL);
+				}).then(async (problemURL) => {
+					appendProblemURLToFile(problemURL, executePrimaryTask);
+					return;
 				})
-			} else if (selection === "Create a new .testcases file") {
+			} else if (selection === "Create a new .tcs testcase file") {
 				try {
 					fs.writeFileSync(
-						filepath + ".testcases",
-						"input\n1\n1 2 3\n4 3\noutput\nYES\n1 2 3\n-----------------\ninput\n1\n2\n5\noutput\n500\n4\n-----------------\n"
+						filepath + ".tcs",
+						"input\n1\n2\n5 0 92 0302\noutput\n500\n4\n-----------------\ninput\n1 2 4\njohn mary 20 30\noutput\n500\n-----------------\n"
 					)
-					vscode.workspace.openTextDocument(filepath + ".testcases").then(document => {
+					vscode.workspace.openTextDocument(filepath + ".tcs").then(document => {
 						console.log(document.getText())
 						vscode.window.showTextDocument(document, vscode.ViewColumn.Beside)
 					})
+
 				} catch (err) {
 					console.error(err);
 				}
@@ -97,7 +104,8 @@ function testCasesHelper(filepath) {
 		})
 }
 
-function executePrimaryTask() {
+async function executePrimaryTask() {
+	const saveFile = await vscode.commands.executeCommand("workbench.action.files.save");
 	var codeforcesURL = vscode.window.activeTextEditor.document.getText();
 	var filepath = vscode.window.activeTextEditor.document.fileName;
 	var cases;
@@ -111,7 +119,6 @@ function executePrimaryTask() {
 	codeforcesURL = codeforcesURL.split("\n")[0];
 	codeforcesURL = codeforcesURL.substring(2);
 	var compilationError = false;
-	var oc = vscode.window.createOutputChannel("competitive");
 
 
 	function evaluateResults(result, isFinal) {
@@ -124,7 +131,7 @@ function executePrimaryTask() {
 	let passed_cases = [];
 	function runTestCases(caseNum) {
 		try {
-			fs.accessSync(filepath + ".testcases")
+			fs.accessSync(filepath + ".tcs")
 		} catch (err) {
 			var html = downloadCodeforcesPage(codeforcesURL);
 			html.then(string => {
@@ -190,6 +197,8 @@ function executePrimaryTask() {
 			}
 			if (caseNum == (cases.numCases - 1)) {
 				evaluateResults(passed_cases, true);
+				spawn("rm", [filepath + ".bin"]);
+
 			} else {
 				evaluateResults(passed_cases, false);
 			}
@@ -251,7 +260,7 @@ function executePrimaryTask() {
 		} else {
 			testCasesHelper(filepath);
 			// oc.clear();
-			// oc.append("Error - \nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .testcases file containing the testcases. If your current filename is A.cpp then create a file A.cpp.testcases");
+			// oc.append("Error - \nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .tcs file containing the testcases. If your current filename is A.cpp then create a file A.cpp.tcs");
 			// oc.show();
 			return false;
 		}
