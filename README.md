@@ -1,5 +1,7 @@
 # Competitive Programming Helper
 
+Download from here : https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper or search in the VS Code Extensions within the application.
+
 This extension helps you to quickly run codeforces testcases for a given problem automatically. You can also add custom testcases to the generated ```.testcases``` file. If the file you are testing in ```A.cpp``` then the generated testcases file is ```A.cpp.testcases```, in which you can add your own testcases.
 
 Tip : Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
