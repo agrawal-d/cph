@@ -29,8 +29,22 @@ Type ```Ctrl/Cmd + Shift + P``` and search for "*Run Codeforces Testcases Comman
 
 ↑ Rich analysis of your code
 
+## Requirements
+
+The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the terminal/command prompt.
+
 ## About
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
+
+## Release Notes
+* Version 0.0.3
+    * Testcases are now run sequentially instead of in parallel, givin much more accurate run times.
+    * Optimized handling of some special and infinite testcases,
+* Version 0.0.2
+    * Handles infinite loops, and testcase errors
+    * Bugfixes for undefined testcases, parsing errors and more.
+* Version 0.0.1
+    * Initial Release,
 
 <!-- 
 > Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.

@@ -1,11 +1,11 @@
-function getWebviewContent(results) {
-    if(results.length===0){
+function getWebviewContent(results, isLastResult) {
+    if (results.length === 0) {
         return "Error";
     }
     var modf = "";
     var count = 1;
     for (var element of results) {
-        if(element.got.length>200){element.got="Too long to display"}
+        if (element.got.length > 200) { element.got = "Too long to display" }
         modf += `
     <div class="case">
         <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"}</span> <span class="right time">Took ${element.time}ms</span></b></p>
@@ -67,6 +67,9 @@ ${element.got}</pre>
     <h4>Compilation Results</h4>
     `;
     pre += modf;
+    if (!isLastResult) {
+        pre += "<br><br><b>Running next testcase...</b>";
+    }
     pre += `</body></html>`
     return pre;
 }

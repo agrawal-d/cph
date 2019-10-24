@@ -2,7 +2,7 @@
   "name": "competitive-programming-helper",
   "displayName": "Competitive Programming Helper",
   "description": "Makes running testcases in competitve programming easy.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"
@@ -14,12 +14,19 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "./dist/extension.js",
+  "main": "dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "extension.runCodeforcesTestcases",
-        "title": "Run Codeforces Testcases"
+        "title": "Run Codeforces Testcases",
+        "icon": "icon.png"
+      }
+    ],
+    "keybindings": [
+      {
+        "key": "ctrl+alt+b",
+        "command": "extension.runCodeforcesTestcases"
       }
     ]
   },
