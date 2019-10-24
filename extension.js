@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 const parseCodeforces = require("./parseCodeforces");
 const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
-const getWebviewContent = require("./generateResultsHtml")
+const getWebviewContent = require("./generateResultsHtml");
 let fs = require("fs");
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

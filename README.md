@@ -3,6 +3,7 @@
 This extension helps you to quickly run codeforces testcases for a given problem automatically. You can also add custom testcases to the generated ```.testcases``` file. If the file you are testing in ```A.cpp``` then the generated testcases file is ```A.cpp.testcases```, in which you can add your own testcases.
 
 Tip : Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
+Tip : Use the shortcut ```Ctrl/Cmd + Alt + 0``` to open testcases file.
 
 ![Extension Overview](screenshots/overall.png)
 
@@ -42,6 +43,8 @@ The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the 
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
 
 ## Release Notes
+* Version 0.0.6
+    * Use cheerio for DOM traversal to fix testcase parsing issues.
 * Version 0.0.5
     * Add command to open testcase file
     * Grouped all commands by category "Competitive" for easy search

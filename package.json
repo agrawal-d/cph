@@ -47,7 +47,7 @@
         "when": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc"
       },
       {
-        "key": "ctrl+alt+c",
+        "key": "ctrl+alt+0",
         "command": "extension.openTestcaseFile",
         "when": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc"
       }
@@ -79,6 +79,7 @@
     "webpack-cli": "^3.3.9"
   },
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   }
