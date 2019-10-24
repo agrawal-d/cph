@@ -42,6 +42,9 @@ The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the 
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
 
 ## Release Notes
+* Version 0.0.5
+    * Add command to open testcase file
+    * Grouped all commands by category "Competitive" for easy search
 * Version 0.0.4
     * You can now create a testcase file without a codeforces url
     * Prompts for Codeforces URL if not present in first line of C++ file

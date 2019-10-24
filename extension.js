@@ -19,6 +19,27 @@ statusBarItem.command = "extension.runCodeforcesTestcases";
 
 // main extension commands are in this function
 
+function openTestcaseFile() {
+	var filepath = vscode.window.activeTextEditor.document.fileName;
+	if (!filepath || !(filepath.substring(filepath.length - 4).toLowerCase() == '.cpp')) {
+		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
+		return;
+	} else {
+		try {
+			fs.accessSync(filepath + ".testcases");
+		} catch (err) {
+			testCasesHelper(filepath);
+			return;
+		}
+
+		vscode.workspace.openTextDocument(filepath + ".testcases").then(document => {
+			vscode.window.showTextDocument(document, vscode.ViewColumn.Beside)
+		})
+
+	}
+}
+
+
 function startWebView() {
 	if (!resultsPanel) {
 		console.log("Creating webview");
@@ -185,7 +206,7 @@ function executePrimaryTask() {
 				console.log("Showing error string");
 				passed_cases[caseNum] = {
 					passed: false,
-					time: tm2 - tm ,
+					time: tm2 - tm,
 					output: "Process Was Killed",
 					input: cases.inputs[caseNum].trim(),
 					expected: cases.outputs[caseNum].trim(),
@@ -264,6 +285,10 @@ function executePrimaryTask() {
 function activate(context) {
 	let disposable = vscode.commands.registerCommand('extension.runCodeforcesTestcases', function () {
 		executePrimaryTask();
+	});
+
+	let disposableTwo = vscode.commands.registerCommand('extension.openTestcaseFile', function () {
+		openTestcaseFile();
 	});
 
 	context.subscriptions.push(disposable);
