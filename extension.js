@@ -18,6 +18,64 @@ statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
 
 // main extension commands are in this function
+
+function startWebView() {
+	if (!resultsPanel) {
+		console.log("Creating webview");
+		resultsPanel = vscode.window.createWebviewPanel(
+			'evalResults',
+			'Results',
+			vscode.ViewColumn.Two
+		);
+
+		resultsPanel.onDidDispose(() => {
+			resultsPanel = null;
+		})
+	}
+}
+
+function appendProblemURLToFile(problemURL) {
+	const editor = vscode.window.activeTextEditor;
+	vscode.window.activeTextEditor.edit(editBuilder => {
+		const document = editor.document;
+		const position = new vscode.Position(0, 0);
+		editBuilder.insert(position, "//" + problemURL + "\n");
+	})
+}
+
+function testCasesHelper(filepath) {
+	if (resultsPanel) {
+		vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+	}
+	vscode
+		.window.
+		showQuickPick(["Download testcases from Codeforces", "Create a new .testcases file"], {
+			placeHolder: "Choose one of the options to get testcases"
+		})
+		.then(selection => {
+			if (selection === "Download testcases from Codeforces") {
+				vscode.window.showInputBox({
+					placeHolder: "Enter the complete URL of the codeforces problem"
+				}).then((problemURL) => {
+					appendProblemURLToFile(problemURL);
+				})
+			} else if (selection === "Create a new .testcases file") {
+				try {
+					fs.writeFileSync(
+						filepath + ".testcases",
+						"input\n1\n1 2 3\n4 3\noutput\nYES\n1 2 3\n-----------------\ninput\n1\n2\n5\noutput\n500\n4\n-----------------\n"
+					)
+					vscode.workspace.openTextDocument(filepath + ".testcases").then(document => {
+						console.log(document.getText())
+						vscode.window.showTextDocument(document, vscode.ViewColumn.Beside)
+					})
+				} catch (err) {
+					console.error(err);
+				}
+			}
+		})
+}
+
 function executePrimaryTask() {
 	var codeforcesURL = vscode.window.activeTextEditor.document.getText();
 	var filepath = vscode.window.activeTextEditor.document.fileName;
@@ -27,18 +85,6 @@ function executePrimaryTask() {
 		return;
 	} else {
 		console.log("Is a cpp");
-		if (!resultsPanel) {
-			console.log("Creating webview");
-			resultsPanel = vscode.window.createWebviewPanel(
-				'evalResults',
-				'Results',
-				vscode.ViewColumn.Two
-			);
-
-			resultsPanel.onDidDispose(() => {
-				resultsPanel = null;
-			})
-		}
 	}
 	var firstRun = true;
 	codeforcesURL = codeforcesURL.split("\n")[0];
@@ -47,12 +93,11 @@ function executePrimaryTask() {
 	var oc = vscode.window.createOutputChannel("competitive");
 
 
-	console.log("Setting text");
-	resultsPanel.webview.html = "<html><body><p style='margin:10px'>Please Wait...</p></body></html>"
-
 	function evaluateResults(result, isFinal) {
+		startWebView();
 		var html = getWebviewContent(result, isFinal);
 		resultsPanel.webview.html = html;
+		resultsPanel.reveal()
 	}
 
 	let passed_cases = [];
@@ -72,6 +117,7 @@ function executePrimaryTask() {
 		}
 
 		if (caseNum == 0) {
+			startWebView()
 			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p></body></html>";
 			cases = parseTestCasesFile(filepath);
 
@@ -93,6 +139,7 @@ function executePrimaryTask() {
 		spawned_process.stdout.on('data', (data) => {
 			console.log("hey")
 			if (stdoutlen > 10000) {
+				startWebView();
 				console.log("STDOUT length >10000");
 				resultsPanel.webview.html = "<html><body><p style='margin:10px'>Your code is outputting more data than can be displayed. It is possibly stuck in an infinite loop. <br><br><b>All testcases failed.</b></p></body></html>";
 				return;
@@ -138,7 +185,7 @@ function executePrimaryTask() {
 				console.log("Showing error string");
 				passed_cases[caseNum] = {
 					passed: false,
-					time: tm2 - tm + "ms",
+					time: tm2 - tm ,
 					output: "Process Was Killed",
 					input: cases.inputs[caseNum].trim(),
 					expected: cases.outputs[caseNum].trim(),
@@ -155,7 +202,7 @@ function executePrimaryTask() {
 				if (!passed_cases[caseNum]) {
 					passed_cases[caseNum] = {
 						passed: cases.outputs[caseNum].trim().length == 0,
-						time: tm2 - tm + "ms",
+						time: tm2 - tm,
 						output: "<br/>",
 						input: cases.inputs[caseNum].trim(),
 						expected: cases.outputs[caseNum].trim(),
@@ -171,7 +218,7 @@ function executePrimaryTask() {
 			runTestCases(caseNum + 1);
 		})
 	}
-	
+
 	/**
 	 * Download a html page with the given codeforces url
 	 */
@@ -181,9 +228,10 @@ function executePrimaryTask() {
 			const html = await rp(url);
 			return html;
 		} else {
-			oc.clear();
-			oc.append("Error!\nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .testcases file containing the testcases. If your current filename is A.cpp then create a file A.cpp.testcases");
-			oc.show();
+			testCasesHelper(filepath);
+			// oc.clear();
+			// oc.append("Error - \nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .testcases file containing the testcases. If your current filename is A.cpp then create a file A.cpp.testcases");
+			// oc.show();
 			return false;
 		}
 	}

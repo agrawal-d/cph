@@ -1,8 +1,16 @@
 {
   "name": "competitive-programming-helper",
   "displayName": "Competitive Programming Helper",
-  "description": "Makes running testcases in competitve programming easy.",
-  "version": "0.0.3",
+  "description": "Makes downloading running Codeforces testcases or general competitve programming easy.",
+  "keywords": [
+    "competitive",
+    "codeforces",
+    "icpc",
+    "acm",
+    "c++",
+    "testcases"
+  ],
+  "version": "0.0.4",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"

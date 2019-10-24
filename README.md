@@ -2,12 +2,17 @@
 
 This extension helps you to quickly run codeforces testcases for a given problem automatically. You can also add custom testcases to the generated ```.testcases``` file. If the file you are testing in ```A.cpp``` then the generated testcases file is ```A.cpp.testcases```, in which you can add your own testcases.
 
+Tip : Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
+
 ![Extension Overview](screenshots/overall.png)
 
 
 ## Usage
 
 Type ```Ctrl/Cmd + Shift + P``` and search for "*Run Codeforces Testcases Command*" or Click on the "*Run Testcases*" text on the bottom left of the VSCode ( the bottom statusbar ).
+
+Or Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
+
 
 * The first line of your C++ code should be a comment containing the URL of the codeforces page. The comment should be single line, ie,  start with ```//``` and not ```/*```
 * You can edit the generated .testcases file to add your own testcases.
@@ -37,14 +42,17 @@ The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the 
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
 
 ## Release Notes
+* Version 0.0.4
+    * You can now create a testcase file without a codeforces url
+    * Prompts for Codeforces URL if not present in first line of C++ file
 * Version 0.0.3
-    * Testcases are now run sequentially instead of in parallel, givin much more accurate run times.
-    * Optimized handling of some special and infinite testcases,
+    * Testcases are now run sequentially instead of in parallel, giving much more accurate run times.
+    * Optimized handling of some special and infinite testcases.
 * Version 0.0.2
     * Handles infinite loops, and testcase errors
     * Bugfixes for undefined testcases, parsing errors and more.
 * Version 0.0.1
-    * Initial Release,
+    * Initial Release.
 
 <!-- 
 > Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
