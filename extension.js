@@ -200,6 +200,8 @@ async function executePrimaryTask() {
 			if (caseNum == (cases.numCases - 1)) {
 				evaluateResults(passed_cases, true);
 				spawn("rm", [filepath + ".bin"]);
+				spawn("del", [filepath + ".bin"]);
+
 
 			} else {
 				evaluateResults(passed_cases, false);

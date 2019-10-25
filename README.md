@@ -1,4 +1,4 @@
-# Competitive Programming Helper (v0.0.7)
+# Competitive Programming Helper (v0.0.8)
 
 Download from here : https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper or search in the VS Code Extensions within the application.
 
@@ -45,6 +45,8 @@ The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the 
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
 
 ## Release Notes
+* Version 0.0.8
+    * Fixes cross platform checker issues.
 * Version 0.0.7
     * Fixes many UI and UX issues
     * Files are auto saved on execution.
