@@ -172,9 +172,11 @@ async function executePrimaryTask() {
 				resultsPanel.webview.html = "<html><body><p style='margin:10px'>Your code is outputting more data than can be displayed. It is possibly stuck in an infinite loop. <br><br><b>All testcases failed.</b></p></body></html>";
 				return;
 			}
-			const ans = data.toString();
+			let ans = data.toString();
 			var tm2 = Date.now();
 			var time = tm2 - tm;
+			ans = ans.replace(/\r?\n|\r/g, "\n");
+			cases.outputs[caseNum] = cases.outputs[caseNum].replace(/\r?\n|\r/g, "\n");
 			if (ans.trim() == cases.outputs[caseNum].trim()) {
 				passed_cases[caseNum] = {
 					passed: true,
