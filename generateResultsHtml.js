@@ -43,6 +43,8 @@ ${element.got}</pre>
         pre {
             background: rgba(0,0,0,0.2);
             color: bisque;
+            max-width:100%;
+            overflow-y:auto;
         }
 
         .right {

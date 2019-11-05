@@ -210,20 +210,22 @@ async function executePrimaryTask() {
 		});
 		spawned_process.stderr.on('data', (data) => {
 			console.error(`stderr: ${data}`);
+			oc.clear();
+			oc.appendLine("STDERR:");
+			oc.appendLine(data);
 		});
 
-		spawned_process.on('exit', code => {
+		spawned_process.on('exit', (code, signal) => {
 			var tm2 = Date.now();
-			console.log("Execution done with code", code, "for process ", caseNum);
-			if (typeof (code) == 'object') {
-				console.log("Showing error string");
+			console.log("Execution done with code", code, " with signal ", signal, "for process ", caseNum);
+			if (signal || code != 0) {
 				passed_cases[caseNum] = {
 					passed: false,
 					time: tm2 - tm,
-					output: "Process Was Killed",
+					output: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
 					input: cases.inputs[caseNum].trim(),
 					expected: cases.outputs[caseNum].trim(),
-					got: "Process Was Killed"
+					got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
 				}
 				if (caseNum == (cases.numCases - 1)) {
 					evaluateResults(passed_cases, true);
