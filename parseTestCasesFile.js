@@ -1,9 +1,8 @@
+const fs = require("fs");
 /**
  * Parses a .tcs file and returns an object - containing inputs and outputs and no of testcases
+ * @param sourceCodePath path to the .cpp file
  */
-
-const fs = require("fs");
-
 function parseTestCasesFile(sourceCodePath) {
     var filePath = sourceCodePath + ".tcs";
     try { var txt = fs.readFileSync(filePath).toString() }

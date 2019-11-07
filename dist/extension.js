@@ -133,31 +133,32 @@ module.exports = createTestCasesFile;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = __webpack_require__(/*! vscode */ "vscode");
 const request = __webpack_require__(/*! request */ "./node_modules/request/index.js");
-var rp = __webpack_require__(/*! request-promise-native */ "./node_modules/request-promise-native/lib/rp.js");
-const { spawn, exec } = __webpack_require__(/*! child_process */ "child_process");
+const rp = __webpack_require__(/*! request-promise-native */ "./node_modules/request-promise-native/lib/rp.js");
+const { spawn } = __webpack_require__(/*! child_process */ "child_process");
 const parseCodeforces = __webpack_require__(/*! ./parseCodeforces */ "./parseCodeforces.js");
 const createTestacesFile = __webpack_require__(/*! ./createTestcasesFile */ "./createTestcasesFile.js");
 const parseTestCasesFile = __webpack_require__(/*! ./parseTestCasesFile */ "./parseTestCasesFile.js");
 const getWebviewContent = __webpack_require__(/*! ./generateResultsHtml */ "./generateResultsHtml.js");
-let fs = __webpack_require__(/*! fs */ "fs");
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-var resultsPanel;
+const fs = __webpack_require__(/*! fs */ "fs");
+let oc = vscode.window.createOutputChannel("competitive");
+/**
+ * Webview
+ */
+let resultsPanel;
+
+//Setup statusbar button
 const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1000);
 statusBarItem.text = " ▶  Run Testcases";
 statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
-var oc = vscode.window.createOutputChannel("competitive");
 
-
-// main extension commands are in this function
-
+/**
+ * Opens and reveals the testcase file beside the active window
+ */
 function openTestcaseFile() {
-	var filepath = vscode.window.activeTextEditor.document.fileName;
+	let filepath = vscode.window.activeTextEditor.document.fileName;
 	if (!filepath || !(filepath.substring(filepath.length - 4).toLowerCase() == '.cpp')) {
 		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
 		return;
@@ -176,14 +177,16 @@ function openTestcaseFile() {
 	}
 }
 
-
+/**
+ * Creates and reveals a webview beisde the active window, but does not put any content in it.
+ */
 function startWebView() {
 	if (!resultsPanel) {
 		console.log("Creating webview");
 		resultsPanel = vscode.window.createWebviewPanel(
 			'evalResults',
 			'Results',
-			vscode.ViewColumn.Two
+			vscode.ViewColumn.Beside
 		);
 
 		resultsPanel.onDidDispose(() => {
@@ -192,6 +195,11 @@ function startWebView() {
 	}
 }
 
+/**
+ * adds codeforces url comment to the first line of the current document
+ * @param problemURL the URL of the codeforces problem
+ * @param callback the function to be executed after the comment is inserted
+ */
 function appendProblemURLToFile(problemURL, callback) {
 	const editor = vscode.window.activeTextEditor;
 	vscode.window.activeTextEditor.edit(editBuilder => {
@@ -203,7 +211,10 @@ function appendProblemURLToFile(problemURL, callback) {
 		})
 	})
 }
-
+/**
+ * show dialog box for actions downloading testcases and generating testcase file manually
+ * @param {any} filepath path to the active source code document
+ */
 function testCasesHelper(filepath) {
 	if (resultsPanel) {
 		vscode.commands.executeCommand("workbench.action.closeActiveEditor");
@@ -238,37 +249,45 @@ function testCasesHelper(filepath) {
 			}
 		})
 }
-
+/**
+ * Worker function for the extension, activated on shortcut or "Run testcases"
+ */
 async function executePrimaryTask() {
 	const saveFile = await vscode.commands.executeCommand("workbench.action.files.save");
-	var codeforcesURL = vscode.window.activeTextEditor.document.getText();
-	var filepath = vscode.window.activeTextEditor.document.fileName;
-	var cases;
+	let codeforcesURL = vscode.window.activeTextEditor.document.getText();
+	let filepath = vscode.window.activeTextEditor.document.fileName;
+	let cases;
 	if (!(filepath.substring(filepath.length - 4).toLowerCase() == '.cpp')) {
 		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
 		return;
 	} else {
 		console.log("Is a cpp");
 	}
-	var firstRun = true;
+	let firstRun = true;
 	codeforcesURL = codeforcesURL.split("\n")[0];
 	codeforcesURL = codeforcesURL.substring(2);
-	var compilationError = false;
+	let compilationError = false;
 
-
+	/**
+	 * shows the webview with the available results
+	 */
 	function evaluateResults(result, isFinal) {
 		startWebView();
-		var html = getWebviewContent(result, isFinal);
+		let html = getWebviewContent(result, isFinal);
 		resultsPanel.webview.html = html;
 		resultsPanel.reveal()
 	}
 
 	let passed_cases = [];
+	/**
+	 * runs a particular testcase
+	 * @param {*} caseNum 0-indexed number of the case
+	 */
 	function runTestCases(caseNum) {
 		try {
 			fs.accessSync(filepath + ".tcs")
 		} catch (err) {
-			var html = downloadCodeforcesPage(codeforcesURL);
+			let html = downloadCodeforcesPage(codeforcesURL);
 			html.then(string => {
 				const [inp, op] = parseCodeforces(string);
 				createTestacesFile(inp, op, filepath);
@@ -287,11 +306,12 @@ async function executePrimaryTask() {
 		} else if (caseNum == cases.numCases) {
 			return;
 		}
-		var exec = [];
-		var stdoutlen = 0;
+		let exec = [];
+		let stdoutlen = 0;
 		let spawned_process = spawn((filepath + '.bin'), {
 			timeout: 10000
 		});
+		// Creates a 10 second timeout to kill the spawned process.
 		setTimeout(() => {
 			console.log("10 sec killed process - ", caseNum);
 			spawned_process.kill();
@@ -308,8 +328,8 @@ async function executePrimaryTask() {
 				return;
 			}
 			let ans = data.toString();
-			var tm2 = Date.now();
-			var time = tm2 - tm;
+			let tm2 = Date.now();
+			let time = tm2 - tm;
 			ans = ans.replace(/\r?\n|\r/g, "\n");
 			cases.outputs[caseNum] = cases.outputs[caseNum].replace(/\r?\n|\r/g, "\n");
 			if (ans.trim() == cases.outputs[caseNum].trim()) {
@@ -351,7 +371,7 @@ async function executePrimaryTask() {
 		});
 
 		spawned_process.on('exit', (code, signal) => {
-			var tm2 = Date.now();
+			let tm2 = Date.now();
 			console.log("Execution done with code", code, " with signal ", signal, "for process ", caseNum);
 			if (signal || code != 0) {
 				passed_cases[caseNum] = {
@@ -369,7 +389,7 @@ async function executePrimaryTask() {
 				}
 
 			} else {
-				var tm2 = Date.now();
+				let tm2 = Date.now();
 				if (!passed_cases[caseNum]) {
 					passed_cases[caseNum] = {
 						passed: cases.outputs[caseNum].trim().length == 0,
@@ -400,9 +420,6 @@ async function executePrimaryTask() {
 			return html;
 		} else {
 			testCasesHelper(filepath);
-			// oc.clear();
-			// oc.append("Error - \nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .tcs file containing the testcases. If your current filename is A.cpp then create a file A.cpp.tcs");
-			// oc.show();
 			return false;
 		}
 	}
@@ -430,6 +447,7 @@ async function executePrimaryTask() {
 }
 
 /**
+ * Registers the functions and commands on extension activation
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
@@ -463,6 +481,11 @@ module.exports = {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
+/**
+ * 
+ * @param {*} results an object containing the evaluated testcase results
+ * @param {*} isLastResult boolean wether the results are final or any evaluation is pending
+ */
 function getWebviewContent(results, isLastResult) {
     if (results.length === 0) {
         return "Error";
@@ -475,15 +498,11 @@ function getWebviewContent(results, isLastResult) {
     <div class="case">
         <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"}</span> <span class="right time">Took ${element.time}ms</span></b></p>
         Input :
-        <pre>
-${element.input.trim()}
-        </pre>
+        <pre class="selectable">${element.input.trim()}</pre>
         Expected Output:
-        <pre>
-${element.expected}</pre>
+        <pre class="selectable">${element.expected}</pre>
         Received Output:
-        <pre>
-${element.got}</pre>
+        <pre class="selectable">${element.got}</pre>
     </div>
             `
         count++;
@@ -495,10 +514,30 @@ ${element.got}</pre>
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, text-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
+    * {
+        -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none; /* Safari */
+           -khtml-user-select: none; /* Konqueror HTML */
+             -moz-user-select: none; /* Firefox */
+              -ms-user-select: none; /* Internet Explorer/Edge */
+                  user-select: none; /* Non-prefixed version, currently
+                                        supported by Chrome and Opera */;
+        cursor:default !important;
+      }
+      .selectable {
+        -webkit-touch-callout: text; /* iOS Safari */
+          -webkit-user-select: text; /* Safari */
+           -khtml-user-select: text; /* Konqueror HTML */
+             -moz-user-select: text; /* Firefox */
+              -ms-user-select: text; /* Internet Explorer/Edge */
+                  user-select: text; /* Non-prefixed version, currently
+                                        supported by Chrome and Opera */;
+        cursor:text !important;
+      }
         .case {
             background: rgba(0,0,0,0.1);
             padding: 10px;
@@ -61920,12 +61959,11 @@ module.exports = findTestCases;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+const fs = __webpack_require__(/*! fs */ "fs");
 /**
  * Parses a .tcs file and returns an object - containing inputs and outputs and no of testcases
+ * @param sourceCodePath path to the .cpp file
  */
-
-const fs = __webpack_require__(/*! fs */ "fs");
-
 function parseTestCasesFile(sourceCodePath) {
     var filePath = sourceCodePath + ".tcs";
     try { var txt = fs.readFileSync(filePath).toString() }

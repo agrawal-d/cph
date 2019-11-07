@@ -45,9 +45,11 @@ The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the 
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
 
 ## Release Notes
-*Version 0.0.9
+* Version 1.0
+    * Formatting or results improved. Minor Bug-Fixes.
+* Version 0.0.9
     * Handles process exit signals and codes gracefully with detailed output.
-* Version 0.0.8
+* Version 0.0.8i
     * Fixes cross platform checker issues.
 * Version 0.0.7
     * Fixes many UI and UX issues

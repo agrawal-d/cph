@@ -1,28 +1,29 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const request = require('request');
-var rp = require('request-promise-native');
-const { spawn, exec } = require('child_process');
+const rp = require('request-promise-native');
+const { spawn } = require('child_process');
 const parseCodeforces = require("./parseCodeforces");
 const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
 const getWebviewContent = require("./generateResultsHtml");
-let fs = require("fs");
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-var resultsPanel;
+const fs = require("fs");
+let oc = vscode.window.createOutputChannel("competitive");
+/**
+ * Webview
+ */
+let resultsPanel;
+
+//Setup statusbar button
 const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1000);
 statusBarItem.text = " ▶  Run Testcases";
 statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
-var oc = vscode.window.createOutputChannel("competitive");
 
-
-// main extension commands are in this function
-
+/**
+ * Opens and reveals the testcase file beside the active window
+ */
 function openTestcaseFile() {
-	var filepath = vscode.window.activeTextEditor.document.fileName;
+	let filepath = vscode.window.activeTextEditor.document.fileName;
 	if (!filepath || !(filepath.substring(filepath.length - 4).toLowerCase() == '.cpp')) {
 		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
 		return;
@@ -41,14 +42,16 @@ function openTestcaseFile() {
 	}
 }
 
-
+/**
+ * Creates and reveals a webview beisde the active window, but does not put any content in it.
+ */
 function startWebView() {
 	if (!resultsPanel) {
 		console.log("Creating webview");
 		resultsPanel = vscode.window.createWebviewPanel(
 			'evalResults',
 			'Results',
-			vscode.ViewColumn.Two
+			vscode.ViewColumn.Beside
 		);
 
 		resultsPanel.onDidDispose(() => {
@@ -57,6 +60,11 @@ function startWebView() {
 	}
 }
 
+/**
+ * adds codeforces url comment to the first line of the current document
+ * @param problemURL the URL of the codeforces problem
+ * @param callback the function to be executed after the comment is inserted
+ */
 function appendProblemURLToFile(problemURL, callback) {
 	const editor = vscode.window.activeTextEditor;
 	vscode.window.activeTextEditor.edit(editBuilder => {
@@ -68,7 +76,10 @@ function appendProblemURLToFile(problemURL, callback) {
 		})
 	})
 }
-
+/**
+ * show dialog box for actions downloading testcases and generating testcase file manually
+ * @param {any} filepath path to the active source code document
+ */
 function testCasesHelper(filepath) {
 	if (resultsPanel) {
 		vscode.commands.executeCommand("workbench.action.closeActiveEditor");
@@ -103,37 +114,45 @@ function testCasesHelper(filepath) {
 			}
 		})
 }
-
+/**
+ * Worker function for the extension, activated on shortcut or "Run testcases"
+ */
 async function executePrimaryTask() {
 	const saveFile = await vscode.commands.executeCommand("workbench.action.files.save");
-	var codeforcesURL = vscode.window.activeTextEditor.document.getText();
-	var filepath = vscode.window.activeTextEditor.document.fileName;
-	var cases;
+	let codeforcesURL = vscode.window.activeTextEditor.document.getText();
+	let filepath = vscode.window.activeTextEditor.document.fileName;
+	let cases;
 	if (!(filepath.substring(filepath.length - 4).toLowerCase() == '.cpp')) {
 		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
 		return;
 	} else {
 		console.log("Is a cpp");
 	}
-	var firstRun = true;
+	let firstRun = true;
 	codeforcesURL = codeforcesURL.split("\n")[0];
 	codeforcesURL = codeforcesURL.substring(2);
-	var compilationError = false;
+	let compilationError = false;
 
-
+	/**
+	 * shows the webview with the available results
+	 */
 	function evaluateResults(result, isFinal) {
 		startWebView();
-		var html = getWebviewContent(result, isFinal);
+		let html = getWebviewContent(result, isFinal);
 		resultsPanel.webview.html = html;
 		resultsPanel.reveal()
 	}
 
 	let passed_cases = [];
+	/**
+	 * runs a particular testcase
+	 * @param {*} caseNum 0-indexed number of the case
+	 */
 	function runTestCases(caseNum) {
 		try {
 			fs.accessSync(filepath + ".tcs")
 		} catch (err) {
-			var html = downloadCodeforcesPage(codeforcesURL);
+			let html = downloadCodeforcesPage(codeforcesURL);
 			html.then(string => {
 				const [inp, op] = parseCodeforces(string);
 				createTestacesFile(inp, op, filepath);
@@ -152,11 +171,12 @@ async function executePrimaryTask() {
 		} else if (caseNum == cases.numCases) {
 			return;
 		}
-		var exec = [];
-		var stdoutlen = 0;
+		let exec = [];
+		let stdoutlen = 0;
 		let spawned_process = spawn((filepath + '.bin'), {
 			timeout: 10000
 		});
+		// Creates a 10 second timeout to kill the spawned process.
 		setTimeout(() => {
 			console.log("10 sec killed process - ", caseNum);
 			spawned_process.kill();
@@ -173,8 +193,8 @@ async function executePrimaryTask() {
 				return;
 			}
 			let ans = data.toString();
-			var tm2 = Date.now();
-			var time = tm2 - tm;
+			let tm2 = Date.now();
+			let time = tm2 - tm;
 			ans = ans.replace(/\r?\n|\r/g, "\n");
 			cases.outputs[caseNum] = cases.outputs[caseNum].replace(/\r?\n|\r/g, "\n");
 			if (ans.trim() == cases.outputs[caseNum].trim()) {
@@ -216,7 +236,7 @@ async function executePrimaryTask() {
 		});
 
 		spawned_process.on('exit', (code, signal) => {
-			var tm2 = Date.now();
+			let tm2 = Date.now();
 			console.log("Execution done with code", code, " with signal ", signal, "for process ", caseNum);
 			if (signal || code != 0) {
 				passed_cases[caseNum] = {
@@ -234,7 +254,7 @@ async function executePrimaryTask() {
 				}
 
 			} else {
-				var tm2 = Date.now();
+				let tm2 = Date.now();
 				if (!passed_cases[caseNum]) {
 					passed_cases[caseNum] = {
 						passed: cases.outputs[caseNum].trim().length == 0,
@@ -265,9 +285,6 @@ async function executePrimaryTask() {
 			return html;
 		} else {
 			testCasesHelper(filepath);
-			// oc.clear();
-			// oc.append("Error - \nYou must do either of these two things : \nCreate a comment with the URL of the codeforces problem on line 1 first.\nOr Create a .tcs file containing the testcases. If your current filename is A.cpp then create a file A.cpp.tcs");
-			// oc.show();
 			return false;
 		}
 	}
@@ -295,6 +312,7 @@ async function executePrimaryTask() {
 }
 
 /**
+ * Registers the functions and commands on extension activation
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
