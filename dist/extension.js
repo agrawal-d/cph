@@ -236,7 +236,7 @@ function testCasesHelper(filepath) {
 				try {
 					fs.writeFileSync(
 						filepath + ".tcs",
-						"input\n1\n2\n5 0 92 0302\noutput\n500\n4\n-----------------\ninput\n1 2 4\njohn mary 20 30\noutput\n500\n-----------------\n"
+						"input\nwrite (multiline) input here\noutput\nwrite (multiline) outputhere\n----------------------\ninput\nwrite (multiline) input here\noutput\nwrite (multiline) outputhere\n----------------------\n"
 					)
 					vscode.workspace.openTextDocument(filepath + ".tcs").then(document => {
 						console.log(document.getText())
@@ -332,37 +332,40 @@ async function executePrimaryTask() {
 			let time = tm2 - tm;
 			ans = ans.replace(/\r?\n|\r/g, "\n");
 			cases.outputs[caseNum] = cases.outputs[caseNum].replace(/\r?\n|\r/g, "\n");
-			if (ans.trim() == cases.outputs[caseNum].trim()) {
-				passed_cases[caseNum] = {
-					passed: true,
-					time: time,
-					output: ans.trim(),
-					input: cases.inputs[caseNum].trim(),
-					expected: cases.outputs[caseNum].trim(),
-					got: ans.trim()
+			let stripped_case = cases.outputs[caseNum].replace(/\r?\n|\r| /g, "");
+			let stripped_ans = ans.replace(/\s|\n|\r\n|\r| /g, "");
+			if (stripped_ans == stripped_case) {
+				if (ans.trim() == cases.outputs[caseNum].trim()) {
+					passed_cases[caseNum] = {
+						passed: true,
+						time: time,
+						output: ans.trim(),
+						input: cases.inputs[caseNum].trim(),
+						expected: cases.outputs[caseNum].trim(),
+						got: ans.trim()
+					}
+				} else {
+					passed_cases[caseNum] = {
+						passed: false,
+						time: time,
+						output: ans.trim(),
+						input: cases.inputs[caseNum].trim(),
+						expected: cases.outputs[caseNum].trim(),
+						got: ans.trim()
+
+					}
 				}
-			} else {
-				passed_cases[caseNum] = {
-					passed: false,
-					time: time,
-					output: ans.trim(),
-					input: cases.inputs[caseNum].trim(),
-					expected: cases.outputs[caseNum].trim(),
-					got: ans.trim()
+				if (caseNum == (cases.numCases - 1)) {
+					evaluateResults(passed_cases, true);
+					spawn("rm", [filepath + ".bin"]);
+					spawn("del", [filepath + ".bin"]);
 
+
+				} else {
+					evaluateResults(passed_cases, false);
 				}
-			}
-			if (caseNum == (cases.numCases - 1)) {
-				evaluateResults(passed_cases, true);
-				spawn("rm", [filepath + ".bin"]);
-				spawn("del", [filepath + ".bin"]);
 
-
-			} else {
-				evaluateResults(passed_cases, false);
-			}
-
-		});
+			}});
 		spawned_process.stderr.on('data', (data) => {
 			console.error(`stderr: ${data}`);
 			oc.clear();

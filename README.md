@@ -1,4 +1,4 @@
-# Competitive Programming Helper (v0.0.9)
+# Competitive Programming Helper (v1.0.1)
 
 Download from here : https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper or search in the VS Code Extensions within the application.
 
