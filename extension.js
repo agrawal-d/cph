@@ -7,14 +7,19 @@ const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
 const getWebviewContent = require("./generateResultsHtml");
 const fs = require("fs");
+const path = require("path")
+const writeToTestCaseFile = require("./writeToTestCaseFile");
 let oc = vscode.window.createOutputChannel("competitive");
 /**
  * Webview
  */
 let resultsPanel;
-
+let latestFilePath = "";
+let latestTextDocument = null;
+let latestContext = null;
 //Setup statusbar button
 const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1000);
+
 statusBarItem.text = " ▶  Run Testcases";
 statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
@@ -28,6 +33,8 @@ function openTestcaseFile() {
 		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
 		return;
 	} else {
+		latestFilePath = filepath
+		latestTextDocument = vscode.window.activeTextEditor;
 		try {
 			fs.accessSync(filepath + ".tcs");
 		} catch (err) {
@@ -51,8 +58,42 @@ function startWebView() {
 		resultsPanel = vscode.window.createWebviewPanel(
 			'evalResults',
 			'Results',
-			vscode.ViewColumn.Beside
+			vscode.ViewColumn.Beside,
+			{
+				enableScripts: true
+			}
 		);
+		// message from webview
+		resultsPanel.webview.onDidReceiveMessage(message => {
+			switch (message.command) {
+				case "save-and-rerun-all": {
+					console.log(message.testcases);
+					if (!latestFilePath || latestFilePath.length === 0) {
+						console.error("Filepath not known");
+						return;
+					}
+					if (!writeToTestCaseFile(JSON.stringify(message.testcases), latestFilePath)) {
+						vscode.window.showInformationMessage("Couldnt save testcases. Please report bug to developer.");
+						return;
+					}
+					if (latestTextDocument) {
+						vscode.window.showTextDocument(latestTextDocument, vscode.ViewColumn.One, {
+							preview: true
+						}).then((textEditor) => {
+							vscode.commands.executeCommand("extension.runCodeforcesTestcases").then((param) => {
+								console.log("Command executed");
+								console.log("Opened text editor", textEditor);
+							})
+						});
+						console.log("Save one", latestTextDocument);
+					} else {
+						vscode.window.showInformationMessage("Couldnt switch to active editor. Please report bug to developer.");
+						return;
+					}
+
+				}
+			}
+		})
 
 		resultsPanel.onDidDispose(() => {
 			resultsPanel = null;
@@ -94,30 +135,31 @@ function testCasesHelper(filepath) {
 				vscode.window.showInputBox({
 					placeHolder: "Enter the complete URL of the codeforces problem"
 				}).then(async (problemURL) => {
+					if (!problemURL || problemURL == "" || problemURL == undefined) {
+						return;
+					}
 					appendProblemURLToFile(problemURL, executePrimaryTask);
 					return;
 				})
 			} else if (selection === "Create a new .tcs testcase file") {
-				try {
-					fs.writeFileSync(
-						filepath + ".tcs",
-						"input\nwrite (multiline) input here\noutput\nwrite (multiline) outputhere\n----------------------\ninput\nwrite (multiline) input here\noutput\nwrite (multiline) outputhere\n----------------------\n"
-					)
-					vscode.workspace.openTextDocument(filepath + ".tcs").then(document => {
-						console.log(document.getText())
-						vscode.window.showTextDocument(document, vscode.ViewColumn.Beside)
-					})
-
-				} catch (err) {
-					console.error(err);
-				}
+				let blank_testcase =
+					`
+[
+	{
+		"input":"",
+		"output":""
+	}
+]
+`
+				//@todo
+				writeToTestCaseFile(JSON.stringify(blank_testcase), filepath);
 			}
 		})
 }
 /**
  * Worker function for the extension, activated on shortcut or "Run testcases"
  */
-async function executePrimaryTask() {
+async function executePrimaryTask(context) {
 	const saveFile = await vscode.commands.executeCommand("workbench.action.files.save");
 	let codeforcesURL = vscode.window.activeTextEditor.document.getText();
 	let filepath = vscode.window.activeTextEditor.document.fileName;
@@ -127,6 +169,8 @@ async function executePrimaryTask() {
 		return;
 	} else {
 		console.log("Is a cpp");
+		latestFilePath = filepath;
+		latestTextDocument = vscode.window.activeTextEditor.document;
 	}
 	let firstRun = true;
 	codeforcesURL = codeforcesURL.split("\n")[0];
@@ -138,7 +182,11 @@ async function executePrimaryTask() {
 	 */
 	function evaluateResults(result, isFinal) {
 		startWebView();
-		let html = getWebviewContent(result, isFinal);
+		const onDiskPath = vscode.Uri.file(
+			path.join(context.extensionPath, 'frontend', 'main.js')
+		);
+		const jssrc = resultsPanel.webview.asWebviewUri(onDiskPath);
+		let html = getWebviewContent(result, isFinal, jssrc);
 		resultsPanel.webview.html = html;
 		resultsPanel.reveal()
 	}
@@ -165,7 +213,7 @@ async function executePrimaryTask() {
 
 		if (caseNum == 0) {
 			startWebView()
-			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p></body></html>";
+			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
 			cases = parseTestCasesFile(filepath);
 
 		} else if (caseNum == cases.numCases) {
@@ -185,7 +233,6 @@ async function executePrimaryTask() {
 
 		spawned_process.stdin.write(cases.inputs[caseNum]);
 		spawned_process.stdout.on('data', (data) => {
-			console.log("hey")
 			if (stdoutlen > 10000) {
 				startWebView();
 				console.log("STDOUT length >10000");
@@ -200,37 +247,36 @@ async function executePrimaryTask() {
 			let stripped_case = cases.outputs[caseNum].replace(/\r?\n|\r| /g, "");
 			let stripped_ans = ans.replace(/\s|\n|\r\n|\r| /g, "");
 			if (stripped_ans == stripped_case) {
-				if (ans.trim() == cases.outputs[caseNum].trim()) {
-					passed_cases[caseNum] = {
-						passed: true,
-						time: time,
-						output: ans.trim(),
-						input: cases.inputs[caseNum].trim(),
-						expected: cases.outputs[caseNum].trim(),
-						got: ans.trim()
-					}
-				} else {
-					passed_cases[caseNum] = {
-						passed: false,
-						time: time,
-						output: ans.trim(),
-						input: cases.inputs[caseNum].trim(),
-						expected: cases.outputs[caseNum].trim(),
-						got: ans.trim()
-
-					}
+				passed_cases[caseNum] = {
+					passed: true,
+					time: time,
+					output: ans.trim(),
+					input: cases.inputs[caseNum].trim(),
+					expected: cases.outputs[caseNum].trim(),
+					got: ans.trim()
 				}
-				if (caseNum == (cases.numCases - 1)) {
-					evaluateResults(passed_cases, true);
-					spawn("rm", [filepath + ".bin"]);
-					spawn("del", [filepath + ".bin"]);
+			} else {
+				passed_cases[caseNum] = {
+					passed: false,
+					time: time,
+					output: ans.trim(),
+					input: cases.inputs[caseNum].trim(),
+					expected: cases.outputs[caseNum].trim(),
+					got: ans.trim()
 
-
-				} else {
-					evaluateResults(passed_cases, false);
 				}
+			}
+			if (caseNum == (cases.numCases - 1)) {
+				evaluateResults(passed_cases, true);
+				spawn("rm", [filepath + ".bin"]);
+				spawn("del", [filepath + ".bin"]);
 
-			}});
+
+			} else {
+				evaluateResults(passed_cases, false);
+			}
+
+		});
 		spawned_process.stderr.on('data', (data) => {
 			console.error(`stderr: ${data}`);
 			oc.clear();
@@ -319,8 +365,9 @@ async function executePrimaryTask() {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+	latestContext = context;
 	let disposable = vscode.commands.registerCommand('extension.runCodeforcesTestcases', function () {
-		executePrimaryTask();
+		executePrimaryTask(context);
 	});
 
 	let disposableTwo = vscode.commands.registerCommand('extension.openTestcaseFile', function () {

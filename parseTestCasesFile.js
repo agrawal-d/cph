@@ -10,35 +10,19 @@ function parseTestCasesFile(sourceCodePath) {
     var tcNum = 0;
     var inpCases = [];
     var opCases = [];
-    var lines = txt.split('\n');
-    var inInp = false;
-    var inOp = false;
-    var tc = "";
-    for (var line of lines) {
-        if (line == "input") {
-            if (inOp) {
-                opCases.push(tc);
-            }
-            tc = "";
-            inOp = false;
-            inInp = true;
-        } else if (line == "output") {
-            if (inInp) {
-                inpCases.push(tc);
-            };
-            tc = "";
-            inInp = false;
-            inOp = true;
-        } else if (!line.includes("------") && line != "\n") {
-            tc += (line + "\n");
-        }
+    console.log(txt);
+    const tcs = JSON.parse(txt);
+    for (let element of tcs) {
+        tcNum++;
+        inpCases.push(element.input);
+        opCases.push(element.output);
     }
-    opCases.push(tc);
     var result = {
         inputs: inpCases,
         outputs: opCases,
         numCases: inpCases.length
     }
+    console.log(result);
     return result;
 
 }

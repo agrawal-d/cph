@@ -3,7 +3,7 @@
  * @param {*} results an object containing the evaluated testcase results
  * @param {*} isLastResult boolean wether the results are final or any evaluation is pending
  */
-function getWebviewContent(results, isLastResult) {
+function getWebviewContent(results, isLastResult, jspath) {
     if (results.length === 0) {
         return "Error";
     }
@@ -13,13 +13,17 @@ function getWebviewContent(results, isLastResult) {
         if (element.got.length > 200) { element.got = "Too long to display" }
         modf += `
     <div class="case">
-        <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"}</span> <span class="right time">Took ${element.time}ms</span></b></p>
+        <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"} , Took ${element.time}ms</span>
+
+         <span class="right time">
+            <button class="btn btn-red" onclick="deleteTestCase(this)">Delete testcase</button>
+         </span></b></p>
         Input :
-        <pre class="selectable">${element.input.trim()}</pre>
+        <textarea class="selectable">${element.input.trim()}</textarea>
         Expected Output:
-        <pre class="selectable">${element.expected}</pre>
+        <textarea class="selectable">${element.expected}</textarea>
         Received Output:
-        <pre class="selectable">${element.got}</pre>
+        <textarea readonly class="selectable">${element.got}</textarea>
     </div>
             `
         count++;
@@ -55,17 +59,39 @@ function getWebviewContent(results, isLastResult) {
                                         supported by Chrome and Opera */;
         cursor:text !important;
       }
+      body{
+          margin-bottom:100px;
+      }
+      #pane{
+          position:fixed;
+          bottom:0px;
+          left:0px;
+          width:100%;
+          padding:15px;
+          background:var(--vscode-sideBar-background);
+          box-shadow:0px 0px 10px 0px rgba(50,50,50,0.3);
+      }
         .case {
             background: rgba(0,0,0,0.1);
             padding: 10px;
             margin-bottom: 5px;
         }
 
-        pre {
-            background: rgba(0,0,0,0.2);
+        .pre, pre, textarea {
+            background: var(--input.background);
+            width:100%;
+            display:block;
+            background:rgba(0,0,0,0.2);
+            outline:none !important;
+            border:0px;
             color: bisque;
             max-width:100%;
-            overflow-y:auto;
+            overflow-x:auto;
+            resize:none;
+        }
+        textarea:focus, textarea:active{
+            background:black;
+            outline:none !important;
         }
 
         .right {
@@ -83,6 +109,21 @@ function getWebviewContent(results, isLastResult) {
         .pass {
             color: rgb(37, 87, 37);
         }
+        .btn{
+            padding:5px 10px 5px 10px;
+            background:#3393CC91;
+            color:white;
+            outline:none;
+            margin-right:2px;
+            margin-bottom:5px;
+            border:0px;
+        }
+        .btn-green{
+            background:#70B92791;
+        }
+        .btn-red{
+            background:#B9274391
+        }
     </style>
 </head>
 
@@ -93,7 +134,18 @@ function getWebviewContent(results, isLastResult) {
     if (!isLastResult) {
         pre += "<br><br><b>Running next testcase...</b>";
     }
-    pre += `</body></html>`
+    pre += `
+<div id="app"></div>
+<div id="pane">
+<button class="btn" id="new-testcase" onclick="addTestCase()">New Testcase</button>
+<button class="btn btn-green" onClick="saveAndRerunAll()">Save & Rerun all</button>
+<br>
+<span id="unsaved"></span>
+</div>
+</body>
+<script src="${jspath}"></script>
+</html>
+`
     return pre;
 }
 

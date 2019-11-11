@@ -22,7 +22,7 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "dist/extension.js",
+  "main": "extension.js",
   "contributes": {
     "commands": [
       {
