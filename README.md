@@ -50,6 +50,8 @@ This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). 
 _____________________________
 
 ## Release Notes
+* Version 2.0.X
+    * Rich GUI editor for testcases
 * Version 1.0
     * Formatting or results improved. Minor Bug-Fixes.
 * Version 0.0.9
