@@ -4,9 +4,6 @@
  * @param {*} isLastResult boolean wether the results are final or any evaluation is pending
  */
 function getWebviewContent(results, isLastResult, jspath) {
-    if (results.length === 0) {
-        return "Error";
-    }
     var modf = "";
     var count = 1;
     for (var element of results) {
@@ -16,14 +13,14 @@ function getWebviewContent(results, isLastResult, jspath) {
         <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"} , Took ${element.time}ms</span>
 
          <span class="right time">
-            <button class="btn btn-red" onclick="deleteTestCase(this)">Delete testcase</button>
+            <button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
          </span></b></p>
         Input :
         <textarea class="selectable">${element.input.trim()}</textarea>
         Expected Output:
-        <textarea class="selectable">${element.expected}</textarea>
+        <textarea class="selectable">${element.expected.trim()}</textarea>
         Received Output:
-        <textarea readonly class="selectable">${element.got}</textarea>
+        <textarea readonly class="selectable">${element.got.trim()}</textarea>
     </div>
             `
         count++;

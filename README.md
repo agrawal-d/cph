@@ -1,46 +1,48 @@
-# Competitive Programming Helper (v1.0.1)
+# Competitive Programming Helper (v2.0)
 
-Download from here : https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper or search in the VS Code Extensions within the application.
+Store link : https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper
 
-This extension helps you to quickly run codeforces testcases for a given problem automatically. You can also add custom testcases to the generated ```.tcs``` file. If the file you are testing in ```A.cpp``` then the generated testcases file is ```A.cpp.tcs```, in which you can add your own testcases.
+This extension helps you to quickly run and judge your problems.
+You can download and run codeforces testcases for a given problem automatically. You can also add custom testcases.
+
+This new version has a rich GUI editor for testcases.
 
 * Tip : Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
 
-*  Tip : Use the shortcut ```Ctrl/Cmd + Alt + 0``` to open testcases file.
 
-![Extension Overview](screenshots/overall.png)
+![Extension Overview](screenshots/1.png)
 
+Extension Overview
 
+![Rich GUI Editor](screenshots/2.png)
+
+Rich GUI Editor
+
+-----------------------------------------
 ## Usage
 
-Type ```Ctrl/Cmd + Shift + P``` and search for "*Run Codeforces Testcases Command*" or Click on the "*Run Testcases*" text on the bottom left of the VSCode ( the bottom statusbar ).
+![Run testcases button](screenshots/3.png)
 
-Or Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
+↑ Press the "Run Testcases" button on bottom left
 
+![Command Pallete](screenshots/4.png)
+
+↑ Type ```Ctrl/Cmd + Shift + P``` and search for "*Run Codeforces Testcases Command*" or Click on the "*Run Testcases*" text on the bottom left of the VSCode ( the bottom statusbar ).
+
+
+* Or Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
 
 * The first line of your C++ code should be a comment containing the URL of the codeforces page. The comment should be single line, ie,  start with ```//``` and not ```/*```
-* You can edit the generated .tcs file to add your own testcases.
 
-![Use a comment as the first line](screenshots/1.png)
-
-↑ Use a comment as the first line of your code as the URL of the problem
-
-
-
-![Run Command ](screenshots/run-command.png)
-
-↑ Press Ctrl/Cmd+Shift+P and type ```codeforces````
-
-
-
-
-![Use a comment as the first line](screenshots/example-result.png)
-
-↑ Rich analysis of your code
+* You can edit the generated .tcs ( which is a JSON file ) file to add your own testcases.
 
 ## Requirements
 
 The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the terminal/command prompt.
+
+## Manual URL Entry ( Optional )
+
+For codeforces, the fist line of your .cpp file should be a sigle line comment of the codeforces url. But you do not need to add it manually, just run the extension and enter in the box displayed.
 
 ## About
 This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.

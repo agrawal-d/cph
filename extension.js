@@ -24,29 +24,15 @@ statusBarItem.text = " ▶  Run Testcases";
 statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
 
+
 /**
- * Opens and reveals the testcase file beside the active window
+ * Verifies if url is valid
  */
-function openTestcaseFile() {
-	let filepath = vscode.window.activeTextEditor.document.fileName;
-	if (!filepath || !(filepath.substring(filepath.length - 4).toLowerCase() == '.cpp')) {
-		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
-		return;
-	} else {
-		latestFilePath = filepath
-		latestTextDocument = vscode.window.activeTextEditor;
-		try {
-			fs.accessSync(filepath + ".tcs");
-		} catch (err) {
-			testCasesHelper(filepath);
-			return;
-		}
-
-		vscode.workspace.openTextDocument(filepath + ".tcs").then(document => {
-			vscode.window.showTextDocument(document, vscode.ViewColumn.Beside)
-		})
-
+function verifyValidCodeforcesURL(url) {
+	if (url.includes("https://codeforces.com") || url.includes("http://codeforces.com")) {
+		return true;
 	}
+	return false;
 }
 
 /**
@@ -60,7 +46,8 @@ function startWebView() {
 			'Results',
 			vscode.ViewColumn.Beside,
 			{
-				enableScripts: true
+				enableScripts: true,
+				retainContextWhenHidden: true
 			}
 		);
 		// message from webview
@@ -127,7 +114,7 @@ function testCasesHelper(filepath) {
 	}
 	vscode
 		.window.
-		showQuickPick(["Download testcases from Codeforces", "Create a new .tcs testcase file"], {
+		showQuickPick(["Download testcases from Codeforces", "Manually enter testcases"], {
 			placeHolder: "Choose one of the options to get testcases"
 		})
 		.then((selection) => {
@@ -136,26 +123,46 @@ function testCasesHelper(filepath) {
 					placeHolder: "Enter the complete URL of the codeforces problem"
 				}).then(async (problemURL) => {
 					if (!problemURL || problemURL == "" || problemURL == undefined) {
+
+						return;
+					}
+					if (!verifyValidCodeforcesURL(problemURL)) {
+						vscode.window.showErrorMessage("Not a valid codeforces URL");
 						return;
 					}
 					appendProblemURLToFile(problemURL, executePrimaryTask);
 					return;
 				})
 			} else if (selection === "Create a new .tcs testcase file") {
-				let blank_testcase =
-					`
-[
-	{
-		"input":"",
-		"output":""
-	}
-]
-`
-				//@todo
+				console.log("Showing blank webview");
+				let blank_testcase = [];
 				writeToTestCaseFile(JSON.stringify(blank_testcase), filepath);
+				evaluateResults([], true);
+				return;
+
+				// console.log("Showing blank webview");
+				// evaluateResults([], true);
+				// vscode.commands.executeCommand("extension.runCodeforcesTestcases");
 			}
 		})
 }
+
+/**
+ * shows the webview with the available results
+ */
+function evaluateResults(result, isFinal) {
+	startWebView();
+	const onDiskPath = vscode.Uri.file(
+		path.join(latestContext.extensionPath, 'frontend', 'main.js')
+	);
+	const jssrc = resultsPanel.webview.asWebviewUri(onDiskPath);
+	let html = getWebviewContent(result, isFinal, jssrc);
+	console.log(html)
+	resultsPanel.webview.html = html;
+	resultsPanel.reveal()
+}
+
+
 /**
  * Worker function for the extension, activated on shortcut or "Run testcases"
  */
@@ -176,20 +183,6 @@ async function executePrimaryTask(context) {
 	codeforcesURL = codeforcesURL.split("\n")[0];
 	codeforcesURL = codeforcesURL.substring(2);
 	let compilationError = false;
-
-	/**
-	 * shows the webview with the available results
-	 */
-	function evaluateResults(result, isFinal) {
-		startWebView();
-		const onDiskPath = vscode.Uri.file(
-			path.join(context.extensionPath, 'frontend', 'main.js')
-		);
-		const jssrc = resultsPanel.webview.asWebviewUri(onDiskPath);
-		let html = getWebviewContent(result, isFinal, jssrc);
-		resultsPanel.webview.html = html;
-		resultsPanel.reveal()
-	}
 
 	let passed_cases = [];
 	/**
@@ -230,8 +223,7 @@ async function executePrimaryTask(context) {
 			spawned_process.kill();
 		}, 10000)
 		let tm = Date.now();
-
-		spawned_process.stdin.write(cases.inputs[caseNum]);
+		spawned_process.stdin.write(cases.inputs[caseNum] + "\n");
 		spawned_process.stdout.on('data', (data) => {
 			if (stdoutlen > 10000) {
 				startWebView();
@@ -239,6 +231,7 @@ async function executePrimaryTask(context) {
 				resultsPanel.webview.html = "<html><body><p style='margin:10px'>Your code is outputting more data than can be displayed. It is possibly stuck in an infinite loop. <br><br><b>All testcases failed.</b></p></body></html>";
 				return;
 			}
+			console.log("Go stdout", data);
 			let ans = data.toString();
 			let tm2 = Date.now();
 			let time = tm2 - tm;
@@ -328,7 +321,7 @@ async function executePrimaryTask(context) {
 	 * Download a html page with the given codeforces url
 	 */
 	async function downloadCodeforcesPage(url) {
-		if (url.includes("https://codeforces.com") || url.includes("http://codeforces.com")) {
+		if (verifyValidCodeforcesURL(url)) {
 			vscode.window.showInformationMessage("Downloading Testcases");
 			const html = await rp(url);
 			return html;
@@ -370,9 +363,9 @@ function activate(context) {
 		executePrimaryTask(context);
 	});
 
-	let disposableTwo = vscode.commands.registerCommand('extension.openTestcaseFile', function () {
-		openTestcaseFile();
-	});
+	// let disposableTwo = vscode.commands.registerCommand('extension.openTestcaseFile', function () {
+	// 	openTestcaseFile();
+	// });
 
 	context.subscriptions.push(disposable);
 }

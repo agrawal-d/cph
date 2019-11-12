@@ -10,7 +10,7 @@
     "c++",
     "testcases"
   ],
-"version": "1.0.1",
+  "version": "2.0.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"
@@ -22,19 +22,12 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "extension.js",
+  "main": "dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "extension.runCodeforcesTestcases",
-        "title": "Run Codeforces Testcases",
-        "icon": "icon.png",
-        "enablement": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc",
-        "category": "Competitive"
-      },
-      {
-        "command": "extension.openTestcaseFile",
-        "title": "Open the testcases for the current C++ file",
+        "title": "Run Testcases",
         "icon": "icon.png",
         "enablement": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc",
         "category": "Competitive"
@@ -44,11 +37,6 @@
       {
         "key": "ctrl+alt+b",
         "command": "extension.runCodeforcesTestcases",
-        "when": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc"
-      },
-      {
-        "key": "ctrl+alt+0",
-        "command": "extension.openTestcaseFile",
         "when": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc"
       }
     ]

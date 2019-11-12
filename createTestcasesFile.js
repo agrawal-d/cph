@@ -4,23 +4,21 @@ let fs = require("fs");
  */
 function createTestCasesFile(inp, op, filepath) {
     console.log("Creating a file at", filepath);
-    var strings = "";
+    let ans = [];
     for (var i = 0; i < inp.length; i++) {
-        if (i != 0) {
-            strings += "-----------------\n";
-        }
-        strings += "input\n";
-        strings += inp[i];
-        strings += "output\n";
-        strings += op[i];
+        ans.push({
+            input: inp[i],
+            output: op[i]
+        });
     }
+    var strings = JSON.stringify(ans);
 
     try {
         fs.writeFileSync(filepath + ".tcs", strings);
     } catch (err) {
         console.log(err);
         return 1;
-    }finally{
+    } finally {
         console.log("Done attemting file creation");
     }
     return 0;
