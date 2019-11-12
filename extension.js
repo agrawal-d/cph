@@ -133,10 +133,14 @@ function testCasesHelper(filepath) {
 					appendProblemURLToFile(problemURL, executePrimaryTask);
 					return;
 				})
-			} else if (selection === "Create a new .tcs testcase file") {
+			} else if (selection === "Manually enter testcases") {
 				console.log("Showing blank webview");
 				let blank_testcase = [];
-				writeToTestCaseFile(JSON.stringify(blank_testcase), filepath);
+				if (!writeToTestCaseFile(JSON.stringify(blank_testcase), filepath)) {
+					console.error("Could not create tcs file");
+					return;
+				}
+				console.log('Created TCS file');
 				evaluateResults([], true);
 				return;
 
@@ -205,9 +209,15 @@ async function executePrimaryTask(context) {
 		}
 
 		if (caseNum == 0) {
-			startWebView()
-			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
+			startWebView();
+			console.l
 			cases = parseTestCasesFile(filepath);
+			if (!cases || !cases.inputs || cases.inputs.length === 0) {
+				evaluateResults([], true);
+				return;
+			}
+			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
+
 
 		} else if (caseNum == cases.numCases) {
 			return;

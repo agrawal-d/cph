@@ -266,10 +266,14 @@ function testCasesHelper(filepath) {
 					appendProblemURLToFile(problemURL, executePrimaryTask);
 					return;
 				})
-			} else if (selection === "Create a new .tcs testcase file") {
+			} else if (selection === "Manually enter testcases") {
 				console.log("Showing blank webview");
 				let blank_testcase = [];
-				writeToTestCaseFile(JSON.stringify(blank_testcase), filepath);
+				if (!writeToTestCaseFile(JSON.stringify(blank_testcase), filepath)) {
+					console.error("Could not create tcs file");
+					return;
+				}
+				console.log('Created TCS file');
 				evaluateResults([], true);
 				return;
 
@@ -338,9 +342,15 @@ async function executePrimaryTask(context) {
 		}
 
 		if (caseNum == 0) {
-			startWebView()
-			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
+			startWebView();
+			console.l
 			cases = parseTestCasesFile(filepath);
+			if (!cases || !cases.inputs || cases.inputs.length === 0) {
+				evaluateResults([], true);
+				return;
+			}
+			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
+
 
 		} else if (caseNum == cases.numCases) {
 			return;
@@ -531,7 +541,7 @@ function getWebviewContent(results, isLastResult, jspath) {
     var modf = "";
     var count = 1;
     for (var element of results) {
-        if (element.got.length > 200) { element.got = "Too long to display" }
+        if (element.got.length > 20000) { element.got = "Too long to display" }
         modf += `
     <div class="case">
         <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"} , Took ${element.time}ms</span>
@@ -582,6 +592,10 @@ function getWebviewContent(results, isLastResult, jspath) {
       }
       body{
           margin-bottom:100px;
+      }
+      .btn:hover{
+          opacity:0.8;
+          2px solid black;
       }
       #pane{
           position:fixed;
@@ -637,7 +651,7 @@ function getWebviewContent(results, isLastResult, jspath) {
             outline:none;
             margin-right:2px;
             margin-bottom:5px;
-            border:0px;
+            border:2px solid transparent;
         }
         .btn-green{
             background:#70B92791;
@@ -649,8 +663,22 @@ function getWebviewContent(results, isLastResult, jspath) {
 </head>
 
 <body>
-    <h4>Compilation Results</h4>
+    <h4>Evaluation</h4>
     `;
+    if (results.length == 0) {
+        pre += `<div class="case">
+        <p><b>Unsaved Testcase</span>
+        <span class="right time">
+        <button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
+        </span></b></p>
+        Input :
+        <textarea  class="selectable"></textarea>
+        Expected Output:
+        <textarea  class="selectable"></textarea>
+        Received Output:
+        <textarea readonly class="selectable">Run to show output</textarea>
+        </div>`;
+    }
     pre += modf;
     if (!isLastResult) {
         pre += "<br><br><b>Running next testcase...</b>";

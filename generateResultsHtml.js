@@ -7,7 +7,7 @@ function getWebviewContent(results, isLastResult, jspath) {
     var modf = "";
     var count = 1;
     for (var element of results) {
-        if (element.got.length > 200) { element.got = "Too long to display" }
+        if (element.got.length > 20000) { element.got = "Too long to display" }
         modf += `
     <div class="case">
         <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"} , Took ${element.time}ms</span>
@@ -58,6 +58,10 @@ function getWebviewContent(results, isLastResult, jspath) {
       }
       body{
           margin-bottom:100px;
+      }
+      .btn:hover{
+          opacity:0.8;
+          2px solid black;
       }
       #pane{
           position:fixed;
@@ -113,7 +117,7 @@ function getWebviewContent(results, isLastResult, jspath) {
             outline:none;
             margin-right:2px;
             margin-bottom:5px;
-            border:0px;
+            border:2px solid transparent;
         }
         .btn-green{
             background:#70B92791;
@@ -125,8 +129,22 @@ function getWebviewContent(results, isLastResult, jspath) {
 </head>
 
 <body>
-    <h4>Compilation Results</h4>
+    <h4>Evaluation</h4>
     `;
+    if (results.length == 0) {
+        pre += `<div class="case">
+        <p><b>Unsaved Testcase</span>
+        <span class="right time">
+        <button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
+        </span></b></p>
+        Input :
+        <textarea  class="selectable"></textarea>
+        Expected Output:
+        <textarea  class="selectable"></textarea>
+        Received Output:
+        <textarea readonly class="selectable">Run to show output</textarea>
+        </div>`;
+    }
     pre += modf;
     if (!isLastResult) {
         pre += "<br><br><b>Running next testcase...</b>";
