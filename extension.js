@@ -9,6 +9,7 @@ const getWebviewContent = require("./generateResultsHtml");
 const fs = require("fs");
 const path = require("path")
 const writeToTestCaseFile = require("./writeToTestCaseFile");
+const testCaseResult = require("./runTestcase");
 let oc = vscode.window.createOutputChannel("competitive");
 /**
  * Webview
@@ -17,6 +18,12 @@ let resultsPanel;
 let latestFilePath = "";
 let latestTextDocument = null;
 let latestContext = null;
+let cases = null;
+let codeforcesURL = null;
+let filepath = null;
+let passed_cases = [];
+
+
 //Setup statusbar button
 const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1000);
 
@@ -172,9 +179,9 @@ function evaluateResults(result, isFinal) {
  */
 async function executePrimaryTask(context) {
 	const saveFile = await vscode.commands.executeCommand("workbench.action.files.save");
-	let codeforcesURL = vscode.window.activeTextEditor.document.getText();
-	let filepath = vscode.window.activeTextEditor.document.fileName;
-	let cases;
+	codeforcesURL = vscode.window.activeTextEditor.document.getText();
+	filepath = vscode.window.activeTextEditor.document.fileName;
+	cases = null;
 	if (!(filepath.substring(filepath.length - 4).toLowerCase() == '.cpp')) {
 		vscode.window.showInformationMessage("Active file must be have a .cpp extension");
 		return;
@@ -183,148 +190,57 @@ async function executePrimaryTask(context) {
 		latestFilePath = filepath;
 		latestTextDocument = vscode.window.activeTextEditor.document;
 	}
-	let firstRun = true;
+	let firstRun = true; // @todo
 	codeforcesURL = codeforcesURL.split("\n")[0];
 	codeforcesURL = codeforcesURL.substring(2);
 	let compilationError = false;
 
-	let passed_cases = [];
+	passed_cases = [];
+
 	/**
-	 * runs a particular testcase
-	 * @param {*} caseNum 0-indexed number of the case
+	 * runn all testcases
 	 */
-	function runTestCases(caseNum) {
+
+
+	function runSingleTestcase(casenum, stdin, stdout_expected) {
+		let result = {
+			input: stdin,
+			expected: stdout_expected,
+			otput: null,
+		};
+		cases = parseTestCasesFile(filepath);
+		try {
+			let evalResults = await testCaseResult(filepath + ".bin", stdin, stdout_expected);
+		} catch (err) {
+			if (err.type == signal) {
+
+			}
+		}
+		return null;
+
+	}
+
+
+	async function runTestCases() {
 		try {
 			fs.accessSync(filepath + ".tcs")
 		} catch (err) {
-			let html = downloadCodeforcesPage(codeforcesURL);
-			html.then(string => {
-				const [inp, op] = parseCodeforces(string);
-				createTestacesFile(inp, op, filepath);
-				runTestCases(0);
-			}).catch(err => {
-				console.error("Error", err)
-			})
+			executePrimaryTask(latestContext);
 			return;
 		}
-
-		if (caseNum == 0) {
-			startWebView();
-			console.l
-			cases = parseTestCasesFile(filepath);
-			if (!cases || !cases.inputs || cases.inputs.length === 0) {
-				evaluateResults([], true);
-				return;
-			}
-			resultsPanel.webview.html = "<html><body><p style='margin:10px'>Runnung Testcases ...</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
-
-
-		} else if (caseNum == cases.numCases) {
+		startWebView();
+		cases = parseTestCasesFile(filepath);
+		if (!cases || cases.length === 0) {
+			evaluateResults([], true);
 			return;
 		}
-		let exec = [];
-		let stdoutlen = 0;
-		let spawned_process = spawn((filepath + '.bin'), {
-			timeout: 10000
-		});
-		// Creates a 10 second timeout to kill the spawned process.
-		setTimeout(() => {
-			console.log("10 sec killed process - ", caseNum);
-			spawned_process.kill();
-		}, 10000)
-		let tm = Date.now();
-		spawned_process.stdin.write(cases.inputs[caseNum] + "\n");
-		spawned_process.stdout.on('data', (data) => {
-			if (stdoutlen > 10000) {
-				startWebView();
-				console.log("STDOUT length >10000");
-				resultsPanel.webview.html = "<html><body><p style='margin:10px'>Your code is outputting more data than can be displayed. It is possibly stuck in an infinite loop. <br><br><b>All testcases failed.</b></p></body></html>";
-				return;
-			}
-			console.log("Go stdout", data);
-			let ans = data.toString();
-			let tm2 = Date.now();
-			let time = tm2 - tm;
-			ans = ans.replace(/\r?\n|\r/g, "\n");
-			cases.outputs[caseNum] = cases.outputs[caseNum].replace(/\r?\n|\r/g, "\n");
-			let stripped_case = cases.outputs[caseNum].replace(/\r?\n|\r| /g, "");
-			let stripped_ans = ans.replace(/\s|\n|\r\n|\r| /g, "");
-			if (stripped_ans == stripped_case) {
-				passed_cases[caseNum] = {
-					passed: true,
-					time: time,
-					output: ans.trim(),
-					input: cases.inputs[caseNum].trim(),
-					expected: cases.outputs[caseNum].trim(),
-					got: ans.trim()
-				}
-			} else {
-				passed_cases[caseNum] = {
-					passed: false,
-					time: time,
-					output: ans.trim(),
-					input: cases.inputs[caseNum].trim(),
-					expected: cases.outputs[caseNum].trim(),
-					got: ans.trim()
-
-				}
-			}
-			if (caseNum == (cases.numCases - 1)) {
-				evaluateResults(passed_cases, true);
-				spawn("rm", [filepath + ".bin"]);
-				spawn("del", [filepath + ".bin"]);
+		resultsPanel.webview.html = "<html><body style='margin:10px'><p>Compilation Complete. Starting Testcases Evaluation.</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
 
 
-			} else {
-				evaluateResults(passed_cases, false);
-			}
+		for (let i = 0; i < cases.length; i++) {
+			runSingleTestcase(i);
+		}
 
-		});
-		spawned_process.stderr.on('data', (data) => {
-			console.error(`stderr: ${data}`);
-			oc.clear();
-			oc.appendLine("STDERR:");
-			oc.appendLine(data);
-		});
-
-		spawned_process.on('exit', (code, signal) => {
-			let tm2 = Date.now();
-			console.log("Execution done with code", code, " with signal ", signal, "for process ", caseNum);
-			if (signal || code != 0) {
-				passed_cases[caseNum] = {
-					passed: false,
-					time: tm2 - tm,
-					output: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
-					input: cases.inputs[caseNum].trim(),
-					expected: cases.outputs[caseNum].trim(),
-					got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
-				}
-				if (caseNum == (cases.numCases - 1)) {
-					evaluateResults(passed_cases, true);
-				} else {
-					evaluateResults(passed_cases, false);
-				}
-
-			} else {
-				let tm2 = Date.now();
-				if (!passed_cases[caseNum]) {
-					passed_cases[caseNum] = {
-						passed: cases.outputs[caseNum].trim().length == 0,
-						time: tm2 - tm,
-						output: "<br/>",
-						input: cases.inputs[caseNum].trim(),
-						expected: cases.outputs[caseNum].trim(),
-						got: "<br/>"
-					}
-					if (caseNum == (cases.numCases - 1)) {
-						evaluateResults(passed_cases, true);
-					} else {
-						evaluateResults(passed_cases, false);
-					}
-				}
-			}
-			runTestCases(caseNum + 1);
-		})
 	}
 
 	/**
@@ -357,7 +273,7 @@ async function executePrimaryTask(context) {
 
 	gpp.on('exit', async (exitCode) => {
 		if (!compilationError) {
-			await runTestCases(0);
+			await runTestCases();
 		}
 		console.log(`Compiler exited with code ${exitCode}`);
 	});

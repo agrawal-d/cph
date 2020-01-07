@@ -12,18 +12,7 @@ function parseTestCasesFile(sourceCodePath) {
     var opCases = [];
     console.log(txt);
     const tcs = JSON.parse(txt);
-    for (let element of tcs) {
-        tcNum++;
-        inpCases.push(element.input);
-        opCases.push(element.output);
-    }
-    var result = {
-        inputs: inpCases,
-        outputs: opCases,
-        numCases: inpCases.length
-    }
-    console.log(result);
-    return result;
+    return tcs;
 
 }
 
