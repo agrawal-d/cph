@@ -10,7 +10,7 @@
     "c++",
     "testcases"
   ],
-  "version": "2.0.1",
+  "version": "2.1.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"
@@ -24,6 +24,21 @@
   "publisher": "DivyanshuAgrawal",
   "main": "dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Competitive Programming Helper",
+      "properties": {
+        "competitive-programming-helper.saveLocation": {
+          "type": "string",
+          "default": "",
+          "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
+        },
+        "competitive-programming-helper.compilationFlags": {
+          "type":"string",
+          "default": "",
+          "description": "Space seperated additional flags passed to g++ while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
+        }
+      }
+    },
     "commands": [
       {
         "command": "extension.runCodeforcesTestcases",

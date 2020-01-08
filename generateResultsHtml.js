@@ -1,16 +1,21 @@
 /**
- * 
+ *
  * @param {*} results an object containing the evaluated testcase results
  * @param {*} isLastResult boolean wether the results are final or any evaluation is pending
  */
 function getWebviewContent(results, isLastResult, jspath) {
-    var modf = "";
-    var count = 1;
-    for (var element of results) {
-        if (element.got.length > 20000) { element.got = "Too long to display" }
-        modf += `
+  var modf = "";
+  var count = 1;
+  for (var element of results) {
+    if (element.got.length > 20000) {
+      element.got = "Too long to display";
+    }
+    console.log(results);
+    modf += `
     <div class="case">
-        <p><b>Testcase ${count} <span class="${(element.passed) ? "pass" : "fail"}">${(element.passed) ? "PASSED" : "FAILED"} , Took ${element.time}ms</span>
+        <p><b>Testcase ${count} <span class="${
+      element.passed ? "pass" : "fail"
+    }">${element.passed ? "PASSED" : "FAILED"} , ${element.time}ms</span>
 
          <span class="right time">
             <button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
@@ -22,11 +27,11 @@ function getWebviewContent(results, isLastResult, jspath) {
         Received Output:
         <textarea readonly class="selectable">${element.got.trim()}</textarea>
     </div>
-            `
-        count++;
-    }
+            `;
+    count++;
+  }
 
-    var pre = `
+  var pre = `
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,6 +63,7 @@ function getWebviewContent(results, isLastResult, jspath) {
       }
       body{
           margin-bottom:100px;
+          padding:0px;
       }
       .btn:hover{
           opacity:0.8;
@@ -74,8 +80,8 @@ function getWebviewContent(results, isLastResult, jspath) {
       }
         .case {
             background: rgba(0,0,0,0.1);
-            padding: 10px;
-            margin-bottom: 5px;
+            padding: 8px;
+            margin-bottom: 2px;
         }
 
         .pre, pre, textarea {
@@ -111,7 +117,7 @@ function getWebviewContent(results, isLastResult, jspath) {
             color: rgb(37, 87, 37);
         }
         .btn{
-            padding:5px 10px 5px 10px;
+            padding:2px 5px 2px 5px;
             background:#3393CC91;
             color:white;
             outline:none;
@@ -125,14 +131,16 @@ function getWebviewContent(results, isLastResult, jspath) {
         .btn-red{
             background:#B9274391
         }
+        h4{
+            padding:5px;
+        }
     </style>
 </head>
 
-<body>
-    <h4>Evaluation</h4>
-    `;
-    if (results.length == 0) {
-        pre += `<div class="case">
+<body>`;
+
+  if (results.length == 0) {
+    pre += `<div class="case">
         <p><b>Unsaved Testcase</span>
         <span class="right time">
         <button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
@@ -144,24 +152,24 @@ function getWebviewContent(results, isLastResult, jspath) {
         Received Output:
         <textarea readonly class="selectable">Run to show output</textarea>
         </div>`;
-    }
-    pre += modf;
-    if (!isLastResult) {
-        pre += "<br><br><b>Running next testcase...</b>";
-    }
-    pre += `
+  }
+  pre += modf;
+  if (!isLastResult) {
+    pre += "<br><br><b>Running next testcase...</b>";
+  }
+  pre += `
 <div id="app"></div>
 <div id="pane">
 <button class="btn" id="new-testcase" onclick="addTestCase()">New Testcase</button>
 <button class="btn btn-green" onClick="saveAndRerunAll()">Save & Rerun all</button>
 <br>
-<span id="unsaved"></span>
+<small id="unsaved"></small>
 </div>
 </body>
 <script src="${jspath}"></script>
 </html>
-`
-    return pre;
+`;
+  return pre;
 }
 
 module.exports = getWebviewContent;

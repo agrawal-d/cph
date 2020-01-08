@@ -1,57 +1,63 @@
 # Competitive Programming Helper (v2.0)
 
-Store link : https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper
-
-This extension helps you to quickly run and judge your problems.
+This extension helps you to quickly compile, run and judge your problems.
 You can download and run codeforces testcases for a given problem automatically. You can also add custom testcases.
 
 This new version has a rich GUI editor for testcases.
 
-* Tip : Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
+![Extension Overview](screenshots/video.gif)
 
+### Tips
 
-![Extension Overview](screenshots/1.png)
+* Use the shortcut ```Ctrl + Alt + B``` to activate.
 
-Extension Overview
+* You can choose additional compiler flags and save location from VSCode settings.
 
-![Rich GUI Editor](screenshots/2.png)
+![Rich GUI Editor](screenshots/settings.png)
 
-Rich GUI Editor
+Change settings to hoose custom compiler flags and testcase/binary save location.
 
 -----------------------------------------
 ## Usage
 
-![Run testcases button](screenshots/3.png)
+Click on the &nbsp; &nbsp; ![Run testcases button](screenshots/run_testcases.png) button on the bottom left of VSCode.
 
-↑ Press the "Run Testcases" button on bottom left
+Or
 
-![Command Pallete](screenshots/4.png)
+Type ```Ctrl/Cmd + Shift + P``` and select "*Run Codeforces Testcases Command*".
 
-↑ Type ```Ctrl/Cmd + Shift + P``` and search for "*Run Codeforces Testcases Command*" or Click on the "*Run Testcases*" text on the bottom left of the VSCode ( the bottom statusbar ).
+Or
 
+Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
 
-* Or Use the shortcut ```Ctrl/Cmd + Alt + B``` to activate.
+-------
 
-* The first line of your C++ code should be a comment containing the URL of the codeforces page. The comment should be single line, ie,  start with ```//``` and not ```/*```
-
-* You can edit the generated .tcs ( which is a JSON file ) file to add your own testcases.
+You can edit the generated .tcs ( which is a JSON file ) file to add your own testcases.
 
 ## Requirements
 
-The GNU C++ Compiler ( GCC ) must be installed and should be accesible from the terminal/command prompt.
+The GNU C++ Compiler ( g++ ) must be installed and should be accesible from the terminal/command prompt.
 
 ## Manual URL Entry ( Optional )
 
 For codeforces, the fist line of your .cpp file should be a sigle line comment of the codeforces url. But you do not need to add it manually, just run the extension and enter in the box displayed.
 
 ## About
-This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs to hereisdx@gmail.com. Thank you for using this extension.
+This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs by creating an issue using the link above. Thank you for using this extension.
+
+## Support
+
+If you need help using this extension, create an issue [here](https://github.com/agrawal-d) and the developers will get back to you.
 
 _____________________________
 
 ## Release Notes
+
+* Version 2.1.0
+    * Added support for custom compiler flags and generated testcases and binaries storage location.
+    * Added usage GIF to readme.
 * Version 2.0.X
-    * Rich GUI editor for testcases
+    * Rich GUI editor for testcases.
 * Version 1.0
     * Formatting or results improved. Minor Bug-Fixes.
 * Version 0.0.9

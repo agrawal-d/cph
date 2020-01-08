@@ -1,14 +1,14 @@
 const fs = require("fs");
-function writeToTestCaseFile(string, filePathWithoutExtension) {
-    try {
-        fs.writeFileSync(
-            filePathWithoutExtension + ".tcs", string
-        )
-        return true;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
+const locationHelper = require("./locationHelper");
+function writeToTestCaseFile(string, filepath) {
+  try {
+    console.log(filepath);
+    fs.writeFileSync(locationHelper.getTestCaseLocation(filepath), string);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 }
 
 module.exports = writeToTestCaseFile;
