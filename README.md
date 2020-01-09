@@ -1,4 +1,4 @@
-# Competitive Programming Helper (v2.0)
+# Competitive Programming Helper
 
 This extension helps you to quickly compile, run and judge your problems.
 You can download and run codeforces testcases for a given problem automatically. You can also add custom testcases.
@@ -54,6 +54,8 @@ If you need help using this extension, create an issue [here](https://github.com
 ---
 
 ## Release Notes
+- Version 2.2.1
+    - Fixed minor settings bug
 - Version 2.2.0
     - Added support for C language. ( Overall, now, C and C++ are supported)
 - Version 2.1.0
