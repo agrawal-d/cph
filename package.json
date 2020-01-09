@@ -32,10 +32,15 @@
           "default": "",
           "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
         },
-        "competitive-programming-helper.compilationFlags": {
-          "type":"string",
+        "competitive-programming-helper.compilationFlagscpp": {
+          "type": "string",
           "default": "",
-          "description": "Space seperated additional flags passed to g++ while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
+          "description": "Space seperated additional flags passed to gcc ( for C) while compiling your file. Example '-O2 -Wall'"
+        },
+        "competitive-programming-helper.compilationFlagsc": {
+          "type": "string",
+          "default": "",
+          "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
         }
       }
     },

@@ -332,6 +332,7 @@ function evaluateResults(result, isFinal) {
  * Worker function for the extension, activated on shortcut or "Run testcases"
  */
 async function executePrimaryTask(context) {
+  oc.hide();
   preferences = vscode.workspace.getConfiguration(
     "competitive-programming-helper"
   );
@@ -341,13 +342,17 @@ async function executePrimaryTask(context) {
   let codeforcesURL = vscode.window.activeTextEditor.document.getText();
   let filepath = vscode.window.activeTextEditor.document.fileName;
   let cases;
-  if (!(filepath.substring(filepath.length - 4).toLowerCase() == ".cpp")) {
+  const fileExtension = filepath
+    .split(".")
+    .pop()
+    .toLowerCase();
+  if (!(fileExtension === "cpp" || fileExtension === "c")) {
     vscode.window.showInformationMessage(
-      "Active file must be have a .cpp extension"
+      "Active file must be have a .c or .cpp extension"
     );
     return;
   } else {
-    console.log("Is a cpp");
+    console.log("Is a c or cpp");
     latestFilePath = filepath;
     latestTextDocument = vscode.window.activeTextEditor.document;
   }
@@ -518,7 +523,7 @@ async function executePrimaryTask(context) {
   /**
    * Comiple the C++ file
    */
-  let flags = preferences.get("compilationFlags").split(" ");
+  let flags = preferences.get("compilationFlags" + fileExtension).split(" ");
   if (flags[0] === "") {
     flags = [];
   }
@@ -526,19 +531,28 @@ async function executePrimaryTask(context) {
   let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
   const outputLocation = locationHelper.getBinLocation(filepath);
   flags = [filepath, "-o", outputLocation].concat(flags);
-  console.log("g++ flags", flags);
-  const gpp = spawn("g++", flags);
-  gpp.stdout.on("data", data => {
+  let compiler; // type of compiler ( g++ or gcc )
+  switch (fileExtension) {
+    case "cpp":
+      compiler = "g++";
+      break;
+    case "c":
+      compiler = "gcc";
+      break;
+  }
+  console.log("gcc/g++ flags", flags);
+  const compilerProcess = spawn(compiler, flags);
+  compilerProcess.stdout.on("data", data => {
     console.log(`stdout: ${data}`);
   });
-  gpp.stderr.on("data", data => {
+  compilerProcess.stderr.on("data", data => {
     oc.clear();
     oc.append("Errors while compiling\n" + data.toString());
     oc.show();
     compilationError = true;
   });
 
-  gpp.on("exit", async exitCode => {
+  compilerProcess.on("exit", async exitCode => {
     if (!compilationError) {
       await runTestCases(0);
     }
