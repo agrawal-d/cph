@@ -3,7 +3,7 @@
  * @param {*} results an object containing the evaluated testcase results
  * @param {*} isLastResult boolean wether the results are final or any evaluation is pending
  */
-function getWebviewContent(results, isLastResult, jspath) {
+function getWebviewContent(results, isLastResult, jspath, filepath) {
   var modf = "";
   var count = 1;
   for (var element of results) {
@@ -15,12 +15,12 @@ function getWebviewContent(results, isLastResult, jspath) {
     <div class="case">
         <p><b>Testcase ${count} <span class="${
       element.passed ? "pass" : "fail"
-    }">${element.passed ? "PASSED" : "FAILED"} <span class="exec-time">${
+      }">${element.passed ? "PASSED" : "FAILED"} <span class="exec-time">${
       element.time
-    }ms</span></span>
+      }ms</span></span>
 
          <span class="right time">
-         <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
+         <button class="btn btn-green" onclick="rerunTestCase(${count})">&#x21BA; </button>
             <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F;  </button>
          </span></b></p>
         Input :
@@ -147,16 +147,18 @@ function getWebviewContent(results, isLastResult, jspath) {
         h4{
             padding:5px;
         }
+        #filepath{
+          display:none;
+        }
     </style>
 </head>
 
-<body>`;
+<body><span id="filepath">${filepath}</span>`;
 
   if (results.length == 0) {
     pre += `<div class="case">
         <p><b>Unsaved Testcase</span>
         <span class="right time">
-          <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
           <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F; </button>
         </span></b></p>
         Input :

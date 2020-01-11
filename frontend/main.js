@@ -6,7 +6,7 @@ let newTestCaseString =
     `<div class="case">
 <p><b>Unsaved Testcase</span>
 <span class="right time">
-<button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
+<button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F;</button>
 </span></b></p>
 Input :
 <textarea  class="selectable"></textarea>
@@ -58,7 +58,11 @@ function addTestCase() {
     window.scrollTo(0, document.body.scrollHeight);
 }
 
-function saveAndRerunAll() {
+function extractFilepath() {
+    return document.getElementById("filepath").innerText;
+}
+
+function extractTestCases() {
     let caseElm = document.querySelectorAll("div.case");
     let ans = [];
     caseElm.forEach(elm => {
@@ -69,8 +73,24 @@ function saveAndRerunAll() {
             output: exp
         })
     })
-    vscode.postMessage({ command: 'save-and-rerun-all', testcases: ans })
-    // currentPanel.webview.postMessage({ command: 'save-and-run', testcases: ans });
+    return ans;
+}
+
+
+function rerunTestCase(casenum) {
+    casenum = casenum - 1;
+    const ans = extractTestCases();
+    const filepath = extractFilepath();
+    vscode.postMessage({ command: 'save-and-rerun-single', testcases: ans, casenum: casenum, filepath: filepath })
+    console.log("Single done", casenum);
+
+}
+
+function saveAndRerunAll() {
+    let ans = extractTestCases();
+    const filepath = extractFilepath();
+
+    vscode.postMessage({ command: 'save-and-rerun-all', testcases: ans, filepath: filepath })
 
 }
 

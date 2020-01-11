@@ -4,6 +4,7 @@ const { spawn } = require("child_process");
 const parseCodeforces = require("./parseCodeforces");
 const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
+const compileFile = require("./compileFile");
 const getWebviewContent = require("./generateResultsHtml");
 const locationHelper = require("./locationHelper");
 const fs = require("fs");
@@ -91,6 +92,22 @@ function verifyValidCodeforcesURL(url) {
   return false;
 }
 
+
+function createLayout() {
+  vscode.commands.executeCommand("vscode.setEditorLayout", {
+    orientation: 0,
+    groups: [
+      { groups: [{}], size: 0.75 },
+      { groups: [{}], size: 0.25 }
+    ]
+  });
+}
+
+
+
+
+
+
 /**
  * Creates and reveals a webview beisde the active window, but does not put any content in it.
  */
@@ -106,26 +123,20 @@ function startWebView() {
         retainContextWhenHidden: true
       }
     );
-    vscode.commands.executeCommand("vscode.setEditorLayout", {
-      orientation: 0,
-      groups: [
-        { groups: [{}], size: 0.75 },
-        { groups: [{}], size: 0.25 }
-      ]
-    });
+    createLayout();
     // message from webview
     resultsPanel.webview.onDidReceiveMessage(message => {
       switch (message.command) {
         case "save-and-rerun-all": {
           console.log(message.testcases);
-          if (!latestFilePath || latestFilePath.length === 0) {
+          if (!message.filepath || message.filepath.length === 0) {
             console.error("Filepath not known");
             return;
           }
           if (
             !writeToTestCaseFile(
               JSON.stringify(message.testcases),
-              latestFilePath
+              message.filepath
             )
           ) {
             vscode.window.showInformationMessage(
@@ -133,24 +144,41 @@ function startWebView() {
             );
             return;
           }
-          if (latestTextDocument) {
-            vscode.window
-              .showTextDocument(latestTextDocument, vscode.ViewColumn.One)
-              .then(textEditor => {
-                vscode.commands
-                  .executeCommand("extension.runCodeforcesTestcases")
-                  .then(param => {
-                    console.log("Command executed");
-                    console.log("Opened text editor", textEditor);
-                  });
-              });
-            console.log("Save one", latestTextDocument);
+          if (message.filepath) {
+            vscode.workspace.openTextDocument(message.filepath).then((document) => {
+              vscode.window
+                .showTextDocument(document, vscode.ViewColumn.One)
+                .then(textEditor => {
+                  vscode.commands
+                    .executeCommand("extension.runCodeforcesTestcases")
+                    .then(param => {
+                      console.log("Command executed");
+                      console.log("Opened text editor", textEditor);
+                    });
+                })
+            });
+            createLayout();
           } else {
             vscode.window.showInformationMessage(
               "Couldnt switch to active editor. Please report bug to developer."
             );
             return;
           }
+          break;
+        }
+        case "save-and-rerun-single": {
+          console.log(message.testcases, message.casenum);
+          if (!writeToTestCaseFile(
+            JSON.stringify(message.testcases),
+            latestFilePath)) {
+            vscode.window.showInformationMessage(
+              "Couldnt save testcases. Please report bug to developer."
+            );
+            return;
+          }
+
+          // now evaulate it
+          break;
         }
       }
     });
@@ -220,7 +248,7 @@ function testCasesHelper(filepath) {
           return;
         }
         console.log("Created TCS file");
-        displayResults([], true);
+        displayResults([], true, filepath);
         return;
 
         // console.log("Showing blank webview");
@@ -233,13 +261,13 @@ function testCasesHelper(filepath) {
 /**
  * shows the webview with the available results
  */
-function displayResults(result, isFinal) {
+function displayResults(result, isFinal, filepath) {
   startWebView();
   const onDiskPath = vscode.Uri.file(
     path.join(latestContext.extensionPath, "frontend", "main.js")
   );
   const jssrc = resultsPanel.webview.asWebviewUri(onDiskPath);
-  let html = getWebviewContent(result, isFinal, jssrc);
+  let html = getWebviewContent(result, isFinal, jssrc, filepath);
   resultsPanel.webview.html = html;
   resultsPanel.reveal();
 }
@@ -277,7 +305,16 @@ async function executePrimaryTask(context) {
   }
   codeforcesURL = codeforcesURL.split("\n")[0];
   codeforcesURL = codeforcesURL.substring(2);
-  let compilationError = false;
+
+
+
+
+  async function runSingleTestCase(inp, op) {
+
+  }
+
+
+
 
   let passed_cases = [];
   /**
@@ -305,7 +342,7 @@ async function executePrimaryTask(context) {
       startWebView();
       cases = parseTestCasesFile(locationHelper.getTestCaseLocation(filepath));
       if (!cases || !cases.inputs || cases.inputs.length === 0) {
-        displayResults([], true);
+        displayResults([], true, filepath);
         return;
       }
       resultsPanel.webview.html =
@@ -364,7 +401,7 @@ async function executePrimaryTask(context) {
         };
       }
       if (caseNum == cases.numCases - 1) {
-        displayResults(passed_cases, true);
+        displayResults(passed_cases, true, filepath);
         spawn("rm", [locationHelper.getBinLocation(filepath)]);
         spawn("del", [locationHelper.getBinLocation(filepath)]);
       } else {
@@ -398,9 +435,9 @@ async function executePrimaryTask(context) {
           got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`
         };
         if (caseNum == cases.numCases - 1) {
-          displayResults(passed_cases, true);
+          displayResults(passed_cases, true, filepath);
         } else {
-          displayResults(passed_cases, false);
+          displayResults(passed_cases, false, filepath);
         }
       } else {
         let tm2 = Date.now();
@@ -414,9 +451,9 @@ async function executePrimaryTask(context) {
             got: ""
           };
           if (caseNum == cases.numCases - 1) {
-            displayResults(passed_cases, true);
+            displayResults(passed_cases, true, filepath);
           } else {
-            displayResults(passed_cases, false);
+            displayResults(passed_cases, false, filepath);
           }
         }
       }
@@ -438,44 +475,12 @@ async function executePrimaryTask(context) {
     }
   }
 
-  /**
-   * Comiple the C++ file
-   */
-  let flags = preferences.get("compilationFlags" + fileExtension).split(" ");
-  if (flags[0] === "") {
-    flags = [];
+  let compilationResult = await compileFile(filepath, oc);
+  if (compilationResult === "OK") {
+    console.log("Compiled OK");
+  } else {
+    console.error("Compilation error!");
   }
-  const saveSetting = preferences.get("saveLocation");
-  let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
-  const outputLocation = locationHelper.getBinLocation(filepath);
-  flags = [filepath, "-o", outputLocation].concat(flags);
-  let compiler; // type of compiler ( g++ or gcc )
-  switch (fileExtension) {
-    case "cpp":
-      compiler = "g++";
-      break;
-    case "c":
-      compiler = "gcc";
-      break;
-  }
-  console.log("gcc/g++ flags", flags);
-  const compilerProcess = spawn(compiler, flags);
-  compilerProcess.stdout.on("data", data => {
-    console.log(`stdout: ${data}`);
-  });
-  compilerProcess.stderr.on("data", data => {
-    oc.clear();
-    oc.append("Errors while compiling\n" + data.toString());
-    oc.show();
-    compilationError = true;
-  });
-
-  compilerProcess.on("exit", async exitCode => {
-    if (!compilationError) {
-      await runTestCases(0);
-    }
-    console.log(`Compiler exited with code ${exitCode}`);
-  });
 }
 
 /**
