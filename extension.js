@@ -15,7 +15,7 @@ let preferences = require("./preferencesHelper");
 const writeToTestCaseFile = require("./writeToTestCaseFile");
 const handleCompanion = require("./companionHandler");
 let oc = vscode.window.createOutputChannel("competitive");
-
+let spawnStack = [];
 
 /**
  * check if folder is open - then warn if folder is not open;
@@ -69,12 +69,20 @@ console.log("Companion server started");
 
 
 
+// kills all spawned process
+function killAll() {
+  console.log("Killing all spawns");
+  spawnStack.forEach(proc => {
+    proc.kill();
+  })
+  spawnStack = [];
+}
+
 
 /**
  * Webview
  */
 let resultsPanel;
-let latestFilePath = "";
 let latestTextDocument = null;
 let latestContext = null;
 
@@ -103,10 +111,95 @@ function createLayout() {
   });
 }
 
+async function runSingleTestCase(filepath, inp, op) {
+  console.log("fp", locationHelper.getBinLocation(filepath));
+  try {
+    let promise = new Promise((resolve, reject) => {
+      let spawned_process = spawn(locationHelper.getBinLocation(filepath), {
+        timeout: 10000
+      });
+      spawnStack.push(spawned_process);
 
 
+      let time0 = Date.now();
+      let stdout = "";
+      let stderr = "";
 
 
+      let killer = setTimeout(() => {
+        console.log("Killed process timeout.");
+        spawned_process.kill();
+      }, 10000);
+
+      spawned_process.stdin.write(inp + "\n");
+
+      spawned_process.stdout.on("data", data => {
+        stdout += data.toString();
+      });
+
+      spawned_process.stderr.on("data", data => {
+        stderr += data.toString();
+      });
+
+      spawned_process.on("exit", (code, signal) => {
+        let time1 = Date.now();
+        clearImmediate(killer);
+        killer = null;
+        console.log("Execution done with code", code, " with signal ", signal);
+
+        if (signal || code != 0) {
+          resolve({
+            evaluation: false,
+            got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
+            time: time1 - time0
+          });
+        } else {
+          if (stderr.length > 0) {
+            resolve({
+              evaluation: false,
+              got: "STDERR:" + stderr,
+              time: time1 = time0
+            })
+          } else {
+            let stdout_fixed;
+            stdout_fixed = stdout.replace(/\r?\n|\r/g, " ");
+            stdout_fixed = stdout_fixed.replace(/[ ]/g, "");
+            op = op.replace(/\r?\n|\r/g, " ");
+            op = op.replace(/[ ]/g, "");
+            let eval;
+            if (op == stdout) {
+              eval = true;
+            } else {
+              eval = false;
+            }
+            resolve({
+              evaluation: eval,
+              got: stdout,
+              time: time1 - time0
+            })
+          }
+        }
+      });
+    })
+    return promise;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function handleSingleTestcaseCommand(filepath, caseId, data) {
+  let compilation = await compileFile(filepath, oc);
+  if (compilation === "OK") {
+    let evaluation = await runSingleTestCase(filepath, data.input, data.output);
+    console.log("Eval : ", evaluation);
+    resultsPanel.webview.postMessage({
+      command: "singe-case-rerun-evaluation",
+      evaluation: evaluation,
+      caseId: caseId
+    });
+  }
+
+}
 
 /**
  * Creates and reveals a webview beisde the active window, but does not put any content in it.
@@ -167,17 +260,19 @@ function startWebView() {
           break;
         }
         case "save-and-rerun-single": {
-          console.log(message.testcases, message.casenum);
           if (!writeToTestCaseFile(
             JSON.stringify(message.testcases),
-            latestFilePath)) {
-            vscode.window.showInformationMessage(
-              "Couldnt save testcases. Please report bug to developer."
-            );
+            message.filepath)) {
+            vscode.window.showInformationMessage("Couldnt save testcases. Please report bug to developer.");
             return;
           }
 
           // now evaulate it
+          handleSingleTestcaseCommand(message.filepath, message.caseId, message.testcases[message.casenum]);
+          break;
+        }
+        case "kill-all": {
+          killAll();
           break;
         }
       }
@@ -272,6 +367,7 @@ function displayResults(result, isFinal, filepath) {
   resultsPanel.reveal();
 }
 
+
 /**
  * Worker function for the extension, activated on shortcut or "Run testcases"
  */
@@ -300,21 +396,10 @@ async function executePrimaryTask(context) {
     return;
   } else {
     console.log("Is a c or cpp");
-    latestFilePath = filepath;
     latestTextDocument = vscode.window.activeTextEditor.document;
   }
   codeforcesURL = codeforcesURL.split("\n")[0];
   codeforcesURL = codeforcesURL.substring(2);
-
-
-
-
-  async function runSingleTestCase(inp, op) {
-
-  }
-
-
-
 
   let passed_cases = [];
   /**
@@ -350,13 +435,13 @@ async function executePrimaryTask(context) {
     } else if (caseNum == cases.numCases) {
       return;
     }
-    let exec = [];
     let stdoutlen = 0;
     let spawned_process = spawn(locationHelper.getBinLocation(filepath), {
       timeout: 10000
     });
+    spawnStack.push(spawned_process);
     // Creates a 10 second timeout to kill the spawned process.
-    setTimeout(() => {
+    let killer = setTimeout(() => {
       console.log("10 sec killed process - ", caseNum);
       spawned_process.kill();
     }, 10000);
@@ -417,6 +502,8 @@ async function executePrimaryTask(context) {
 
     spawned_process.on("exit", (code, signal) => {
       let tm2 = Date.now();
+      clearInterval(killer);
+      killer = null;
       console.log(
         "Execution done with code",
         code,
@@ -478,6 +565,7 @@ async function executePrimaryTask(context) {
   let compilationResult = await compileFile(filepath, oc);
   if (compilationResult === "OK") {
     console.log("Compiled OK");
+    runTestCases(0);
   } else {
     console.error("Compilation error!");
   }

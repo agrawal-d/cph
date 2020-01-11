@@ -10,25 +10,26 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
     if (element.got.length > 30000) {
       element.got = "Too long to display";
     }
+    let caseId = "cid" + Date.now() + Math.random();
     console.log(results);
     modf += `
-    <div class="case">
-        <p><b>Testcase ${count} <span class="${
+    <div class="case case-${count - 1}" data-casenum="${count - 1}" id="${caseId}">
+        <p><b>Testcase ${count} <span class="passorfail ${
       element.passed ? "pass" : "fail"
-      }">${element.passed ? "PASSED" : "FAILED"} <span class="exec-time">${
+      }">${element.passed ? "PASSED" : "FAILED"}</span> <span class="exec-time">${
       element.time
-      }ms</span></span>
+      }ms</span>
 
          <span class="right time">
-         <button class="btn btn-green" onclick="rerunTestCase(${count})">&#x21BA; </button>
+         <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
             <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F;  </button>
          </span></b></p>
         Input :
-        <textarea class="selectable">${element.input.trim()}</textarea>
+        <textarea class="selectable input-textarea">${element.input.trim()}</textarea>
         Expected Output:
-        <textarea class="selectable">${element.expected.trim()}</textarea>
+        <textarea class="selectable expected-textarea">${element.expected.trim()}</textarea>
         Received Output:
-        <textarea readonly class="selectable">${element.got.trim()}</textarea>
+        <textarea readonly class="selectable received-textarea">${element.got.trim()}</textarea>
     </div>
             `;
     count++;
@@ -150,15 +151,20 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
         #filepath{
           display:none;
         }
+        #running-next-box{
+          padding:10px;
+        }
     </style>
 </head>
 
 <body><span id="filepath">${filepath}</span>`;
 
   if (results.length == 0) {
-    pre += `<div class="case">
+    let caseId = "cid" + Date.now() + Math.random();
+    pre += `<div class="case case-0" data-casenum="0" id="${caseId}">
         <p><b>Unsaved Testcase</span>
         <span class="right time">
+        <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
           <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F; </button>
         </span></b></p>
         Input :
@@ -171,13 +177,14 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
   }
   pre += modf;
   if (!isLastResult) {
-    pre += "<br><br><b>Running next testcase...</b>";
+    pre += "<div id='running-next-box'><br><br>Running next testcase...<br><br><button class='btn btn-red' onclick='stopRunning()'>🛑 Stop this</button></div>";
   }
   pre += `
 <div id="app"></div>
 <div id="pane">
-<button class="btn" id="new-testcase" onclick="addTestCase()">New Testcase</button>
-<button class="btn btn-green" onClick="saveAndRerunAll()">&#x21BA; all</button>
+<button class="btn" id="new-testcase" onclick="addTestCase()">➕ New</button>
+<button class='btn btn-red' onclick='stopRunning()'>🛑 Stop</button>
+<button class="btn btn-green" onClick="saveAndRerunAll()">&#x1F4BE; Save and run</button>
 <br>
 <small id="unsaved"></small>
 </div>

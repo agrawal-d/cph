@@ -19,7 +19,6 @@ function getBinLocation(filepath) {
  * @param filepath complete path to .cpp file
  */
 function getTestCaseLocation(filepath) {
-  console.log("Here")
   const saveSetting = preferences.get("saveLocation");
   let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
   return saveSetting.length == 0
