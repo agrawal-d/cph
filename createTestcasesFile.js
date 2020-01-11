@@ -3,10 +3,10 @@ let locationHelper = require("./locationHelper");
 /**
  * Creates a .tcs file in the given filepath with the given input and output arrays
  */
-function createTestCasesFile(inp, op, filepath) {
+function createTestCasesFile(inp, op, tcsPath) {
   console.log(
     "Creating a file at",
-    locationHelper.getTestCaseLocation(filepath)
+    tcsPath
   );
   let ans = [];
   for (var i = 0; i < inp.length; i++) {
@@ -18,7 +18,7 @@ function createTestCasesFile(inp, op, filepath) {
   var strings = JSON.stringify(ans);
 
   try {
-    fs.writeFileSync(locationHelper.getTestCaseLocation(filepath), strings);
+    fs.writeFileSync(tcsPath, strings);
   } catch (err) {
     console.log(err);
     return 1;

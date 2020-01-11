@@ -7,7 +7,7 @@ function getWebviewContent(results, isLastResult, jspath) {
   var modf = "";
   var count = 1;
   for (var element of results) {
-    if (element.got.length > 20000) {
+    if (element.got.length > 30000) {
       element.got = "Too long to display";
     }
     console.log(results);
@@ -15,10 +15,13 @@ function getWebviewContent(results, isLastResult, jspath) {
     <div class="case">
         <p><b>Testcase ${count} <span class="${
       element.passed ? "pass" : "fail"
-    }">${element.passed ? "PASSED" : "FAILED"} , ${element.time}ms</span>
+    }">${element.passed ? "PASSED" : "FAILED"} <span class="exec-time">${
+      element.time
+    }ms</span></span>
 
          <span class="right time">
-            <button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
+         <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
+            <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F;  </button>
          </span></b></p>
         Input :
         <textarea class="selectable">${element.input.trim()}</textarea>
@@ -84,6 +87,14 @@ function getWebviewContent(results, isLastResult, jspath) {
             margin-bottom: 2px;
         }
 
+        .exec-time{
+          background: #fbff001c;
+          color:white;
+          padding:2px 5px 2px 5px;
+          font-size:80%;
+          border-radius:5px;
+        }
+
         .pre, pre, textarea {
             background: var(--input.background);
             width:100%;
@@ -95,10 +106,12 @@ function getWebviewContent(results, isLastResult, jspath) {
             max-width:100%;
             overflow-x:auto;
             resize:none;
+            border:1px solid transparent;
         }
         textarea:focus, textarea:active{
             background:black;
             outline:none !important;
+            border:1px solid #3393cc;
         }
 
         .right {
@@ -143,7 +156,8 @@ function getWebviewContent(results, isLastResult, jspath) {
     pre += `<div class="case">
         <p><b>Unsaved Testcase</span>
         <span class="right time">
-        <button class="btn btn-red" onclick="deleteTestCase(this)">Delete</button>
+          <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
+          <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F; </button>
         </span></b></p>
         Input :
         <textarea  class="selectable"></textarea>
@@ -161,7 +175,7 @@ function getWebviewContent(results, isLastResult, jspath) {
 <div id="app"></div>
 <div id="pane">
 <button class="btn" id="new-testcase" onclick="addTestCase()">New Testcase</button>
-<button class="btn btn-green" onClick="saveAndRerunAll()">Save & Rerun all</button>
+<button class="btn btn-green" onClick="saveAndRerunAll()">&#x21BA; all</button>
 <br>
 <small id="unsaved"></small>
 </div>

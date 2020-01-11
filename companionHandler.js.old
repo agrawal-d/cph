@@ -1,0 +1,25 @@
+const vscode = require("vscode");
+const parseTestCasesFile = require("./parseTestCasesFile");
+const createTestacesFile = require("./createTestcasesFile");
+const locationHelper = require("./locationHelper");
+
+
+
+/**
+ * Appends cases to  testcase file already present, else, it generates a new one
+ */
+function handleCompanion(problem) {
+    try {
+        if (vscode.workspace.workspaceFolders === undefined) {
+            vscode.commands.executeCommand(
+                "extension.showWorkspaceError"
+            )
+        } else {
+            vscode.workspace.fs.writeFile()
+        }
+    } catch (e) {
+
+    }
+}
+
+module.exports = handleCompanion;

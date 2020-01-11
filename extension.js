@@ -1,27 +1,38 @@
 const vscode = require("vscode");
-const request = require("request");
 const rp = require("request-promise-native");
 const { spawn } = require("child_process");
 const parseCodeforces = require("./parseCodeforces");
 const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
 const getWebviewContent = require("./generateResultsHtml");
+const locationHelper = require("./locationHelper");
 const fs = require("fs");
 const path = require("path");
+const companionServer = require("./companionServer");
+const EventEmitter = require('events');
+let preferences = require("./preferencesHelper");
 const writeToTestCaseFile = require("./writeToTestCaseFile");
+const handleCompanion = require("./companionHandler");
 let oc = vscode.window.createOutputChannel("competitive");
-let preferences = vscode.workspace.getConfiguration(
-  "competitive-programming-helper"
-);
-const locationHelper = require("./locationHelper");
+
+
 /**
- * Webview
+ * check if folder is open - then warn if folder is not open;
+ *
  */
-let resultsPanel;
-let latestFilePath = "";
-let latestTextDocument = null;
-let latestContext = null;
-//Setup statusbar button
+function workspaceIsFolder() {
+  return vscode.workspace.workspaceFolders !== undefined;
+}
+
+//   console.error("Not a workspace folder!");
+//   const statusBarItem = vscode.window.createStatusBarItem(
+//     vscode.StatusBarAlignment.Left,
+//     1000
+//   statusBarItem.text = "❌ Open a folder to Run Testcases";
+//   statusBarItem.show();
+//   statusBarItem.command = "extension.showWorkspaceError";
+
+
 const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
   1000
@@ -31,8 +42,44 @@ statusBarItem.text = " ▶  Run Testcases";
 statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
 
+
 /**
- * Verifies if url is valid
+ * Shows error if workspace is not a folder.
+ */
+function showWorkSpaceError() {
+  vscode.window.showErrorMessage("To use Competitive Companion Integration you must open a folder in VS Code. Go to File>Open Folder or press Ctrl+K then press O");
+}
+
+const server = companionServer();
+console.log("Companion server started");
+
+
+// setup event listeners for competitive companion extension
+(() => {
+  class CompanionEmitterSetup extends EventEmitter { }
+  const mySetup = new CompanionEmitterSetup();
+  mySetup.on("new-problem", function (problem) {
+    handleCompanion(problem);
+  })
+
+  global.companionEmitter = mySetup;
+  console.log("Event listeners setup");
+})();
+
+
+
+
+/**
+ * Webview
+ */
+let resultsPanel;
+let latestFilePath = "";
+let latestTextDocument = null;
+let latestContext = null;
+
+
+/**
+ * Verifies if url is codeforces
  */
 function verifyValidCodeforcesURL(url) {
   if (
@@ -59,6 +106,13 @@ function startWebView() {
         retainContextWhenHidden: true
       }
     );
+    vscode.commands.executeCommand("vscode.setEditorLayout", {
+      orientation: 0,
+      groups: [
+        { groups: [{}], size: 0.75 },
+        { groups: [{}], size: 0.25 }
+      ]
+    });
     // message from webview
     resultsPanel.webview.onDidReceiveMessage(message => {
       switch (message.command) {
@@ -127,7 +181,7 @@ function appendProblemURLToFile(problemURL, callback) {
 }
 
 /**
- * show dialog box for actions downloading testcases and generating testcase file manually
+ * show dialog box for actions such as downloading testcases and generating testcase file manually
  * @param {any} filepath path to the active source code document
  */
 function testCasesHelper(filepath) {
@@ -166,7 +220,7 @@ function testCasesHelper(filepath) {
           return;
         }
         console.log("Created TCS file");
-        evaluateResults([], true);
+        displayResults([], true);
         return;
 
         // console.log("Showing blank webview");
@@ -179,7 +233,7 @@ function testCasesHelper(filepath) {
 /**
  * shows the webview with the available results
  */
-function evaluateResults(result, isFinal) {
+function displayResults(result, isFinal) {
   startWebView();
   const onDiskPath = vscode.Uri.file(
     path.join(latestContext.extensionPath, "frontend", "main.js")
@@ -194,6 +248,9 @@ function evaluateResults(result, isFinal) {
  * Worker function for the extension, activated on shortcut or "Run testcases"
  */
 async function executePrimaryTask(context) {
+  if (!workspaceIsFolder) {
+    showWorkSpaceError();
+  }
   oc.hide();
   preferences = vscode.workspace.getConfiguration(
     "competitive-programming-helper"
@@ -218,7 +275,6 @@ async function executePrimaryTask(context) {
     latestFilePath = filepath;
     latestTextDocument = vscode.window.activeTextEditor.document;
   }
-  let firstRun = true;
   codeforcesURL = codeforcesURL.split("\n")[0];
   codeforcesURL = codeforcesURL.substring(2);
   let compilationError = false;
@@ -236,7 +292,7 @@ async function executePrimaryTask(context) {
       html
         .then(string => {
           const [inp, op] = parseCodeforces(string);
-          createTestacesFile(inp, op, filepath);
+          createTestacesFile(inp, op, locationHelper.getTestCaseLocation(filepath));
           runTestCases(0);
         })
         .catch(err => {
@@ -249,7 +305,7 @@ async function executePrimaryTask(context) {
       startWebView();
       cases = parseTestCasesFile(locationHelper.getTestCaseLocation(filepath));
       if (!cases || !cases.inputs || cases.inputs.length === 0) {
-        evaluateResults([], true);
+        displayResults([], true);
         return;
       }
       resultsPanel.webview.html =
@@ -308,11 +364,11 @@ async function executePrimaryTask(context) {
         };
       }
       if (caseNum == cases.numCases - 1) {
-        evaluateResults(passed_cases, true);
+        displayResults(passed_cases, true);
         spawn("rm", [locationHelper.getBinLocation(filepath)]);
         spawn("del", [locationHelper.getBinLocation(filepath)]);
       } else {
-        evaluateResults(passed_cases, false);
+        displayResults(passed_cases, false);
       }
     });
     spawned_process.stderr.on("data", data => {
@@ -342,9 +398,9 @@ async function executePrimaryTask(context) {
           got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`
         };
         if (caseNum == cases.numCases - 1) {
-          evaluateResults(passed_cases, true);
+          displayResults(passed_cases, true);
         } else {
-          evaluateResults(passed_cases, false);
+          displayResults(passed_cases, false);
         }
       } else {
         let tm2 = Date.now();
@@ -358,9 +414,9 @@ async function executePrimaryTask(context) {
             got: ""
           };
           if (caseNum == cases.numCases - 1) {
-            evaluateResults(passed_cases, true);
+            displayResults(passed_cases, true);
           } else {
-            evaluateResults(passed_cases, false);
+            displayResults(passed_cases, false);
           }
         }
       }
@@ -427,24 +483,30 @@ async function executePrimaryTask(context) {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+  console.log("ACTIVATED")
   latestContext = context;
   let disposable = vscode.commands.registerCommand(
     "extension.runCodeforcesTestcases",
-    function() {
+    function () {
       executePrimaryTask(context);
     }
   );
+  // context.subscriptions.push(disposable);
 
-  // let disposableTwo = vscode.commands.registerCommand('extension.openTestcaseFile', function () {
-  // 	openTestcaseFile();
-  // });
 
-  context.subscriptions.push(disposable);
+  let disposable2 = vscode.commands.registerCommand(
+    "extension.showWorkspaceError",
+    function () {
+      showWorkSpaceError();
+    }
+  );
+  context.subscriptions.push(disposable, disposable2);
+
 }
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
   activate,

@@ -22,7 +22,7 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "dist/extension.js",
+  "main": "extension.js",
   "contributes": {
     "configuration": {
       "title": "Competitive Programming Helper",
@@ -48,8 +48,11 @@
       {
         "command": "extension.runCodeforcesTestcases",
         "title": "Run Testcases",
-        "icon": "icon.png",
-        "enablement": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc",
+        "category": "Competitive"
+      },
+      {
+        "command": "extension.showWorkspaceError",
+        "title": "Show folder error message",
         "category": "Competitive"
       }
     ],
@@ -81,7 +84,7 @@
     "glob": "^7.1.4",
     "mocha": "^6.1.4",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.3.1",
+    "typescript": "^3.7.4",
     "vscode-test": "^1.2.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9"
