@@ -301,9 +301,6 @@ function appendProblemURLToFile(problemURL, callback) {
  * @param {any} filepath path to the active source code document
  */
 function testCasesHelper(filepath) {
-  if (resultsPanel) {
-    vscode.commands.executeCommand("workbench.action.closeActiveEditor");
-  }
   vscode.window
     .showQuickPick(
       ["Download testcases from Codeforces", "Manually enter testcases"],
