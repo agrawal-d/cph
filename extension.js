@@ -233,7 +233,6 @@ function startWebView() {
                   executePrimaryTask("no-webview-check");
                 })
             });
-            createLayout();
           } else {
             vscode.window.showInformationMessage(
               "Couldnt switch to active editor. Please report bug to developer."
