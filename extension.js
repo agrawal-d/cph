@@ -157,7 +157,7 @@ async function runSingleTestCase(filepath, inp, op) {
             op = op.replace(/\r?\n|\r/g, " ");
             op = op.replace(/[ ]/g, "");
             let eval;
-            if (op == stdout) {
+            if (op == stdout_fixed) {
               eval = true;
             } else {
               eval = false;
