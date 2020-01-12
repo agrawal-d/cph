@@ -6,11 +6,12 @@ Quickly compile, run and judge competitive programming problems. Download and te
 
 **Whats new :** This new version adds lots of new features like Competitive Companion support, ability to run a single testcase, better stability, a welcome guide and lots more!
 
-> ![Extension Overview](screenshots/video.gif)
-> Overview
+> ![Extension Overview](screenshots/manual.gif)
+> Manual Usage
 
-> **Competitive Companion support**
+> ## Competitive Companion support
 >
+> ![Extension Overview](screenshots/companion.gif)
 > Click on the ![Green plus](screenshots/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and [set it up](#competitive-companion-setup).
 
 ### Tips
