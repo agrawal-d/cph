@@ -121,6 +121,7 @@ async function runSingleTestCase(filepath, inp, op) {
       }, 10000);
 
       spawned_process.stdin.write(inp + "\n");
+      spawned_process.stdin.end();
 
       spawned_process.stdout.on("data", data => {
         stdout += data.toString();
@@ -443,6 +444,7 @@ async function executePrimaryTask(context) {
     }, 10000);
     let tm = Date.now();
     spawned_process.stdin.write(cases.inputs[caseNum] + "\n");
+    spawned_process.stdin.end();
     spawned_process.stdout.on("data", data => {
       if (stdoutlen > 10000) {
         startWebView();
