@@ -184,6 +184,17 @@ window.addEventListener("message", event => {
             caseBox.querySelector("span.passorfail").className = `passorfail ${evaluation.evaluation ? "pass" : "fail"} `;
             caseBox.querySelector("textarea.received-textarea").value = evaluation.got;
         }
+        case "send-filepath": {
+            vscode.postMessage({
+                command: "webview-filepath",
+                filepath: extractFilepath()
+            })
+
+            return;
+        }
+        case "save-and-run-all": {
+            saveAndRerunAll();
+        }
 
     }
 })

@@ -25,15 +25,6 @@ function workspaceIsFolder() {
   return vscode.workspace.workspaceFolders !== undefined;
 }
 
-//   console.error("Not a workspace folder!");
-//   const statusBarItem = vscode.window.createStatusBarItem(
-//     vscode.StatusBarAlignment.Left,
-//     1000
-//   statusBarItem.text = "❌ Open a folder to Run Testcases";
-//   statusBarItem.show();
-//   statusBarItem.command = "extension.showWorkspaceError";
-
-
 const statusBarItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
   1000
@@ -79,9 +70,7 @@ function killAll() {
 }
 
 
-/**
- * Webview
- */
+//webview
 let resultsPanel;
 let latestTextDocument = null;
 let latestContext = null;
@@ -100,7 +89,7 @@ function verifyValidCodeforcesURL(url) {
   return false;
 }
 
-
+// creates 2X1 grid 0.75+0.25
 function createLayout() {
   vscode.commands.executeCommand("vscode.setEditorLayout", {
     orientation: 0,
@@ -221,7 +210,6 @@ function startWebView() {
     resultsPanel.webview.onDidReceiveMessage(message => {
       switch (message.command) {
         case "save-and-rerun-all": {
-          console.log(message.testcases);
           if (!message.filepath || message.filepath.length === 0) {
             console.error("Filepath not known");
             return;
@@ -242,12 +230,7 @@ function startWebView() {
               vscode.window
                 .showTextDocument(document, vscode.ViewColumn.One)
                 .then(textEditor => {
-                  vscode.commands
-                    .executeCommand("extension.runCodeforcesTestcases")
-                    .then(param => {
-                      console.log("Command executed");
-                      console.log("Opened text editor", textEditor);
-                    });
+                  executePrimaryTask("no-webview-check");
                 })
             });
             createLayout();
@@ -274,6 +257,17 @@ function startWebView() {
         case "kill-all": {
           killAll();
           break;
+        }
+        case "webview-filepath": {
+          if (message.filepath === vscode.window.activeTextEditor.document.fileName) {
+            resultsPanel.webview.postMessage({
+              command: "save-and-run-all"
+            });
+          } else {
+            executePrimaryTask("no-webview-check");
+          }
+          break;
+
         }
       }
     });
@@ -373,11 +367,22 @@ function displayResults(result, isFinal, filepath) {
  */
 async function executePrimaryTask(context) {
   oc.hide();
+
   const saveFile = await vscode.commands.executeCommand(
     "workbench.action.files.save"
   );
   let codeforcesURL = vscode.window.activeTextEditor.document.getText();
   let filepath = vscode.window.activeTextEditor.document.fileName;
+
+
+  if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
+    resultsPanel.webview.postMessage({
+      command: "send-filepath"
+    });
+    return;
+  }
+
+
   let cases;
   const fileExtension = filepath
     .split(".")
