@@ -104,6 +104,7 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
                   user-select: none; /* Non-prefixed version, currently
                                         supported by Chrome and Opera */;
         cursor:default !important;
+        box-sizing;border-box;
       }
       .selectable {
         -webkit-touch-callout: text; /* iOS Safari */
@@ -167,7 +168,8 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
             border:0px;
             color: bisque;
             max-width:100%;
-            overflow-x:auto;
+            max-height:150px;
+            overflow-y:auto;
             resize:none;
             border:1px solid transparent;
         }
@@ -221,21 +223,22 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
 
 <body><span id="filepath">${filepath}</span>`;
 
-  if (results.length == 0) {
+  if (results.length == 0 && isLastResult) {
     let caseId = "cid" + Date.now() + Math.random();
     pre += `<div class="case case-0" data-casenum="0" id="${caseId}">
-        <p><b>Unsaved Testcase</span>
-        <span class="right time">
-        <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
-          <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F; </button>
-        </span></b></p>
-        Input :
-        <textarea  class="selectable"></textarea>
-        Expected Output:
-        <textarea  class="selectable"></textarea>
-        Received Output:
-        <textarea readonly class="selectable">Run to show output</textarea>
-        </div>`;
+    <p><b>Testcase 1<span class="passorfail"></span> <span class="exec-time">...</span>
+
+         <span class="right time">
+         <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
+            <button class="btn btn-red" onclick="deleteTestCase(this)">&#x2A2F;  </button>
+         </span></b></p>
+         Input :
+         <textarea class="selectable input-textarea"></textarea>
+         Expected Output:
+         <textarea class="selectable expected-textarea"></textarea>
+         Received Output:
+         <textarea readonly class="selectable received-textarea">Run to show output</textarea>
+         </div>`;
   }
   pre += modf;
   if (!isLastResult) {
