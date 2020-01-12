@@ -3,6 +3,59 @@
  * @param {*} results an object containing the evaluated testcase results
  * @param {*} isLastResult boolean wether the results are final or any evaluation is pending
  */
+
+const { workspace, ConfigurationTarget } = require("vscode");
+const config = require("./config");
+
+
+function firstTimeMessage() {
+  let preferences = workspace.getConfiguration(
+    "competitive-programming-helper"
+  );
+  console.log(preferences);
+  let firstTime = preferences.get("firstTime");
+  console.log("FT", firstTime);
+  let message;
+  if (firstTime || firstTime === "true") {
+    message = `<div class="first-time-message">
+    <h2>First time welcome guide</h2>
+    <p>Here are some tips to get you started:
+      <ul>
+        <li>Add support for tons of website by downloading the browser extension <a href="https://github.com/jmerle/competitive-companion#readme" target="_blank">Competitive Companion</a>.
+
+        <br><br>
+
+        <a class="btn" href="https://chrome.google.com/webstore/detail/competitive-companion/cjnmckjndlpiamhfimnnjmnckgghkjbl">Download for Google Chrome</a>
+
+        <a class="btn" href="https://addons.mozilla.org/en-US/firefox/addon/competitive-companion/">Download for Firefox</a>
+
+        <br>
+        Install and the go to its settings and enter port number <code>${config.port}</code>. Then, just click a button on any problem and auto create file and testcases!</li>
+
+        <li>Change your generated files location to prevent cluttering of your workspace.Go to VS Code Settings > Extensions > Competitive programming helper and enter any existing folder location where temp files will be saved.</li>
+
+        <li>
+          Add  custom compiler flags from settings like <code>-O2 -stdc++</code> etc.
+        </li>
+
+
+      </ul>
+      <b>Checkout the <a href="https://github.com/agrawal-d/competitive-programming-helper#readme" target="_blank">readme</a> for more tips.</b>
+      <br>
+      <br>
+      <button class="btn btn-red" onclick="this.parentElement.style.display='none'">Close</button>
+    </p>
+  </div><br>`;
+  } else {
+    message = '';
+  }
+  preferences.update("firstTime", false, ConfigurationTarget.Global);
+  preferences.update("firstTime", false, ConfigurationTarget.Workspace);
+  preferences.update("firstTime", false, ConfigurationTarget.WorkspaceFolder);
+
+  return message;
+}
+
 function getWebviewContent(results, isLastResult, jspath, filepath) {
   var modf = "";
   var count = 1;
@@ -34,8 +87,8 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
             `;
     count++;
   }
-
-  var pre = `
+  let pre = "";
+  pre += firstTimeMessage() + `
 <!DOCTYPE html>
 <html lang="en">
 
@@ -96,6 +149,18 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
           border-radius:5px;
         }
 
+        a.btn{
+          text-decoration:none;
+          display:inline-block;
+        }
+
+        .first-time-message{
+          padding:10px;
+          background:rgba(0,0,0,0.1);
+        }
+        .first-time-message ul li{
+          margin-bottom:10px;
+        }
         .pre, pre, textarea {
             background: var(--input.background);
             width:100%;

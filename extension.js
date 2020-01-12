@@ -62,7 +62,7 @@ console.log("Companion server started");
   mySetup.on("new-problem", function (problem) {
     handleCompanion(problem);
   })
-
+  //@ts-ignore
   global.companionEmitter = mySetup;
   console.log("Event listeners setup");
 })();
@@ -143,7 +143,7 @@ async function runSingleTestCase(filepath, inp, op) {
 
       spawned_process.on("exit", (code, signal) => {
         let time1 = Date.now();
-        clearImmediate(killer);
+        clearInterval(killer);
         killer = null;
         console.log("Execution done with code", code, " with signal ", signal);
 

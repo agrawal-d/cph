@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 let num_test_cases = -1;
 num_test_cases = document.querySelectorAll("textarea").length;

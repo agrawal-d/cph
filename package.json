@@ -41,6 +41,11 @@
           "type": "string",
           "default": "",
           "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
+        },
+        "competitive-programming-helper.firstTime": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show welcome message"
         }
       }
     },
