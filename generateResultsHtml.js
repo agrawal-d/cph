@@ -168,7 +168,7 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
             border:0px;
             color: bisque;
             max-width:100%;
-            max-height:150px;
+            max-height:150px !important;
             overflow-y:auto;
             resize:none;
             border:1px solid transparent;

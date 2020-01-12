@@ -5,6 +5,42 @@ num_test_cases = document.querySelectorAll("textarea").length;
 const vscode = acquireVsCodeApi();
 
 
+/**
+ * Shortcut detection
+ */
+var keys = {
+    ctrl: false,
+    alt: false,
+    b: false
+};
+window.addEventListener("keydown", (event) => {
+    if (event.key === "Control") {
+        keys.ctrl = true;
+    } else if (event.key === "Alt") {
+        keys.alt = true;
+    } else if (event.key == "B" || event.key === "b") {
+        keys.b = true;
+    }
+
+    if (keys.ctrl && keys.alt && keys.b) {
+        event.preventDefault();
+        saveAndRerunAll();
+    }
+})
+window.addEventListener("keyup", (event) => {
+    if (event.key === "Control") {
+        keys.ctrl = false;
+    } else if (event.key === "Alt") {
+        keys.alt = false;
+    } else if (event.key == "B" || event.key === "b") {
+        keys.b = false;
+
+    }
+})
+
+/**
+ * Stupid notifications
+ */
 function showUnsavedMessage(message) {
     document.getElementById("unsaved").innerText = message;
 }

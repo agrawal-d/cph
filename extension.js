@@ -372,9 +372,6 @@ function displayResults(result, isFinal, filepath) {
  * Worker function for the extension, activated on shortcut or "Run testcases"
  */
 async function executePrimaryTask(context) {
-  if (!workspaceIsFolder) {
-    showWorkSpaceError();
-  }
   oc.hide();
   const saveFile = await vscode.commands.executeCommand(
     "workbench.action.files.save"
