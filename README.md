@@ -1,45 +1,54 @@
 # Competitive Programming Helper
 
 This extension helps you to quickly compile, run and judge your problems.
-You can download and run codeforces testcases for a given problem automatically. You can also add custom testcases.
+You can download and testcases for a given problem automatically. You can also add custom testcases.
 
-This new version supports an additional language - C.
+**Supports tonnes of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!**
 
-![Extension Overview](screenshots/video.gif)
+_Whats new :_ This new version adds lots of new features like Competitive Companion support, ability to run a single testcase, better stability, a welcome guide and lots more!
+
+> ![Extension Overview](screenshots/video.gif)
+> Overview
+
+> **Competitive Companion support**
+>
+> Click on the ![Green plus](screenshots/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and change a setting.
 
 ### Tips
 
 - Use the shortcut `Ctrl + Alt + B` to activate.
-
 - You can choose additional compiler flags and save location from VSCode settings.
 
-![Rich GUI Editor](screenshots/settings.png)
+> ![Settings](screenshots/settings.gif)
+> Change settings to hoose custom compiler flags and testcase/binary save location and more.
 
-Change settings to hoose custom compiler flags and testcase/binary save location.
+## Competitive Companion Setup
 
----
+It is simple to use Competitive Companion with this extenison.
 
-## Usage
+1. Download Competitive Companion for your browser : [Firefox](https://addons.mozilla.org/en-US/firefox/addon/competitive-companion/) [Google Chrome](https://chrome.google.com/webstore/detail/competitive-companion/cjnmckjndlpiamhfimnnjmnckgghkjbl)
 
-Click on the &nbsp; &nbsp; ![Run testcases button](screenshots/run_testcases.png) button on the bottom left of VSCode.
+1. Go to your extensions page and open the settings for Competitive Companion. In the list of ports, enter the port `27121`.
 
-Or
+1. That's it! Now just click on the ![Green plus](screenshots/companion.png) to download problem and testcases. You must open VS Code in a folder to use this. To open in a folder, just press `File> Open Folder` or `Ctrl+K then Ctrl+O`.
 
-Type `Ctrl/Cmd + Shift + P` and select "_Run Codeforces Testcases Command_".
+**(See [firefox help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-firefox.webm) or [chrome help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-chrome.webm))**
 
-Or
+## How to use
 
-Use the shortcut `Ctrl/Cmd + Alt + B` to activate.
+- Click on the ![Run testcases button](screenshots/run_testcases.png) button on the bottom left of VSCode.
 
----
+- Or Type `Ctrl/Cmd + Shift + P` and select "_Run Codeforces Testcases Command_".
 
-You can edit the generated .tcs ( which is a JSON file ) file to add your own testcases.
+- Or Use the shortcut `Ctrl/Cmd + Alt + B` to activate.
 
-## Requirements
+## Dependencies
 
 The GNU C++ Compiler ( g++ ) and GNU C compiler (gcc ) must be installed and should be accesible from the terminal/command prompt.
 
-## Manual URL Entry ( Optional )
+For competitive companion support, download the extension.
+
+## Manual URL Entry ( Optional/ Old )
 
 For codeforces, the fist line of your .cpp/.c file should be a sigle line comment of the codeforces url. But you do not need to add it manually, just run the extension and enter in the box displayed.
 
@@ -54,10 +63,11 @@ If you need help using this extension, create an issue [here](https://github.com
 ---
 
 ## Release Notes
+
 - Version 2.2.1
-    - Fixed minor settings bug
+  - Fixed minor settings bug
 - Version 2.2.0
-    - Added support for C language. ( Overall, now, C and C++ are supported)
+  - Added support for C language. ( Overall, now, C and C++ are supported)
 - Version 2.1.0
   - Added support for custom compiler flags and generated testcases and binaries storage location.
   - Added usage GIF to readme.

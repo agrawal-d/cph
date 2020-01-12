@@ -1,14 +1,12 @@
 const vscode = require("vscode");
 const path = require("path");
-const preferences = vscode.workspace.getConfiguration(
-  "competitive-programming-helper"
-);
+const preferences = require("./preferencesHelper");
 
 /**
  * @param filepath complete path to .cpp file
  */
 function getBinLocation(filepath) {
-  const saveSetting = preferences.get("saveLocation");
+  const saveSetting = preferences().get("saveLocation");
   let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
   return saveSetting.length == 0
     ? filepath + ".bin"
@@ -19,7 +17,7 @@ function getBinLocation(filepath) {
  * @param filepath complete path to .cpp file
  */
 function getTestCaseLocation(filepath) {
-  const saveSetting = preferences.get("saveLocation");
+  const saveSetting = preferences().get("saveLocation");
   let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
   return saveSetting.length == 0
     ? filepath + ".tcs"

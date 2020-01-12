@@ -376,9 +376,6 @@ async function executePrimaryTask(context) {
     showWorkSpaceError();
   }
   oc.hide();
-  preferences = vscode.workspace.getConfiguration(
-    "competitive-programming-helper"
-  );
   const saveFile = await vscode.commands.executeCommand(
     "workbench.action.files.save"
   );

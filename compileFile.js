@@ -11,12 +11,12 @@ function compileFile(filepath, oc) {
             .pop()
             .toLowerCase();
 
-        let flags = preferences.get("compilationFlags" + fileExtension).split(" ");
+        let flags = preferences().get("compilationFlags" + fileExtension).split(" ");
         let compilationError = false;
         if (flags[0] === "") {
             flags = [];
         }
-        const saveSetting = preferences.get("saveLocation");
+        const saveSetting = preferences().get("saveLocation");
         let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
         const outputLocation = locationHelper.getBinLocation(filepath);
         flags = [filepath, "-o", outputLocation].concat(flags);

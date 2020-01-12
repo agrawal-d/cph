@@ -4,16 +4,13 @@
  * @param {*} isLastResult boolean wether the results are final or any evaluation is pending
  */
 
-const { workspace, ConfigurationTarget } = require("vscode");
+const { ConfigurationTarget } = require("vscode");
 const config = require("./config");
+const preferences = require("./preferencesHelper");
 
 
 function firstTimeMessage() {
-  let preferences = workspace.getConfiguration(
-    "competitive-programming-helper"
-  );
-  console.log(preferences);
-  let firstTime = preferences.get("firstTime");
+  let firstTime = preferences().get("firstTime");
   console.log("FT", firstTime);
   let message;
   if (firstTime || firstTime === "true") {
@@ -49,9 +46,9 @@ function firstTimeMessage() {
   } else {
     message = '';
   }
-  preferences.update("firstTime", false, ConfigurationTarget.Global);
-  preferences.update("firstTime", false, ConfigurationTarget.Workspace);
-  preferences.update("firstTime", false, ConfigurationTarget.WorkspaceFolder);
+  preferences().update("firstTime", false, ConfigurationTarget.Global);
+  preferences().update("firstTime", false, ConfigurationTarget.Workspace);
+  preferences().update("firstTime", false, ConfigurationTarget.WorkspaceFolder);
 
   return message;
 }
