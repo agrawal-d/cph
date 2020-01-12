@@ -424,8 +424,9 @@ async function executePrimaryTask(context) {
         displayResults([], true, filepath);
         return;
       }
-      resultsPanel.webview.html =
-        "<html><body><p style='margin:10px'>Runnung Testcases ...</p><p>If this message does not change in 10 seconds, it means an error occured. Please contact developer.<p/></body></html>";
+
+      displayResults([], false, filepath);
+
     } else if (caseNum == cases.numCases) {
       return;
     }
