@@ -1,18 +1,17 @@
 # Competitive Programming Helper
 
-This extension helps you to quickly compile, run and judge your problems.
-You can download and testcases for a given problem automatically. You can also add custom testcases.
+Quickly compile, run and judge competitive programming problems. Download and testcases for a given problem automatically and/or add custom testcases.
 
 **Supports tonnes of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!**
 
-_Whats new :_ This new version adds lots of new features like Competitive Companion support, ability to run a single testcase, better stability, a welcome guide and lots more!
+**Whats new :** This new version adds lots of new features like Competitive Companion support, ability to run a single testcase, better stability, a welcome guide and lots more!
 
 > ![Extension Overview](screenshots/video.gif)
 > Overview
 
 > **Competitive Companion support**
 >
-> Click on the ![Green plus](screenshots/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and change a setting.
+> Click on the ![Green plus](screenshots/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and [set it up](#competitive-companion-setup).
 
 ### Tips
 
@@ -32,25 +31,20 @@ It is simple to use Competitive Companion with this extenison.
 
 1. That's it! Now just click on the ![Green plus](screenshots/companion.png) to download problem and testcases. You must open VS Code in a folder to use this. To open in a folder, just press `File> Open Folder` or `Ctrl+K then Ctrl+O`.
 
-**(See [firefox help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-firefox.webm) or [chrome help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-chrome.webm))**
+**(See [firefox help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-firefox.webm?raw=true) or [chrome help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-chrome.webm?raw=true))**
 
 ## How to use
 
 - Click on the ![Run testcases button](screenshots/run_testcases.png) button on the bottom left of VSCode.
 
-- Or Type `Ctrl/Cmd + Shift + P` and select "_Run Codeforces Testcases Command_".
+- Or Type `Ctrl+ Shift + P` and select "_Run Testcases Command_".
 
-- Or Use the shortcut `Ctrl/Cmd + Alt + B` to activate.
+- Or Use the shortcut `Ctrl + Alt + B` to activate.
 
 ## Dependencies
 
 The GNU C++ Compiler ( g++ ) and GNU C compiler (gcc ) must be installed and should be accesible from the terminal/command prompt.
-
 For competitive companion support, download the extension.
-
-## Manual URL Entry ( Optional/ Old )
-
-For codeforces, the fist line of your .cpp/.c file should be a sigle line comment of the codeforces url. But you do not need to add it manually, just run the extension and enter in the box displayed.
 
 ## About
 
