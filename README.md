@@ -2,7 +2,7 @@
 
 Quickly compile, run and judge competitive programming problems. Download and testcases for a given problem automatically and/or add custom testcases.
 
-**Supports tonnes of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!**
+**Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!**
 
 **Whats new :** This new version adds lots of new features like Competitive Companion support, ability to run a single testcase, better stability, a welcome guide and lots more!
 
