@@ -2,25 +2,25 @@
 
 Quickly compile, run and judge competitive programming problems. Download and testcases for a given problem automatically and/or add custom testcases.
 
-**Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!**
+Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!
 
-**Whats new :** This new version adds lots of new features like Competitive Companion support, ability to run a single testcase, better stability, a welcome guide and lots more!
+**Whats new :** This new feature adds a new shortcut for adding new testcase - `Ctrl+Alt+N` (only when you are focused in the results screen). Also includes bugfixes, and genreal UX improvements including new animations!
 
-> ![Extension Overview](screenshots/manual.gif)
-> Manual Usage
+![Extension Overview](screenshots/manual.gif)
+Manual Usage
 
-> ## Competitive Companion support
->
-> ![Extension Overview](screenshots/companion.gif)
-> Click on the ![Green plus](screenshots/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and [set it up](#competitive-companion-setup).
+## Competitive Companion support
+
+![Extension Overview](screenshots/companion.gif)
+Click on the ![Green plus](screenshots/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and [set it up](#competitive-companion-setup).
 
 ### Tips
 
 - Use the shortcut `Ctrl + Alt + B` to activate.
 - You can choose additional compiler flags and save location from VSCode settings.
 
-> ![Settings](screenshots/settings.gif)
-> Change settings to hoose custom compiler flags and testcase/binary save location and more.
+![Settings](screenshots/settings.gif)
+Change settings to hoose custom compiler flags and testcase/binary save location and more.
 
 ## Competitive Companion Setup
 
@@ -28,9 +28,7 @@ It is simple to use Competitive Companion with this extenison.
 
 1. Download Competitive Companion for your browser : [Firefox](https://addons.mozilla.org/en-US/firefox/addon/competitive-companion/) [Google Chrome](https://chrome.google.com/webstore/detail/competitive-companion/cjnmckjndlpiamhfimnnjmnckgghkjbl)
 
-1. Go to your extensions page and open the settings for Competitive Companion. In the list of ports, enter the port `27121`.
-
-1. That's it! Now just click on the ![Green plus](screenshots/companion.png) to download problem and testcases. You must open VS Code in a folder to use this. To open in a folder, just press `File> Open Folder` or `Ctrl+K then Ctrl+O`.
+1. That's it! Now just open a problem page, click on the ![Green plus](screenshots/companion.png) in the browser add-ons area to download problem and testcases. You must open VS Code in a folder to use this. To open in a folder, just press `File> Open Folder` or `Ctrl+K then Ctrl+O`.
 
 **(See [firefox help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-firefox.webm?raw=true) or [chrome help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-chrome.webm?raw=true))**
 
@@ -41,6 +39,8 @@ It is simple to use Competitive Companion with this extenison.
 - Or Type `Ctrl+ Shift + P` and select "_Run Testcases Command_".
 
 - Or Use the shortcut `Ctrl + Alt + B` to activate.
+
+- When focused on the results screen, press `Ctrl + Alt + N` to create a new testcase.
 
 ## Dependencies
 
@@ -55,8 +55,6 @@ This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). 
 
 If you need help using this extension, create an issue [here](https://github.com/agrawal-d) and the developers will get back to you.
 
----
-
 ## Release Notes
 
-Refer to [CHANGELOG.md](CHANGELOG.md)
+Release notes are no longer maintained.

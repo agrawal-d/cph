@@ -8,7 +8,6 @@ const { ConfigurationTarget } = require("vscode");
 const config = require("./config");
 const preferences = require("./preferencesHelper");
 
-
 function firstTimeMessage() {
   let firstTime = preferences().get("firstTime");
   console.log("FT", firstTime);
@@ -44,7 +43,7 @@ function firstTimeMessage() {
     </p>
   </div><br>`;
   } else {
-    message = '';
+    message = "";
   }
   preferences().update("firstTime", false, ConfigurationTarget.Global);
   preferences().update("firstTime", false, ConfigurationTarget.Workspace);
@@ -63,12 +62,13 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
     let caseId = "cid" + Date.now() + Math.random();
     console.log(results);
     modf += `
-    <div class="case case-${count - 1}" data-casenum="${count - 1}" id="${caseId}">
+    <div class="case case-${count - 1}" data-casenum="${count -
+      1}" id="${caseId}">
         <p><b>Testcase ${count} <span class="passorfail ${
       element.passed ? "pass" : "fail"
-      }">${element.passed ? "PASSED" : "FAILED"}</span> <span class="exec-time">${
+    }">${element.passed ? "PASSED" : "FAILED"}</span> <span class="exec-time">${
       element.time
-      }ms</span>
+    }ms</span>
 
          <span class="right time">
          <button class="btn btn-green" onclick="rerunTestCase(this)">&#x21BA; </button>
@@ -85,7 +85,9 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
     count++;
   }
   let pre = "";
-  pre += firstTimeMessage() + `
+  pre +=
+    firstTimeMessage() +
+    `
 <!DOCTYPE html>
 <html lang="en">
 
@@ -104,7 +106,7 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
                   user-select: none; /* Non-prefixed version, currently
                                         supported by Chrome and Opera */;
         cursor:default !important;
-        box-sizing;border-box;
+        box-sizing: border-box;
       }
       .selectable {
         -webkit-touch-callout: text; /* iOS Safari */
@@ -138,6 +140,21 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
             padding: 8px;
             margin-bottom: 2px;
         }
+        .case:last-child{
+          animation: highlight 0.5s;
+        }
+
+        @keyframes highlight{
+          0%{
+            background: rgba(0,0,0,0.1);
+          }
+          50%{
+            background: rgba(125, 142, 292,0.6);
+          }
+          100%{
+            background: rgba(0,0,0,0.1);
+          }
+        }
 
         .exec-time{
           background: #fbff001c;
@@ -168,15 +185,21 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
             border:0px;
             color: bisque;
             max-width:100%;
-            max-height:150px !important;
+            max-height:250px !important;
             overflow-y:auto;
             resize:none;
             border:1px solid transparent;
+            box-sizing:content-box !important;
+
+        }
+        ::-webkit-resizer {
+          display: none;
         }
         textarea:focus, textarea:active{
             background:black;
             outline:none !important;
             border:1px solid #3393cc;
+            scroll:none;
         }
 
         .right {
@@ -208,6 +231,9 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
         }
         .btn-red{
             background:#B9274391
+        }
+        .btn:focus{
+          border-color:pink;
         }
         h4{
             padding:5px;
@@ -242,16 +268,20 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
   }
   pre += modf;
   if (!isLastResult) {
-    pre += "<div id='running-next-box'><br><br>Running next testcase...<br><br><button class='btn btn-red' onclick='stopRunning()'>🛑 Stop this</button></div>";
+    pre +=
+      "<div id='running-next-box'><br><br>Running next testcase...<br><br><button class='btn btn-red' onclick='stopRunning()'>🛑 Stop this</button></div>";
   }
   pre += `
+
+
 <div id="app"></div>
+<button class="btn" id="new-testcase" onclick="addTestCase()" style="margin:10px">➕ New testcase</button>
 <div id="pane">
 <button class="btn" id="new-testcase" onclick="addTestCase()">➕ New</button>
 <button class='btn btn-red' onclick='stopRunning()'>🛑 Stop</button>
 <button class="btn btn-green" onClick="saveAndRerunAll()">&#x1F4BE; Save and run</button>
 <br>
-<small id="unsaved"></small>
+<small id="unsaved">No status to show.</small>
 </div>
 </body>
 <script src="${jspath}"></script>
