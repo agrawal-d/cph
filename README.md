@@ -1,6 +1,6 @@
 # Competitive Programming Helper
 
-![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge) ![GitHub](https://img.shields.io/github/license/agrawal-d/competitive-programming-helper?style=for-the-badge) ![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge) ![Visual Studio Marketplace Rating (Stars)](https://img.shields.io/visual-studio-marketplace/stars/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge)
+![[VS Code Marketplace Version](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)](https://img.shields.io/visual-studio-marketplace/v/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge&logo=visual-studio-code) ![GitHub](https://img.shields.io/github/license/agrawal-d/competitive-programming-helper?style=for-the-badge) ![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge) ![Visual Studio Marketplace Rating (Stars)](https://img.shields.io/visual-studio-marketplace/stars/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge)
 
 
 
