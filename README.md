@@ -1,5 +1,9 @@
 # Competitive Programming Helper
 
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge) ![GitHub](https://img.shields.io/github/license/agrawal-d/competitive-programming-helper?style=for-the-badge) ![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge) ![Visual Studio Marketplace Rating (Stars)](https://img.shields.io/visual-studio-marketplace/stars/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge)
+
+
+
 Quickly compile, run and judge competitive programming problems. Download and testcases for a given problem automatically and/or add custom testcases.
 
 Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!
