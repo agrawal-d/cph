@@ -2,7 +2,7 @@
 
 [![VS Code Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper) ![GitHub](https://img.shields.io/github/license/agrawal-d/competitive-programming-helper?style=for-the-badge) [![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper?style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)
 
-Quickly compile, run and judge competitive programming problems. Download and testcases for a given problem automatically and/or add custom testcases.
+Quickly compile, run and judge competitive programming problems. Add testcases manually or Download automatically.
 
 Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!
 
