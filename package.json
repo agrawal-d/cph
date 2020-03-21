@@ -1,7 +1,7 @@
 {
   "name": "competitive-programming-helper",
   "displayName": "Competitive Programming Helper",
-  "description": "Makes downloading running Codeforces testcases or general competitve programming easy.",
+  "description": "Makes judging, compiling, and downloading problems for competitve programming easy.",
   "keywords": [
     "competitive",
     "codeforces",
@@ -10,7 +10,7 @@
     "c++",
     "testcases"
   ],
-  "version": "3.1.0",
+  "version": "3.3.0",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.39.0"
@@ -33,19 +33,22 @@
           "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
         },
         "competitive-programming-helper.compilationFlagsc": {
+          "title": "Compilation flags for .c files",
           "type": "string",
           "default": "",
           "description": "Space seperated additional flags passed to gcc ( for C) while compiling your file. Example '-O2 -Wall'"
         },
         "competitive-programming-helper.compilationFlagscpp": {
+          "title": "Compilation flags for .cpp files",
           "type": "string",
           "default": "",
           "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
         },
         "competitive-programming-helper.firstTime": {
+          "title": "Show welcome message",
           "type": "boolean",
           "default": true,
-          "description": "Show welcome message"
+          "description": "A welcome message is shown when you run a testcase for the first time."
         }
       }
     },
@@ -65,7 +68,7 @@
       {
         "key": "ctrl+alt+b",
         "command": "extension.runCodeforcesTestcases",
-        "when": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc"
+        "when": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc || resourceExtname==.c"
       }
     ]
   },

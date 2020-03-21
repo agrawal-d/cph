@@ -43,8 +43,6 @@ function showWorkSpaceError() {
 }
 
 const server = companionServer();
-console.log("Companion server started");
-
 
 // setup event listeners for competitive companion extension
 (() => {
