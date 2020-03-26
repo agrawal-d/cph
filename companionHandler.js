@@ -4,6 +4,7 @@ const createTestacesFile = require("./createTestcasesFile");
 const locationHelper = require("./locationHelper");
 const path = require("path");
 const fs = require("fs");
+const config = require("./config");
 
 
 /**
@@ -19,22 +20,17 @@ function handleCompanion(problem) {
     } else {
         console.log(vscode.workspace.workspaceFolders[0].uri);
         const dir = vscode.workspace.workspaceFolders[0].uri.fsPath;
-
-        const languageExtension = {
-            "C++": ".cpp",
-            "Python": ".py"
-        };
-        const languageChoices = Object.keys(languageExtension);
+        const languageChoices = Object.keys(config.languageExtensions);
 
         vscode.window.showQuickPick(languageChoices, {
             placeHolder: "Select the language"
         })
         .then(async language => {
-            const extension = languageExtension[language];
-            if (!extension)
+            const ext = config.languageExtensions[language];
+            if (!ext)
                 throw Error("Extension not found");
             
-            let problemFile = problem.name.replace(/\W+/g, '_') + extension;
+            let problemFile = `${problem.name.replace(/\W+/g, '_')}.${ext}`;
             let fullPath = path.join(dir, problemFile);
             return fullPath;
         })
