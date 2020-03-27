@@ -14,6 +14,8 @@ const EventEmitter = require('events');
 let preferences = require("./preferencesHelper");
 const writeToTestCaseFile = require("./writeToTestCaseFile");
 const handleCompanion = require("./companionHandler");
+const config = require('./config');
+
 let oc = vscode.window.createOutputChannel("competitive");
 let spawnStack = [];
 
@@ -383,13 +385,22 @@ async function executePrimaryTask(context) {
     .split(".")
     .pop()
     .toLowerCase();
-  if (!(fileExtension === "cpp" || fileExtension === "c")) {
+  
+  const validExtensions = Object.values(config.extensions);
+  const extList = validExtensions.map(ext => `.${ext}`);
+  const extListPresentation = `${
+    extList.slice(0, -1).join(', ')
+  } or ${
+    extList.slice(-1)[0]
+  }`;
+
+  if (!validExtensions.includes(fileExtension)) {
     vscode.window.showInformationMessage(
-      "Active file must be have a .c or .cpp extension"
+      `Active file must be have a ${extListPresentation} extension`
     );
     return;
   } else {
-    console.log("Is a c or cpp");
+    console.log(`Is a ${extListPresentation}`);
     latestTextDocument = vscode.window.activeTextEditor.document;
   }
   codeforcesURL = codeforcesURL.split("\n")[0];
