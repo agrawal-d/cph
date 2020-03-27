@@ -21,7 +21,7 @@ let spawnStack = [];
 
 /**
  * Retrieve extension of file
- * @param {string} filePath 
+ * @param {string} filePath complete path to .c, .cpp or .py file
  */
 function getExtension(filePath) {
   const fileExtension = filePath
@@ -33,7 +33,7 @@ function getExtension(filePath) {
 
 /**
  * Get language based on file extension
- * @param {string} extension 
+ * @param {string} extension c, cpp or py
  */
 function getLanguage(extension) {
   for (const [lang, ext] of Object.entries(config.extensions))
@@ -43,7 +43,7 @@ function getLanguage(extension) {
 
 /**
  * Get language based on the file path
- * @param {'string'} filePath 
+ * @param {'string'} filePath complete path to .c, .cpp or .py file
  */
 function getLangugeByFilePath(filePath) {
   const extension = getExtension(filePath);
@@ -333,9 +333,9 @@ function appendProblemURLToFile(problemURL, callback) {
 
 /**
  * show dialog box for actions such as downloading testcases and generating testcase file manually
- * @param {any} filepath path to the active source code document
+ * @param {any} filePath path to the active source code document
  */
-function testCasesHelper(filepath) {
+function testCasesHelper(filePath) {
   vscode.window
     .showQuickPick(
       ["Download testcases from Codeforces", "Manually enter testcases"],
@@ -363,12 +363,12 @@ function testCasesHelper(filepath) {
       } else if (selection === "Manually enter testcases") {
         console.log("Showing blank webview");
         let blank_testcase = [];
-        if (!writeToTestCaseFile(JSON.stringify(blank_testcase), filepath)) {
+        if (!writeToTestCaseFile(JSON.stringify(blank_testcase), filePath)) {
           console.error("Could not create tcs file");
           return;
         }
         console.log("Created TCS file");
-        displayResults([], true, filepath);
+        displayResults([], true, filePath);
         return;
 
         // console.log("Showing blank webview");

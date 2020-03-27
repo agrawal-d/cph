@@ -4,6 +4,11 @@ const path = require("path");
 const locationHelper = require("./locationHelper");
 const config = require("./config")
 
+/**
+ * Get flags which needed for compile based on language
+ * @param {string} language programming language
+ * @param {string} filePath complete path to .c, .cpp or .py file
+ */
 function getFlags(language, filePath) {
     const ext = config.extensions[language];
     let flags = preferences().get("compilationFlags" + ext).split(" ");

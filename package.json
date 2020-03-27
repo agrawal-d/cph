@@ -72,7 +72,7 @@
     "keybindings": [{
       "key": "ctrl+alt+b",
       "command": "extension.runCodeforcesTestcases",
-      "when": "resourceExtname==.cpp || resourceExtname ==.c++ || resourceExtname == .cc || resourceExtname==.c"
+      "when": "resourceExtname == .cpp || resourceExtname == .c++ || resourceExtname == .cc || resourceExtname == .c || resourceExtname == .py"
     }]
   },
   "repository": {

@@ -3,7 +3,9 @@ const path = require("path");
 const preferences = require("./preferencesHelper");
 
 /**
- * @param filePath complete path to .cpp file
+ * Get compiled file
+ * @param language programming language
+ * @param filePath complete path to .c, .cpp or .py file
  */
 function getBinLocation(language, filePath) {
   if (language === 'Python')
@@ -17,7 +19,7 @@ function getBinLocation(language, filePath) {
 }
 
 /**
- * @param filePath complete path to .cpp file
+ * @param filePath complete path to .c, .cpp or .py file
  */
 function getTestCaseLocation(filePath) {
   const saveSetting = preferences().get("saveLocation");
