@@ -6,7 +6,7 @@ const preferences = require("./preferencesHelper");
  * @param filePath complete path to .cpp file
  */
 function getBinLocation(language, filePath) {
-  if (language == 'Python')
+  if (language === 'Python')
     return `${filePath}c`
 
   const saveSetting = preferences().get("saveLocation");

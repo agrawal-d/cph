@@ -48,7 +48,7 @@
           "title": "Compilation flags for .py files",
           "type": "string",
           "default": "",
-          "description": "Space seperated additional flags passed to python3 ( for Python ) while interpreting your file. Example '-Wignore -u'"
+          "description": "Space seperated additional flags passed to python ( for Python ) while compiling your file. Example '-Wignore -u'"
         },
         "competitive-programming-helper.firstTime": {
           "title": "Show welcome message",

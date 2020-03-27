@@ -41,6 +41,10 @@ function getLanguage(extension) {
           return lang;
 }
 
+/**
+ * Get language based on the file path
+ * @param {'string'} filePath 
+ */
 function getLangugeByFilePath(filePath) {
   const extension = getExtension(filePath);
   return getLanguage(extension);
