@@ -4,31 +4,31 @@ const path = require("path");
 const locationHelper = require("./locationHelper");
 const config = require("./config")
 
-function getFlags(language, path) {
+function getFlags(language, filePath) {
     const ext = config.extensions[language];
     let flags = preferences().get("compilationFlags" + ext).split(" ");
     if (flags[0] === "")
         flags = [];
 
     if (language === 'Python')
-        flags = ['-m', 'compileall', '-b', path, ...flags];
+        flags = ['-m', 'compileall', '-b', filePath, ...flags];
     else {
         // type of compiler ( g++ or gcc )
-        const outputLocation = locationHelper.getBinLocation(path);
-        flags = [path, "-o", outputLocation, ...flags];
+        const outputLocation = locationHelper.getBinLocation(language, filePath);
+        flags = [filePath, "-o", outputLocation, ...flags];
     }
     return flags
 }
 
 // compile the file and return a promise with the result/error
-function compileFile(language, filepath, oc) {
+function compileFile(language, filePath, oc) {
     let promise = new Promise((resolve, reject) => {
         const compiler = config.compilers[language];
-        const flags = getFlags(language, filepath);
+        const flags = getFlags(language, filePath);
         console.log(`${compiler} flags`, flags);
 
         const saveSetting = preferences().get("saveLocation");
-        let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
+        let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
 
         let compilationError = false;
         const compilerProcess = spawn(compiler, flags);

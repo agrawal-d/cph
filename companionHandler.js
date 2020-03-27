@@ -34,9 +34,9 @@ function handleCompanion(problem) {
             let fullPath = path.join(dir, problemFile);
             return fullPath;
         })
-        .then(async path => {
-            console.log(path);
-            console.log(fs.writeFileSync(path, ""));
+        .then(async filePath => {
+            console.log(filePath);
+            console.log(fs.writeFileSync(filePath, ""));
 
             let inp = [];
             let op = [];
@@ -46,8 +46,8 @@ function handleCompanion(problem) {
             }
             console.log(inp, op);
 
-            createTestacesFile(inp, op, locationHelper.getTestCaseLocation(path));
-            vscode.workspace.openTextDocument(path).then((doc) => {
+            createTestacesFile(inp, op, locationHelper.getTestCaseLocation(filePath));
+            vscode.workspace.openTextDocument(filePath).then((doc) => {
                 vscode.window.showTextDocument(doc);
             })
         }, err => console.error(err))

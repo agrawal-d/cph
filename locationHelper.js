@@ -3,24 +3,27 @@ const path = require("path");
 const preferences = require("./preferencesHelper");
 
 /**
- * @param filepath complete path to .cpp file
+ * @param filePath complete path to .cpp file
  */
-function getBinLocation(filepath) {
+function getBinLocation(language, filePath) {
+  if (language == 'Python')
+    return `${filePath}c`
+
   const saveSetting = preferences().get("saveLocation");
-  let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
+  let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
   return saveSetting.length == 0
-    ? filepath + ".bin"
+    ? filePath + ".bin"
     : path.join(saveSetting, fileName + ".bin");
 }
 
 /**
- * @param filepath complete path to .cpp file
+ * @param filePath complete path to .cpp file
  */
-function getTestCaseLocation(filepath) {
+function getTestCaseLocation(filePath) {
   const saveSetting = preferences().get("saveLocation");
-  let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
+  let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
   return saveSetting.length == 0
-    ? filepath + ".tcs"
+    ? filePath + ".tcs"
     : path.join(saveSetting, fileName + ".tcs");
 }
 

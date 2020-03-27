@@ -21,10 +21,10 @@ let spawnStack = [];
 
 /**
  * Retrieve extension of file
- * @param {string} path 
+ * @param {string} filePath 
  */
-function getExtension(path) {
-  const fileExtension = path
+function getExtension(filePath) {
+  const fileExtension = filePath
     .split(".")
     .pop()
     .toLowerCase();
@@ -39,6 +39,11 @@ function getLanguage(extension) {
   for (const [lang, ext] of Object.entries(config.extensions))
       if (ext === extension)
           return lang;
+}
+
+function getLangugeByFilePath(filePath) {
+  const extension = getExtension(filePath);
+  return getLanguage(extension);
 }
 
 /**
@@ -122,11 +127,12 @@ function createLayout() {
   });
 }
 
-async function runSingleTestCase(filepath, inp, op) {
-  console.log("fp", locationHelper.getBinLocation(filepath));
+async function runSingleTestCase(filePath, inp, op) {
+  const language = getLangugeByFilePath(filePath)
+  console.log("fp", locationHelper.getBinLocation(language, filePath));
   try {
     let promise = new Promise((resolve, reject) => {
-      let spawned_process = spawn(locationHelper.getBinLocation(filepath), {
+      let spawned_process = spawn(locationHelper.getBinLocation(language, filePath), {
         timeout: 10000
       });
       spawnStack.push(spawned_process);
@@ -199,13 +205,11 @@ async function runSingleTestCase(filepath, inp, op) {
   }
 }
 
-async function handleSingleTestcaseCommand(filepath, caseId, data) {
-  const extension = getExtension(filepath);
-  const language = getLanguage(extension);
-
-  let compilation = await compileFile(language, filepath, oc);
+async function handleSingleTestcaseCommand(filePath, caseId, data) {
+  const language = getLangugeByFilePath(filePath)
+  let compilation = await compileFile(language, filePath, oc);
   if (compilation === "OK") {
-    let evaluation = await runSingleTestCase(filepath, data.input, data.output);
+    let evaluation = await runSingleTestCase(filePath, data.input, data.output);
     console.log("Eval : ", evaluation);
     resultsPanel.webview.postMessage({
       command: "singe-case-rerun-evaluation",
@@ -213,7 +217,6 @@ async function handleSingleTestcaseCommand(filepath, caseId, data) {
       caseId: caseId
     });
   }
-
 }
 
 /**
@@ -394,7 +397,7 @@ async function executePrimaryTask(context) {
     "workbench.action.files.save"
   );
   let codeforcesURL = vscode.window.activeTextEditor.document.getText();
-  let filepath = vscode.window.activeTextEditor.document.fileName;
+  let filePath = vscode.window.activeTextEditor.document.fileName;
 
 
   if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
@@ -405,7 +408,7 @@ async function executePrimaryTask(context) {
   }
 
   let cases;
-  const fileExtension = getExtension(filepath);
+  const fileExtension = getExtension(filePath);
   const language = getLanguage(fileExtension);
 
   const validExtensions = Object.values(config.extensions);
@@ -435,13 +438,13 @@ async function executePrimaryTask(context) {
    */
   function runTestCases(caseNum) {
     try {
-      fs.accessSync(locationHelper.getTestCaseLocation(filepath));
+      fs.accessSync(locationHelper.getTestCaseLocation(filePath));
     } catch (err) {
       let html = downloadCodeforcesPage(codeforcesURL);
       html
         .then(string => {
           const [inp, op] = parseCodeforces(string);
-          createTestacesFile(inp, op, locationHelper.getTestCaseLocation(filepath));
+          createTestacesFile(inp, op, locationHelper.getTestCaseLocation(filePath));
           runTestCases(0);
         })
         .catch(err => {
@@ -452,19 +455,19 @@ async function executePrimaryTask(context) {
 
     if (caseNum == 0) {
       startWebView();
-      cases = parseTestCasesFile(locationHelper.getTestCaseLocation(filepath));
+      cases = parseTestCasesFile(locationHelper.getTestCaseLocation(filePath));
       if (!cases || !cases.inputs || cases.inputs.length === 0) {
-        displayResults([], true, filepath);
+        displayResults([], true, filePath);
         return;
       }
 
-      displayResults([], false, filepath);
+      displayResults([], false, filePath);
 
     } else if (caseNum == cases.numCases) {
       return;
     }
     let stdoutlen = 0;
-    let spawned_process = spawn(locationHelper.getBinLocation(filepath), {
+    let spawned_process = spawn(locationHelper.getBinLocation(language, filePath), {
       timeout: 10000
     });
     spawnStack.push(spawned_process);
@@ -515,9 +518,9 @@ async function executePrimaryTask(context) {
         };
       }
       if (caseNum == cases.numCases - 1) {
-        displayResults(passed_cases, true, filepath);
-        spawn("rm", [locationHelper.getBinLocation(filepath)]);
-        spawn("del", [locationHelper.getBinLocation(filepath)]);
+        displayResults(passed_cases, true, filePath);
+        spawn("rm", [locationHelper.getBinLocation(language, filePath)]);
+        spawn("del", [locationHelper.getBinLocation(language, filePath)]);
       } else {
         displayResults(passed_cases, false);
       }
@@ -551,9 +554,9 @@ async function executePrimaryTask(context) {
           got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`
         };
         if (caseNum == cases.numCases - 1) {
-          displayResults(passed_cases, true, filepath);
+          displayResults(passed_cases, true, filePath);
         } else {
-          displayResults(passed_cases, false, filepath);
+          displayResults(passed_cases, false, filePath);
         }
       } else {
         let tm2 = Date.now();
@@ -567,9 +570,9 @@ async function executePrimaryTask(context) {
             got: ""
           };
           if (caseNum == cases.numCases - 1) {
-            displayResults(passed_cases, true, filepath);
+            displayResults(passed_cases, true, filePath);
           } else {
-            displayResults(passed_cases, false, filepath);
+            displayResults(passed_cases, false, filePath);
           }
         }
       }
@@ -586,12 +589,12 @@ async function executePrimaryTask(context) {
       const html = await rp(url);
       return html;
     } else {
-      testCasesHelper(filepath);
+      testCasesHelper(filePath);
       return false;
     }
   }
 
-  let compilationResult = await compileFile(language, filepath, oc);
+  let compilationResult = await compileFile(language, filePath, oc);
   if (compilationResult === "OK") {
     console.log("Compiled OK");
     runTestCases(0);
