@@ -136,16 +136,18 @@ async function runSingleTestCase(filePath, inp, op) {
   console.log("fp", locationHelper.getBinLocation(language, filePath));
   try {
     let promise = new Promise((resolve, reject) => {
-      let spawned_process = spawn(locationHelper.getBinLocation(language, filePath), {
-        timeout: 10000
-      });
-      spawnStack.push(spawned_process);
+      const binPath = locationHelper.getBinLocation(language, filePath)
+      let options = {timeout: 10000}
 
+      let spawned_process = (language === 'Python'
+        ? spawn(config.compilers[language], [binPath], options)
+        : spawn(binPath, {timeout: 10000})
+      );
+      spawnStack.push(spawned_process);
 
       let time0 = Date.now();
       let stdout = "";
       let stderr = "";
-
 
       let killer = setTimeout(() => {
         console.log("Killed process timeout.");
@@ -470,10 +472,15 @@ async function executePrimaryTask(context) {
     } else if (caseNum == cases.numCases) {
       return;
     }
+
     let stdoutlen = 0;
-    let spawned_process = spawn(locationHelper.getBinLocation(language, filePath), {
-      timeout: 10000
-    });
+    const binPath = locationHelper.getBinLocation(language, filePath)
+    let options = {timeout: 10000}
+    
+    let spawned_process = (language === 'Python'
+      ? spawn(config.compilers[language], [binPath], options)
+      : spawn(binPath, {timeout: 10000})
+    );
     spawnStack.push(spawned_process);
     // Creates a 10 second timeout to kill the spawned process.
     let killer = setTimeout(() => {
