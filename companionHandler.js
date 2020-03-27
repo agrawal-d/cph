@@ -20,13 +20,13 @@ function handleCompanion(problem) {
     } else {
         console.log(vscode.workspace.workspaceFolders[0].uri);
         const dir = vscode.workspace.workspaceFolders[0].uri.fsPath;
-        const languageChoices = Object.keys(config.languageExtensions);
+        const languageChoices = Object.keys(config.extensions);
 
         vscode.window.showQuickPick(languageChoices, {
             placeHolder: "Select the language"
         })
         .then(async language => {
-            const ext = config.languageExtensions[language];
+            const ext = config.extensions[language];
             if (!ext)
                 throw Error("Extension not found");
             

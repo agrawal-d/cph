@@ -1,8 +1,14 @@
 const config = {
   port: 27121,
-  languageExtensions: {
+  extensions: {
+    "C": "c",
     "C++": "cpp",
     "Python": "py"
+  },
+  compilers: {
+    "C": "gcc",
+    "C++": "g++",
+    "Python": "python3"
   }
 };
 
