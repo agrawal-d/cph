@@ -4,12 +4,6 @@ const path = require("path");
 const locationHelper = require("./locationHelper");
 const config = require("./config")
 
-function getLanguage(extension) {
-    for (const [lang, ext] of Object.entries(config.extensions))
-        if (ext === extension)
-            return lang;
-}
-
 function getFlags(language, path) {
     const ext = config.extensions[language];
     let flags = preferences().get("compilationFlags" + ext).split(" ");
@@ -17,7 +11,7 @@ function getFlags(language, path) {
         flags = [];
 
     if (language === 'Python')
-        flags = [path, ...flags];
+        flags = ['-m', 'compileall', '-b', path, ...flags];
     else {
         // type of compiler ( g++ or gcc )
         const outputLocation = locationHelper.getBinLocation(path);
@@ -27,14 +21,8 @@ function getFlags(language, path) {
 }
 
 // compile the file and return a promise with the result/error
-function compileFile(filepath, oc) {
+function compileFile(language, filepath, oc) {
     let promise = new Promise((resolve, reject) => {
-        const fileExtension = filepath
-            .split(".")
-            .pop()
-            .toLowerCase();
-        
-        const language = getLanguage(fileExtension);
         const compiler = config.compilers[language];
         const flags = getFlags(language, filepath);
         console.log(`${compiler} flags`, flags);
@@ -66,4 +54,3 @@ function compileFile(filepath, oc) {
 }
 
 module.exports = compileFile;
-

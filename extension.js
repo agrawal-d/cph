@@ -20,6 +20,28 @@ let oc = vscode.window.createOutputChannel("competitive");
 let spawnStack = [];
 
 /**
+ * Retrieve extension of file
+ * @param {string} path 
+ */
+function getExtension(path) {
+  const fileExtension = path
+    .split(".")
+    .pop()
+    .toLowerCase();
+  return fileExtension;
+}
+
+/**
+ * Get language based on file extension
+ * @param {string} extension 
+ */
+function getLanguage(extension) {
+  for (const [lang, ext] of Object.entries(config.extensions))
+      if (ext === extension)
+          return lang;
+}
+
+/**
  * check if folder is open - then warn if folder is not open;
  *
  */
@@ -178,7 +200,10 @@ async function runSingleTestCase(filepath, inp, op) {
 }
 
 async function handleSingleTestcaseCommand(filepath, caseId, data) {
-  let compilation = await compileFile(filepath, oc);
+  const extension = getExtension(filepath);
+  const language = getLanguage(extension);
+
+  let compilation = await compileFile(language, filepath, oc);
   if (compilation === "OK") {
     let evaluation = await runSingleTestCase(filepath, data.input, data.output);
     console.log("Eval : ", evaluation);
@@ -379,13 +404,10 @@ async function executePrimaryTask(context) {
     return;
   }
 
-
   let cases;
-  const fileExtension = filepath
-    .split(".")
-    .pop()
-    .toLowerCase();
-  
+  const fileExtension = getExtension(filepath);
+  const language = getLanguage(fileExtension);
+
   const validExtensions = Object.values(config.extensions);
   const extList = validExtensions.map(ext => `.${ext}`);
   const extListPresentation = `${
@@ -569,7 +591,7 @@ async function executePrimaryTask(context) {
     }
   }
 
-  let compilationResult = await compileFile(filepath, oc);
+  let compilationResult = await compileFile(language, filepath, oc);
   if (compilationResult === "OK") {
     console.log("Compiled OK");
     runTestCases(0);
