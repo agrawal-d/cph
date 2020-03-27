@@ -2,6 +2,29 @@ const { spawn } = require("child_process");
 const preferences = require("./preferencesHelper");
 const path = require("path");
 const locationHelper = require("./locationHelper");
+const config = require("./config")
+
+function getLanguage(extension) {
+    for (const [lang, ext] of Object.entries(config.extensions))
+        if (ext === extension)
+            return lang;
+}
+
+function getFlags(language, path) {
+    const ext = config.extensions[language];
+    let flags = preferences().get("compilationFlags" + ext).split(" ");
+    if (flags[0] === "")
+        flags = [];
+
+    if (language === 'Python')
+        flags = [path, ...flags];
+    else {
+        // type of compiler ( g++ or gcc )
+        const outputLocation = locationHelper.getBinLocation(path);
+        flags = [path, "-o", outputLocation, ...flags];
+    }
+    return flags
+}
 
 // compile the file and return a promise with the result/error
 function compileFile(filepath, oc) {
@@ -10,26 +33,16 @@ function compileFile(filepath, oc) {
             .split(".")
             .pop()
             .toLowerCase();
+        
+        const language = getLanguage(fileExtension);
+        const compiler = config.compilers[language];
+        const flags = getFlags(language, filepath);
+        console.log(`${compiler} flags`, flags);
 
-        let flags = preferences().get("compilationFlags" + fileExtension).split(" ");
-        let compilationError = false;
-        if (flags[0] === "") {
-            flags = [];
-        }
         const saveSetting = preferences().get("saveLocation");
         let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
-        const outputLocation = locationHelper.getBinLocation(filepath);
-        flags = [filepath, "-o", outputLocation].concat(flags);
-        let compiler; // type of compiler ( g++ or gcc )
-        switch (fileExtension) {
-            case "cpp":
-                compiler = "g++";
-                break;
-            case "c":
-                compiler = "gcc";
-                break;
-        }
-        console.log("gcc/g++ flags", flags);
+
+        let compilationError = false;
         const compilerProcess = spawn(compiler, flags);
         compilerProcess.stdout.on("data", data => {
             console.log(`stdout: ${data}`);
@@ -40,7 +53,6 @@ function compileFile(filepath, oc) {
             oc.show();
             compilationError = true;
         });
-
         compilerProcess.on("exit", async exitCode => {
             if (!compilationError) {
                 resolve("OK")
@@ -49,9 +61,8 @@ function compileFile(filepath, oc) {
             reject(exitCode);
         });
     })
-
+    
     return promise;
-
 }
 
 module.exports = compileFile;
