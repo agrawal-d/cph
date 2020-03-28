@@ -43,7 +43,7 @@ function getLanguage(extension) {
 
 /**
  * Get language based on the file path
- * @param {'string'} filePath complete path to .c, .cpp or .py file
+ * @param {string} filePath complete path to .c, .cpp or .py file
  */
 function getLangugeByFilePath(filePath) {
   const extension = getExtension(filePath);
@@ -405,7 +405,6 @@ async function executePrimaryTask(context) {
   let codeforcesURL = vscode.window.activeTextEditor.document.getText();
   let filePath = vscode.window.activeTextEditor.document.fileName;
 
-
   if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
     resultsPanel.webview.postMessage({
       command: "send-filepath"
@@ -414,26 +413,18 @@ async function executePrimaryTask(context) {
   }
 
   let cases;
-  const fileExtension = getExtension(filePath);
-  const language = getLanguage(fileExtension);
+  const language = getLangugeByFilePath(filePath);
+  const extList = Object.values(config.extensions).map(ext => `.${ext}`);
+  const extListPresentation = `${extList.slice(0, -1).join(', ')} or ${extList.slice(-1)[0]}`;
 
-  const validExtensions = Object.values(config.extensions);
-  const extList = validExtensions.map(ext => `.${ext}`);
-  const extListPresentation = `${
-    extList.slice(0, -1).join(', ')
-  } or ${
-    extList.slice(-1)[0]
-  }`;
-
-  if (!validExtensions.includes(fileExtension)) {
-    vscode.window.showInformationMessage(
-      `Active file must be have a ${extListPresentation} extension`
-    );
+  if (!language) {
+    vscode.window.showInformationMessage(`Active file must be have a ${extListPresentation} extension.`);
     return;
-  } else {
-    console.log(`Is a ${extListPresentation}`);
-    latestTextDocument = vscode.window.activeTextEditor.document;
   }
+  
+  console.log(`Is a ${extListPresentation}`);
+  latestTextDocument = vscode.window.activeTextEditor.document;
+
   codeforcesURL = codeforcesURL.split("\n")[0];
   codeforcesURL = codeforcesURL.substring(2);
 
