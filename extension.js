@@ -141,7 +141,7 @@ async function runSingleTestCase(filePath, inp, op) {
 
       let spawned_process = (language === 'Python'
         ? spawn(config.compilers[language], [binPath], options)
-        : spawn(binPath, {timeout: 10000})
+        : spawn(binPath, options)
       );
       spawnStack.push(spawned_process);
 
@@ -479,7 +479,7 @@ async function executePrimaryTask(context) {
     
     let spawned_process = (language === 'Python'
       ? spawn(config.compilers[language], [binPath], options)
-      : spawn(binPath, {timeout: 10000})
+      : spawn(binPath, options)
     );
     spawnStack.push(spawned_process);
     // Creates a 10 second timeout to kill the spawned process.
