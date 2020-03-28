@@ -45,10 +45,10 @@
           "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
         },
         "competitive-programming-helper.compilationFlagspy": {
-          "title": "Compilation flags for .py files",
+          "title": "Compilation flags for Python 3",
           "type": "string",
           "default": "",
-          "description": "Space seperated additional flags passed to python ( for Python ) while compiling your file. Example '-Wignore -u'"
+          "description": "Space seperated additional flags passed to python3 while compiling your file. Example '-Wignore -u'"
         },
         "competitive-programming-helper.firstTime": {
           "title": "Show welcome message",

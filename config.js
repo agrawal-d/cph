@@ -8,7 +8,7 @@ const config = {
   compilers: {
     "C": "gcc",
     "C++": "g++",
-    "Python": "python"
+    "Python": "python3"
   }
 };
 
