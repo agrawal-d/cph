@@ -15,10 +15,20 @@ function getFlags(language, filePath) {
     if (flags[0] === "")
         flags = [];
 
-    if (language === 'Python')
+    if (language === 'Python'){
+        /**
+         * python3
+         * 
+         * -m compileall    Searches sys.path for the 'compileall' module and runs it as a script
+         * -b               Causes bytecode to be written to their legacy location rather than '__pycache__'
+         */
         flags = ['-m', 'compileall', '-b', filePath, ...flags];
-    else {
-        // type of compiler ( g++ or gcc )
+    } else {
+        /**
+         * g++ & gcc
+         * 
+         * -o outputLocation    Place output in 'outputLocation' file
+         */
         const outputLocation = locationHelper.getBinLocation(language, filePath);
         flags = [filePath, "-o", outputLocation, ...flags];
     }
