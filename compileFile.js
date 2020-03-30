@@ -2,14 +2,15 @@ const { spawn } = require("child_process");
 const preferences = require("./preferencesHelper");
 const path = require("path");
 const locationHelper = require("./locationHelper");
-const config = require("./config")
+const config = require("./config");
+const { getLangugeByFilePath } = require('./utilities');
 
 /**
  * Get flags which needed for compile based on language
- * @param {string} language programming language
  * @param {string} filePath complete path to .c, .cpp or .py file
  */
-function getFlags(language, filePath) {
+function getFlags(filePath) {
+    const language = getLangugeByFilePath(filePath);
     const ext = config.extensions[language];
     let flags = preferences().get("compilationFlags" + ext).split(" ");
     if (flags[0] === "")
@@ -36,10 +37,14 @@ function getFlags(language, filePath) {
 }
 
 // compile the file and return a promise with the result/error
-function compileFile(language, filePath, oc) {
+function compileFile(filePath, oc) {
     let promise = new Promise((resolve, reject) => {
+        const language = getLangugeByFilePath(filePath);
+        if (language === 'Python')
+            resolve("OK")
+
         const compiler = config.compilers[language];
-        const flags = getFlags(language, filePath);
+        const flags = getFlags(filePath);
         console.log(`${compiler} flags`, flags);
 
         const saveSetting = preferences().get("saveLocation");
