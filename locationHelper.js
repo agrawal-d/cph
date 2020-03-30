@@ -1,15 +1,15 @@
-const vscode = require("vscode");
 const path = require("path");
 const preferences = require("./preferencesHelper");
+const { getLangugeByFilePath } = require('./utilities');
 
 /**
  * Get compiled file
- * @param language programming language
  * @param filePath complete path to .c, .cpp or .py file
  */
-function getBinLocation(language, filePath) {
+function getBinLocation(filePath) {
+  const language = getLangugeByFilePath(filePath);
   if (language === 'Python')
-    return `${filePath}c`
+    return
 
   const saveSetting = preferences().get("saveLocation");
   let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
@@ -30,6 +30,6 @@ function getTestCaseLocation(filePath) {
 }
 
 module.exports = {
-  getBinLocation: getBinLocation,
-  getTestCaseLocation: getTestCaseLocation
+  getBinLocation,
+  getTestCaseLocation
 };

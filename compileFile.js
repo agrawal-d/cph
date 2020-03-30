@@ -1,11 +1,11 @@
 const { spawn } = require("child_process");
 const preferences = require("./preferencesHelper");
 const path = require("path");
-const locationHelper = require("./locationHelper");
+const { getBinLocation } = require("./locationHelper");
 const config = require("./config");
 const { getLangugeByFilePath } = require('./utilities');
 
-/**
+/**language
  * Get flags which needed for compile based on language
  * @param {string} filePath complete path to .c, .cpp or .py file
  */
@@ -30,7 +30,7 @@ function getFlags(filePath) {
          * 
          * -o outputLocation    Place output in 'outputLocation' file
          */
-        const outputLocation = locationHelper.getBinLocation(language, filePath);
+        const outputLocation = getBinLocation(filePath);
         flags = [filePath, "-o", outputLocation, ...flags];
     }
     return flags

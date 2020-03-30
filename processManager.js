@@ -6,15 +6,17 @@ const config = require('./config');
 /**
  * Execute an executable file
  * @param {string} filePath bin or .py
- * @param {object} options e.g. timeout
+ * @param {object} options
  */
 function execFile(filePath, options = {}) {
     const language = getLangugeByFilePath(filePath);
+    const opts = {...options, timeout: config.timeout};
+
     if (language === 'Python')
-        return spawn(config.compilers[language], [filePath], options)
+        return spawn(config.compilers[language], [filePath], opts)
     
-    const binPath = getBinLocation(language, filePath);
-    return spawn(binPath, options);
+    const binPath = getBinLocation(filePath);
+    return spawn(binPath, opts);
 }
 
 // kills all spawned process
@@ -26,28 +28,25 @@ function killAll(stack) {
 /**
  * Create timeout to kill the process
  * @param {*} process 
- * @param {number} timeout
  * @param {object} info
  */
-function setKiller(process, timeout, info = {}) {
+function setKiller(process, info = {}) {
     return setTimeout(() => {
-        console.log(`${timeout} sec killed process`, info);
+        console.log(`${config.timeout} sec killed process`, info);
         process.kill();
-    }, timeout);
+    }, config.timeout);
 }
 
 /**
- * Get rid of created binary
+ * Get rid of created bin if exists
  * @param {string} filePath bin or .py
  */
 function removeBin(filePath) {
-    const language = getLangugeByFilePath(filePath);
-    if (language === 'Python')
-        return
-
-    const binPath = getBinLocation(language, filePath);    
-    spawn("rm", [binPath]);
-    spawn("del", [binPath]);
+    const binPath = getBinLocation(filePath);
+    if (binPath) {
+        spawn("rm", [binPath]);
+        spawn("del", [binPath]);
+    }
 }
 
 module.exports = {

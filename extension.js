@@ -1,21 +1,20 @@
 const vscode = require("vscode");
 const rp = require("request-promise-native");
-const { spawn } = require("child_process");
 const parseCodeforces = require("./parseCodeforces");
 const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
 const compileFile = require("./compileFile");
 const getWebviewContent = require("./generateResultsHtml");
-const locationHelper = require("./locationHelper");
+const { getTestCaseLocation } = require("./locationHelper");
 const fs = require("fs");
 const path = require("path");
 const companionServer = require("./companionServer");
 const EventEmitter = require('events');
-let preferences = require("./preferencesHelper");
 const writeToTestCaseFile = require("./writeToTestCaseFile");
 const handleCompanion = require("./companionHandler");
 const config = require('./config');
-const { getLangugeByFilePath, verifyValidCodeforcesURL } = require('./utilities');
+const { getExtension, verifyValidCodeforcesURL } = require('./utilities');
+const { killAll, execFile, setKiller, removeBin } = require('./processManager')
 
 let oc = vscode.window.createOutputChannel("competitive");
 let spawnStack = [];
@@ -60,17 +59,6 @@ const server = companionServer();
 })();
 
 
-
-// kills all spawned process
-function killAll() {
-  console.log("Killing all spawns");
-  spawnStack.forEach(proc => {
-    proc.kill();
-  })
-  spawnStack = [];
-}
-
-
 //webview
 let resultsPanel;
 let latestTextDocument = null;
@@ -89,27 +77,16 @@ function createLayout() {
 }
 
 async function runSingleTestCase(filePath, inp, op) {
-  const language = getLangugeByFilePath(filePath)
-  console.log("fp", locationHelper.getBinLocation(language, filePath));
+  // console.log("fp", locationHelper.getBinLocation(language, filePath));
   try {
     let promise = new Promise((resolve, reject) => {
-      const binPath = locationHelper.getBinLocation(language, filePath)
-      let options = {timeout: 10000}
-
-      let spawned_process = (language === 'Python'
-        ? spawn(config.compilers[language], [binPath], options)
-        : spawn(binPath, options)
-      );
+      let spawned_process = execFile(filePath);
+      let killer = setKiller(spawned_process);
       spawnStack.push(spawned_process);
 
       let time0 = Date.now();
       let stdout = "";
       let stderr = "";
-
-      let killer = setTimeout(() => {
-        console.log("Killed process timeout.");
-        spawned_process.kill();
-      }, 10000);
 
       spawned_process.stdin.write(inp + "\n");
       spawned_process.stdin.end();
@@ -169,8 +146,7 @@ async function runSingleTestCase(filePath, inp, op) {
 }
 
 async function handleSingleTestcaseCommand(filePath, caseId, data) {
-  const language = getLangugeByFilePath(filePath)
-  let compilation = await compileFile(language, filePath, oc);
+  let compilation = await compileFile(filePath, oc);
   if (compilation === "OK") {
     let evaluation = await runSingleTestCase(filePath, data.input, data.output);
     console.log("Eval : ", evaluation);
@@ -247,6 +223,7 @@ function startWebView() {
         }
         case "kill-all": {
           killAll();
+          spawnStack = []
           break;
         }
         case "webview-filepath": {
@@ -370,11 +347,11 @@ async function executePrimaryTask(context) {
   }
 
   let cases;
-  const language = getLangugeByFilePath(filePath);
+  const extension = getExtension(filePath);
   const extList = Object.values(config.extensions).map(ext => `.${ext}`);
   const extListPresentation = `${extList.slice(0, -1).join(', ')} or ${extList.slice(-1)[0]}`;
 
-  if (!language) {
+  if (!extList.includes(`.${extension}`)) {
     vscode.window.showInformationMessage(`Active file must be have a ${extListPresentation} extension.`);
     return;
   }
@@ -392,13 +369,13 @@ async function executePrimaryTask(context) {
    */
   function runTestCases(caseNum) {
     try {
-      fs.accessSync(locationHelper.getTestCaseLocation(filePath));
+      fs.accessSync(getTestCaseLocation(filePath));
     } catch (err) {
       let html = downloadCodeforcesPage(codeforcesURL);
       html
         .then(string => {
           const [inp, op] = parseCodeforces(string);
-          createTestacesFile(inp, op, locationHelper.getTestCaseLocation(filePath));
+          createTestacesFile(inp, op, getTestCaseLocation(filePath));
           runTestCases(0);
         })
         .catch(err => {
@@ -409,7 +386,7 @@ async function executePrimaryTask(context) {
 
     if (caseNum == 0) {
       startWebView();
-      cases = parseTestCasesFile(locationHelper.getTestCaseLocation(filePath));
+      cases = parseTestCasesFile(getTestCaseLocation(filePath));
       if (!cases || !cases.inputs || cases.inputs.length === 0) {
         displayResults([], true, filePath);
         return;
@@ -422,19 +399,10 @@ async function executePrimaryTask(context) {
     }
 
     let stdoutlen = 0;
-    const binPath = locationHelper.getBinLocation(language, filePath)
-    let options = {timeout: 10000}
-    
-    let spawned_process = (language === 'Python'
-      ? spawn(config.compilers[language], [binPath], options)
-      : spawn(binPath, options)
-    );
+    let spawned_process = execFile(filePath);
+    let killer = setKiller(spawned_process, { caseNum });
     spawnStack.push(spawned_process);
-    // Creates a 10 second timeout to kill the spawned process.
-    let killer = setTimeout(() => {
-      console.log("10 sec killed process - ", caseNum);
-      spawned_process.kill();
-    }, 10000);
+
     let tm = Date.now();
     spawned_process.stdin.write(cases.inputs[caseNum] + "\n");
     spawned_process.stdin.end();
@@ -478,8 +446,7 @@ async function executePrimaryTask(context) {
       }
       if (caseNum == cases.numCases - 1) {
         displayResults(passed_cases, true, filePath);
-        spawn("rm", [locationHelper.getBinLocation(language, filePath)]);
-        spawn("del", [locationHelper.getBinLocation(language, filePath)]);
+        removeBin(filePath);
       } else {
         displayResults(passed_cases, false);
       }
@@ -553,7 +520,7 @@ async function executePrimaryTask(context) {
     }
   }
 
-  let compilationResult = await compileFile(language, filePath, oc);
+  let compilationResult = await compileFile(filePath, oc);
   if (compilationResult === "OK") {
     console.log("Compiled OK");
     runTestCases(0);

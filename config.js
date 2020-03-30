@@ -1,5 +1,6 @@
 const config = {
   port: 27121,
+  timeout: 10000,
   extensions: {
     "C": "c",
     "C++": "cpp",
