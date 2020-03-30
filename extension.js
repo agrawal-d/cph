@@ -15,40 +15,10 @@ let preferences = require("./preferencesHelper");
 const writeToTestCaseFile = require("./writeToTestCaseFile");
 const handleCompanion = require("./companionHandler");
 const config = require('./config');
+const { getLangugeByFilePath, verifyValidCodeforcesURL } = require('./utilities');
 
 let oc = vscode.window.createOutputChannel("competitive");
 let spawnStack = [];
-
-/**
- * Retrieve extension of file
- * @param {string} filePath complete path to .c, .cpp or .py file
- */
-function getExtension(filePath) {
-  const fileExtension = filePath
-    .split(".")
-    .pop()
-    .toLowerCase();
-  return fileExtension;
-}
-
-/**
- * Get language based on file extension
- * @param {string} extension c, cpp or py
- */
-function getLanguage(extension) {
-  for (const [lang, ext] of Object.entries(config.extensions))
-      if (ext === extension)
-          return lang;
-}
-
-/**
- * Get language based on the file path
- * @param {string} filePath complete path to .c, .cpp or .py file
- */
-function getLangugeByFilePath(filePath) {
-  const extension = getExtension(filePath);
-  return getLanguage(extension);
-}
 
 /**
  * check if folder is open - then warn if folder is not open;
@@ -106,19 +76,6 @@ let resultsPanel;
 let latestTextDocument = null;
 let latestContext = null;
 
-
-/**
- * Verifies if url is codeforces
- */
-function verifyValidCodeforcesURL(url) {
-  if (
-    url.includes("https://codeforces.com") ||
-    url.includes("http://codeforces.com")
-  ) {
-    return true;
-  }
-  return false;
-}
 
 // creates 2X1 grid 0.75+0.25
 function createLayout() {
