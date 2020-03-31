@@ -46,8 +46,8 @@ It is simple to use Competitive Companion with this extenison.
 
 ## Dependencies
 
-* The gcc, g++, python3 and rustc must be installed and should be accesible from the terminal/command prompt for support of their languages.
-*   For competitive companion support, download the extension.
+* gcc, g++, python3 and rustc must be installed and should be accesible from the terminal/command prompt for support of their languages.
+* For competitive companion support, download the extension.
 
 ## About
 
