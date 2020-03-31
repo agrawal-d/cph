@@ -2,14 +2,16 @@ const config = {
   port: 27121,
   timeout: 10000,
   extensions: {
-    "C": "c",
+    C: "c",
     "C++": "cpp",
-    "Python": "py"
+    Python: "py",
+    Rust: "rs"
   },
   compilers: {
     "C": "gcc",
     "C++": "g++",
-    "Python": "python3"
+    "Python": "python3",
+    "Rust":"rustc"
   }
 };
 

@@ -9,12 +9,12 @@ const { getTestCaseLocation } = require("./locationHelper");
 const fs = require("fs");
 const path = require("path");
 const companionServer = require("./companionServer");
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 const writeToTestCaseFile = require("./writeToTestCaseFile");
 const handleCompanion = require("./companionHandler");
-const config = require('./config');
-const { getExtension, verifyValidCodeforcesURL } = require('./utilities');
-const { killAll, execFile, setKiller, removeBin } = require('./processManager')
+const config = require("./config");
+const { getExtension, verifyValidCodeforcesURL } = require("./utilities");
+const { killAll, execFile, setKiller, removeBin } = require("./processManager");
 
 let oc = vscode.window.createOutputChannel("competitive");
 let spawnStack = [];
@@ -36,34 +36,33 @@ statusBarItem.text = " ▶  Run Testcases";
 statusBarItem.show();
 statusBarItem.command = "extension.runCodeforcesTestcases";
 
-
 /**
  * Shows error if workspace is not a folder.
  */
 function showWorkSpaceError() {
-  vscode.window.showErrorMessage("To use Competitive Companion Integration you must open a folder in VS Code. Go to File>Open Folder or press Ctrl+K then press O");
+  vscode.window.showErrorMessage(
+    "To use Competitive Companion Integration you must open a folder in VS Code. Go to File>Open Folder or press Ctrl+K then press O"
+  );
 }
 
 const server = companionServer();
 
 // setup event listeners for competitive companion extension
 (() => {
-  class CompanionEmitterSetup extends EventEmitter { }
+  class CompanionEmitterSetup extends EventEmitter {}
   const mySetup = new CompanionEmitterSetup();
-  mySetup.on("new-problem", function (problem) {
+  mySetup.on("new-problem", function(problem) {
     handleCompanion(problem);
-  })
+  });
   //@ts-ignore
   global.companionEmitter = mySetup;
   console.log("Event listeners setup");
 })();
 
-
 //webview
 let resultsPanel;
 let latestTextDocument = null;
 let latestContext = null;
-
 
 // creates 2X1 grid 0.75+0.25
 function createLayout() {
@@ -116,8 +115,8 @@ async function runSingleTestCase(filePath, inp, op) {
             resolve({
               evaluation: false,
               got: "STDERR:" + stderr,
-              time: time1 = time0
-            })
+              time: (time1 = time0)
+            });
           } else {
             let stdout_fixed;
             stdout_fixed = stdout.replace(/\r?\n|\r/g, " ");
@@ -134,11 +133,11 @@ async function runSingleTestCase(filePath, inp, op) {
               evaluation: eval,
               got: stdout,
               time: time1 - time0
-            })
+            });
           }
         }
       });
-    })
+    });
     return promise;
   } catch (e) {
     console.error(e);
@@ -194,13 +193,16 @@ function startWebView() {
             return;
           }
           if (message.filepath) {
-            vscode.workspace.openTextDocument(message.filepath).then((document) => {
-              vscode.window
-                .showTextDocument(document, vscode.ViewColumn.One)
-                .then(textEditor => {
-                  executePrimaryTask("no-webview-check");
-                })
-            });
+            console.log("From webview", message.filepath);
+            vscode.workspace
+              .openTextDocument(message.filepath)
+              .then(document => {
+                vscode.window
+                  .showTextDocument(document, vscode.ViewColumn.One)
+                  .then(textEditor => {
+                    vscode.execu;
+                  });
+              });
           } else {
             vscode.window.showInformationMessage(
               "Couldnt switch to active editor. Please report bug to developer."
@@ -210,32 +212,48 @@ function startWebView() {
           break;
         }
         case "save-and-rerun-single": {
-          if (!writeToTestCaseFile(
-            JSON.stringify(message.testcases),
-            message.filepath)) {
-            vscode.window.showInformationMessage("Couldnt save testcases. Please report bug to developer.");
+          if (
+            !writeToTestCaseFile(
+              JSON.stringify(message.testcases),
+              message.filepath
+            )
+          ) {
+            vscode.window.showInformationMessage(
+              "Couldnt save testcases. Please report bug to developer."
+            );
             return;
           }
 
           // now evaulate it
-          handleSingleTestcaseCommand(message.filepath, message.caseId, message.testcases[message.casenum]);
+          handleSingleTestcaseCommand(
+            message.filepath,
+            message.caseId,
+            message.testcases[message.casenum]
+          );
           break;
         }
         case "kill-all": {
           killAll();
-          spawnStack = []
+          spawnStack = [];
           break;
         }
         case "webview-filepath": {
-          if (message.filepath === vscode.window.activeTextEditor.document.fileName) {
+          if (
+            message.filepath ===
+            vscode.window.activeTextEditor.document.fileName
+          ) {
             resultsPanel.webview.postMessage({
               command: "save-and-run-all"
             });
           } else {
-            executePrimaryTask("no-webview-check");
+            // executePrimaryTask("no-webview-check");
+            vscode.commands
+              .executeCommand("extension.runCodeforcesTestcases")
+              .then(response => {
+                callback();
+              });
           }
           break;
-
         }
       }
     });
@@ -326,7 +344,6 @@ function displayResults(result, isFinal, filepath) {
   resultsPanel.reveal();
 }
 
-
 /**
  * Worker function for the extension, activated on shortcut or "Run testcases"
  */
@@ -339,23 +356,27 @@ async function executePrimaryTask(context) {
   let codeforcesURL = vscode.window.activeTextEditor.document.getText();
   let filePath = vscode.window.activeTextEditor.document.fileName;
 
-  if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
-    resultsPanel.webview.postMessage({
-      command: "send-filepath"
-    });
-    return;
-  }
+  // if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
+  //   resultsPanel.webview.postMessage({
+  //     command: "send-filepath"
+  //   });
+  //   return;
+  // }
 
   let cases;
   const extension = getExtension(filePath);
   const extList = Object.values(config.extensions).map(ext => `.${ext}`);
-  const extListPresentation = `${extList.slice(0, -1).join(', ')} or ${extList.slice(-1)[0]}`;
+  const extListPresentation = `${extList.slice(0, -1).join(", ")} or ${
+    extList.slice(-1)[0]
+  }`;
 
   if (!extList.includes(`.${extension}`)) {
-    vscode.window.showInformationMessage(`Active file must be have a ${extListPresentation} extension.`);
+    vscode.window.showInformationMessage(
+      `Active file must be have a ${extListPresentation} extension.`
+    );
     return;
   }
-  
+
   console.log(`Is a ${extListPresentation}`);
   latestTextDocument = vscode.window.activeTextEditor.document;
 
@@ -393,7 +414,6 @@ async function executePrimaryTask(context) {
       }
 
       displayResults([], false, filePath);
-
     } else if (caseNum == cases.numCases) {
       return;
     }
@@ -534,30 +554,28 @@ async function executePrimaryTask(context) {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  console.log("ACTIVATED")
+  console.log("ACTIVATED");
   latestContext = context;
   let disposable = vscode.commands.registerCommand(
     "extension.runCodeforcesTestcases",
-    function () {
+    function() {
       executePrimaryTask(context);
     }
   );
   // context.subscriptions.push(disposable);
 
-
   let disposable2 = vscode.commands.registerCommand(
     "extension.showWorkspaceError",
-    function () {
+    function() {
       showWorkSpaceError();
     }
   );
   context.subscriptions.push(disposable, disposable2);
-
 }
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
-function deactivate() { }
+function deactivate() {}
 
 module.exports = {
   activate,

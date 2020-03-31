@@ -50,6 +50,12 @@
           "default": "",
           "description": "Space seperated additional flags passed to python3 while compiling your file. Example '-Wignore -u'"
         },
+        "competitive-programming-helper.compilationFlagsrs": {
+          "title": "Compilation flags for Rust",
+          "type": "string",
+          "default": "",
+          "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
+        },
         "competitive-programming-helper.firstTime": {
           "title": "Show welcome message",
           "type": "boolean",
@@ -58,7 +64,8 @@
         }
       }
     },
-    "commands": [{
+    "commands": [
+      {
         "command": "extension.runCodeforcesTestcases",
         "title": "Run Testcases",
         "category": "Competitive"
@@ -69,11 +76,13 @@
         "category": "Competitive"
       }
     ],
-    "keybindings": [{
-      "key": "ctrl+alt+b",
-      "command": "extension.runCodeforcesTestcases",
-      "when": "resourceExtname == .cpp || resourceExtname == .c++ || resourceExtname == .cc || resourceExtname == .c || resourceExtname == .py"
-    }]
+    "keybindings": [
+      {
+        "key": "ctrl+alt+b",
+        "command": "extension.runCodeforcesTestcases",
+        "when": "resourceExtname == .cpp || resourceExtname == .c++ || resourceExtname == .cc || resourceExtname == .c || resourceExtname == .py"
+      }
+    ]
   },
   "repository": {
     "type": "git",
