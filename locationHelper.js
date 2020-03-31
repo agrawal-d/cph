@@ -1,6 +1,6 @@
 const path = require("path");
 const preferences = require("./preferencesHelper");
-const { getLangugeByFilePath } = require('./utilities');
+const { getLangugeByFilePath } = require("./utilities");
 
 /**
  * Get compiled file
@@ -8,8 +8,7 @@ const { getLangugeByFilePath } = require('./utilities');
  */
 function getBinLocation(filePath) {
   const language = getLangugeByFilePath(filePath);
-  if (language === 'Python')
-    return
+  if (language === "Python") return filePath + "c";
 
   const saveSetting = preferences().get("saveLocation");
   let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
