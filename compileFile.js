@@ -1,35 +1,56 @@
 const { spawn } = require("child_process");
 const preferences = require("./preferencesHelper");
 const path = require("path");
-const locationHelper = require("./locationHelper");
+const { getBinLocation } = require("./locationHelper");
+const config = require("./config");
+const { getLangugeByFilePath } = require('./utilities');
+
+/**language
+ * Get flags which needed for compile based on language
+ * @param {string} filePath complete path to .c, .cpp or .py file
+ */
+function getFlags(filePath) {
+    const language = getLangugeByFilePath(filePath);
+    const ext = config.extensions[language];
+    let flags = preferences().get("compilationFlags" + ext).split(" ");
+    if (flags[0] === "")
+        flags = [];
+
+    if (language === 'Python'){
+        /**
+         * python3
+         * 
+         * -m compileall    Searches sys.path for the 'compileall' module and runs it as a script
+         * -b               Causes bytecode to be written to their legacy location rather than '__pycache__'
+         */
+        flags = ['-m', 'compileall', '-b', filePath, ...flags];
+    } else {
+        /**
+         * g++ & gcc
+         * 
+         * -o outputLocation    Place output in 'outputLocation' file
+         */
+        const outputLocation = getBinLocation(filePath);
+        flags = [filePath, "-o", outputLocation, ...flags];
+    }
+    return flags
+}
 
 // compile the file and return a promise with the result/error
-function compileFile(filepath, oc) {
+function compileFile(filePath, oc) {
     let promise = new Promise((resolve, reject) => {
-        const fileExtension = filepath
-            .split(".")
-            .pop()
-            .toLowerCase();
+        const language = getLangugeByFilePath(filePath);
+        if (language === 'Python')
+            resolve("OK")
 
-        let flags = preferences().get("compilationFlags" + fileExtension).split(" ");
-        let compilationError = false;
-        if (flags[0] === "") {
-            flags = [];
-        }
+        const compiler = config.compilers[language];
+        const flags = getFlags(filePath);
+        console.log(`${compiler} flags`, flags);
+
         const saveSetting = preferences().get("saveLocation");
-        let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
-        const outputLocation = locationHelper.getBinLocation(filepath);
-        flags = [filepath, "-o", outputLocation].concat(flags);
-        let compiler; // type of compiler ( g++ or gcc )
-        switch (fileExtension) {
-            case "cpp":
-                compiler = "g++";
-                break;
-            case "c":
-                compiler = "gcc";
-                break;
-        }
-        console.log("gcc/g++ flags", flags);
+        let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
+
+        let compilationError = false;
         const compilerProcess = spawn(compiler, flags);
         compilerProcess.stdout.on("data", data => {
             console.log(`stdout: ${data}`);
@@ -40,7 +61,6 @@ function compileFile(filepath, oc) {
             oc.show();
             compilationError = true;
         });
-
         compilerProcess.on("exit", async exitCode => {
             if (!compilationError) {
                 resolve("OK")
@@ -49,10 +69,8 @@ function compileFile(filepath, oc) {
             reject(exitCode);
         });
     })
-
+    
     return promise;
-
 }
 
 module.exports = compileFile;
-

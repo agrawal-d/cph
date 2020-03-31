@@ -1,19 +1,21 @@
 const vscode = require("vscode");
 const rp = require("request-promise-native");
-const { spawn } = require("child_process");
 const parseCodeforces = require("./parseCodeforces");
 const createTestacesFile = require("./createTestcasesFile");
 const parseTestCasesFile = require("./parseTestCasesFile");
 const compileFile = require("./compileFile");
 const getWebviewContent = require("./generateResultsHtml");
-const locationHelper = require("./locationHelper");
+const { getTestCaseLocation } = require("./locationHelper");
 const fs = require("fs");
 const path = require("path");
 const companionServer = require("./companionServer");
 const EventEmitter = require('events');
-let preferences = require("./preferencesHelper");
 const writeToTestCaseFile = require("./writeToTestCaseFile");
 const handleCompanion = require("./companionHandler");
+const config = require('./config');
+const { getExtension, verifyValidCodeforcesURL } = require('./utilities');
+const { killAll, execFile, setKiller, removeBin } = require('./processManager')
+
 let oc = vscode.window.createOutputChannel("competitive");
 let spawnStack = [];
 
@@ -57,35 +59,11 @@ const server = companionServer();
 })();
 
 
-
-// kills all spawned process
-function killAll() {
-  console.log("Killing all spawns");
-  spawnStack.forEach(proc => {
-    proc.kill();
-  })
-  spawnStack = [];
-}
-
-
 //webview
 let resultsPanel;
 let latestTextDocument = null;
 let latestContext = null;
 
-
-/**
- * Verifies if url is codeforces
- */
-function verifyValidCodeforcesURL(url) {
-  if (
-    url.includes("https://codeforces.com") ||
-    url.includes("http://codeforces.com")
-  ) {
-    return true;
-  }
-  return false;
-}
 
 // creates 2X1 grid 0.75+0.25
 function createLayout() {
@@ -98,25 +76,17 @@ function createLayout() {
   });
 }
 
-async function runSingleTestCase(filepath, inp, op) {
-  console.log("fp", locationHelper.getBinLocation(filepath));
+async function runSingleTestCase(filePath, inp, op) {
+  // console.log("fp", locationHelper.getBinLocation(language, filePath));
   try {
     let promise = new Promise((resolve, reject) => {
-      let spawned_process = spawn(locationHelper.getBinLocation(filepath), {
-        timeout: 10000
-      });
+      let spawned_process = execFile(filePath);
+      let killer = setKiller(spawned_process);
       spawnStack.push(spawned_process);
-
 
       let time0 = Date.now();
       let stdout = "";
       let stderr = "";
-
-
-      let killer = setTimeout(() => {
-        console.log("Killed process timeout.");
-        spawned_process.kill();
-      }, 10000);
 
       spawned_process.stdin.write(inp + "\n");
       spawned_process.stdin.end();
@@ -175,10 +145,10 @@ async function runSingleTestCase(filepath, inp, op) {
   }
 }
 
-async function handleSingleTestcaseCommand(filepath, caseId, data) {
-  let compilation = await compileFile(filepath, oc);
+async function handleSingleTestcaseCommand(filePath, caseId, data) {
+  let compilation = await compileFile(filePath, oc);
   if (compilation === "OK") {
-    let evaluation = await runSingleTestCase(filepath, data.input, data.output);
+    let evaluation = await runSingleTestCase(filePath, data.input, data.output);
     console.log("Eval : ", evaluation);
     resultsPanel.webview.postMessage({
       command: "singe-case-rerun-evaluation",
@@ -186,7 +156,6 @@ async function handleSingleTestcaseCommand(filepath, caseId, data) {
       caseId: caseId
     });
   }
-
 }
 
 /**
@@ -254,6 +223,7 @@ function startWebView() {
         }
         case "kill-all": {
           killAll();
+          spawnStack = []
           break;
         }
         case "webview-filepath": {
@@ -297,9 +267,9 @@ function appendProblemURLToFile(problemURL, callback) {
 
 /**
  * show dialog box for actions such as downloading testcases and generating testcase file manually
- * @param {any} filepath path to the active source code document
+ * @param {any} filePath path to the active source code document
  */
-function testCasesHelper(filepath) {
+function testCasesHelper(filePath) {
   vscode.window
     .showQuickPick(
       ["Download testcases from Codeforces", "Manually enter testcases"],
@@ -327,12 +297,12 @@ function testCasesHelper(filepath) {
       } else if (selection === "Manually enter testcases") {
         console.log("Showing blank webview");
         let blank_testcase = [];
-        if (!writeToTestCaseFile(JSON.stringify(blank_testcase), filepath)) {
+        if (!writeToTestCaseFile(JSON.stringify(blank_testcase), filePath)) {
           console.error("Could not create tcs file");
           return;
         }
         console.log("Created TCS file");
-        displayResults([], true, filepath);
+        displayResults([], true, filePath);
         return;
 
         // console.log("Showing blank webview");
@@ -367,8 +337,7 @@ async function executePrimaryTask(context) {
     "workbench.action.files.save"
   );
   let codeforcesURL = vscode.window.activeTextEditor.document.getText();
-  let filepath = vscode.window.activeTextEditor.document.fileName;
-
+  let filePath = vscode.window.activeTextEditor.document.fileName;
 
   if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
     resultsPanel.webview.postMessage({
@@ -377,21 +346,19 @@ async function executePrimaryTask(context) {
     return;
   }
 
-
   let cases;
-  const fileExtension = filepath
-    .split(".")
-    .pop()
-    .toLowerCase();
-  if (!(fileExtension === "cpp" || fileExtension === "c")) {
-    vscode.window.showInformationMessage(
-      "Active file must be have a .c or .cpp extension"
-    );
+  const extension = getExtension(filePath);
+  const extList = Object.values(config.extensions).map(ext => `.${ext}`);
+  const extListPresentation = `${extList.slice(0, -1).join(', ')} or ${extList.slice(-1)[0]}`;
+
+  if (!extList.includes(`.${extension}`)) {
+    vscode.window.showInformationMessage(`Active file must be have a ${extListPresentation} extension.`);
     return;
-  } else {
-    console.log("Is a c or cpp");
-    latestTextDocument = vscode.window.activeTextEditor.document;
   }
+  
+  console.log(`Is a ${extListPresentation}`);
+  latestTextDocument = vscode.window.activeTextEditor.document;
+
   codeforcesURL = codeforcesURL.split("\n")[0];
   codeforcesURL = codeforcesURL.substring(2);
 
@@ -402,13 +369,13 @@ async function executePrimaryTask(context) {
    */
   function runTestCases(caseNum) {
     try {
-      fs.accessSync(locationHelper.getTestCaseLocation(filepath));
+      fs.accessSync(getTestCaseLocation(filePath));
     } catch (err) {
       let html = downloadCodeforcesPage(codeforcesURL);
       html
         .then(string => {
           const [inp, op] = parseCodeforces(string);
-          createTestacesFile(inp, op, locationHelper.getTestCaseLocation(filepath));
+          createTestacesFile(inp, op, getTestCaseLocation(filePath));
           runTestCases(0);
         })
         .catch(err => {
@@ -419,27 +386,23 @@ async function executePrimaryTask(context) {
 
     if (caseNum == 0) {
       startWebView();
-      cases = parseTestCasesFile(locationHelper.getTestCaseLocation(filepath));
+      cases = parseTestCasesFile(getTestCaseLocation(filePath));
       if (!cases || !cases.inputs || cases.inputs.length === 0) {
-        displayResults([], true, filepath);
+        displayResults([], true, filePath);
         return;
       }
 
-      displayResults([], false, filepath);
+      displayResults([], false, filePath);
 
     } else if (caseNum == cases.numCases) {
       return;
     }
+
     let stdoutlen = 0;
-    let spawned_process = spawn(locationHelper.getBinLocation(filepath), {
-      timeout: 10000
-    });
+    let spawned_process = execFile(filePath);
+    let killer = setKiller(spawned_process, { caseNum });
     spawnStack.push(spawned_process);
-    // Creates a 10 second timeout to kill the spawned process.
-    let killer = setTimeout(() => {
-      console.log("10 sec killed process - ", caseNum);
-      spawned_process.kill();
-    }, 10000);
+
     let tm = Date.now();
     spawned_process.stdin.write(cases.inputs[caseNum] + "\n");
     spawned_process.stdin.end();
@@ -482,9 +445,8 @@ async function executePrimaryTask(context) {
         };
       }
       if (caseNum == cases.numCases - 1) {
-        displayResults(passed_cases, true, filepath);
-        spawn("rm", [locationHelper.getBinLocation(filepath)]);
-        spawn("del", [locationHelper.getBinLocation(filepath)]);
+        displayResults(passed_cases, true, filePath);
+        removeBin(filePath);
       } else {
         displayResults(passed_cases, false);
       }
@@ -518,9 +480,9 @@ async function executePrimaryTask(context) {
           got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`
         };
         if (caseNum == cases.numCases - 1) {
-          displayResults(passed_cases, true, filepath);
+          displayResults(passed_cases, true, filePath);
         } else {
-          displayResults(passed_cases, false, filepath);
+          displayResults(passed_cases, false, filePath);
         }
       } else {
         let tm2 = Date.now();
@@ -534,9 +496,9 @@ async function executePrimaryTask(context) {
             got: ""
           };
           if (caseNum == cases.numCases - 1) {
-            displayResults(passed_cases, true, filepath);
+            displayResults(passed_cases, true, filePath);
           } else {
-            displayResults(passed_cases, false, filepath);
+            displayResults(passed_cases, false, filePath);
           }
         }
       }
@@ -553,12 +515,12 @@ async function executePrimaryTask(context) {
       const html = await rp(url);
       return html;
     } else {
-      testCasesHelper(filepath);
+      testCasesHelper(filePath);
       return false;
     }
   }
 
-  let compilationResult = await compileFile(filepath, oc);
+  let compilationResult = await compileFile(filePath, oc);
   if (compilationResult === "OK") {
     console.log("Compiled OK");
     runTestCases(0);

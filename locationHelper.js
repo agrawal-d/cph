@@ -1,30 +1,34 @@
-const vscode = require("vscode");
 const path = require("path");
 const preferences = require("./preferencesHelper");
+const { getLangugeByFilePath } = require("./utilities");
 
 /**
- * @param filepath complete path to .cpp file
+ * Get compiled file
+ * @param filePath complete path to .c, .cpp or .py file
  */
-function getBinLocation(filepath) {
+function getBinLocation(filePath) {
+  const language = getLangugeByFilePath(filePath);
+  if (language === "Python") return filePath + "c";
+
   const saveSetting = preferences().get("saveLocation");
-  let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
+  let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
   return saveSetting.length == 0
-    ? filepath + ".bin"
+    ? filePath + ".bin"
     : path.join(saveSetting, fileName + ".bin");
 }
 
 /**
- * @param filepath complete path to .cpp file
+ * @param filePath complete path to .c, .cpp or .py file
  */
-function getTestCaseLocation(filepath) {
+function getTestCaseLocation(filePath) {
   const saveSetting = preferences().get("saveLocation");
-  let fileName = filepath.substring(filepath.lastIndexOf(path.sep) + 1);
+  let fileName = filePath.substring(filePath.lastIndexOf(path.sep) + 1);
   return saveSetting.length == 0
-    ? filepath + ".tcs"
+    ? filePath + ".tcs"
     : path.join(saveSetting, fileName + ".tcs");
 }
 
 module.exports = {
-  getBinLocation: getBinLocation,
-  getTestCaseLocation: getTestCaseLocation
+  getBinLocation,
+  getTestCaseLocation
 };

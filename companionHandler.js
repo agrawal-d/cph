@@ -4,6 +4,7 @@ const createTestacesFile = require("./createTestcasesFile");
 const locationHelper = require("./locationHelper");
 const path = require("path");
 const fs = require("fs");
+const config = require("./config");
 
 
 /**
@@ -17,13 +18,25 @@ function handleCompanion(problem) {
             "extension.showWorkspaceError"
         )
     } else {
-        try {
-            console.log(vscode.workspace.workspaceFolders[0].uri);
-            const dir = vscode.workspace.workspaceFolders[0].uri.fsPath;
-            let problemFile = problem.name.replace(/\W+/g, '_') + ".cpp";
+        console.log(vscode.workspace.workspaceFolders[0].uri);
+        const dir = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        const languageChoices = Object.keys(config.extensions);
+
+        vscode.window.showQuickPick(languageChoices, {
+            placeHolder: "Select the language"
+        })
+        .then(async language => {
+            const ext = config.extensions[language];
+            if (!ext)
+                throw Error("Extension not found");
+            
+            let problemFile = `${problem.name.replace(/\W+/g, '_')}.${ext}`;
             let fullPath = path.join(dir, problemFile);
-            console.log(fullPath);
-            console.log(fs.writeFileSync(fullPath, ""));
+            return fullPath;
+        })
+        .then(async filePath => {
+            console.log(filePath);
+            console.log(fs.writeFileSync(filePath, ""));
 
             let inp = [];
             let op = [];
@@ -32,18 +45,18 @@ function handleCompanion(problem) {
                 op.push(element.output);
             }
             console.log(inp, op);
-            createTestacesFile(inp, op, locationHelper.getTestCaseLocation(fullPath));
-            vscode.workspace.openTextDocument(fullPath).then((doc) => {
+
+            createTestacesFile(inp, op, locationHelper.getTestCaseLocation(filePath));
+            vscode.workspace.openTextDocument(filePath).then((doc) => {
                 vscode.window.showTextDocument(doc);
             })
-
-        } catch (e) {
-            console.error(e);
+        }, err => console.error(err))
+        .then(undefined, err => {
+            console.error(err);
             vscode.window.showErrorMessage("Error while creating file. Are you sure you have the correct permissions ?");
             return -1;
-        }
+        })
     }
-
 }
 
 module.exports = handleCompanion;
