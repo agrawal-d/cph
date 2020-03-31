@@ -200,7 +200,7 @@ function startWebView() {
                 vscode.window
                   .showTextDocument(document, vscode.ViewColumn.One)
                   .then(textEditor => {
-                    vscode.execu;
+                    vscode.commands.executeCommand("extension.runCodeforcesTestcases");
                   });
               });
           } else {
