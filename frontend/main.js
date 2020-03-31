@@ -149,7 +149,11 @@ function rerunTestCase(button) {
 function saveAndRerunAll() {
   let ans = extractTestCases();
   const filepath = extractFilepath();
-
+  console.log({
+    command: "save-and-rerun-all",
+    testcases: ans,
+    filepath: filepath
+  });
   vscode.postMessage({
     command: "save-and-rerun-all",
     testcases: ans,
@@ -161,7 +165,7 @@ function stopRunning() {
   vscode.postMessage({
     command: "kill-all"
   });
-  console.log("stop-all emitted");
+  console.log("kill-all emitted");
 }
 
 function deleteTestCase(element) {

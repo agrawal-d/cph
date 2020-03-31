@@ -87,9 +87,6 @@ async function runSingleTestCase(filePath, inp, op) {
       let stdout = "";
       let stderr = "";
 
-      spawned_process.stdin.write(inp + "\n");
-      spawned_process.stdin.end();
-
       spawned_process.stdout.on("data", data => {
         stdout += data.toString();
       });
@@ -137,6 +134,9 @@ async function runSingleTestCase(filePath, inp, op) {
           }
         }
       });
+
+      spawned_process.stdin.write(inp + "\n");
+      spawned_process.stdin.end();
     });
     return promise;
   } catch (e) {
@@ -233,7 +233,7 @@ function startWebView() {
           break;
         }
         case "kill-all": {
-          killAll();
+          killAll(spawnStack);
           spawnStack = [];
           break;
         }
@@ -389,6 +389,7 @@ async function executePrimaryTask(context) {
    * @param {*} caseNum 0-indexed number of the case
    */
   function runTestCases(caseNum) {
+    console.log("Running case", caseNum);
     try {
       fs.accessSync(getTestCaseLocation(filePath));
     } catch (err) {
@@ -423,9 +424,9 @@ async function executePrimaryTask(context) {
     let killer = setKiller(spawned_process, { caseNum });
     spawnStack.push(spawned_process);
 
+    console.log("Writing to stdin for case number", caseNum);
+
     let tm = Date.now();
-    spawned_process.stdin.write(cases.inputs[caseNum] + "\n");
-    spawned_process.stdin.end();
     spawned_process.stdout.on("data", data => {
       if (stdoutlen > 10000) {
         startWebView();
@@ -434,7 +435,7 @@ async function executePrimaryTask(context) {
           "<html><body><p style='margin:10px'>Your code is outputting more data than can be displayed. It is possibly stuck in an infinite loop. <br><br><b>All testcases failed.</b></p></body></html>";
         return;
       }
-      console.log("Go stdout", data);
+      console.log("Got stdout", data);
       let ans = data.toString();
       let tm2 = Date.now();
       let time = tm2 - tm;
@@ -494,7 +495,7 @@ async function executePrimaryTask(context) {
         passed_cases[caseNum] = {
           passed: false,
           time: tm2 - tm,
-          output: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
+          output: `Runtime error. Exit signal ${signal}. "Exit" code ${code}.`,
           input: cases.inputs[caseNum].trim(),
           expected: cases.outputs[caseNum].trim(),
           got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`
@@ -524,6 +525,9 @@ async function executePrimaryTask(context) {
       }
       runTestCases(caseNum + 1);
     });
+
+    spawned_process.stdin.write(cases.inputs[caseNum] + "\n");
+    spawned_process.stdin.end();
   }
 
   /**

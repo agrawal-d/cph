@@ -6,7 +6,7 @@ Quickly compile, run and judge competitive programming problems. Add testcases m
 
 Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!
 
-**Whats new :** This new feature adds a new shortcut for adding new testcase - `Ctrl+Alt+N` (only when you are focused in the results screen). Also includes bugfixes, and genreal UX improvements including new animations!
+**Whats new :** Now supports Rust and Python 3!
 
 ![Extension Overview](screenshots/manual.gif)
 Manual Usage
@@ -46,17 +46,19 @@ It is simple to use Competitive Companion with this extenison.
 
 ## Dependencies
 
-The GNU C++ Compiler ( g++ ) and GNU C compiler (gcc ) must be installed and should be accesible from the terminal/command prompt.
-For competitive companion support, download the extension.
+* The gcc, g++, python3 and rustc must be installed and should be accesible from the terminal/command prompt for support of their languages.
+*   For competitive companion support, download the extension.
 
 ## About
 
-This extension was created by Divyanshu Agrawal (https://github.com/agrawal-d). Please report bugs by creating an issue using the link above. Thank you for using this extension.
+* This extension is maintained by [agrawal-d](https://github.com/agrawal-d). It would not have been possible to make this without the help of other [Contributors](#Contributors)!
+
+* Please report bugs by creating an issue using the link above. Thank you for using this extension.
 
 ## Support
 
 If you need help using this extension, create an issue [here](https://github.com/agrawal-d) and the developers will get back to you.
 
-## Release Notes
+## Contributors
 
-Release notes are no longer maintained.
+* Huge thanks to [mr2rm](https://github.com/mr2rm) for working on Python3 support and doing major refactors and code cleanup.
