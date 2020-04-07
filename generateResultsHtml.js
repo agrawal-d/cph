@@ -62,8 +62,9 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
     let caseId = "cid" + Date.now() + Math.random();
     console.log(results);
     modf += `
-    <div class="case case-${count - 1}" data-casenum="${count -
-      1}" id="${caseId}">
+    <div class="case case-${count - 1}" data-casenum="${
+      count - 1
+    }" id="${caseId}">
         <p><b>Testcase ${count} <span class="passorfail ${
       element.passed ? "pass" : "fail"
     }">${element.passed ? "PASSED" : "FAILED"}</span> <span class="exec-time">${
@@ -141,7 +142,7 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
             margin-bottom: 2px;
         }
         .case:last-child{
-          animation: highlight 0.5s;
+          // animation: highlight 0.5s;
         }
 
         @keyframes highlight{
@@ -244,6 +245,23 @@ function getWebviewContent(results, isLastResult, jspath, filepath) {
         #running-next-box{
           padding:10px;
         }
+        body.vscode-light *{
+          color:black !important;
+        }
+        body.vscode-light textarea,pre{
+          background:rgba(255,255,255,0.8);
+          border:1px solid whitesmoke !important;
+        }
+
+        body.vscode-light .case{
+          background:rgba(255,255,255,0.2);
+        }
+
+        body.vscode-light textarea:focus, textarea:active{
+          background:rgba(0,0,0,0.2);
+          outline:none !important;
+          border:1px solid lightblue;
+      }
     </style>
 </head>
 

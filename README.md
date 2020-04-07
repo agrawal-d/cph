@@ -6,7 +6,7 @@ Quickly compile, run and judge competitive programming problems. Add testcases m
 
 Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Judge and more!
 
-**Whats new :** Now supports Rust and Python 3!
+**Whats new :** Now supports Rust (experimental) and Python 3!
 
 ![Extension Overview](screenshots/manual.gif)
 Manual Usage
@@ -48,6 +48,7 @@ It is simple to use Competitive Companion with this extenison.
 
 * gcc, g++, python3 and rustc must be installed and should be accesible from the terminal/command prompt for support of their languages.
 * For competitive companion support, download the extension.
+* Rust support is experimental!
 
 ## About
 

@@ -200,7 +200,8 @@ function startWebView() {
                 vscode.window
                   .showTextDocument(document, vscode.ViewColumn.One)
                   .then(textEditor => {
-                    vscode.commands.executeCommand("extension.runCodeforcesTestcases");
+                    // vscode.commands.executeCommand("extension.runCodeforcesTestcases");
+                    executePrimaryTask("no-webview-check")
                   });
               });
           } else {
@@ -246,12 +247,12 @@ function startWebView() {
               command: "save-and-run-all"
             });
           } else {
-            // executePrimaryTask("no-webview-check");
-            vscode.commands
-              .executeCommand("extension.runCodeforcesTestcases")
-              .then(response => {
-                callback();
-              });
+            executePrimaryTask("no-webview-check");
+            // vscode.commands
+            //   .executeCommand("extension.runCodeforcesTestcases")
+            //   .then(response => {
+            //     callback();
+            //   });
           }
           break;
         }
@@ -356,12 +357,12 @@ async function executePrimaryTask(context) {
   let codeforcesURL = vscode.window.activeTextEditor.document.getText();
   let filePath = vscode.window.activeTextEditor.document.fileName;
 
-  // if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
-  //   resultsPanel.webview.postMessage({
-  //     command: "send-filepath"
-  //   });
-  //   return;
-  // }
+  if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
+    resultsPanel.webview.postMessage({
+      command: "send-filepath"
+    });
+    return;
+  }
 
   let cases;
   const extension = getExtension(filePath);
