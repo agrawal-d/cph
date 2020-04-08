@@ -22,7 +22,7 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "extension.js",
+  "main": "dist/extension.js",
   "contributes": {
     "configuration": {
       "title": "Competitive Programming Helper",
