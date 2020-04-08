@@ -61,6 +61,19 @@
           "type": "boolean",
           "default": true,
           "description": "A welcome message is shown when you run a testcase for the first time."
+        },
+        "competitive-programming-helper.defaultLanguage": {
+          "title": "Default language for new problems",
+          "type": "string",
+          "default": "",
+          "enum": [
+            "None",
+            "C",
+            "C++",
+            "Python",
+            "Rust"
+          ],
+          "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
         }
       }
     },

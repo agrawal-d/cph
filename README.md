@@ -20,6 +20,7 @@ Click on the ![Green plus](screenshots/companion.png) on your browser address ba
 
 - Use the shortcut `Ctrl + Alt + B` to activate.
 - You can choose additional compiler flags and save location from VSCode settings.
+- You can choose a default language that will be used when you import a problem through Competitive Companion from VSCode settings.
 
 ![Settings](screenshots/settings.gif)
 Change settings to hoose custom compiler flags and testcase/binary save location and more.

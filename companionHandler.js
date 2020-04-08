@@ -1,6 +1,7 @@
 const vscode = require("vscode");
 const parseTestCasesFile = require("./parseTestCasesFile");
 const createTestacesFile = require("./createTestcasesFile");
+const preferences = require("./preferencesHelper"); 
 const locationHelper = require("./locationHelper");
 const path = require("path");
 const fs = require("fs");
@@ -22,9 +23,21 @@ function handleCompanion(problem) {
         const dir = vscode.workspace.workspaceFolders[0].uri.fsPath;
         const languageChoices = Object.keys(config.extensions);
 
-        vscode.window.showQuickPick(languageChoices, {
-            placeHolder: "Select the language"
-        })
+        const defaultLanguage = preferences().get("defaultLanguage");
+        const selectLanguage = new Promise( (resolve) => {
+            if(defaultLanguage != "None") {
+                resolve(defaultLanguage);
+            }
+            else {
+                vscode.window.showQuickPick(languageChoices, {
+                    placeHolder: "Select the language"
+                })
+                .then(language => {
+                    resolve(language);
+                })
+            }
+        });
+        selectLanguage
         .then(async language => {
             const ext = config.extensions[language];
             if (!ext)
