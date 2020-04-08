@@ -64,3 +64,5 @@ If you need help using this extension, create an issue [here](https://github.com
 ## Contributors
 
 * Huge thanks to [mr2rm](https://github.com/mr2rm) for working on Python3 support and doing major refactors and code cleanup.
+
+* Thanks to [predator810](https://github.com/predator810) for adding default language setting.
