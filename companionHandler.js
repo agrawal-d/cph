@@ -24,7 +24,7 @@ function handleCompanion(problem) {
         const languageChoices = Object.keys(config.extensions);
 
         const defaultLanguage = preferences().get("defaultLanguage");
-        const selectedLanguage = new Promise( (resolve) => {
+        const selectLanguage = new Promise( (resolve) => {
             if(defaultLanguage != "None") {
                 resolve(defaultLanguage);
             }
@@ -37,7 +37,7 @@ function handleCompanion(problem) {
                 })
             }
         });
-        selectedLanguage
+        selectLanguage
         .then(async language => {
             const ext = config.extensions[language];
             if (!ext)
