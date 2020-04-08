@@ -24,23 +24,20 @@ function handleCompanion(problem) {
         const languageChoices = Object.keys(config.extensions);
 
         const defaultLanguage = preferences().get("defaultLanguage");
-        let selectLanguage;
-        if(defaultLanguage != "") {
-            selectLanguage = new Promise( (resolve) => {
+        const selectedLanguage = new Promise( (resolve) => {
+            if(defaultLanguage != "None") {
                 resolve(defaultLanguage);
-            });
-        }
-        else {
-            selectLanguage = new Promise( (resolve) => {
+            }
+            else {
                 vscode.window.showQuickPick(languageChoices, {
                     placeHolder: "Select the language"
                 })
-                .then(async language => {
+                .then(language => {
                     resolve(language);
                 })
-            });
-        }
-        selectLanguage
+            }
+        });
+        selectedLanguage
         .then(async language => {
             const ext = config.extensions[language];
             if (!ext)

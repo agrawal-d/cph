@@ -22,7 +22,7 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "dist/extension.js",
+  "main": "extension.js",
   "contributes": {
     "configuration": {
       "title": "Competitive Programming Helper",
@@ -66,8 +66,14 @@
           "title": "Default Language for new problems",
           "type": "string",
           "default": "",
-          "enum": ["", "C", "C++", "Python", "Rust"],
-          "description": ""
+          "enum": [
+            "None",
+            "C",
+            "C++",
+            "Python",
+            "Rust"
+          ],
+          "description": "Select the Default Language for problems imported via Competitive Companion (None will give option to select language on importing problem every time"
         }
       }
     },
