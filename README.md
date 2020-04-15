@@ -33,8 +33,6 @@ It is simple to use Competitive Companion with this extenison.
 
 1. That's it! Now just open a problem page, click on the ![Green plus](screenshots/companion.png) in the browser add-ons area to download problem and testcases. You must open VS Code in a folder to use this. To open in a folder, just press `File> Open Folder` or `Ctrl+K then Ctrl+O`.
 
-**(See [firefox help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-firefox.webm?raw=true) or [chrome help video](https://github.com/agrawal-d/competitive-programming-helper/blob/master/screenshots/companion-help-chrome.webm?raw=true))**
-
 ## How to use
 
 - Click on the ![Run testcases button](screenshots/run_testcases.png) button on the bottom left of VSCode.
