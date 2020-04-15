@@ -51,7 +51,7 @@ const server = companionServer();
 (() => {
   class CompanionEmitterSetup extends EventEmitter {}
   const mySetup = new CompanionEmitterSetup();
-  mySetup.on("new-problem", function(problem) {
+  mySetup.on("new-problem", function (problem) {
     handleCompanion(problem);
   });
   //@ts-ignore
@@ -70,8 +70,8 @@ function createLayout() {
     orientation: 0,
     groups: [
       { groups: [{}], size: 0.75 },
-      { groups: [{}], size: 0.25 }
-    ]
+      { groups: [{}], size: 0.25 },
+    ],
   });
 }
 
@@ -87,11 +87,11 @@ async function runSingleTestCase(filePath, inp, op) {
       let stdout = "";
       let stderr = "";
 
-      spawned_process.stdout.on("data", data => {
+      spawned_process.stdout.on("data", (data) => {
         stdout += data.toString();
       });
 
-      spawned_process.stderr.on("data", data => {
+      spawned_process.stderr.on("data", (data) => {
         stderr += data.toString();
       });
 
@@ -105,14 +105,14 @@ async function runSingleTestCase(filePath, inp, op) {
           resolve({
             evaluation: false,
             got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
-            time: time1 - time0
+            time: time1 - time0,
           });
         } else {
           if (stderr.length > 0) {
             resolve({
               evaluation: false,
               got: "STDERR:" + stderr,
-              time: (time1 = time0)
+              time: (time1 = time0),
             });
           } else {
             let stdout_fixed;
@@ -129,7 +129,7 @@ async function runSingleTestCase(filePath, inp, op) {
             resolve({
               evaluation: eval,
               got: stdout,
-              time: time1 - time0
+              time: time1 - time0,
             });
           }
         }
@@ -152,7 +152,7 @@ async function handleSingleTestcaseCommand(filePath, caseId, data) {
     resultsPanel.webview.postMessage({
       command: "singe-case-rerun-evaluation",
       evaluation: evaluation,
-      caseId: caseId
+      caseId: caseId,
     });
   }
 }
@@ -169,12 +169,12 @@ function startWebView() {
       vscode.ViewColumn.Beside,
       {
         enableScripts: true,
-        retainContextWhenHidden: true
+        retainContextWhenHidden: true,
       }
     );
     createLayout();
     // message from webview
-    resultsPanel.webview.onDidReceiveMessage(message => {
+    resultsPanel.webview.onDidReceiveMessage((message) => {
       switch (message.command) {
         case "save-and-rerun-all": {
           if (!message.filepath || message.filepath.length === 0) {
@@ -196,12 +196,12 @@ function startWebView() {
             console.log("From webview", message.filepath);
             vscode.workspace
               .openTextDocument(message.filepath)
-              .then(document => {
+              .then((document) => {
                 vscode.window
                   .showTextDocument(document, vscode.ViewColumn.One)
-                  .then(textEditor => {
+                  .then((textEditor) => {
                     // vscode.commands.executeCommand("extension.runCodeforcesTestcases");
-                    executePrimaryTask("no-webview-check")
+                    executePrimaryTask("no-webview-check");
                   });
               });
           } else {
@@ -244,7 +244,7 @@ function startWebView() {
             vscode.window.activeTextEditor.document.fileName
           ) {
             resultsPanel.webview.postMessage({
-              command: "save-and-run-all"
+              command: "save-and-run-all",
             });
           } else {
             executePrimaryTask("no-webview-check");
@@ -272,13 +272,13 @@ function startWebView() {
  */
 function appendProblemURLToFile(problemURL, callback) {
   const editor = vscode.window.activeTextEditor;
-  vscode.window.activeTextEditor.edit(editBuilder => {
+  vscode.window.activeTextEditor.edit((editBuilder) => {
     const document = editor.document;
     const position = new vscode.Position(0, 0);
     editBuilder.insert(position, "//" + problemURL + "\n");
     vscode.commands
       .executeCommand("workbench.action.files.save")
-      .then(response => {
+      .then((response) => {
         callback();
       });
   });
@@ -293,16 +293,16 @@ function testCasesHelper(filePath) {
     .showQuickPick(
       ["Download testcases from Codeforces", "Manually enter testcases"],
       {
-        placeHolder: "Choose one of the options to get testcases"
+        placeHolder: "Choose one of the options to get testcases",
       }
     )
-    .then(selection => {
+    .then((selection) => {
       if (selection === "Download testcases from Codeforces") {
         vscode.window
           .showInputBox({
-            placeHolder: "Enter the complete URL of the codeforces problem"
+            placeHolder: "Enter the complete URL of the codeforces problem",
           })
-          .then(async problemURL => {
+          .then(async (problemURL) => {
             if (!problemURL || problemURL == "" || problemURL == undefined) {
               return;
             }
@@ -337,7 +337,7 @@ function testCasesHelper(filePath) {
 function displayResults(result, isFinal, filepath) {
   startWebView();
   const onDiskPath = vscode.Uri.file(
-    path.join(latestContext.extensionPath, "frontend", "main.js")
+    path.join(latestContext.extensionPath, "src", "frontend", "main.js")
   );
   const jssrc = resultsPanel.webview.asWebviewUri(onDiskPath);
   let html = getWebviewContent(result, isFinal, jssrc, filepath);
@@ -359,14 +359,14 @@ async function executePrimaryTask(context) {
 
   if (resultsPanel && resultsPanel.webview && context != "no-webview-check") {
     resultsPanel.webview.postMessage({
-      command: "send-filepath"
+      command: "send-filepath",
     });
     return;
   }
 
   let cases;
   const extension = getExtension(filePath);
-  const extList = Object.values(config.extensions).map(ext => `.${ext}`);
+  const extList = Object.values(config.extensions).map((ext) => `.${ext}`);
   const extListPresentation = `${extList.slice(0, -1).join(", ")} or ${
     extList.slice(-1)[0]
   }`;
@@ -396,12 +396,12 @@ async function executePrimaryTask(context) {
     } catch (err) {
       let html = downloadCodeforcesPage(codeforcesURL);
       html
-        .then(string => {
-          const [inp, op] = parseCodeforces(string);
+        .then((string) => {
+          const [inp, op] = Codeforces(string);
           createTestacesFile(inp, op, getTestCaseLocation(filePath));
           runTestCases(0);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("Error", err);
         });
       return;
@@ -428,7 +428,7 @@ async function executePrimaryTask(context) {
     console.log("Writing to stdin for case number", caseNum);
 
     let tm = Date.now();
-    spawned_process.stdout.on("data", data => {
+    spawned_process.stdout.on("data", (data) => {
       if (stdoutlen > 10000) {
         startWebView();
         console.log("STDOUT length >10000");
@@ -454,7 +454,7 @@ async function executePrimaryTask(context) {
           output: ans.trim(),
           input: cases.inputs[caseNum].trim(),
           expected: cases.outputs[caseNum].trim(),
-          got: ans.trim()
+          got: ans.trim(),
         };
       } else {
         passed_cases[caseNum] = {
@@ -463,7 +463,7 @@ async function executePrimaryTask(context) {
           output: ans.trim(),
           input: cases.inputs[caseNum].trim(),
           expected: cases.outputs[caseNum].trim(),
-          got: ans.trim()
+          got: ans.trim(),
         };
       }
       if (caseNum == cases.numCases - 1) {
@@ -473,7 +473,7 @@ async function executePrimaryTask(context) {
         displayResults(passed_cases, false);
       }
     });
-    spawned_process.stderr.on("data", data => {
+    spawned_process.stderr.on("data", (data) => {
       console.error(`stderr: ${data}`);
       oc.clear();
       oc.appendLine("STDERR:");
@@ -499,7 +499,7 @@ async function executePrimaryTask(context) {
           output: `Runtime error. Exit signal ${signal}. "Exit" code ${code}.`,
           input: cases.inputs[caseNum].trim(),
           expected: cases.outputs[caseNum].trim(),
-          got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`
+          got: `Runtime error. Exit signal ${signal}. Exit code ${code}.`,
         };
         if (caseNum == cases.numCases - 1) {
           displayResults(passed_cases, true, filePath);
@@ -515,7 +515,7 @@ async function executePrimaryTask(context) {
             output: "",
             input: cases.inputs[caseNum].trim(),
             expected: cases.outputs[caseNum].trim(),
-            got: ""
+            got: "",
           };
           if (caseNum == cases.numCases - 1) {
             displayResults(passed_cases, true, filePath);
@@ -563,7 +563,7 @@ function activate(context) {
   latestContext = context;
   let disposable = vscode.commands.registerCommand(
     "extension.runCodeforcesTestcases",
-    function() {
+    function () {
       executePrimaryTask(context);
     }
   );
@@ -571,7 +571,7 @@ function activate(context) {
 
   let disposable2 = vscode.commands.registerCommand(
     "extension.showWorkspaceError",
-    function() {
+    function () {
       showWorkSpaceError();
     }
   );
@@ -584,5 +584,5 @@ function deactivate() {}
 
 module.exports = {
   activate,
-  deactivate
+  deactivate,
 };

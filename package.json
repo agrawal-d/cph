@@ -11,7 +11,7 @@
     "testcases"
   ],
   "version": "3.4.5",
-  "icon": "icon.png",
+  "icon": "img/icon.png",
   "engines": {
     "vscode": "^1.39.0"
   },
@@ -22,7 +22,7 @@
     "*"
   ],
   "publisher": "DivyanshuAgrawal",
-  "main": "dist/extension.js",
+  "main": "src/extension.js",
   "contributes": {
     "configuration": {
       "title": "Competitive Programming Helper",
