@@ -26,7 +26,7 @@ function firstTimeMessage() {
         <a class="btn" href="https://addons.mozilla.org/en-US/firefox/addon/competitive-companion/">Download for Firefox</a>
 
         <br>
-        Install and the go to its settings and enter port number <code>${config.port}</code>. Then, just click a button on any problem and auto create file and testcases!</li>
+        Install it for your browser. Then, just click a button on any problem and auto create file and testcases!</li>
 
         <li>Change your generated files location to prevent cluttering of your workspace.Go to VS Code Settings > Extensions > Competitive programming helper and enter any existing folder location where temp files will be saved.</li>
 
