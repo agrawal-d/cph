@@ -6,3 +6,4 @@ frontend/
 dist/
 dev/
 vsc-extension-quickstart.md
+.vscode
