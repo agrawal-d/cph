@@ -8,13 +8,13 @@ Supports tons of websites including AtCoder, Codeforces, Codechef, UVa Online Ju
 
 **Whats new :** Now supports Rust (experimental) and Python 3!
 
-![Extension Overview](screenshots/manual.gif)
+![Extension Overview](img/manual.gif)
 Manual Usage
 
 ## Competitive Companion support
 
-![Extension Overview](screenshots/companion.gif)
-Click on the ![Green plus](screenshots/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and [set it up](#competitive-companion-setup).
+![Extension Overview](img/companion.gif)
+Click on the ![Green plus](img/companion.png) on your browser address bar to automatically download testcases and create .cpp file. You need to install the competitive companion extension to use this, and [set it up](#competitive-companion-setup).
 
 ### Tips
 
@@ -22,7 +22,7 @@ Click on the ![Green plus](screenshots/companion.png) on your browser address ba
 - You can choose additional compiler flags and save location from VSCode settings.
 - You can choose a default language that will be used when you import a problem through Competitive Companion from VSCode settings.
 
-![Settings](screenshots/settings.gif)
+![Settings](img/settings.gif)
 Change settings to hoose custom compiler flags and testcase/binary save location and more.
 
 ## Competitive Companion Setup
@@ -35,7 +35,7 @@ It is simple to use Competitive Companion with this extenison.
 
 ## How to use
 
-- Click on the ![Run testcases button](screenshots/run_testcases.png) button on the bottom left of VSCode.
+- Click on the ![Run testcases button](img/run_testcases.png) button on the bottom left of VSCode.
 
 - Or Type `Ctrl+ Shift + P` and select "_Run Testcases Command_".
 
