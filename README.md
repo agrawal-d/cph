@@ -34,9 +34,8 @@ of popular websites like Codeforces, Codechef, TopCoder etc.
 -   Autmatic compilation with display for compilation errors.
 -   Intelligent judge with support for signals, time outs and run time errors.
 -   Works with Competitive Companion.
--   Works locally for you own problems.
+-   Works locally for your own problems.
 -   Support for several languages.
--   Improve the documentation.
 
 ## Supported Languages
 
