@@ -1,0 +1,248 @@
+* {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+    cursor: default !important;
+    box-sizing: border-box;
+}
+.selectable {
+    -webkit-touch-callout: text; /* iOS Safari */
+    -webkit-user-select: text; /* Safari */
+    -khtml-user-select: text; /* Konqueror HTML */
+    -moz-user-select: text; /* Firefox */
+    -ms-user-select: text; /* Internet Explorer/Edge */
+    user-select: text; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+    cursor: text !important;
+}
+body {
+    margin-bottom: 100px;
+    padding: 0px;
+}
+.btn:hover {
+    opacity: 0.8;
+}
+.actions {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    padding: 15px;
+    background: var(--vscode-sideBar-background);
+    box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.3);
+}
+.case {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    margin-bottom: 2px;
+}
+
+.exec-time {
+    background: #fbff001c;
+    color: white;
+    padding: 2px 5px 2px 5px;
+    font-size: 80%;
+    border-radius: 5px;
+}
+
+a.btn {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.first-time-message {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.1);
+}
+.first-time-message ul li {
+    margin-bottom: 10px;
+}
+.pre,
+pre,
+textarea {
+    background: var(--input-background);
+    width: 100%;
+    display: block;
+    background: rgba(0, 0, 0, 0.2);
+    outline: none !important;
+    border: 0px;
+    color: bisque;
+    max-width: 100%;
+    max-height: 250px !important;
+    overflow-y: auto;
+    resize: none;
+    border: 1px solid transparent;
+    box-sizing: content-box !important;
+    margin-bottom: 4px;
+}
+
+.clearfix {
+    clear: both;
+    content: '';
+    width: 100%;
+    display: block;
+}
+
+::-webkit-resizer {
+    display: none;
+}
+textarea:focus,
+textarea:active {
+    background: black;
+    outline: none !important;
+    border: 1px solid #3393cc;
+}
+
+.case-number {
+    font-weight: bold;
+    font-size: 1.15em;
+    color: rgb(25, 152, 211);
+}
+
+.case-metadata {
+    margin-bottom: 5px;
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
+}
+
+.time {
+    color: rgb(185, 185, 84);
+}
+
+.fail {
+    color: rgb(126, 38, 38);
+}
+
+.pass {
+    color: rgb(37, 87, 37);
+}
+.btn {
+    padding: 2px 5px 2px 5px;
+    background: #3393cc91;
+    color: white;
+    outline: none;
+    margin-right: 4px;
+    margin-bottom: 5px;
+    border: 2px solid transparent;
+}
+.btn-green {
+    background: #70b92791;
+}
+.btn-red {
+    background: #b9274391;
+}
+.btn:focus {
+    border-color: pink;
+}
+.btn-orange {
+    background: orange;
+}
+
+.w-80 {
+    width: 80px;
+}
+
+h4 {
+    padding: 5px;
+}
+#filepath {
+    display: none;
+}
+#running-next-box {
+    padding: 10px;
+}
+body.vscode-light * {
+    color: black !important;
+}
+body.vscode-light textarea,
+pre {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid whitesmoke !important;
+}
+
+body.vscode-light .case {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+body.vscode-light textarea:focus {
+    background: rgba(0, 0, 0, 0.2);
+    outline: none !important;
+    border: 1px solid lightblue;
+}
+
+button:disabled {
+    background: rgb(66, 66, 66) !important;
+    opacity: 0.1 !important;
+}
+
+#problem,
+#results {
+    display: none;
+}
+
+.result-data {
+    font-size: 1.15em;
+    margin-left: 5px;
+}
+
+.result-pass {
+    color: greenyellow;
+    padding-right: 5px;
+}
+.result-fail {
+    color: orangered;
+    padding-right: 5px;
+}
+.running-text {
+    color: yellow;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-size: 1.15em;
+}
+
+.problem-name {
+    font-size: 18px;
+    margin: 5px;
+    padding: 10px;
+}
+
+.case {
+    border-left: 5px solid var(--vscode-input-background);
+    border-radius: 5px;
+}
+
+.case.running {
+    /* animation: runs 1s linear infinite; */
+    border-color: yellow;
+}
+
+.case.passed {
+    border-left-color: green;
+}
+
+.case.failed {
+    border-left-color: orangered;
+}
+
+.signal {
+    padding: 4px;
+}
+
+/* @keyframes runs {
+    50% {
+        border-color: orange;
+    }
+    100% {
+        border-color: var(--input-background);
+    }
+} */
