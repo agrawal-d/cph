@@ -1,6 +1,6 @@
 # Competitive Programming Helper (cph)
 
-![CI Tests](https://github.com/agrawal-d/competitive-programming-helper/workflows/CI%20Tests/badge.svg)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=master)
 
 Quickly compile, run and judge competitive programming problems. Add testcases
 manually or Download automatically. A VS Code extension.
@@ -31,27 +31,27 @@ of popular websites like Codeforces, Codechef, TopCoder etc.
 
 ## Features
 
-- Autmatic compilation with display for compilation errors.
-- Intelligent judge with support for signals, time outs and run time errors.
-- Works with Competitive Companion.
-- Works locally for you own problems.
-- Support for several languages.
-- Improve the documentation.
+-   Autmatic compilation with display for compilation errors.
+-   Intelligent judge with support for signals, time outs and run time errors.
+-   Works with Competitive Companion.
+-   Works locally for you own problems.
+-   Support for several languages.
+-   Improve the documentation.
 
 ## Supported Languages
 
-- C++
-- C
-- Rust
-- Python
+-   C++
+-   C
+-   Rust
+-   Python
 
 ## Contributing
 
 You can contribute to this extension in many ways:
 
-- File bug repots by creating issues.
-- Develop this extension further - see [developer giude](docs/dev-guide.md).
-- Spreading the word about this extension.
+-   File bug repots by creating issues.
+-   Develop this extension further - see [developer giude](docs/dev-guide.md).
+-   Spreading the word about this extension.
 
 ## License
 
