@@ -12,7 +12,8 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
-			]
+			],
+			"preLaunchTask": "npm: webpack",
 		},
 		{
 			"name": "Extension Tests",
