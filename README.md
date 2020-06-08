@@ -1,5 +1,7 @@
 # Competitive Programming Helper (cph)
 
+![CI Tests](https://github.com/agrawal-d/competitive-programming-helper/workflows/CI%20Tests/badge.svg)
+
 Quickly compile, run and judge competitive programming problems. Add testcases
 manually or Download automatically. A VS Code extension.
 
