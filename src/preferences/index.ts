@@ -2,9 +2,7 @@ import { workspace } from 'vscode';
 import type { prefSection } from '../types';
 
 const getPreference = (section: prefSection): any => {
-    const ret = workspace
-        .getConfiguration('competitive-programming-helper')
-        .get(section);
+    const ret = workspace.getConfiguration('cph').get(section);
 
     console.log('Read preference for ', section, ret);
     return ret;
@@ -37,7 +35,7 @@ export const getFirstTimePref = (): boolean =>
 
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('defaultLanguage');
-    if (pref === 'none') {
+    if (pref === 'none' || pref == ' ' || !pref) {
         return null;
     }
     return pref;

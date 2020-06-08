@@ -54,12 +54,12 @@ export function activate(context: vscode.ExtensionContext) {
     setupCompanionServer();
     checkLaunchWebview(context);
 
-    vscode.window.onDidChangeActiveTextEditor((e) => {
-        editorChanged(e, context);
-    });
-
     vscode.workspace.onDidCloseTextDocument((e) => {
         editorClosed(e, context);
+    });
+
+    vscode.window.onDidChangeActiveTextEditor((e) => {
+        editorChanged(e, context);
     });
 
     return;
