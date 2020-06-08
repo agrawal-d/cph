@@ -5,9 +5,9 @@ the competitive programming helper extension (cph).
 
 ## Sections
 
-[User Guide](user_guide.md)
+[User Guide](user-guide.md)
 
-[Developer Guide](developer_guide.md)
+[Developer Guide](dev-guide.md)
 
 [Get Support](suppport.md)
 
