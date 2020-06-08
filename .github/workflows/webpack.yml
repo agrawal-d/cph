@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm install -g webpack
+      - run: npm install -g webpack-cli
       - run: npm run webpack-production
 # For help, see
 #See also https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
