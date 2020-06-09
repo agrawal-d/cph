@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.0.2
+
+-   Fix webview resources loading.
+
+## 4.0.1
+
+-   Fox conflicts with previous releases.
+
 ## 4.0.0
 
 -   Complete migration to typescript
