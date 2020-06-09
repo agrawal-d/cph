@@ -5,6 +5,7 @@ import path from 'path';
 import { runSingleAndSave } from './runSingleAndSave';
 import { saveProblem } from '../parser';
 import runAllAndSave from './runAllAndSave';
+import { readFileSync } from 'fs';
 
 let resultsPanel: vscode.WebviewPanel | undefined;
 let problemName = '';
@@ -118,25 +119,34 @@ export const setBaseWebViewHTML = async (
         console.error('Webview us undefined');
         throw new Error('Webview is undefined');
     }
-    const appScript = getExtensionResource(
-        context,
-        'dist',
-        'frontend.module.js',
-    );
-    const appCss = getExtensionResource(context, 'dist', 'app.css');
+    // Current VS Implementation is buggy. Revert when it's fixed. For now, read
+    // using fs. PREV: const appScript = getExtensionResource(context, 'dist',
+    // 'frontend.module.js',
+    // );
+    // const appCss = getExtensionResource(context, 'dist', 'app.css');
+    const css = readFileSync(
+        path.join(context.extensionPath, 'dist', 'app.css'),
+    ).toString();
+    const frontendModule = readFileSync(
+        path.join(context.extensionPath, 'dist', 'frontend.module.js'),
+    ).toString();
     const html = `
 <!DOCTYPE html lang="EN">
 <html>
 <head>
-<link rel="stylesheet" href="${appCss}">
+<style>
+${css}
+</style>
 <meta charset="UTF-8" />
 </head>
 <body>
 <div id="problem" hidden>
 ${JSON.stringify(problem)}
 </div>
-<div id="app">An error occurred. Please reopen the file.</div>
-<script src="${appScript}"></script>
+<div id="app">An error occurred! Please reopen the source code file. ( Ctrl+W then Ctrl+Shift+T )</div>
+<script>
+${frontendModule}
+</script>
 </body>
 </html>
 `;
