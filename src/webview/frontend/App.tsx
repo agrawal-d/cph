@@ -250,16 +250,13 @@ function App() {
             <div className="results">{views}</div>
             <div className="actions">
                 <button className="btn btn-orange" onClick={runAll}>
-                    ▶️ Run All
+                    ↺ Run All
                 </button>
                 <button className="btn" onClick={newCase}>
-                    ➕ New
+                    + New
                 </button>
                 <button className="btn btn-red" onClick={stop}>
-                    🛑 Stop
-                </button>
-                <button className="btn btn-green" onClick={save}>
-                    💾 Save
+                    ⊗ Stop
                 </button>
             </div>
         </div>
