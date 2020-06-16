@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.3
+
+-   Fix problem with immediately exiting processes.
+
 ## 4.0.2
 
 -   Fix webview resources loading.
