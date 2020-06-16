@@ -77,7 +77,7 @@ const createLocalProblem = async (
     }
 
     const newProblem: Problem = {
-        name: path.basename(srcPath).split('.')[0],
+        name: 'Local: ' + path.basename(srcPath).split('.')[0],
         url: srcPath,
         tests: [
             {

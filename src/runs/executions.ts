@@ -65,7 +65,14 @@ export const runTestCase = (
             result.stdout += data;
         });
         process.stderr.on('data', (data) => (result.stderr += data));
-        process.stdin.write(input);
+
+        console.log('Wrote to STDIN');
+        try {
+            process.stdin.write(input);
+        } catch (err) {
+            console.error('WRITEERROR', err);
+        }
+
         process.stdin.end();
         process.on('error', (err) => {
             const end = Date.now();
