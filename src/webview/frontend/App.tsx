@@ -248,6 +248,9 @@ function App() {
                 <h1 className="problem-name">{problem.name}</h1>
             </div>
             <div className="results">{views}</div>
+            <button className="btn margin-10" onClick={newCase}>
+                + New Testcase
+            </button>
             <div className="actions">
                 <button className="btn btn-orange" onClick={runAll}>
                     ↺ Run All

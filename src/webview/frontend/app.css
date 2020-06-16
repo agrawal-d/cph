@@ -153,6 +153,10 @@ textarea:active {
     text-align: center;
 }
 
+.margin-10 {
+    margin: 10px;
+}
+
 h4 {
     padding: 5px;
 }
