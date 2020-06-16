@@ -38,6 +38,11 @@
                     "default": "",
                     "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
                 },
+                "cph.timeOut": {
+                    "type": "number",
+                    "default": 3000,
+                    "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
+                },
                 "cph.argsC": {
                     "title": "Compilation flags for .c files",
                     "type": "string",
@@ -51,10 +56,10 @@
                     "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
                 },
                 "cph.argsPython": {
-                    "title": "Compilation flags for Python 3",
+                    "title": "Compilation flags for Python",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to python3 while compiling your file. Example '-Wignore -u'"
+                    "description": "Space seperated additional flags passed to python while compiling your file. Example '-Wignore -u'"
                 },
                 "cph.argsRust": {
                     "title": "Compilation flags for Rust",

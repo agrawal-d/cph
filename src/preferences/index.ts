@@ -16,7 +16,7 @@ export const updatePreference = (section: prefSection, value: any) => {
 
 export const getSaveLocationPref = (): string => getPreference('saveLocation');
 
-export const getTimeOutPref = (): number => getPreference('runTimeOut') || 3000;
+export const getTimeOutPref = (): number => getPreference('timeOut') || 3000;
 
 export const getCppArgsPref = (): string[] =>
     getPreference('argsCpp').split(' ') || [];

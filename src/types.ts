@@ -2,7 +2,7 @@
 export type prefSection =
     | 'saveLocation'
     | 'defaultLanguage'
-    | 'runTimeOut'
+    | 'timeOut'
     | 'argsC'
     | 'argsCpp'
     | 'argsRust'

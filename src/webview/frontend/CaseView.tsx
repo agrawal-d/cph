@@ -17,10 +17,10 @@ export default function CaseView(props: {
 }) {
     const { id, result } = props.case;
 
-    const [input, useInput] = useState<string>(props.case.testcase.input);
-    const [output, useOutput] = useState<string>(props.case.testcase.output);
-    const [running, useRuning] = useState<boolean>(false);
-    const [minimized, useMinimized] = useState<boolean>(
+    const [input, setInput] = useState<string>(props.case.testcase.input);
+    const [output, setOutput] = useState<string>(props.case.testcase.output);
+    const [running, setRunning] = useState<boolean>(false);
+    const [minimized, setMinimized] = useState<boolean>(
         props.case.result?.pass === true,
     );
     const inputBox = createRef<HTMLTextAreaElement>();
@@ -39,49 +39,51 @@ export default function CaseView(props: {
     useEffect(() => {
         if (props.forceRunning) {
             console.log('Case was forced to run!');
-            useRuning(true);
+            setRunning(true);
         }
     }, [props.forceRunning]);
 
     const handleInputChange = (
         event: React.ChangeEvent<HTMLTextAreaElement>,
     ) => {
-        useInput(event.target.value);
+        setInput(event.target.value);
     };
 
     const handleOutputChange = (
         event: React.ChangeEvent<HTMLTextAreaElement>,
     ) => {
-        useOutput(event.target.value);
+        setOutput(event.target.value);
     };
 
     const rerun = () => {
-        useRuning(true);
+        setRunning(true);
         props.rerun(id, input, output);
     };
 
     const expand = () => {
-        useMinimized(false);
+        setMinimized(false);
     };
 
     const minimize = () => {
-        useMinimized(true);
+        setMinimized(true);
     };
+
+    const toggle = () => (minimized ? expand() : minimize());
 
     useEffect(() => {
         if (props.case.result !== null) {
-            useRuning(false);
-            props.case.result.pass ? useMinimized(true) : useMinimized(false);
+            setRunning(false);
+            props.case.result.pass ? setMinimized(true) : setMinimized(false);
         }
     }, [props.case.result]);
 
     useEffect(() => {
         if (running === true) {
-            useMinimized(true);
+            setMinimized(true);
         }
     }, [running]);
 
-    let resultText;
+    let resultText = '';
     // Handle several cases for result text
     if (result?.signal) {
         resultText = result?.signal;
@@ -101,7 +103,7 @@ export default function CaseView(props: {
     return (
         <div className={caseClassName}>
             <div className="case-metadata">
-                <div className="left">
+                <div className="left" onClick={toggle}>
                     <div className="case-number left">Testcase {props.num}</div>
                     {running && <span className="running-text">Running</span>}
                     {result && !running && (
@@ -147,7 +149,7 @@ export default function CaseView(props: {
                     )}
                     {!minimized && (
                         <button
-                            className="btn w80"
+                            className="btn btn-w80"
                             onClick={minimize}
                             title="Minimize"
                         >
@@ -176,7 +178,7 @@ export default function CaseView(props: {
                     Received Output:
                     <TextareaAutosize
                         className="selectable received-textarea"
-                        value={resultText}
+                        value={trunctateStdout(resultText)}
                         readOnly
                     />
                 </>
@@ -184,3 +186,11 @@ export default function CaseView(props: {
         </div>
     );
 }
+
+/** Limit string length to 100,000. */
+const trunctateStdout = (stdout: string): string => {
+    if (stdout.length > 100000) {
+        stdout = '[Truncated]\n' + stdout.substr(0, 100000);
+    }
+    return stdout;
+};

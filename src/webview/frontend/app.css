@@ -148,8 +148,9 @@ textarea:active {
     background: orange;
 }
 
-.w-80 {
-    width: 80px;
+.btn-w80 {
+    width: 30px;
+    text-align: center;
 }
 
 h4 {
