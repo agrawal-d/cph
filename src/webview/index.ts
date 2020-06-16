@@ -23,7 +23,8 @@ const createLayout = (): Thenable<void> => {
     });
 };
 
-export const initializeWebView = (): void => {
+/** Create and show a webview panel ( but without content ) */
+const initializeWebView = (): void => {
     console.log('Initializing webview');
     resultsPanel = vscode.window.createWebviewPanel(
         'evalResults',
@@ -88,6 +89,7 @@ const setupListnersWebViewToExtension = (): void => {
  */
 export const startWebVeiwIfNotActive = async () => {
     if (resultsPanel === undefined) {
+        console.log('Starting webview');
         initializeWebView();
         await createLayout();
         setupListnersWebViewToExtension();
