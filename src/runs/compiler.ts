@@ -3,6 +3,7 @@ import { Language } from '../types';
 import { spawn } from 'child_process';
 import path from 'path';
 import { getSaveLocationPref } from '../preferences';
+import { extensionToWebWiewMessage } from '../webview';
 
 /**
  *  Get the location to save the generated binary in. If save location is
@@ -65,6 +66,9 @@ const getFlags = (language: Language, srcPath: string): string[] => {
  */
 export const compileFile = (srcPath: string): Promise<boolean> => {
     console.log('Compilation Started');
+    extensionToWebWiewMessage({
+        command: 'compiling-start',
+    });
     ocHide();
     const language: Language = getLanguage(srcPath);
     if (language.skipCompile) {
@@ -86,9 +90,15 @@ export const compileFile = (srcPath: string): Promise<boolean> => {
                 ocShow();
                 console.error('Compilation failed');
                 resolve(false);
+                extensionToWebWiewMessage({
+                    command: 'compiling-stop',
+                });
                 return;
             }
             console.log('Compilation passed');
+            extensionToWebWiewMessage({
+                command: 'compiling-stop',
+            });
             resolve(true);
             return;
         });
