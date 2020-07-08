@@ -4,6 +4,7 @@ import { spawn } from 'child_process';
 import path from 'path';
 import { getSaveLocationPref } from '../preferences';
 import { extensionToWebWiewMessage } from '../webview';
+import * as vscode from 'vscode';
 
 /**
  *  Get the location to save the generated binary in. If save location is
@@ -66,18 +67,26 @@ const getFlags = (language: Language, srcPath: string): string[] => {
  */
 export const compileFile = (srcPath: string): Promise<boolean> => {
     console.log('Compilation Started');
-    extensionToWebWiewMessage({
-        command: 'compiling-start',
-    });
     ocHide();
     const language: Language = getLanguage(srcPath);
     if (language.skipCompile) {
         return Promise.resolve(true);
     }
+    extensionToWebWiewMessage({
+        command: 'compiling-start',
+    });
     const flags: string[] = getFlags(language, srcPath);
     console.log('Compiling with flags', flags);
     const result = new Promise<boolean>((resolve) => {
-        const compiler = spawn(language.compiler, flags);
+        let compiler;
+        try {
+            compiler = spawn(language.compiler, flags);
+        } catch (err) {
+            vscode.window.showErrorMessage(
+                `Could not launch the compiler ${language.compiler}. Is it installed?`,
+            );
+            throw err;
+        }
         let error = '';
 
         compiler.stderr.on('data', (data) => {

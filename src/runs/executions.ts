@@ -3,6 +3,7 @@ import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { platform } from 'os';
 import config from '../config';
 import { getTimeOutPref } from '../preferences';
+import * as vscode from 'vscode';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
@@ -35,18 +36,23 @@ export const runTestCase = (
     }, getTimeOutPref());
 
     // Start the binary or the interpreter.
-    switch (language.name) {
-        case 'python': {
-            process = spawn(
-                language.compiler, // 'python3' or 'python' TBD
-                [binPath, ...language.args],
-                spawnOpts,
-            );
-            break;
+    try {
+        switch (language.name) {
+            case 'python': {
+                process = spawn(
+                    language.compiler, // 'python3' or 'python' TBD
+                    [binPath, ...language.args],
+                    spawnOpts,
+                );
+                break;
+            }
+            default: {
+                process = spawn(binPath, spawnOpts);
+            }
         }
-        default: {
-            process = spawn(binPath, spawnOpts);
-        }
+    } catch (err) {
+        vscode.window.showErrorMessage('Could not spawn testcase process.\n');
+        throw err;
     }
 
     const begin = Date.now();
