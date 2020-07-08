@@ -243,6 +243,9 @@ button:disabled {
     padding: 4px;
 }
 
+.compiling {
+    color: orange;
+}
 /* @keyframes runs {
     50% {
         border-color: orange;

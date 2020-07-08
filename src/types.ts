@@ -94,6 +94,14 @@ export type ResultCommand = {
     result: RunResult;
 } & WebviewMessageCommon;
 
+export type CompilingStartCommand = {
+    command: 'compiling-start';
+};
+
+export type CompilingStopCommand = {
+    command: 'compiling-stop';
+};
+
 export type RunAllInWebViewCommand = {
     command: 'run-all';
 };
@@ -101,4 +109,6 @@ export type RunAllInWebViewCommand = {
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
-    | RunAllInWebViewCommand;
+    | RunAllInWebViewCommand
+    | CompilingStartCommand
+    | CompilingStopCommand;

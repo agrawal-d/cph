@@ -36,8 +36,9 @@ function App() {
         getCasesFromProblem(getProblemFromDOM()),
     );
     const [focusLast, useFocusLast] = useState<boolean>(false);
-    1;
     const [forceRunning, useForceRunning] = useState<number | false>(false);
+    const [compiling, setCompiling] = useState<boolean>(false);
+    const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
 
     // Update problem if cases change. The only place where `useProblem` is
     // allowed to ensure sync.
@@ -66,6 +67,14 @@ function App() {
                 }
                 case 'run-all': {
                     runAll();
+                    break;
+                }
+                case 'compiling-start': {
+                    setCompiling(true);
+                    break;
+                }
+                case 'compiling-stop': {
+                    setCompiling(false);
                     break;
                 }
                 default: {
@@ -123,8 +132,15 @@ function App() {
 
     // Save problem if it changes.
     useEffect(() => {
-        save();
-        console.log('Saved', problem);
+        if (deferSaveTimer === null) {
+            console.log('Setting timer');
+            setDeferSaveTimer(
+                window.setTimeout(() => {
+                    save();
+                    setDeferSaveTimer(null);
+                }, 400),
+            );
+        }
     }, [problem]);
 
     // Create a new Case
@@ -149,6 +165,7 @@ function App() {
 
     // Save the problem
     const save = () => {
+        console.log('Saved problem');
         vscodeApi.postMessage({
             command: 'save',
             problem,
@@ -245,7 +262,10 @@ function App() {
     return (
         <div className="ui">
             <div className="meta">
-                <h1 className="problem-name">{problem.name}</h1>
+                <h1 className="problem-name">
+                    {problem.name}{' '}
+                    {compiling && <b className="compiling">Compiling</b>}
+                </h1>
             </div>
             <div className="results">{views}</div>
             <button className="btn margin-10" onClick={newCase}>
