@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.0
+
+-   Improved large testcase editing performance by defering saves.
+-   Suffix problem names with MD5 hashes to prevent same-name-collisions.
+-   OS specific deletion bug fixes.
+-   Show compilation status in UI.
+
 ## 4.0.3
 
 -   Fix problem with immediately exiting processes.
