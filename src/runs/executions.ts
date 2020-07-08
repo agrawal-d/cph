@@ -1,7 +1,9 @@
 import { Language, Run } from '../types';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
+import { platform } from 'os';
 import config from '../config';
 import { getTimeOutPref } from '../preferences';
+
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
 /**
@@ -98,8 +100,15 @@ export const deleteBinary = (language: Language, binPath: string) => {
         return;
     }
     console.log('Deleting binary', binPath);
-    spawn('rm', [binPath]);
-    spawn('del', [binPath]);
+    try {
+        if (platform() == 'linux') {
+            spawn('rm', [binPath]);
+        } else {
+            spawn('del', [binPath]);
+        }
+    } catch (err) {
+        console.error('Error while deleting binary', err);
+    }
 };
 
 /** Kill all running binaries. Usually, only one should be running at a time. */
