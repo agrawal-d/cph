@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { Problem } from '../types';
 import { getSaveLocationPref } from '../preferences';
+import crypto from 'crypto';
 
 /**
  *  Get the location (file path) to save the generated problem file in. If save
@@ -13,11 +14,21 @@ import { getSaveLocationPref } from '../preferences';
 export const getProbSaveLocation = (srcPath: string): string => {
     const savePreference = getSaveLocationPref();
     const srcFileName = path.basename(srcPath);
-    const binFileName = `${srcFileName}.prob`;
+    const srcFolder = path.dirname(srcPath);
+    const hash = crypto
+        .createHash('md5')
+        .update(srcPath)
+        .digest('hex')
+        .substr(0);
+    const baseProbName = `.${srcFileName}_${hash}.prob`;
+    const cphFolder = path.join(srcFolder, '.cph');
     if (savePreference && savePreference !== '') {
-        return path.join(savePreference, binFileName);
+        return path.join(savePreference, baseProbName);
     }
-    return `${srcPath}.prob`;
+    if (!fs.existsSync(cphFolder)) {
+        fs.mkdirSync(cphFolder);
+    }
+    return path.join(cphFolder, baseProbName);
 };
 
 /** Get the problem for a source, `null` if does not exist on the filesystem. */
