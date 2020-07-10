@@ -7,6 +7,7 @@ export type prefSection =
     | 'argsCpp'
     | 'argsRust'
     | 'argsPython'
+    | 'argsJava'
     | 'defaultLanguage'
     | 'firstTime'
     | 'languageIdCpp'
@@ -22,7 +23,7 @@ export type Language = {
     skipCompile: boolean;
 };
 
-export type LangNames = 'python' | 'c' | 'cpp' | 'rust';
+export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java';
 
 export type TestCase = {
     input: string;
