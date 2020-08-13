@@ -36,24 +36,26 @@ export const runTestCase = (
     }, getTimeOutPref());
 
     // Start the binary or the interpreter.
-    try {
-        switch (language.name) {
-            case 'python': {
-                process = spawn(
-                    language.compiler, // 'python3' or 'python' TBD
-                    [binPath, ...language.args],
-                    spawnOpts,
-                );
-                break;
-            }
-            default: {
-                process = spawn(binPath, spawnOpts);
-            }
+    switch (language.name) {
+        case 'python': {
+            process = spawn(
+                language.compiler, // 'python3' or 'python' TBD
+                [binPath, ...language.args],
+                spawnOpts,
+            );
+            break;
         }
-    } catch (err) {
-        vscode.window.showErrorMessage('Could not spawn testcase process.\n');
-        throw err;
+        default: {
+            process = spawn(binPath, spawnOpts);
+        }
     }
+
+    process.on('error', (err) => {
+        console.error(err);
+        vscode.window.showErrorMessage(
+            `Could not launch testcase process. Is '${language.compiler}' in your PATH?`,
+        );
+    });
 
     const begin = Date.now();
     const ret: Promise<Run> = new Promise((resolve) => {
