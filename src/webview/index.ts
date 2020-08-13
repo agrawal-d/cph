@@ -6,6 +6,7 @@ import { runSingleAndSave } from './runSingleAndSave';
 import { saveProblem } from '../parser';
 import runAllAndSave from './runAllAndSave';
 import { readFileSync } from 'fs';
+import { deleteProblemFile } from '../utils';
 
 let resultsPanel: vscode.WebviewPanel | undefined;
 let problemName = '';
@@ -76,6 +77,13 @@ const setupListnersWebViewToExtension = (): void => {
                     killRunning();
                     break;
                 }
+
+                case 'delete-tcs': {
+                    closeWebVeiw();
+                    deleteProblemFile(message.problem.srcPath);
+                    break;
+                }
+
                 default: {
                     console.error('Unknown event received from webview');
                 }

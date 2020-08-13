@@ -9,6 +9,9 @@ import {
 } from '../preferences';
 import { Language } from '../types';
 import { Url } from 'url';
+import { getProbSaveLocation } from '../parser';
+import { platform } from 'os';
+import { spawn } from 'child_process';
 
 const oc = vscode.window.createOutputChannel('coconsttitive');
 
@@ -103,4 +106,18 @@ export const checkUnsupported = (srcPath: string): boolean => {
         return true;
     }
     return false;
+};
+
+/** Deletes the .prob problem file for a given source code path. */
+export const deleteProblemFile = (srcPath: string) => {
+    const probPath = getProbSaveLocation(srcPath);
+    try {
+        if (platform() === 'win32') {
+            spawn('del', [probPath]);
+        } else {
+            spawn('rm', [probPath]);
+        }
+    } catch (error) {
+        console.error('Error while deleting problem file ', error);
+    }
 };

@@ -180,6 +180,14 @@ function App() {
         });
     };
 
+    // Deletes the .prob file and closes webview
+    const deleteTcs = () => {
+        vscodeApi.postMessage({
+            command: 'delete-tcs',
+            problem,
+        });
+    };
+
     const runAll = () => {
         console.log(problem);
         vscodeApi.postMessage({
@@ -272,14 +280,17 @@ function App() {
                 + New Testcase
             </button>
             <div className="actions">
-                <button className="btn btn-orange" onClick={runAll}>
+                <button className="btn" onClick={runAll}>
                     ↺ Run All
                 </button>
-                <button className="btn" onClick={newCase}>
+                <button className="btn btn-green" onClick={newCase}>
                     + New
                 </button>
-                <button className="btn btn-red" onClick={stop}>
+                <button className="btn btn-orange" onClick={stop}>
                     ⊗ Stop
+                </button>
+                <button className="btn btn-red right" onClick={deleteTcs}>
+                    ☠ Delete
                 </button>
             </div>
         </div>

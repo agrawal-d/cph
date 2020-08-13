@@ -78,11 +78,16 @@ export type SaveCommand = {
     command: 'save';
 } & WebviewMessageCommon;
 
+export type DeleteTcsCommand = {
+    command: 'delete-tcs';
+} & WebviewMessageCommon;
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | RunSingleCommand
     | KillRunningCommand
-    | SaveCommand;
+    | SaveCommand
+    | DeleteTcsCommand;
 
 export type RunningCommand = {
     command: 'running';
