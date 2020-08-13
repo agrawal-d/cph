@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.2.0
+
+-   Shows error if unable to spawn compiler/interpreter.
+-   Ability to delete a testcase file permanently.
+
 ## 4.1.0
 
 -   Improved large testcase editing performance by defering saves.
