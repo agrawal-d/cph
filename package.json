@@ -5,7 +5,7 @@
     "license": "MIT",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "4.3.0",
+    "version": "4.3.1",
     "engines": {
         "vscode": "^1.45.0"
     },
@@ -35,7 +35,7 @@
                 "command": "cph.runTestCases"
             },
             {
-                "key": "ctrl+alt+b",
+                "key": "ctrl+alt+s",
                 "command": "cph.submitToCodeForces"
             }
         ],
