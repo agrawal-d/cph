@@ -1,18 +1,42 @@
 import http from 'http';
 import config from '../config';
-import { Problem } from '../types';
+import { Problem, CphSubmitResponse, CphEmptyResponse } from '../types';
 import { saveProblem } from '../parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync } from 'fs';
+import { writeFileSync, readFileSync } from 'fs';
 import { startWebVeiwIfNotActive, setBaseWebViewHTML } from '../webview';
 import { randomId } from '../utils';
 import { getDefaultLangPref } from '../preferences';
 
+const emptyResponse: CphEmptyResponse = { empty: true };
+let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
+
+/** Stores a response to be submitted to CF page soon. */
+export const storeSubmitProblem = (problem: Problem) => {
+    const srcPath = problem.srcPath;
+    const parts = problem.url.split('/');
+    const len = parts.length;
+    const problemName = parts[len - 2] + parts[len - 1];
+    const sourceCode = readFileSync(srcPath).toString();
+    const languageId = 54; // "G++ 17";
+
+    savedResponse = {
+        empty: false,
+        problemName,
+        sourceCode,
+        languageId,
+    };
+
+    console.log('Stored savedResponse', savedResponse);
+};
+
 export const setupCompanionServer = () => {
     try {
         const server = http.createServer((req, res) => {
+            const { headers } = req;
             let rawProblem = '';
+
             req.on('readable', function () {
                 console.log('Companion server got data');
                 const tmp = req.read();
@@ -25,7 +49,14 @@ export const setupCompanionServer = () => {
                 handleNewProblem(problem);
                 console.log('Companion server closed connection.');
             });
-            res.write('OK');
+            res.write(JSON.stringify(savedResponse));
+            if (headers['cph-submit'] == 'true') {
+                console.log(
+                    'Request was from the cph-submit extension; sending savedResponse and clearing it',
+                    savedResponse,
+                );
+                savedResponse = emptyResponse;
+            }
             res.end();
         });
         server.listen(config.port);

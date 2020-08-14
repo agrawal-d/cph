@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.0
+
+-   cph-sumbit integration for directly submitting to CodeForces.
+
 ## 4.2.0
 
 -   Shows error if unable to spawn compiler/interpreter.

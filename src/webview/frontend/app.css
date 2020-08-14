@@ -126,6 +126,12 @@ textarea:active {
 .pass {
     color: rgb(37, 87, 37);
 }
+
+.pad-10 {
+    padding: 10px;
+    background: #9eabec0d;
+}
+
 .btn {
     padding: 2px 5px 2px 5px;
     background: #3393cc91;
@@ -146,6 +152,10 @@ textarea:active {
 }
 .btn-orange {
     background: orange;
+}
+
+.btn-submit {
+    margin: 10px;
 }
 
 .btn-w80 {

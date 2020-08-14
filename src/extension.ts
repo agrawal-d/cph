@@ -6,6 +6,7 @@ import {
     editorClosed,
     checkLaunchWebview,
 } from './webview/editorChange';
+import { submitToCodeForces } from './companion/submit';
 
 declare global {
     module NodeJS {
@@ -31,8 +32,16 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         },
     );
 
+    const disposable3 = vscode.commands.registerCommand(
+        'cph.submitToCodeForces',
+        () => {
+            submitToCodeForces();
+        },
+    );
+
     context.subscriptions.push(disposable);
     context.subscriptions.push(disposable2);
+    context.subscriptions.push(disposable3);
 };
 
 // This method is called when the extension is activated

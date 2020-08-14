@@ -7,6 +7,7 @@ import { saveProblem } from '../parser';
 import runAllAndSave from './runAllAndSave';
 import { readFileSync } from 'fs';
 import { deleteProblemFile } from '../utils';
+import { storeSubmitProblem } from '../companion';
 
 let resultsPanel: vscode.WebviewPanel | undefined;
 let problemName = '';
@@ -64,15 +65,18 @@ const setupListnersWebViewToExtension = (): void => {
                     runSingleAndSave(problem, id);
                     break;
                 }
+
                 case 'run-all-and-save': {
                     const problem = message.problem;
                     runAllAndSave(problem);
                     break;
                 }
+
                 case 'save': {
                     saveProblem(message.problem.srcPath, message.problem);
                     break;
                 }
+
                 case 'kill-running': {
                     killRunning();
                     break;
@@ -81,6 +85,11 @@ const setupListnersWebViewToExtension = (): void => {
                 case 'delete-tcs': {
                     closeWebVeiw();
                     deleteProblemFile(message.problem.srcPath);
+                    break;
+                }
+
+                case 'submit': {
+                    storeSubmitProblem(message.problem);
                     break;
                 }
 

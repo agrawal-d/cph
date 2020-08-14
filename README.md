@@ -1,6 +1,7 @@
 # Competitive Programming Helper (cph)
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=master) [![Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=master)
+[![Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
 
 Quickly compile, run and judge competitive programming problems. Add testcases
 manually or Download automatically. A VS Code extension.
@@ -24,8 +25,11 @@ of popular websites like Codeforces, Codechef, TopCoder etc.
 1. The file opens in VS Code with testcases preloaded. Press `Ctrl+Alt+B` to run
    them.
 
-You can also use this extension locally, just open any supported file and
-press 'Run Testcases' (or `Ctrl+Alt+B`) to manually enter testcases.
+1. Install the [cph-submit](https://github.com/agrawal-d/cph-submit) browser
+   extension to enable submitting directly.
+
+You can also use this extension locally, just open any supported file and press
+'Run Testcases' (or `Ctrl+Alt+B`) to manually enter testcases.
 
 [![See detailed user guide](https://img.shields.io/badge/-Read%20detailed%20usage%20guide-blue?style=for-the-badge)](docs/user-guide.md)
 
@@ -34,6 +38,8 @@ press 'Run Testcases' (or `Ctrl+Alt+B`) to manually enter testcases.
 -   Autmatic compilation with display for compilation errors.
 -   Intelligent judge with support for signals, time outs and run time errors.
 -   Works with Competitive Companion.
+-   [CodeForces auto-submit](https://github.com/agrawal-d/cph-submit)
+    integration.
 -   Works locally for your own problems.
 -   Support for several languages.
 

@@ -30,7 +30,7 @@ export const getBinSaveLocation = (srcPath: string): string => {
 };
 
 /**
- * Gets the complete lsit of required arguments to be passed to the compiler.
+ * Get the complete lsit of required arguments to be passed to the compiler.
  * Loads additional args from preferences if available.
  *
  * @param language The Language object for the source code
@@ -42,12 +42,8 @@ const getFlags = (language: Language, srcPath: string): string[] => {
     if (args[0] === '') args = [];
 
     switch (language.name) {
-        case 'cpp': {
-            return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
-        }
-        case 'c': {
-            return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
-        }
+        case 'cpp':
+        case 'c':
         case 'rust': {
             return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
         }

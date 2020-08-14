@@ -82,12 +82,17 @@ export type DeleteTcsCommand = {
     command: 'delete-tcs';
 } & WebviewMessageCommon;
 
+export type SubmitCommand = {
+    command: 'submit';
+} & WebviewMessageCommon;
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | RunSingleCommand
     | KillRunningCommand
     | SaveCommand
-    | DeleteTcsCommand;
+    | DeleteTcsCommand
+    | SubmitCommand;
 
 export type RunningCommand = {
     command: 'running';
@@ -117,3 +122,14 @@ export type VSToWebViewMessage =
     | RunAllInWebViewCommand
     | CompilingStartCommand
     | CompilingStopCommand;
+
+export type CphEmptyResponse = {
+    empty: true;
+};
+
+export type CphSubmitResponse = {
+    empty: false;
+    problemName: string;
+    sourceCode: string;
+    languageId: number;
+};

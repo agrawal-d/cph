@@ -196,6 +196,13 @@ function App() {
         });
     };
 
+    const submitCf = () => {
+        vscodeApi.postMessage({
+            command: 'submit',
+            problem,
+        });
+    };
+
     const debounceFocusLast = () => {
         setTimeout(() => {
             useFocusLast(false);
@@ -267,6 +274,36 @@ function App() {
         }
     });
 
+    const renderSubmitButton = () => {
+        let url: URL;
+        try {
+            url = new URL(problem.url);
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+
+        if (url.hostname !== 'codeforces.com') {
+            return null;
+        }
+
+        return (
+            <div className="pad-10 submit-area">
+                <button className="btn" onClick={submitCf}>
+                    Submit on CF <small>(beta)</small>
+                </button>
+                <br />
+                <small>
+                    To submit to codeforces, you need to have the{' '}
+                    <a href="https://github.com/agrawal-d/cph-sumbit">
+                        cph-submit browser extension{' '}
+                    </a>
+                    installed, and a browser window open.
+                </small>
+            </div>
+        );
+    };
+
     return (
         <div className="ui">
             <div className="meta">
@@ -293,6 +330,7 @@ function App() {
                     ☠ Delete
                 </button>
             </div>
+            {renderSubmitButton()}
         </div>
     );
 }
