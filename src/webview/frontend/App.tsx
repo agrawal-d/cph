@@ -295,7 +295,7 @@ function App() {
                 <br />
                 <small>
                     To submit to codeforces, you need to have the{' '}
-                    <a href="https://github.com/agrawal-d/cph-sumbit">
+                    <a href="https://github.com/agrawal-d/cph-submit">
                         cph-submit browser extension{' '}
                     </a>
                     installed, and a browser window open.
