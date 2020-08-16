@@ -12,6 +12,7 @@ import {
 } from '../webview';
 import { randomId } from '../utils';
 import { getDefaultLangPref, getLanguageId } from '../preferences';
+import { getProblemName } from './submit';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -19,9 +20,7 @@ let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 /** Stores a response to be submitted to CF page soon. */
 export const storeSubmitProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
-    const parts = problem.url.split('/');
-    const len = parts.length;
-    const problemName = parts[len - 2] + parts[len - 1];
+    const problemName = getProblemName(problem.url);
     const sourceCode = readFileSync(srcPath).toString();
     const languageId = getLanguageId(problem.srcPath);
 
