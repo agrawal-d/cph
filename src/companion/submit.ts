@@ -43,7 +43,7 @@ export const getProblemName = (problemUrl: string): string => {
     const parts = problemUrl.split('/');
     let problemName: string;
 
-    if (parts.find((x) => x == 'problem')) {
+    if (parts.find((x) => x == 'contest')) {
         // Url is like https://codeforces.com/contest/1398/problem/C
         problemName = parts[parts.length - 3] + parts[parts.length - 1];
     } else {
