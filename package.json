@@ -94,6 +94,26 @@
                         "rust"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
+                },
+                "cph.languageIdCpp": {
+                    "type": "number",
+                    "default": 54,
+                    "description": "The language ID chosen in the drop down for choosing the language during submission for C++"
+                },
+                "cph.languageIdPython": {
+                    "type": "number",
+                    "default": 31,
+                    "description": "The language ID chosen in the drop down for choosing the language during submission for Python"
+                },
+                "cph.languageIdC": {
+                    "type": "number",
+                    "default": 43,
+                    "description": "The language ID chosen in the drop down for choosing the language during submission for C"
+                },
+                "cph.languageIdRust": {
+                    "type": "number",
+                    "default": 49,
+                    "description": "The language ID chosen in the drop down for choosing the language during submission for Rust"
                 }
             }
         }

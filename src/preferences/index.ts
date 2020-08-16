@@ -1,5 +1,6 @@
 import { workspace } from 'vscode';
 import type { prefSection } from '../types';
+import path from 'path';
 
 const getPreference = (section: prefSection): any => {
     const ret = workspace.getConfiguration('cph').get(section);
@@ -39,4 +40,30 @@ export const getDefaultLangPref = (): string | null => {
         return null;
     }
     return pref;
+};
+
+/** The language ID preference for a particular extension. */
+export const getLanguageId = (srcPath: string): number => {
+    const extension = path.extname(srcPath);
+    switch (extension) {
+        case '.cpp': {
+            return getPreference('languageIdCpp');
+        }
+
+        case '.c': {
+            return getPreference('languageIdC');
+        }
+
+        case '.rs': {
+            return getPreference('languageIdRust');
+        }
+
+        case '.py': {
+            return getPreference('languageIdPython');
+        }
+
+        default: {
+            return -1;
+        }
+    }
 };

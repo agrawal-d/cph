@@ -7,7 +7,7 @@ import path from 'path';
 import { writeFileSync, readFileSync } from 'fs';
 import { startWebVeiwIfNotActive, setBaseWebViewHTML } from '../webview';
 import { randomId } from '../utils';
-import { getDefaultLangPref } from '../preferences';
+import { getDefaultLangPref, getLanguageId } from '../preferences';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -19,7 +19,7 @@ export const storeSubmitProblem = (problem: Problem) => {
     const len = parts.length;
     const problemName = parts[len - 2] + parts[len - 1];
     const sourceCode = readFileSync(srcPath).toString();
-    const languageId = 54; // "G++ 17";
+    const languageId = getLanguageId(problem.srcPath);
 
     savedResponse = {
         empty: false,

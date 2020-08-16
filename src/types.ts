@@ -8,7 +8,11 @@ export type prefSection =
     | 'argsRust'
     | 'argsPython'
     | 'defaultLanguage'
-    | 'firstTime';
+    | 'firstTime'
+    | 'languageIdCpp'
+    | 'languageIdC'
+    | 'languageIdRust'
+    | 'languageIdPython';
 
 export type Language = {
     name: LangNames;
