@@ -253,6 +253,27 @@ button:disabled {
     padding: 4px;
 }
 
+.loader {
+    border: 2px solid #f3f3f3; /* Light grey */
+    border-top: 2px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 0.5s linear infinite;
+    display: inline-block;
+    margin: 0px 10px 0px 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .compiling {
     color: orange;
 }

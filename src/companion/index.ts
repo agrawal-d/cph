@@ -5,7 +5,11 @@ import { saveProblem } from '../parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync } from 'fs';
-import { startWebVeiwIfNotActive, setBaseWebViewHTML } from '../webview';
+import {
+    startWebVeiwIfNotActive,
+    setBaseWebViewHTML,
+    extensionToWebWiewMessage,
+} from '../webview';
 import { randomId } from '../utils';
 import { getDefaultLangPref, getLanguageId } from '../preferences';
 
@@ -56,6 +60,9 @@ export const setupCompanionServer = () => {
                     savedResponse,
                 );
                 savedResponse = emptyResponse;
+                extensionToWebWiewMessage({
+                    command: 'submit-finished',
+                });
             }
             res.end();
         });

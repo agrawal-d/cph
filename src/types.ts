@@ -120,12 +120,22 @@ export type RunAllInWebViewCommand = {
     command: 'run-all';
 };
 
+export type WaitingForSubmitCommand = {
+    command: 'waiting-for-submit';
+};
+
+export type SubmitFinishedCommand = {
+    command: 'submit-finished';
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
     | RunAllInWebViewCommand
     | CompilingStartCommand
-    | CompilingStopCommand;
+    | CompilingStopCommand
+    | WaitingForSubmitCommand
+    | SubmitFinishedCommand;
 
 export type CphEmptyResponse = {
     empty: true;

@@ -1,6 +1,7 @@
 import { getProblem } from '../parser';
 import * as vscode from 'vscode';
 import { storeSubmitProblem } from '.';
+import { extensionToWebWiewMessage } from '../webview';
 
 export const submitToCodeForces = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
@@ -34,4 +35,5 @@ export const submitToCodeForces = () => {
     }
 
     storeSubmitProblem(problem);
+    extensionToWebWiewMessage({ command: 'waiting-for-submit' });
 };

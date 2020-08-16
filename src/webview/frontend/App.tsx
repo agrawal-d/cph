@@ -39,6 +39,7 @@ function App() {
     const [forceRunning, useForceRunning] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
+    const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
 
     // Update problem if cases change. The only place where `useProblem` is
     // allowed to ensure sync.
@@ -75,6 +76,14 @@ function App() {
                 }
                 case 'compiling-stop': {
                     setCompiling(false);
+                    break;
+                }
+                case 'submit-finished': {
+                    setWaitingForSubmit(false);
+                    break;
+                }
+                case 'waiting-for-submit': {
+                    setWaitingForSubmit(true);
                     break;
                 }
                 default: {
@@ -201,6 +210,8 @@ function App() {
             command: 'submit',
             problem,
         });
+
+        setWaitingForSubmit(true);
     };
 
     const debounceFocusLast = () => {
@@ -292,14 +303,25 @@ function App() {
                 <button className="btn" onClick={submitCf}>
                     Submit on CF <small>(beta)</small>
                 </button>
-                <br />
-                <small>
-                    To submit to codeforces, you need to have the{' '}
-                    <a href="https://github.com/agrawal-d/cph-submit">
-                        cph-submit browser extension{' '}
-                    </a>
-                    installed, and a browser window open.
-                </small>
+                {waitingForSubmit && (
+                    <>
+                        <span className="loader"></span> Waiting for extension
+                        ...
+                        <br />
+                        <small>
+                            To submit to codeforces, you need to have the{' '}
+                            <a href="https://github.com/agrawal-d/cph-submit">
+                                cph-submit browser extension{' '}
+                            </a>
+                            installed, and a browser window open. You can change
+                            language ID from VS Code settings.
+                            <br />
+                            <br />
+                            Hint: You can also press <kbd>Ctrl+Alt+S</kbd> to
+                            submit.
+                        </small>
+                    </>
+                )}
             </div>
         );
     };
