@@ -35,7 +35,7 @@ export const getLanguage = (srcPath: string): Language => {
         case 'cpp': {
             return {
                 name: langName,
-                args: [...getCppArgsPref()],
+                args: ['-std=c++11','-g'],
                 compiler: 'g++',
                 skipCompile: false,
             };
