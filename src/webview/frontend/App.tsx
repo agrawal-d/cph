@@ -359,7 +359,8 @@ function App() {
                                 downloaded in ~/.kattis.
                                 <br />
                                 <br />
-                                Click 'Open' to open up the submission result.
+                                Click `&apos;`Open`&apos;` to open up the
+                                submission result.
                             </small>
                         </>
                     )}

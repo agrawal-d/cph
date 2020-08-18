@@ -108,6 +108,7 @@ const handleNewProblem = async (problem: Problem) => {
     }
     const defaultLanguage = getDefaultLangPref();
     let problemFileName: string;
+    let extn: string;
     if (defaultLanguage == null) {
         const choices = Object.keys(config.extensions);
         const selected = await vscode.window.showQuickPick(choices);
@@ -118,13 +119,27 @@ const handleNewProblem = async (problem: Problem) => {
             return;
         }
         // @ts-ignore
-        const extn: string = config.extensions[selected];
+        extn = config.extensions[selected];
         console.log(config.extensions, extn, selected);
         problemFileName = getProblemFileName(problem.name, extn);
     } else {
         //@ts-ignore
-        const extn: string = config.extensions[defaultLanguage];
+        extn = config.extensions[defaultLanguage];
         problemFileName = getProblemFileName(problem.name, extn);
+    }
+    let url: URL;
+    try {
+        url = new URL(problem.url);
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+    if (url.hostname == 'open.kattis.com') {
+        const splitUrl = problem.url.split('/');
+        problemFileName = getProblemFileName(
+            splitUrl[splitUrl.length - 1],
+            extn,
+        );
     }
     const srcPath = path.join(folder, problemFileName);
 
