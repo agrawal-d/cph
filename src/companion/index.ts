@@ -13,9 +13,32 @@ import {
 import { randomId } from '../utils';
 import { getDefaultLangPref, getLanguageId } from '../preferences';
 import { getProblemName } from './submit';
+import { PythonShell } from 'python-shell';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
+
+export const submitKattisProblem = (problem: Problem) => {
+    const srcPath = problem.srcPath;
+    const options = {
+        scriptPath: '/Users/arnav/Documents/CS/competitive/kattis/submit.py',
+        args: ['-f', srcPath],
+    };
+    const pyshell = new PythonShell('submit.py', options);
+    //vscode.window.showInformationMessage('RAN PYTHON CODE');
+    pyshell.on('message', function (message) {
+        // received a message sent from the Python script (a simple "print" statement)
+        vscode.window.showInformationMessage('received text');
+        vscode.window.showInformationMessage(message);
+    });
+    pyshell.end(function (err) {
+        if (err){
+            throw err;
+        };
+    
+        vscode.window.showInformationMessage('finished');
+    });
+};
 
 /** Stores a response to be submitted to CF page soon. */
 export const storeSubmitProblem = (problem: Problem) => {

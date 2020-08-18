@@ -7,7 +7,7 @@ import { saveProblem } from '../parser';
 import runAllAndSave from './runAllAndSave';
 import { readFileSync } from 'fs';
 import { deleteProblemFile } from '../utils';
-import { storeSubmitProblem } from '../companion';
+import { storeSubmitProblem, submitKattisProblem } from '../companion';
 
 let resultsPanel: vscode.WebviewPanel | undefined;
 let problemName = '';
@@ -88,8 +88,12 @@ const setupListnersWebViewToExtension = (): void => {
                     break;
                 }
 
-                case 'submit': {
+                case 'submitCf': {
                     storeSubmitProblem(message.problem);
+                    break;
+                }
+                case 'submitKattis': {
+                    submitKattisProblem(message.problem);
                     break;
                 }
 

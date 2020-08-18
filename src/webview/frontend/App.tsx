@@ -205,9 +205,18 @@ function App() {
         });
     };
 
+    const submitKattis = () => {
+        vscodeApi.postMessage({
+            command: 'submitKattis',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
+
     const submitCf = () => {
         vscodeApi.postMessage({
-            command: 'submit',
+            command: 'submitCf',
             problem,
         });
 
@@ -293,37 +302,73 @@ function App() {
             console.error(err);
             return null;
         }
-
-        if (url.hostname !== 'codeforces.com') {
+        if (
+            url.hostname !== 'codeforces.com' &&
+            url.hostname !== 'open.kattis.com'
+        ) {
             return null;
         }
 
-        return (
-            <div className="pad-10 submit-area">
-                <button className="btn" onClick={submitCf}>
-                    Submit on CF <small>(beta)</small>
-                </button>
-                {waitingForSubmit && (
-                    <>
-                        <span className="loader"></span> Waiting for extension
-                        ...
-                        <br />
-                        <small>
-                            To submit to codeforces, you need to have the{' '}
-                            <a href="https://github.com/agrawal-d/cph-submit">
-                                cph-submit browser extension{' '}
-                            </a>
-                            installed, and a browser window open. You can change
-                            language ID from VS Code settings.
+        if (url.hostname == 'codeforces.com') {
+            return (
+                <div className="pad-10 submit-area">
+                    <button className="btn" onClick={submitCf}>
+                        Submit on CF <small>(beta)</small>
+                    </button>
+                    {waitingForSubmit && (
+                        <>
+                            <span className="loader"></span> Waiting for
+                            extension ...
                             <br />
+                            <small>
+                                To submit to codeforces, you need to have the{' '}
+                                <a href="https://github.com/agrawal-d/cph-submit">
+                                    cph-submit browser extension{' '}
+                                </a>
+                                installed, and a browser window open. You can
+                                change change language ID from VS Code settings.
+                                <br />
+                                <br />
+                                Hint: You can also press <kbd>
+                                    Ctrl+Alt+S
+                                </kbd>{' '}
+                                to submit.
+                            </small>
+                        </>
+                    )}
+                </div>
+            );
+        } else if (url.hostname == 'open.kattis.com') {
+            return (
+                <div className="pad-10 submit-area">
+                    <button className="btn" onClick={submitKattis}>
+                        Submit on Kattis
+                    </button>
+                    {waitingForSubmit && (
+                        <>
                             <br />
-                            Hint: You can also press <kbd>Ctrl+Alt+S</kbd> to
-                            submit.
-                        </small>
-                    </>
-                )}
-            </div>
-        );
+                            <small>
+                                To submit to Kattis, you need to have the{' '}
+                                <a href="https://open.kattis.com/download/submit.py?410d6d=">
+                                    submission client{' '}
+                                </a>
+                                and the{' '}
+                                <a href="https://open.kattis.com/download/kattisrc">
+                                    configuration file{' '}
+                                </a>
+                                downloaded in this folder.
+                                <br />
+                                <br />
+                                Hint: You can also press <kbd>
+                                    Ctrl+Alt+S
+                                </kbd>{' '}
+                                to submit.
+                            </small>
+                        </>
+                    )}
+                </div>
+            );
+        }
     };
 
     return (

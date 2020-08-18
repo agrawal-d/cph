@@ -1,7 +1,42 @@
 import { getProblem } from '../parser';
 import * as vscode from 'vscode';
 import { storeSubmitProblem } from '.';
+import { submitKattisProblem } from '.';
 import { extensionToWebWiewMessage } from '../webview';
+
+export const submitToKattis = () => {
+    const srcPath = vscode.window.activeTextEditor?.document.fileName;
+    if (!srcPath) {
+        vscode.window.showErrorMessage(
+            'Active editor is not supported for submission',
+        );
+        return;
+    }
+
+    const problem = getProblem(srcPath);
+
+    if (!problem) {
+        vscode.window.showErrorMessage('Failed to parse current code.');
+        return;
+    }
+
+    let url: URL;
+    try {
+        url = new URL(problem.url);
+    } catch (err) {
+        console.error(err);
+        vscode.window.showErrorMessage('Not a kattis problem.');
+        return;
+    }
+
+    if (url.hostname !== 'open.kattis.com') {
+        vscode.window.showErrorMessage('Not a kattis problem.');
+        return;
+    }
+
+    submitKattisProblem(problem);
+    extensionToWebWiewMessage({ command: 'waiting-for-submit' });
+};
 
 export const submitToCodeForces = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
