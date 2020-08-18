@@ -356,13 +356,10 @@ function App() {
                                 <a href="https://open.kattis.com/download/kattisrc">
                                     configuration file{' '}
                                 </a>
-                                downloaded in this folder.
+                                downloaded in ~/.kattis.
                                 <br />
                                 <br />
-                                Hint: You can also press <kbd>
-                                    Ctrl+Alt+S
-                                </kbd>{' '}
-                                to submit.
+                                Click 'Open' to open up the submission result.
                             </small>
                         </>
                     )}

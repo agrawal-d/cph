@@ -4,7 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from '../types';
 import { saveProblem } from '../parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync } from 'fs';
 import {
     startWebVeiwIfNotActive,
     setBaseWebViewHTML,
@@ -13,30 +13,30 @@ import {
 import { randomId } from '../utils';
 import { getDefaultLangPref, getLanguageId } from '../preferences';
 import { getProblemName } from './submit';
-import { PythonShell } from 'python-shell';
+import { spawn } from 'child_process';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 
 export const submitKattisProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
-    const options = {
-        scriptPath: '/Users/arnav/Documents/CS/competitive/kattis/submit.py',
-        args: ['-f', srcPath],
-    };
-    const pyshell = new PythonShell('submit.py', options);
-    //vscode.window.showInformationMessage('RAN PYTHON CODE');
-    pyshell.on('message', function (message) {
-        // received a message sent from the Python script (a simple "print" statement)
-        vscode.window.showInformationMessage('received text');
-        vscode.window.showInformationMessage(message);
+    const homedir = require('os').homedir();
+    const pyshell = spawn(`${homedir}/.kattis/submit.py`, ['-f', srcPath]);
+    pyshell.stdout.on('data', function (data) {
+        const inp = data.toString().split('\n')[1];
+        //vscode.window.showInformationMessage(data);
+
+        if (inp.startsWith('http')) {
+            //vscode.window.showInformationMessage(inp);
+
+            vscode.commands.executeCommand(
+                'vscode.open',
+                vscode.Uri.parse(inp),
+            );
+        }
     });
-    pyshell.end(function (err) {
-        if (err){
-            throw err;
-        };
-    
-        vscode.window.showInformationMessage('finished');
+    pyshell.stderr.on('data', function (data) {
+        vscode.window.showErrorMessage(data);
     });
 };
 
@@ -134,8 +134,9 @@ const handleNewProblem = async (problem: Problem) => {
         ...testcase,
         id: randomId(),
     }));
-
-    writeFileSync(srcPath, '');
+    if (!existsSync(srcPath)) {
+        writeFileSync(srcPath, '');
+    }
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
     await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);

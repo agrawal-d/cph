@@ -83,9 +83,6 @@ export const compileFile = (srcPath: string): Promise<boolean> => {
             );
             throw err;
         }
-        vscode.window.showErrorMessage(
-            `${language.compiler}`,
-        );
         let error = '';
 
         compiler.stderr.on('data', (data) => {
