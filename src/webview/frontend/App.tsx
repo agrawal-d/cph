@@ -349,18 +349,19 @@ function App() {
                             <br />
                             <small>
                                 To submit to Kattis, you need to have the{' '}
-                                <a href="https://open.kattis.com/download/submit.py?410d6d=">
+                                <a href="https://github.com/Kattis/kattis-cli/blob/master/submit.py">
                                     submission client{' '}
                                 </a>
                                 and the{' '}
                                 <a href="https://open.kattis.com/download/kattisrc">
                                     configuration file{' '}
                                 </a>
-                                downloaded in ~/.kattis.
+                                downloaded in a folder called .kattis in your
+                                home directory.
+                                <br />
+                                Submission result will open in your browser.
                                 <br />
                                 <br />
-                                Click &apos;Open&apos; to open up the submission
-                                result.
                             </small>
                         </>
                     )}

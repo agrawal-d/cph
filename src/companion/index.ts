@@ -21,21 +21,45 @@ let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 export const submitKattisProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
     const homedir = require('os').homedir();
-    const pyshell = spawn(`${homedir}/.kattis/submit.py`, ['-f', srcPath]);
-    pyshell.stdout.on('data', function (data) {
-        const inp = data.toString().split('\n')[1];
-        //vscode.window.showInformationMessage(data);
-
-        if (inp.startsWith('http')) {
-            //vscode.window.showInformationMessage(inp);
-
-            vscode.commands.executeCommand(
-                'vscode.open',
-                vscode.Uri.parse(inp),
+    let submitPath = `${homedir}/.kattis/submit.py`;
+    //vscode.window.showInformationMessage(homedir);
+    if (process.platform == 'win32') {
+        if (
+            !existsSync(`${homedir}\\.kattis\\.kattisrc`) ||
+            !existsSync(`${homedir}\\.kattis\\submit.py`)
+        ) {
+            vscode.window.showErrorMessage(
+                `Please ensure .kattisrc and submit.py are present in ${homedir}\\.kattis\\submit.py`,
             );
+            return;
+        } else {
+            submitPath = `${homedir}\\.kattis\\submit.py`;
         }
+    } else {
+        if (
+            !existsSync(`${homedir}/.kattis/.kattisrc`) ||
+            !existsSync(`${homedir}/.kattis/submit.py`)
+        ) {
+            vscode.window.showErrorMessage(
+                `Please ensure .kattisrc and submit.py are present in ${homedir}/.kattis/submit.py`,
+            );
+            return;
+        } else {
+            submitPath = `${homedir}/.kattis/submit.py`;
+        }
+    }
+    const pyshell = spawn('python', [submitPath, '-f', srcPath]);
+
+    //tells the python script to open submission window in new tab
+    pyshell.stdin.setDefaultEncoding('utf-8');
+    pyshell.stdin.write('Y\n');
+    pyshell.stdin.end();
+
+    pyshell.stdout.on('data', function (data) {
+        console.log(data.toString());
     });
     pyshell.stderr.on('data', function (data) {
+        console.log(data.tostring());
         vscode.window.showErrorMessage(data);
     });
 };
