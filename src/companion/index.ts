@@ -57,6 +57,7 @@ export const submitKattisProblem = (problem: Problem) => {
 
     pyshell.stdout.on('data', function (data) {
         console.log(data.toString());
+        extensionToWebWiewMessage({ command: 'submit-finished' });
     });
     pyshell.stderr.on('data', function (data) {
         console.log(data.tostring());

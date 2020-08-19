@@ -346,6 +346,7 @@ function App() {
                     </button>
                     {waitingForSubmit && (
                         <>
+                            <span className="loader"></span> Submitting...
                             <br />
                             <small>
                                 To submit to Kattis, you need to have the{' '}
