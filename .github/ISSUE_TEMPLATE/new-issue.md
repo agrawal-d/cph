@@ -11,4 +11,10 @@ assignees: ''
 
 
 **Extension Version:** <replace with extension version>
+  
 **VS Code Version:** <replace with VS Code version>
+  
+**Browser Version:** <replace with browser version>
+  
+**Operating System:** <replace with OS name, version, and arch ( 32 bit or 64 bit )>
+ 
