@@ -42,8 +42,23 @@ const getFlags = (language: Language, srcPath: string): string[] => {
     if (args[0] === '') args = [];
 
     switch (language.name) {
-        case 'cpp':
-        case 'c':
+        case 'cpp': {
+            return [
+                srcPath,
+                '-o',
+                getBinSaveLocation(srcPath),
+                ...args,
+                '-D',
+                'ONLINE_JUDGE',
+                '-D',
+                'CPH',
+            ];
+        }
+        case 'c': {
+            {
+                return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+            }
+        }
         case 'rust': {
             return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
         }

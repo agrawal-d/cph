@@ -36,7 +36,6 @@ This document contains instructions on how to use this extension.
 
 1. Then, you can run them.
 
-
 ## Submit to Codeforces
 
 1. Install [cph-submit](https://github.com/agrawal-d/cph-submit) on Firefox.
@@ -47,6 +46,9 @@ This document contains instructions on how to use this extension.
 
 1. A tab opens in the browser and the problem is submitted.
 
+## Enviornment
+
+-   For C++, `ONLINE_JUDGE` and `CPH` are defined as a `#define` directive.
 
 ## Customizing preferences
 
