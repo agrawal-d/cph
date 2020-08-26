@@ -36,6 +36,18 @@ This document contains instructions on how to use this extension.
 
 1. Then, you can run them.
 
+
+## Submit to Codeforces
+
+1. Install [cph-submit](https://github.com/agrawal-d/cph-submit) on Firefox.
+
+1. After installing, make sure a browser window is open.
+
+1. Click on the 'Submit to CF' button in the results window.
+
+1. A tab opens in the browser and the problem is submitted.
+
+
 ## Customizing preferences
 
 ![Preferences](img/settings.png)
