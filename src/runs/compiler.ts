@@ -1,4 +1,4 @@
-import { getLanguage, ocHide, ocAppend, ocShow } from '../utils';
+import { getLanguage, ocHide, ocAppend, ocShow, ocWrite } from '../utils';
 import { Language } from '../types';
 import { spawn } from 'child_process';
 import path from 'path';
@@ -106,7 +106,7 @@ export const compileFile = (srcPath: string): Promise<boolean> => {
 
         compiler.on('exit', (exitcode) => {
             if (exitcode === 1 || error !== '') {
-                ocAppend('Errors while compiling:\n' + error);
+                ocWrite('Errors while compiling:\n' + error);
                 ocShow();
                 console.error('Compilation failed');
                 resolve(false);
