@@ -27,7 +27,10 @@ export const runTestCase = (
         time: 0,
         timeOut: false,
     };
-    const spawnOpts = { timeout: config.timeout };
+    const spawnOpts = {
+        timeout: config.timeout,
+        env: { ONLINE_JUDGE: 'true', DEBUG: 'true', CPH: 'true' },
+    };
     let process: ChildProcessWithoutNullStreams;
 
     const killer = setTimeout(() => {

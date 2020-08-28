@@ -1,4 +1,4 @@
-import { getLanguage, ocHide, ocAppend, ocShow } from '../utils';
+import { getLanguage, ocHide, ocAppend, ocShow, ocWrite } from '../utils';
 import { Language } from '../types';
 import { spawn } from 'child_process';
 import path from 'path';
@@ -42,8 +42,23 @@ const getFlags = (language: Language, srcPath: string): string[] => {
     if (args[0] === '') args = [];
 
     switch (language.name) {
-        case 'cpp':
-        case 'c':
+        case 'cpp': {
+            return [
+                srcPath,
+                '-o',
+                getBinSaveLocation(srcPath),
+                ...args,
+                '-D',
+                'ONLINE_JUDGE',
+                '-D',
+                'CPH',
+            ];
+        }
+        case 'c': {
+            {
+                return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+            }
+        }
         case 'rust': {
             return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
         }
@@ -91,7 +106,7 @@ export const compileFile = (srcPath: string): Promise<boolean> => {
 
         compiler.on('exit', (exitcode) => {
             if (exitcode === 1 || error !== '') {
-                ocAppend('Errors while compiling:\n' + error);
+                ocWrite('Errors while compiling:\n' + error);
                 ocShow();
                 console.error('Compilation failed');
                 resolve(false);
