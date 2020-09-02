@@ -11,7 +11,11 @@ import {
     extensionToWebWiewMessage,
 } from '../webview';
 import { randomId } from '../utils';
-import { getDefaultLangPref, getLanguageId, getTemplatePathPref } from '../preferences';
+import {
+    getDefaultLangPref,
+    getLanguageId,
+    getTemplatePathPref,
+} from '../preferences';
 import { getProblemName } from './submit';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
@@ -112,12 +116,16 @@ const handleNewProblem = async (problem: Problem) => {
         id: randomId(),
     }));
 
-    let code_template = "";
-    try{
-        code_template = readFileSync(getTemplatePathPref().toString(), { encoding: 'utf8' });
-    }catch(e){
-        if (getTemplatePathPref().toString().length > 0){
-            vscode.window.showErrorMessage("The code template file does not exist in the specified path");
+    let code_template = '';
+    try {
+        code_template = readFileSync(getTemplatePathPref().toString(), {
+            encoding: 'utf8',
+        });
+    } catch (e) {
+        if (getTemplatePathPref().toString().length > 0) {
+            vscode.window.showErrorMessage(
+                'The code template file does not exist in the specified path',
+            );
         }
     }
 
