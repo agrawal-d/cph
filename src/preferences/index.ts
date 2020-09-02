@@ -19,6 +19,9 @@ export const getSaveLocationPref = (): string => getPreference('saveLocation');
 
 export const getTimeOutPref = (): number => getPreference('timeOut') || 3000;
 
+export const getTemplatePathPref = (): string[] =>
+    getPreference('templatePath').split(' ') || [];
+
 export const getCppArgsPref = (): string[] =>
     getPreference('argsCpp').split(' ') || [];
 

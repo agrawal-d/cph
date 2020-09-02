@@ -3,6 +3,7 @@ export type prefSection =
     | 'saveLocation'
     | 'defaultLanguage'
     | 'timeOut'
+    | 'templatePath'
     | 'argsC'
     | 'argsCpp'
     | 'argsRust'

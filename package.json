@@ -52,6 +52,12 @@
                     "default": 3000,
                     "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
                 },
+                "cph.templatePath": {
+                    "title": "Path for the template code",
+                    "type": "string",
+                    "default": "",
+                    "description": "Absolute path to the template file"
+                },
                 "cph.argsC": {
                     "title": "Compilation flags for .c files",
                     "type": "string",
@@ -155,7 +161,8 @@
     "dependencies": {
         "react": "^16.13.1",
         "react-autosize-textarea": "^7.0.0",
-        "react-dom": "^16.13.1"
+        "react-dom": "^16.13.1",
+        "vsce": "^1.79.5"
     },
     "repository": {
         "type": "git",

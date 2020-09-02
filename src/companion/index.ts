@@ -11,7 +11,7 @@ import {
     extensionToWebWiewMessage,
 } from '../webview';
 import { randomId } from '../utils';
-import { getDefaultLangPref, getLanguageId } from '../preferences';
+import { getDefaultLangPref, getLanguageId, getTemplatePathPref } from '../preferences';
 import { getProblemName } from './submit';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
@@ -112,7 +112,8 @@ const handleNewProblem = async (problem: Problem) => {
         id: randomId(),
     }));
 
-    writeFileSync(srcPath, '');
+    let code_template = readFileSync(getTemplatePathPref().toString(), { encoding: 'utf8' });
+    writeFileSync(srcPath, code_template);
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
     await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
