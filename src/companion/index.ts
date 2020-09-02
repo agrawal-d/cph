@@ -112,7 +112,15 @@ const handleNewProblem = async (problem: Problem) => {
         id: randomId(),
     }));
 
-    let code_template = readFileSync(getTemplatePathPref().toString(), { encoding: 'utf8' });
+    let code_template = "";
+    try{
+        code_template = readFileSync(getTemplatePathPref().toString(), { encoding: 'utf8' });
+    }catch(e){
+        if (getTemplatePathPref().toString().length > 0){
+            vscode.window.showErrorMessage("The code template file does not exist in the specified path");
+        }
+    }
+
     writeFileSync(srcPath, code_template);
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
