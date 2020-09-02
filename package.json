@@ -161,8 +161,7 @@
     "dependencies": {
         "react": "^16.13.1",
         "react-autosize-textarea": "^7.0.0",
-        "react-dom": "^16.13.1",
-        "vsce": "^1.79.5"
+        "react-dom": "^16.13.1"
     },
     "repository": {
         "type": "git",
