@@ -76,7 +76,6 @@ textarea {
     overflow-y: auto;
     resize: none;
     border: 1px solid transparent;
-    box-sizing: content-box !important;
     margin-bottom: 4px;
 }
 
@@ -148,7 +147,7 @@ textarea:active {
     background: #b9274391;
 }
 .btn:focus {
-    border-color: pink;
+    border-color: var(--vscode-focusBorder);
 }
 .btn-orange {
     background: orange;
@@ -181,18 +180,19 @@ body.vscode-light * {
 }
 body.vscode-light textarea,
 pre {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid whitesmoke !important;
+    background: rgba(209, 209, 209, 0.2);
+    outline: none !important;
+    border: 1px solid rgb(243, 243, 243);
 }
 
 body.vscode-light .case {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(235, 228, 228, 0.2);
 }
 
 body.vscode-light textarea:focus {
-    background: rgba(0, 0, 0, 0.2);
+    background: white;
     outline: none !important;
-    border: 1px solid lightblue;
+    border: 1px solid rgb(28, 145, 184);
 }
 
 button:disabled {

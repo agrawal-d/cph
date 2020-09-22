@@ -1,4 +1,4 @@
-import { getLanguage, ocHide, ocAppend, ocShow, ocWrite } from '../utils';
+import { getLanguage, ocHide, ocShow, ocWrite } from '../utils';
 import { Language } from '../types';
 import { spawn } from 'child_process';
 import path from 'path';
@@ -74,10 +74,13 @@ const getFlags = (language: Language, srcPath: string): string[] => {
  * and resolves true. If there is no preference, stores in the current
  * directory. Resolves true if it succeeds, false otherwise.
  *
+ * Saves the file before compilation starts.
+ *
  * @param srcPath location of the source code
  */
-export const compileFile = (srcPath: string): Promise<boolean> => {
+export const compileFile = async (srcPath: string): Promise<boolean> => {
     console.log('Compilation Started');
+    await vscode.workspace.openTextDocument(srcPath).then((doc) => doc.save());
     ocHide();
     const language: Language = getLanguage(srcPath);
     if (language.skipCompile) {
