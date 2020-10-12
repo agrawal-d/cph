@@ -84,7 +84,7 @@ export default function CaseView(props: {
     }, [running]);
 
     let resultText = '';
-    let stderror = result?.stderr;
+    const stderror = result?.stderr;
     // Handle several cases for result text
     if (result?.signal) {
         resultText = result?.signal;
