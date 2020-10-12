@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.3.9
+
+-   Show standard error when it's not empty.
+
 ## 4.3.0
 
 -   cph-sumbit integration for directly submitting to CodeForces.

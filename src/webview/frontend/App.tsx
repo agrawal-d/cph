@@ -305,7 +305,7 @@ function App() {
         return (
             <div className="pad-10 submit-area">
                 <button className="btn" onClick={submitCf}>
-                    Submit on CF <small>(beta)</small>
+                    Submit on Codeforces
                 </button>
                 {waitingForSubmit && (
                     <>
