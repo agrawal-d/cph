@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.3.9
+## 4.4.0
 
 -   Show standard error when it's not empty.
 
