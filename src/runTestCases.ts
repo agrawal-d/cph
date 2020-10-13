@@ -10,7 +10,7 @@ import {
 import { Problem } from './types';
 import { getProblem, saveProblem } from './parser';
 import { compileFile } from './compiler';
-import runAllAndSave from './webview/processRunAllAndSave';
+import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 
 /**

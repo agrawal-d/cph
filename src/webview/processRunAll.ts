@@ -1,5 +1,5 @@
 import { Problem } from '../types';
-import { runSingleAndSave } from './processRunSingleAndSave';
+import { runSingleAndSave } from './processRunSingle';
 import { extensionToWebWiewMessage } from './webview';
 import { compileFile, getBinSaveLocation } from '../compiler';
 import { deleteBinary } from '../executions';
