@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import { Problem } from '../types';
-import { getSaveLocationPref } from '../preferences';
+import { Problem } from './types';
+import { getSaveLocationPref } from './preferences';
 import crypto from 'crypto';
 
 /**

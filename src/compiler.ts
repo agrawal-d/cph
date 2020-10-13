@@ -1,9 +1,9 @@
-import { getLanguage, ocHide, ocShow, ocWrite } from '../utils';
-import { Language } from '../types';
+import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
+import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
-import { getSaveLocationPref } from '../preferences';
-import { extensionToWebWiewMessage } from '../webview';
+import { getSaveLocationPref } from './preferences';
+import { extensionToWebWiewMessage } from './webview/webview';
 import * as vscode from 'vscode';
 
 /**

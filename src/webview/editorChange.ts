@@ -6,7 +6,7 @@ import {
     setBaseWebViewHTML,
     closeWebVeiw,
     getWebViewProblemName,
-} from '.';
+} from './webview';
 import { Problem } from '../types';
 
 /**

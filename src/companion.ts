@@ -1,7 +1,7 @@
 import http from 'http';
-import config from '../config';
-import { Problem, CphSubmitResponse, CphEmptyResponse } from '../types';
-import { saveProblem } from '../parser';
+import config from './config';
+import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
+import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync } from 'fs';
@@ -9,9 +9,9 @@ import {
     startWebVeiwIfNotActive,
     setBaseWebViewHTML,
     extensionToWebWiewMessage,
-} from '../webview';
-import { randomId } from '../utils';
-import { getDefaultLangPref, getLanguageId } from '../preferences';
+} from './webview/webview';
+import { randomId } from './utils';
+import { getDefaultLangPref, getLanguageId } from './preferences';
 import { getProblemName } from './submit';
 
 const emptyResponse: CphEmptyResponse = { empty: true };

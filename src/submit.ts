@@ -1,7 +1,7 @@
-import { getProblem } from '../parser';
+import { getProblem } from './parser';
 import * as vscode from 'vscode';
-import { storeSubmitProblem } from '.';
-import { extensionToWebWiewMessage } from '../webview';
+import { storeSubmitProblem } from './companion';
+import { extensionToWebWiewMessage } from './webview/webview';
 
 export const submitToCodeForces = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;

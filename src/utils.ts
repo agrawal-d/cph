@@ -4,15 +4,15 @@ import path from 'path';
 import { Url } from 'url';
 import * as vscode from 'vscode';
 
-import config from '../config';
-import { getProbSaveLocation } from '../parser';
+import config from './config';
+import { getProbSaveLocation } from './parser';
 import {
     getCArgsPref,
     getCppArgsPref,
     getPythonArgsPref,
     getRustArgsPref,
-} from '../preferences';
-import { Language } from '../types';
+} from './preferences';
+import { Language } from './types';
 
 const oc = vscode.window.createOutputChannel('cph');
 

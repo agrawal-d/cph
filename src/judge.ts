@@ -1,4 +1,4 @@
-import { TestCase, Problem, Case } from '../types';
+import { TestCase, Problem, Case } from './types';
 import { EOL } from 'os';
 
 /**

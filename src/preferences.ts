@@ -1,5 +1,5 @@
 import { workspace } from 'vscode';
-import type { prefSection } from '../types';
+import type { prefSection } from './types';
 import path from 'path';
 
 const getPreference = (section: prefSection): any => {

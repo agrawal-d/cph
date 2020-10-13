@@ -1,10 +1,10 @@
 import { Problem, RunResult } from '../types';
 import { getLanguage } from '../utils';
-import { getBinSaveLocation, compileFile } from '../runs/compiler';
+import { getBinSaveLocation, compileFile } from '../compiler';
 import { saveProblem } from '../parser';
-import { runTestCase, deleteBinary } from '../runs/executions';
-import { isResultCorrect } from '../runs/judge';
-import { extensionToWebWiewMessage } from '.';
+import { runTestCase, deleteBinary } from '../executions';
+import { isResultCorrect } from '../judge';
+import { extensionToWebWiewMessage } from './webview';
 import * as vscode from 'vscode';
 
 export const runSingleAndSave = async (
