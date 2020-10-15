@@ -1,165 +1,174 @@
 {
-    "name": "competitive-programming-helper",
-    "displayName": "competitive-programming-helper",
-    "description": "Makes judging, compiling, and downloading problems for competitve programming easy.",
-    "license": "MIT",
-    "icon": "icon.png",
-    "publisher": "DivyanshuAgrawal",
-    "version": "4.3.7",
-    "engines": {
-        "vscode": "^1.45.0"
-    },
-    "categories": [
-        "Other"
+  "name": "competitive-programming-helper",
+  "displayName": "competitive-programming-helper",
+  "description": "Makes judging, compiling, and downloading problems for competitve programming easy.",
+  "license": "MIT",
+  "icon": "icon.png",
+  "publisher": "DivyanshuAgrawal",
+  "version": "4.3.7",
+  "engines": {
+    "vscode": "^1.45.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cph.runTestCases",
+        "title": "Run Testcases",
+        "icon": "icon.png"
+      },
+      {
+        "command": "cph.submitToCodeForces",
+        "title": "Submit to CodeForces",
+        "icon": "icon.png"
+      }
     ],
-    "activationEvents": [
-        "*"
+    "keybindings": [
+      {
+        "key": "ctrl+alt+b",
+        "command": "cph.runTestCases"
+      },
+      {
+        "key": "ctrl+alt+s",
+        "command": "cph.submitToCodeForces"
+      }
     ],
-    "main": "dist/extension.js",
-    "contributes": {
-        "commands": [
-            {
-                "command": "cph.runTestCases",
-                "title": "Run Testcases",
-                "icon": "icon.png"
-            },
-            {
-                "command": "cph.submitToCodeForces",
-                "title": "Submit to CodeForces",
-                "icon": "icon.png"
-            }
-        ],
-        "keybindings": [
-            {
-                "key": "ctrl+alt+b",
-                "command": "cph.runTestCases"
-            },
-            {
-                "key": "ctrl+alt+s",
-                "command": "cph.submitToCodeForces"
-            }
-        ],
-        "configuration": {
-            "title": "Competitive Programming Helper",
-            "properties": {
-                "cph.saveLocation": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
-                },
-                "cph.timeOut": {
-                    "type": "number",
-                    "default": 3000,
-                    "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
-                },
-                "cph.argsC": {
-                    "title": "Compilation flags for .c files",
-                    "type": "string",
-                    "default": "",
-                    "description": "Space seperated additional flags passed to gcc ( for C) while compiling your file. Example '-O2 -Wall'"
-                },
-                "cph.argsCpp": {
-                    "title": "Compilation flags for .cpp files",
-                    "type": "string",
-                    "default": "",
-                    "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
-                },
-                "cph.argsPython": {
-                    "title": "Compilation flags for Python",
-                    "type": "string",
-                    "default": "",
-                    "description": "Space seperated additional flags passed to python while compiling your file. Example '-Wignore -u'"
-                },
-                "cph.argsRust": {
-                    "title": "Compilation flags for Rust",
-                    "type": "string",
-                    "default": "",
-                    "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
-                },
-                "cph.firstTime": {
-                    "title": "Show welcome message",
-                    "type": "boolean",
-                    "default": true,
-                    "description": "A welcome message is shown when you run a testcase for the first time."
-                },
-                "cph.defaultLanguage": {
-                    "title": "Default language for new problems",
-                    "type": "string",
-                    "default": "",
-                    "enum": [
-                        "none",
-                        "c",
-                        "cpp",
-                        "python",
-                        "rust"
-                    ],
-                    "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
-                },
-                "cph.languageIdCpp": {
-                    "type": "number",
-                    "default": 54,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for C++"
-                },
-                "cph.languageIdPython": {
-                    "type": "number",
-                    "default": 31,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for Python"
-                },
-                "cph.languageIdC": {
-                    "type": "number",
-                    "default": 43,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for C"
-                },
-                "cph.languageIdRust": {
-                    "type": "number",
-                    "default": 49,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for Rust"
-                }
-            }
+    "configuration": {
+      "title": "Competitive Programming Helper",
+      "properties": {
+        "cph.saveLocation": {
+          "type": "string",
+          "default": "",
+          "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
+        },
+        "cph.timeOut": {
+          "type": "number",
+          "default": 3000,
+          "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
+        },
+        "cph.argsC": {
+          "title": "Compilation flags for .c files",
+          "type": "string",
+          "default": "",
+          "description": "Space seperated additional flags passed to gcc ( for C) while compiling your file. Example '-O2 -Wall'"
+        },
+        "cph.argsCpp": {
+          "title": "Compilation flags for .cpp files",
+          "type": "string",
+          "default": "",
+          "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
+        },
+        "cph.argsPython": {
+          "title": "Compilation flags for Python",
+          "type": "string",
+          "default": "",
+          "description": "Space seperated additional flags passed to python while compiling your file. Example '-Wignore -u'"
+        },
+        "cph.argsRust": {
+          "title": "Compilation flags for Rust",
+          "type": "string",
+          "default": "",
+          "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
+        },
+        "cph.firstTime": {
+          "title": "Show welcome message",
+          "type": "boolean",
+          "default": true,
+          "description": "A welcome message is shown when you run a testcase for the first time."
+        },
+        "cph.defaultLanguage": {
+          "title": "Default language for new problems",
+          "type": "string",
+          "default": "",
+          "enum": [
+            "none",
+            "c",
+            "cpp",
+            "python",
+            "rust"
+          ],
+          "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
+        },
+        "cph.languageIdCpp": {
+          "type": "number",
+          "default": 54,
+          "description": "The language ID chosen in the drop down for choosing the language during submission for C++"
+        },
+        "cph.languageIdPython": {
+          "type": "number",
+          "default": 31,
+          "description": "The language ID chosen in the drop down for choosing the language during submission for Python"
+        },
+        "cph.languageIdC": {
+          "type": "number",
+          "default": 43,
+          "description": "The language ID chosen in the drop down for choosing the language during submission for C"
+        },
+        "cph.languageIdRust": {
+          "type": "number",
+          "default": 49,
+          "description": "The language ID chosen in the drop down for choosing the language during submission for Rust"
         }
-    },
-    "scripts": {
-        "webpack-production": "webpack --mode production",
-        "webpack-frontend-production": "webpack --mode production --config ./webpack.frontend.config.js",
-        "vscode:prepublish": "npm run webpack-frontend-production && npm run webpack-production",
-        "prewebpack": "webpack --mode development --config ./webpack.frontend.config.js",
-        "webpack": "webpack --mode development",
-        "webpack-dev": "webpack --mode development --watch",
-        "webpack-frontend-dev": "webpack --mode development --watch --config ./webpack.frontend.config.js",
-        "test-compile": "tsc -p ./",
-        "lint": "eslint . --ext .ts,.tsx",
-        "pretest": "tsc -p ./",
-        "test": "jest out/"
-    },
-    "devDependencies": {
-        "@types/jest": "^25.2.3",
-        "@types/node": "^13.11.0",
-        "@types/react": "^16.9.35",
-        "@types/react-dom": "^16.9.8",
-        "@types/vscode": "^1.45.0",
-        "@typescript-eslint/eslint-plugin": "^3.0.2",
-        "@typescript-eslint/parser": "^3.0.2",
-        "copy-webpack-plugin": "^6.0.1",
-        "eslint": "^7.7.0",
-        "eslint-config-prettier": "^6.11.0",
-        "eslint-plugin-prettier": "^3.1.3",
-        "eslint-plugin-react": "^7.20.0",
-        "eslint-plugin-react-hooks": "^4.0.4",
-        "jest": "^26.0.1",
-        "prettier": "2.0.5",
-        "ts-loader": "^7.0.5",
-        "typescript": "^3.8.3",
-        "webpack": "^4.43.0",
-        "webpack-cli": "^3.3.11"
-    },
-    "dependencies": {
-        "python-shell": "^2.0.1",
-        "react": "^16.13.1",
-        "react-autosize-textarea": "^7.0.0",
-        "react-dom": "^16.13.1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/agrawal-d/competitive-programming-helper/"
+      }
     }
+  },
+  "scripts": {
+    "webpack-production": "webpack --mode production",
+    "webpack-frontend-production": "webpack --mode production --config ./webpack.frontend.config.js",
+    "vscode:prepublish": "npm run webpack-frontend-production && npm run webpack-production",
+    "prewebpack": "webpack --mode development --config ./webpack.frontend.config.js",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "webpack-frontend-dev": "webpack --mode development --watch --config ./webpack.frontend.config.js",
+    "test-compile": "tsc -p ./",
+    "lint": "eslint . --ext .ts,.tsx",
+    "pretest": "tsc -p ./",
+    "test": "jest out/"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.3",
+    "@types/node": "^13.11.0",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/vscode": "^1.45.0",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
+    "copy-webpack-plugin": "^6.0.1",
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^4.0.4",
+    "jest": "^26.0.1",
+    "prettier": "2.0.5",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.8.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "python-shell": "^2.0.2",
+    "react": "^16.13.1",
+    "react-autosize-textarea": "^7.0.0",
+    "react-dom": "^16.13.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agrawal-d/competitive-programming-helper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agrawal-d/competitive-programming-helper/issues"
+  },
+  "homepage": "https://github.com/agrawal-d/competitive-programming-helper#readme",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": ""
 }
