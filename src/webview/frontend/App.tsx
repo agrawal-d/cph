@@ -344,7 +344,7 @@ function App() {
             </div>
             <div className="results">{views}</div>
             <button
-                className="btn margin-10"
+                className="btn margin-10 btn-green"
                 onClick={newCase}
                 title="Create a new empty testcase"
             >

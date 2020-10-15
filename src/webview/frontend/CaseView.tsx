@@ -176,12 +176,16 @@ export default function CaseView(props: {
                         onChange={handleOutputChange}
                         value={output}
                     />
-                    Received Output:
-                    <TextareaAutosize
-                        className="selectable received-textarea"
-                        value={trunctateStdout(resultText)}
-                        readOnly
-                    />
+                    {props.case.result != null && (
+                        <>
+                            Received Output:
+                            <TextareaAutosize
+                                className="selectable received-textarea"
+                                value={trunctateStdout(resultText)}
+                                readOnly
+                            />
+                        </>
+                    )}
                     {stderror && stderror.length > 0 && (
                         <>
                             Standard Error:
