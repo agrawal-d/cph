@@ -1,8 +1,7 @@
 import { getProblem } from './parser';
 import * as vscode from 'vscode';
-<<<<<<< HEAD:src/submit.ts
 import { storeSubmitProblem, submitKattisProblem } from './companion';
-import { extensionToWebWiewMessage } from './webview';
+import { extensionToWebWiewMessage } from './webview/webview';
 
 export const submitToKattis = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
@@ -37,10 +36,6 @@ export const submitToKattis = () => {
     submitKattisProblem(problem);
     extensionToWebWiewMessage({ command: 'waiting-for-submit' });
 };
-=======
-import { storeSubmitProblem } from './companion';
-import { extensionToWebWiewMessage } from './webview/webview';
->>>>>>> abc53e348c8ed239021256496046397bbde03fd4:src/companion/submit.ts
 
 export const submitToCodeForces = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;

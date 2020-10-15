@@ -1,10 +1,5 @@
-<<<<<<< HEAD:src/compiler.ts
-import { getLanguage, ocHide, ocShow, ocWrite } from '../utils';
-import { Language } from '../types';
-=======
 import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
->>>>>>> abc53e348c8ed239021256496046397bbde03fd4:src/runs/compiler.ts
 import { spawn } from 'child_process';
 import path from 'path';
 import { getSaveLocationPref } from './preferences';
