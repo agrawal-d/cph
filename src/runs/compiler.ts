@@ -1,4 +1,4 @@
-import { getLanguage, ocHide, ocAppend, ocShow, ocWrite } from '../utils';
+import { getLanguage, ocHide, ocShow, ocWrite } from '../utils';
 import { Language } from '../types';
 import { spawn } from 'child_process';
 import path from 'path';

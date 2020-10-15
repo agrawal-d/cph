@@ -52,7 +52,7 @@ export const getLanguage = (srcPath: string): Language => {
             return {
                 name: langName,
                 args: [...getPythonArgsPref()],
-                compiler: 'python',
+                compiler: 'python3',
                 skipCompile: true,
             };
         }
