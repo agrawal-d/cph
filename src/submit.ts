@@ -1,7 +1,6 @@
 import { getProblem } from './parser';
 import * as vscode from 'vscode';
-import { storeSubmitProblem } from './companion';
-import { submitKattisProblem } from './companion';
+import { storeSubmitProblem, submitKattisProblem } from './companion';
 import { extensionToWebWiewMessage } from './webview';
 
 export const submitToKattis = () => {
