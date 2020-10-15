@@ -1,19 +1,20 @@
+import { spawn } from 'child_process';
+import { platform } from 'os';
 import path from 'path';
-import config from '../config';
+import { Url } from 'url';
 import * as vscode from 'vscode';
+
+import config from './config';
+import { getProbSaveLocation } from './parser';
 import {
-    getCppArgsPref,
     getCArgsPref,
+    getCppArgsPref,
     getPythonArgsPref,
     getRustArgsPref,
-} from '../preferences';
-import { Language } from '../types';
-import { Url } from 'url';
-import { getProbSaveLocation } from '../parser';
-import { platform } from 'os';
-import { spawn } from 'child_process';
+} from './preferences';
+import { Language } from './types';
 
-const oc = vscode.window.createOutputChannel('coconsttitive');
+const oc = vscode.window.createOutputChannel('cph');
 
 /**
  * Get language based on file extension
@@ -97,7 +98,10 @@ export const ocHide = () => {
 
 export const randomId = () => Math.floor(Date.now() + Math.random() * 100);
 
-/** Check if file is supported. If not, shows an error dialog. Returns true if unsupported. */
+/**
+ * Check if file is supported. If not, shows an error dialog. Returns true if
+ * unsupported.
+ */
 export const checkUnsupported = (srcPath: string): boolean => {
     if (!isValidLanguage(srcPath)) {
         vscode.window.showErrorMessage(

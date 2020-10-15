@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import { Problem } from '../types';
-import { getSaveLocationPref } from '../preferences';
+import { Problem } from './types';
+import { getSaveLocationPref } from './preferences';
 import crypto from 'crypto';
 
 /**
@@ -25,9 +25,6 @@ export const getProbSaveLocation = (srcPath: string): string => {
     if (savePreference && savePreference !== '') {
         return path.join(savePreference, baseProbName);
     }
-    if (!fs.existsSync(cphFolder)) {
-        fs.mkdirSync(cphFolder);
-    }
     return path.join(cphFolder, baseProbName);
 };
 
@@ -45,6 +42,11 @@ export const getProblem = (srcPath: string): Problem | null => {
 
 /** Save the problem (metadata) */
 export const saveProblem = (srcPath: string, problem: Problem) => {
+    const srcFolder = path.dirname(srcPath);
+    const cphFolder = path.join(srcFolder, '.cph');
+    if (!fs.existsSync(cphFolder)) {
+        fs.mkdirSync(cphFolder);
+    }
     const probPath = getProbSaveLocation(srcPath);
     try {
         fs.writeFileSync(probPath, JSON.stringify(problem));

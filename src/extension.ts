@@ -7,6 +7,7 @@ import {
     checkLaunchWebview,
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
+
 declare global {
     module NodeJS {
         interface Global {

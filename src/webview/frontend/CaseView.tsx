@@ -84,6 +84,7 @@ export default function CaseView(props: {
     }, [running]);
 
     let resultText = '';
+    const stderror = result?.stderr;
     // Handle several cases for result text
     if (result?.signal) {
         resultText = result?.signal;
@@ -175,12 +176,26 @@ export default function CaseView(props: {
                         onChange={handleOutputChange}
                         value={output}
                     />
-                    Received Output:
-                    <TextareaAutosize
-                        className="selectable received-textarea"
-                        value={trunctateStdout(resultText)}
-                        readOnly
-                    />
+                    {props.case.result != null && (
+                        <>
+                            Received Output:
+                            <TextareaAutosize
+                                className="selectable received-textarea"
+                                value={trunctateStdout(resultText)}
+                                readOnly
+                            />
+                        </>
+                    )}
+                    {stderror && stderror.length > 0 && (
+                        <>
+                            Standard Error:
+                            <TextareaAutosize
+                                className="selectable stderror-textarea"
+                                value={trunctateStdout(stderror)}
+                                readOnly
+                            />
+                        </>
+                    )}
                 </>
             )}
         </div>

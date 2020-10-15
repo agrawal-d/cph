@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { WebviewToVSEvent, Problem, VSToWebViewMessage } from '../types';
-import { killRunning } from '../runs/executions';
+import { killRunning } from '../executions';
 import path from 'path';
-import { runSingleAndSave } from './runSingleAndSave';
+import { runSingleAndSave } from './processRunSingle';
 import { saveProblem } from '../parser';
-import runAllAndSave from './runAllAndSave';
+import runAllAndSave from './processRunAll';
 import { readFileSync } from 'fs';
 import { deleteProblemFile } from '../utils';
 import { storeSubmitProblem, submitKattisProblem } from '../companion';

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "competitive-programming-helper",
   "displayName": "competitive-programming-helper",
   "description": "Makes judging, compiling, and downloading problems for competitve programming easy.",
@@ -28,6 +29,20 @@
         "title": "Submit to CodeForces",
         "icon": "icon.png"
       }
+=======
+    "name": "competitive-programming-helper",
+    "displayName": "competitive-programming-helper",
+    "description": "Makes judging, compiling, and downloading problems for competitve programming easy.",
+    "license": "MIT",
+    "icon": "icon.png",
+    "publisher": "DivyanshuAgrawal",
+    "version": "4.4.0",
+    "engines": {
+        "vscode": "^1.45.0"
+    },
+    "categories": [
+        "Other"
+>>>>>>> abc53e348c8ed239021256496046397bbde03fd4
     ],
     "keybindings": [
       {

@@ -1,8 +1,8 @@
 import { Problem } from '../types';
-import { runSingleAndSave } from './runSingleAndSave';
-import { extensionToWebWiewMessage } from '.';
-import { compileFile, getBinSaveLocation } from '../runs/compiler';
-import { deleteBinary } from '../runs/executions';
+import { runSingleAndSave } from './processRunSingle';
+import { extensionToWebWiewMessage } from './webview';
+import { compileFile, getBinSaveLocation } from '../compiler';
+import { deleteBinary } from '../executions';
 import { getLanguage } from '../utils';
 
 /**

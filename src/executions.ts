@@ -1,8 +1,8 @@
-import { Language, Run } from '../types';
+import { Language, Run } from './types';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { platform } from 'os';
-import config from '../config';
-import { getTimeOutPref } from '../preferences';
+import config from './config';
+import { getTimeOutPref } from './preferences';
 import * as vscode from 'vscode';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];

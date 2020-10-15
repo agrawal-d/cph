@@ -1,16 +1,16 @@
 import * as vscode from 'vscode';
-import { checkUnsupported, randomId } from '../utils';
+import { checkUnsupported, randomId } from './utils';
 import {
     startWebVeiwIfNotActive,
     setBaseWebViewHTML,
     webViewExists,
     getWebViewProblemName,
     extensionToWebWiewMessage,
-} from '../webview';
-import { Problem } from '../types';
-import { getProblem, saveProblem } from '../parser';
+} from './webview/webview';
+import { Problem } from './types';
+import { getProblem, saveProblem } from './parser';
 import { compileFile } from './compiler';
-import runAllAndSave from '../webview/runAllAndSave';
+import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 
 /**
