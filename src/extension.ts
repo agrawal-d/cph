@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import { setupCompanionServer } from './companion';
-import runTestCases from './runs/runTestCases';
+import runTestCases from './runTestCases';
 import {
     editorChanged,
     editorClosed,
     checkLaunchWebview,
 } from './webview/editorChange';
-import { submitToCodeForces, submitToKattis } from './companion/submit';
+import { submitToCodeForces, submitToKattis } from './submit';
 declare global {
     module NodeJS {
         interface Global {

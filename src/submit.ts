@@ -1,8 +1,8 @@
-import { getProblem } from '../parser';
+import { getProblem } from './parser';
 import * as vscode from 'vscode';
-import { storeSubmitProblem } from '.';
-import { submitKattisProblem } from '.';
-import { extensionToWebWiewMessage } from '../webview';
+import { storeSubmitProblem } from './companion';
+import { submitKattisProblem } from './companion';
+import { extensionToWebWiewMessage } from './webview';
 
 export const submitToKattis = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
