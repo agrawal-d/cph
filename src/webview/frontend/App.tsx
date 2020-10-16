@@ -41,6 +41,7 @@ function App() {
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
     const [saving, setSaving] = useState<boolean>(false);
+    
     // Update problem if cases change. The only place where `useProblem` is
     // allowed to ensure sync.
     useEffect(() => {
@@ -141,7 +142,7 @@ function App() {
 
     // Save problem if it changes.
     useEffect(() => {
-        if (deferSaveTimer != null) {
+        if (deferSaveTimer !== null) {
             clearTimeout(deferSaveTimer);
         }
         const timeOutId = window.setTimeout(() => {
