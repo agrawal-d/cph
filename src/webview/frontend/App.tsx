@@ -40,7 +40,7 @@ function App() {
     const [compiling, setCompiling] = useState<boolean>(false);
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
-
+    const [saving, setSaving] = useState<boolean>(false);
     // Update problem if cases change. The only place where `useProblem` is
     // allowed to ensure sync.
     useEffect(() => {
@@ -141,15 +141,14 @@ function App() {
 
     // Save problem if it changes.
     useEffect(() => {
-        if (deferSaveTimer === null) {
-            console.log('Setting timer');
-            setDeferSaveTimer(
-                window.setTimeout(() => {
-                    save();
-                    setDeferSaveTimer(null);
-                }, 400),
-            );
+        if (deferSaveTimer != null) {
+            clearTimeout(deferSaveTimer);
         }
+        const timeOutId = window.setTimeout(() => {
+            setDeferSaveTimer(null);
+            save();
+        }, 500);
+        setDeferSaveTimer(timeOutId);
     }, [problem]);
 
     // Create a new Case
@@ -174,11 +173,15 @@ function App() {
 
     // Save the problem
     const save = () => {
+        setSaving(true);
         console.log('Saved problem');
         vscodeApi.postMessage({
             command: 'save',
             problem,
         });
+        setTimeout(() => {
+            setSaving(false);
+        }, 500);
     };
 
     // Stop running executions.
@@ -376,24 +379,55 @@ function App() {
             <div className="meta">
                 <h1 className="problem-name">
                     {problem.name}{' '}
-                    {compiling && <b className="compiling">Compiling</b>}
+                    {compiling && (
+                        <b className="compiling">
+                            <span className="loader"></span>Compiling
+                        </b>
+                    )}
                 </h1>
             </div>
             <div className="results">{views}</div>
-            <button className="btn margin-10" onClick={newCase}>
+            <button
+                className="btn margin-10 btn-green"
+                onClick={newCase}
+                title="Create a new empty testcase"
+            >
                 + New Testcase
             </button>
+
             <div className="actions">
-                <button className="btn" onClick={runAll}>
+                <button
+                    className="btn"
+                    onClick={runAll}
+                    title="Run all testcases again"
+                >
                     ↺ Run All
                 </button>
-                <button className="btn btn-green" onClick={newCase}>
+                <button
+                    className="btn btn-green"
+                    onClick={newCase}
+                    title="Create a new empty testcase"
+                >
                     + New
                 </button>
-                <button className="btn btn-orange" onClick={stop}>
+                <button
+                    className="btn btn-orange"
+                    onClick={stop}
+                    title="Kill all running testcases"
+                >
                     ⊗ Stop
                 </button>
-                <button className="btn btn-red right" onClick={deleteTcs}>
+                {saving && (
+                    <span style={{ opacity: 0.2 }}>
+                        <span className="loader"></span>
+                        <span>Saving</span>
+                    </span>
+                )}
+                <button
+                    className="btn btn-red right"
+                    onClick={deleteTcs}
+                    title="Delete all testcases and close results window"
+                >
                     ☠ Delete
                 </button>
             </div>
