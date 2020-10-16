@@ -75,7 +75,7 @@ export const isValidLanguage = (srcPath: string): boolean => {
     );
 };
 
-export const isCodeforcesUrl = (url: Url): boolean => {
+export const isCodeforcesUrl = (url: URL): boolean => {
     return url.hostname === 'codeforces.com';
 };
 

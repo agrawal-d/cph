@@ -12,7 +12,8 @@ export type prefSection =
     | 'languageIdCpp'
     | 'languageIdC'
     | 'languageIdRust'
-    | 'languageIdPython';
+    | 'languageIdPython'
+    | 'useShortCodeforcesName';
 
 export type Language = {
     name: LangNames;

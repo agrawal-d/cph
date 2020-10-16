@@ -10,8 +10,12 @@ import {
     setBaseWebViewHTML,
     extensionToWebWiewMessage,
 } from './webview/webview';
-import { randomId } from './utils';
-import { getDefaultLangPref, getLanguageId } from './preferences';
+import { isCodeforcesUrl, randomId } from './utils';
+import {
+    getDefaultLangPref,
+    getLanguageId,
+    useShortCodeForcesName,
+} from './preferences';
 import { getProblemName } from './submit';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
@@ -73,8 +77,16 @@ export const setupCompanionServer = () => {
     }
 };
 
-export const getProblemFileName = (name: string, ext: string) => {
-    return `${name.replace(/\W+/g, '_')}.${ext}`;
+export const getProblemFileName = (problem: Problem, ext: string) => {
+    if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
+        return `${getProblemName(problem.url)}.${ext}`;
+    } else {
+        console.log(
+            isCodeforcesUrl(new URL(problem.url)),
+            useShortCodeForcesName(),
+        );
+        return `${problem.name.replace(/\W+/g, '_')}.${ext}`;
+    }
 };
 
 const handleNewProblem = async (problem: Problem) => {
@@ -84,7 +96,8 @@ const handleNewProblem = async (problem: Problem) => {
         return;
     }
     const defaultLanguage = getDefaultLangPref();
-    let problemFileName: string;
+    let extn: string;
+
     if (defaultLanguage == null) {
         const choices = Object.keys(config.extensions);
         const selected = await vscode.window.showQuickPick(choices);
@@ -95,14 +108,12 @@ const handleNewProblem = async (problem: Problem) => {
             return;
         }
         // @ts-ignore
-        const extn: string = config.extensions[selected];
-        console.log(config.extensions, extn, selected);
-        problemFileName = getProblemFileName(problem.name, extn);
+        extn = config.extensions[selected];
     } else {
         //@ts-ignore
-        const extn: string = config.extensions[defaultLanguage];
-        problemFileName = getProblemFileName(problem.name, extn);
+        extn = config.extensions[defaultLanguage];
     }
+    const problemFileName = getProblemFileName(problem, extn);
     const srcPath = path.join(folder, problemFileName);
 
     // Add fields absent in competitive companion.
