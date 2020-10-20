@@ -132,7 +132,6 @@ const handleNewProblem = async (problem: Problem) => {
         return;
     }
     const defaultLanguage = getDefaultLangPref();
-
     let extn: string;
 
     if (defaultLanguage == null) {
@@ -150,7 +149,7 @@ const handleNewProblem = async (problem: Problem) => {
         //@ts-ignore
         extn = config.extensions[defaultLanguage];
     }
-    const problemFileName = getProblemFileName(problem.name, extn);
+    let problemFileName = getProblemFileName(problem.name, extn);
     let url: URL;
     try {
         url = new URL(problem.url);
