@@ -132,8 +132,9 @@ const handleNewProblem = async (problem: Problem) => {
         return;
     }
     const defaultLanguage = getDefaultLangPref();
-    let problemFileName: string;
+
     let extn: string;
+
     if (defaultLanguage == null) {
         const choices = Object.keys(config.extensions);
         const selected = await vscode.window.showQuickPick(choices);
@@ -145,13 +146,11 @@ const handleNewProblem = async (problem: Problem) => {
         }
         // @ts-ignore
         extn = config.extensions[selected];
-        console.log(config.extensions, extn, selected);
-        problemFileName = getProblemFileName(problem.name, extn);
     } else {
         //@ts-ignore
         extn = config.extensions[defaultLanguage];
-        problemFileName = getProblemFileName(problem.name, extn);
     }
+    const problemFileName = getProblemFileName(problem.name, extn);
     let url: URL;
     try {
         url = new URL(problem.url);
