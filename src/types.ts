@@ -87,8 +87,12 @@ export type DeleteTcsCommand = {
     command: 'delete-tcs';
 } & WebviewMessageCommon;
 
-export type SubmitCommand = {
-    command: 'submit';
+export type SubmitCf = {
+    command: 'submitCf';
+} & WebviewMessageCommon;
+
+export type SubmitKattis = {
+    command: 'submitKattis';
 } & WebviewMessageCommon;
 
 export type WebviewToVSEvent =
@@ -97,7 +101,8 @@ export type WebviewToVSEvent =
     | KillRunningCommand
     | SaveCommand
     | DeleteTcsCommand
-    | SubmitCommand;
+    | SubmitCf
+    | SubmitKattis;
 
 export type RunningCommand = {
     command: 'running';

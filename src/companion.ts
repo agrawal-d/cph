@@ -4,7 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync } from 'fs';
 import {
     startWebVeiwIfNotActive,
     setBaseWebViewHTML,
@@ -17,9 +17,57 @@ import {
     useShortCodeForcesName,
 } from './preferences';
 import { getProblemName } from './submit';
+import { spawn } from 'child_process';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
+
+export const submitKattisProblem = (problem: Problem) => {
+    const srcPath = problem.srcPath;
+    const homedir = require('os').homedir();
+    let submitPath = `${homedir}/.kattis/submit.py`;
+    //vscode.window.showInformationMessage(homedir);
+    if (process.platform == 'win32') {
+        if (
+            !existsSync(`${homedir}\\.kattis\\.kattisrc`) ||
+            !existsSync(`${homedir}\\.kattis\\submit.py`)
+        ) {
+            vscode.window.showErrorMessage(
+                `Please ensure .kattisrc and submit.py are present in ${homedir}\\.kattis\\submit.py`,
+            );
+            return;
+        } else {
+            submitPath = `${homedir}\\.kattis\\submit.py`;
+        }
+    } else {
+        if (
+            !existsSync(`${homedir}/.kattis/.kattisrc`) ||
+            !existsSync(`${homedir}/.kattis/submit.py`)
+        ) {
+            vscode.window.showErrorMessage(
+                `Please ensure .kattisrc and submit.py are present in ${homedir}/.kattis/submit.py`,
+            );
+            return;
+        } else {
+            submitPath = `${homedir}/.kattis/submit.py`;
+        }
+    }
+    const pyshell = spawn('python', [submitPath, '-f', srcPath]);
+
+    //tells the python script to open submission window in new tab
+    pyshell.stdin.setDefaultEncoding('utf-8');
+    pyshell.stdin.write('Y\n');
+    pyshell.stdin.end();
+
+    pyshell.stdout.on('data', function (data) {
+        console.log(data.toString());
+        extensionToWebWiewMessage({ command: 'submit-finished' });
+    });
+    pyshell.stderr.on('data', function (data) {
+        console.log(data.tostring());
+        vscode.window.showErrorMessage(data);
+    });
+};
 
 /** Stores a response to be submitted to CF page soon. */
 export const storeSubmitProblem = (problem: Problem) => {
@@ -122,8 +170,9 @@ const handleNewProblem = async (problem: Problem) => {
         ...testcase,
         id: randomId(),
     }));
-
-    writeFileSync(srcPath, '');
+    if (!existsSync(srcPath)) {
+        writeFileSync(srcPath, '');
+    }
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
     await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);

@@ -158,6 +158,7 @@
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
+        "python-shell": "^2.0.2",
         "react": "^16.13.1",
         "react-autosize-textarea": "^7.0.0",
         "react-dom": "^16.13.1"
