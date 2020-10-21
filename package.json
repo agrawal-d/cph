@@ -5,7 +5,7 @@
     "license": "MIT",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "4.4.0",
+    "version": "4.4.1",
     "engines": {
         "vscode": "^1.45.0"
     },
@@ -114,6 +114,11 @@
                     "type": "number",
                     "default": 49,
                     "description": "The language ID chosen in the drop down for choosing the language during submission for Rust"
+                },
+                "cph.useShortCodeforcesName": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use a short ID for problem file generated ( like 144C ) instead of the complete problem name for codeforces problems"
                 }
             }
         }

@@ -10,8 +10,12 @@ import {
     setBaseWebViewHTML,
     extensionToWebWiewMessage,
 } from './webview/webview';
-import { randomId } from './utils';
-import { getDefaultLangPref, getLanguageId } from './preferences';
+import { isCodeforcesUrl, randomId } from './utils';
+import {
+    getDefaultLangPref,
+    getLanguageId,
+    useShortCodeForcesName,
+} from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 
@@ -121,8 +125,16 @@ export const setupCompanionServer = () => {
     }
 };
 
-export const getProblemFileName = (name: string, ext: string) => {
-    return `${name.replace(/\W+/g, '_')}.${ext}`;
+export const getProblemFileName = (problem: Problem, ext: string) => {
+    if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
+        return `${getProblemName(problem.url)}.${ext}`;
+    } else {
+        console.log(
+            isCodeforcesUrl(new URL(problem.url)),
+            useShortCodeForcesName(),
+        );
+        return `${problem.name.replace(/\W+/g, '_')}.${ext}`;
+    }
 };
 
 const handleNewProblem = async (problem: Problem) => {
@@ -149,7 +161,6 @@ const handleNewProblem = async (problem: Problem) => {
         //@ts-ignore
         extn = config.extensions[defaultLanguage];
     }
-    let problemFileName = getProblemFileName(problem.name, extn);
     let url: URL;
     try {
         url = new URL(problem.url);
@@ -159,11 +170,9 @@ const handleNewProblem = async (problem: Problem) => {
     }
     if (url.hostname == 'open.kattis.com') {
         const splitUrl = problem.url.split('/');
-        problemFileName = getProblemFileName(
-            splitUrl[splitUrl.length - 1],
-            extn,
-        );
+        problem.name = splitUrl[splitUrl.length - 1];
     }
+    const problemFileName = getProblemFileName(problem, extn);
     const srcPath = path.join(folder, problemFileName);
 
     // Add fields absent in competitive companion.

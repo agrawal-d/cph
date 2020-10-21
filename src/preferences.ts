@@ -42,6 +42,10 @@ export const getDefaultLangPref = (): string | null => {
     return pref;
 };
 
+export const useShortCodeForcesName = (): boolean => {
+    return getPreference('useShortCodeforcesName');
+};
+
 /** The language ID preference for a particular extension. */
 export const getLanguageId = (srcPath: string): number => {
     const extension = path.extname(srcPath);
