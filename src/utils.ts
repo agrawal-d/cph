@@ -1,7 +1,6 @@
 import { spawn } from 'child_process';
 import { platform } from 'os';
 import path from 'path';
-import { Url } from 'url';
 import * as vscode from 'vscode';
 
 import config from './config';
@@ -53,7 +52,7 @@ export const getLanguage = (srcPath: string): Language => {
             return {
                 name: langName,
                 args: [...getPythonArgsPref()],
-                compiler: 'python3',
+                compiler: 'python',
                 skipCompile: true,
             };
         }

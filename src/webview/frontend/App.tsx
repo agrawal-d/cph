@@ -421,7 +421,6 @@ function App() {
                 {saving && (
                     <span style={{ opacity: 0.2 }}>
                         <span className="loader"></span>
-                        <span>Saving</span>
                     </span>
                 )}
                 <button
