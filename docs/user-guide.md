@@ -63,9 +63,8 @@ This document contains instructions on how to use this extension.
 
 4. Click on the 'Submit to Kattis' button in the results window.
 
-5. A new tab will open in the browser with the submissions page.
+5. A new tab will open in the browser with the submissions page. 
 
-   
 
 ## Enviornment
 
