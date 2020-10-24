@@ -386,6 +386,13 @@ function App() {
                         </b>
                     )}
                 </h1>
+                <a
+                    className="btn right help"
+                    title="Help"
+                    href="https://github.com/agrawal-d/cph/blob/master/docs/user-guide.md"
+                >
+                    ?
+                </a>
             </div>
             <div className="results">{views}</div>
             <button
