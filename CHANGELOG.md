@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.4.2
+
+-   Added support for Kattis auto submit.
+
 ## 4.4.0
 
 -   Show standard error when it's not empty.
