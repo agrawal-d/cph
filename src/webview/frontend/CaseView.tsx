@@ -109,8 +109,8 @@ export default function CaseView(props: {
     return (
         <div className={caseClassName}>
             <div className="case-metadata">
-                <div className="left" onClick={toggle}>
-                    <div className="case-number left case-title">
+                <div className="toggle-minimize" onClick={toggle}>
+                    <span className="case-number case-title">
                         {minimized && (
                             <span onClick={expand} title="Expand">
                                 [+]
@@ -122,10 +122,10 @@ export default function CaseView(props: {
                             </span>
                         )}
                         &nbsp;Testcase {props.num}
-                    </div>
+                    </span>
                     {running && <span className="running-text">Running</span>}
                     {result && !running && (
-                        <div className="result-data left">
+                        <span className="result-data">
                             <span
                                 className={
                                     result.pass ? 'result-pass' : 'result-fail'
@@ -134,11 +134,10 @@ export default function CaseView(props: {
                                 {result.pass ? 'Passed' : 'Failed'}
                             </span>
                             <span className="exec-time">{timeText}</span>
-                        </div>
+                        </span>
                     )}
-                    <div className="clearfix"></div>
                 </div>
-                <div className="right time">
+                <div className="time">
                     <button
                         className="btn btn-green"
                         title="Run Again"
@@ -157,7 +156,6 @@ export default function CaseView(props: {
                         {deleteIcon}
                     </button>
                 </div>
-                <div className="clearfix"></div>
             </div>
             {!minimized && (
                 <>

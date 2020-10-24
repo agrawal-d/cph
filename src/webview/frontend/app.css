@@ -103,7 +103,13 @@ textarea:active {
 }
 
 .case-metadata {
-    margin-bottom: 5px;
+    display: flex;
+}
+
+.help {
+    position: absolute;
+    top: 15px;
+    right: 5px;
 }
 
 .right {
@@ -113,11 +119,15 @@ textarea:active {
 .left {
     float: left;
 }
-.case-title {
+
+.toggle-minimize {
+    flex-grow: 1;
     padding: 8px;
     margin: -8px;
+    margin-right: 0px;
 }
-.case-title:hover {
+
+.feedback:hover {
     background-color: rgba(50, 50, 50, 0.3);
 }
 
