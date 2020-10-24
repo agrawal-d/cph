@@ -21,12 +21,12 @@ import { spawn } from 'child_process';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
+const COMPANION_LOGGING = false;
 
 export const submitKattisProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
     const homedir = require('os').homedir();
     let submitPath = `${homedir}/.kattis/submit.py`;
-    //vscode.window.showInformationMessage(homedir);
     if (process.platform == 'win32') {
         if (
             !existsSync(`${homedir}\\.kattis\\.kattisrc`) ||
@@ -93,7 +93,7 @@ export const setupCompanionServer = () => {
             let rawProblem = '';
 
             req.on('readable', function () {
-                console.log('Companion server got data');
+                COMPANION_LOGGING && console.log('Companion server got data');
                 const tmp = req.read();
                 if (tmp && tmp != null && tmp.length > 0) {
                     rawProblem += tmp;
@@ -102,14 +102,16 @@ export const setupCompanionServer = () => {
             req.on('close', function () {
                 const problem: Problem = JSON.parse(rawProblem);
                 handleNewProblem(problem);
-                console.log('Companion server closed connection.');
+                COMPANION_LOGGING &&
+                    console.log('Companion server closed connection.');
             });
             res.write(JSON.stringify(savedResponse));
             if (headers['cph-submit'] == 'true') {
-                console.log(
-                    'Request was from the cph-submit extension; sending savedResponse and clearing it',
-                    savedResponse,
-                );
+                COMPANION_LOGGING &&
+                    console.log(
+                        'Request was from the cph-submit extension; sending savedResponse and clearing it',
+                        savedResponse,
+                    );
                 savedResponse = emptyResponse;
                 extensionToWebWiewMessage({
                     command: 'submit-finished',
