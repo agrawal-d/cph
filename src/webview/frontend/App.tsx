@@ -381,8 +381,8 @@ function App() {
                 <h1 className="problem-name">
                     {problem.name}{' '}
                     {compiling && (
-                        <b className="compiling">
-                            <span className="loader"></span>Compiling
+                        <b className="compiling" title="Compiling">
+                            <span className="loader"></span>
                         </b>
                     )}
                 </h1>
@@ -425,11 +425,6 @@ function App() {
                 >
                     ⊗ Stop
                 </button>
-                {saving && (
-                    <span style={{ opacity: 0.2 }}>
-                        <span className="loader"></span>
-                    </span>
-                )}
                 <button
                     className="btn btn-red right"
                     onClick={deleteTcs}
