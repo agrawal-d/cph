@@ -4,8 +4,6 @@ import { platform } from 'os';
 import config from './config';
 import { getTimeOutPref } from './preferences';
 import * as vscode from 'vscode';
-import config from '../config';
-import { getTimeOutPref } from '../preferences';
 import path from 'path';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
