@@ -39,12 +39,32 @@ This document contains instructions on how to use this extension.
 ## Submit to Codeforces
 
 1. Install [cph-submit](https://github.com/agrawal-d/cph-submit) on Firefox.
-
 1. After installing, make sure a browser window is open.
-
 1. Click on the 'Submit to CF' button in the results window.
-
 1. A tab opens in the browser and the problem is submitted.
+
+## Submit to Kattis
+
+1. Install Kattis [config file](https://open.kattis.com/download/kattisrc) and [submission client](https://open.kattis.com/download/submit.py?e48b42=). Make sure you are logged in on another tab prior to accessing the files.
+
+2. Move these files to a directory(folder) called .kattisrc in your home directory.
+
+   1. On MacOS, this is typically /Users/{username}/.kattisrc
+   2. On Linux, this is typically /home/{username}/.kattisrc
+   3. On Windows, this is typically C:\Users\\{username}\\.kattisrc
+
+3. If any errors come up, check which directory `~` is linked to, by running 
+
+   ```bash
+   python -c "import os; print(os.path.expanduser('~'))"
+   ```
+
+   in a terminal.
+
+4. Click on the 'Submit to Kattis' button in the results window.
+
+5. A new tab will open in the browser with the submissions page. 
+
 
 ## Enviornment
 

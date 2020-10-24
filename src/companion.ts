@@ -161,6 +161,17 @@ const handleNewProblem = async (problem: Problem) => {
         //@ts-ignore
         extn = config.extensions[defaultLanguage];
     }
+    let url: URL;
+    try {
+        url = new URL(problem.url);
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+    if (url.hostname == 'open.kattis.com') {
+        const splitUrl = problem.url.split('/');
+        problem.name = splitUrl[splitUrl.length - 1];
+    }
     const problemFileName = getProblemFileName(problem, extn);
     const srcPath = path.join(folder, problemFileName);
 
