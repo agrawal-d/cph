@@ -15,13 +15,19 @@ of popular platforms like Codeforces, Codechef, TopCoder etc.
 
 ## Quick start
 
-1. [Install cph](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper) in VS Code and open any folder.
-1. [Install competitive companion](https://github.com/jmerle/competitive-companion#readme) in your browser.
-1. Use Companion by pressing the green plus (+) circle from the browser toolbar when visiting any problem page.
-1. The file opens in VS Code with testcases preloaded. Press `Ctrl+Alt+B` to run them.
+1. [Install cph](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
+   in VS Code and open any folder.
+1. [Install competitive companion](https://github.com/jmerle/competitive-companion#readme)
+   in your browser.
+1. Use Companion by pressing the green plus (+) circle from the browser toolbar
+   when visiting any problem page.
+1. The file opens in VS Code with testcases preloaded. Press `Ctrl+Alt+B` to run
+   them.
 
-- (Optional) Install the [cph-submit](https://github.com/agrawal-d/cph-submit) browser extension to enable submitting directly on CodeForces.
-- (Optional) Install submit client and config file from the [Kattis help page](https://open.kattis.com/help/submit) after logging in.
+-   (Optional) Install the [cph-submit](https://github.com/agrawal-d/cph-submit)
+    browser extension to enable submitting directly on CodeForces.
+-   (Optional) Install submit client and config file from the
+    [Kattis help page](https://open.kattis.com/help/submit) after logging in.
 
 You can also use this extension locally, just open any supported file and press
 'Run Testcases' (or `Ctrl+Alt+B`) to manually enter testcases.
