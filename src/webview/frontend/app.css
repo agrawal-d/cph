@@ -97,7 +97,7 @@ textarea:active {
 }
 
 .case-number {
-    font-weight: bold;
+    /* font-weight: bold; */
     font-size: 1.15em;
     color: rgb(25, 152, 211);
 }
@@ -112,6 +112,13 @@ textarea:active {
 
 .left {
     float: left;
+}
+.case-title {
+    padding: 8px;
+    margin: -8px;
+}
+.case-title:hover {
+    background-color: rgba(50, 50, 50, 0.3);
 }
 
 .time {

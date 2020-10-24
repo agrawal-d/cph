@@ -78,11 +78,12 @@ export default function CaseView(props: {
         if (props.case.result !== null) {
             setRunning(false);
             props.case.result.pass ? setMinimized(true) : setMinimized(false);
+            console.log('minimizing', props.case.id, props.case.result);
         }
     }, [props.case.result]);
 
     useEffect(() => {
-        if (running === true) {
+        if (running) {
             setMinimized(true);
         }
     }, [running]);
@@ -109,7 +110,19 @@ export default function CaseView(props: {
         <div className={caseClassName}>
             <div className="case-metadata">
                 <div className="left" onClick={toggle}>
-                    <div className="case-number left">Testcase {props.num}</div>
+                    <div className="case-number left case-title">
+                        {minimized && (
+                            <span onClick={expand} title="Expand">
+                                [+]
+                            </span>
+                        )}
+                        {!minimized && (
+                            <span onClick={minimize} title="Minimize">
+                                [-]
+                            </span>
+                        )}
+                        &nbsp;Testcase {props.num}
+                    </div>
                     {running && <span className="running-text">Running</span>}
                     {result && !running && (
                         <div className="result-data left">
@@ -143,24 +156,6 @@ export default function CaseView(props: {
                     >
                         {deleteIcon}
                     </button>
-                    {minimized && (
-                        <button
-                            className="btn btn-w80"
-                            onClick={expand}
-                            title="Expand"
-                        >
-                            [+]
-                        </button>
-                    )}
-                    {!minimized && (
-                        <button
-                            className="btn btn-w80"
-                            onClick={minimize}
-                            title="Minimize"
-                        >
-                            [-]
-                        </button>
-                    )}
                 </div>
                 <div className="clearfix"></div>
             </div>
