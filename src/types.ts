@@ -12,6 +12,7 @@ export type prefSection =
     | 'firstTime'
     | 'languageIdCpp'
     | 'languageIdC'
+    | 'languageIdJava'
     | 'languageIdRust'
     | 'languageIdPython'
     | 'useShortCodeforcesName';

@@ -5,7 +5,7 @@
     "license": "GPLv3",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "4.4.4",
+    "version": "4.4.5",
     "engines": {
         "vscode": "^1.45.0"
     },
@@ -97,7 +97,8 @@
                         "c",
                         "cpp",
                         "python",
-                        "rust"
+                        "rust",
+                        "java"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
@@ -105,6 +106,11 @@
                     "type": "number",
                     "default": 54,
                     "description": "The language ID chosen in the drop down for choosing the language during submission for C++"
+                },
+                "cph.languageIdJava": {
+                    "type": "number",
+                    "default": 60,
+                    "description": "The language ID chosen in the drop down for choosing the language during submission for Java"
                 },
                 "cph.languageIdPython": {
                     "type": "number",

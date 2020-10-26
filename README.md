@@ -51,6 +51,7 @@ You can also use this extension locally, just open any supported file and press
 -   C
 -   Rust
 -   Python
+-   Java
 
 ## Contributing
 

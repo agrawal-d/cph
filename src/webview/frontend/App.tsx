@@ -40,6 +40,7 @@ function App() {
     const [compiling, setCompiling] = useState<boolean>(false);
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [saving, setSaving] = useState<boolean>(false);
 
     // Update problem if cases change. The only place where `useProblem` is

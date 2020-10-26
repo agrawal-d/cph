@@ -69,6 +69,10 @@ export const getLanguageId = (srcPath: string): number => {
             return getPreference('languageIdPython');
         }
 
+        case '.java': {
+            return getPreference('languageIdJava');
+        }
+
         default: {
             return -1;
         }
