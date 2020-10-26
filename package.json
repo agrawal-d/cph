@@ -76,6 +76,12 @@
                     "default": "",
                     "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
                 },
+                "cph.argsJava": {
+                    "title": "Compilation flags for Java",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to javac while compiling your file. Example '-verbose'"
+                },
                 "cph.firstTime": {
                     "title": "Show welcome message",
                     "type": "boolean",

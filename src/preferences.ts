@@ -31,6 +31,9 @@ export const getPythonArgsPref = (): string[] =>
 export const getRustArgsPref = (): string[] =>
     getPreference('argsRust').split(' ') || [];
 
+export const getJavaArgsPref = (): string[] =>
+    getPreference('argsJava').split(' ') || [];
+
 export const getFirstTimePref = (): boolean =>
     getPreference('firstTime') || 'true';
 

@@ -20,13 +20,15 @@ export const getBinSaveLocation = (srcPath: string): string => {
     if (language.skipCompile) {
         return srcPath;
     }
+    const ext = language.name == 'java' ? '*.class' : '.bin';
     const savePreference = getSaveLocationPref();
-    const srcFileName = path.basename(srcPath);
-    const binFileName = `${srcFileName}.bin`;
+    const srcFileName = path.parse(srcPath).name;
+    const binFileName = srcFileName + ext;
+    const binDir = path.dirname(srcPath);
     if (savePreference && savePreference !== '') {
         return path.join(savePreference, binFileName);
     }
-    return `${srcPath}.bin`;
+    return path.join(binDir, binFileName);
 };
 
 /**
@@ -61,6 +63,10 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         }
         case 'rust': {
             return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+        }
+        case 'java': {
+            const binDir = path.dirname(getBinSaveLocation(srcPath));
+            return [srcPath, '-d', binDir, ...args];
         }
         default: {
             return [];

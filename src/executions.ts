@@ -4,6 +4,7 @@ import { platform } from 'os';
 import config from './config';
 import { getTimeOutPref } from './preferences';
 import * as vscode from 'vscode';
+import path from 'path';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
@@ -46,6 +47,12 @@ export const runTestCase = (
                 [binPath, ...language.args],
                 spawnOpts,
             );
+            break;
+        }
+        case 'java': {
+            const binFileName = path.parse(binPath).name.slice(0, -1);
+            const binDir = path.dirname(binPath);
+            process = spawn('java', ['-cp', binDir, binFileName]);
             break;
         }
         default: {
@@ -115,7 +122,7 @@ export const deleteBinary = (language: Language, binPath: string) => {
         if (platform() == 'linux') {
             spawn('rm', [binPath]);
         } else {
-            spawn('del', [binPath]);
+            spawn('del', [binPath], { shell: true });
         }
     } catch (err) {
         console.error('Error while deleting binary', err);

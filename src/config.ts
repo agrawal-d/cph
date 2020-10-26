@@ -11,13 +11,15 @@ export default {
         cpp: 'cpp',
         python: 'py',
         rust: 'rs',
+        java: 'java',
     },
     compilers: {
         c: 'gcc',
         cpp: 'g++',
         python: 'python',
         rust: 'rustc',
+        java: 'javac',
     },
-    supportedExtensions: ['py', 'cpp', 'rs', 'c'],
+    supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java'],
     skipCompile: ['py'],
 };
