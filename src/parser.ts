@@ -6,14 +6,18 @@ import crypto from 'crypto';
 import * as vscode from 'vscode';
 
 export const getCphFolder = (srcPath: string): string => {
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.parse(srcPath))?.uri.fsPath;
-    if(workspaceFolder == undefined){
-        vscode.window.showErrorMessage('Could not get workspace folder! Using srcFolder...');
-        let srcFolder = path.dirname(srcPath);
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(
+        vscode.Uri.parse(srcPath),
+    )?.uri.fsPath;
+    if (workspaceFolder == undefined) {
+        vscode.window.showErrorMessage(
+            'Could not get workspace folder! Using srcFolder...',
+        );
+        const srcFolder = path.dirname(srcPath);
         return path.join(srcFolder, '.cph');
     }
     return path.join(workspaceFolder, '.cph');
-}
+};
 
 /**
  *  Get the location (file path) to save the generated problem file in. If save

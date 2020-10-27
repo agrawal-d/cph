@@ -14,23 +14,27 @@ export async function archiveActiveProblem(context: vscode.ExtensionContext) {
     }
     const srcFolder = path.dirname(srcPath);
     const srcFileName = path.basename(srcPath);
-    let problem = getProblem(srcPath);
-    if(problem == null){
-        vscode.window.showInformationMessage('Active document is not a problem');
+    const problem = getProblem(srcPath);
+    if (problem == null) {
+        vscode.window.showInformationMessage(
+            'Active document is not a problem',
+        );
         return;
     }
     const newSrcFolder = await vscode.window.showInputBox({
         value: srcFolder,
-        validateInput: text => {
+        validateInput: (text) => {
             vscode.window.showInformationMessage(`Validating: ${text}`);
-            const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.parse(text));
-            if(workspaceFolder == undefined){
-                return(`${text} is not in the current workspace`);
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(
+                vscode.Uri.parse(text),
+            );
+            if (workspaceFolder == undefined) {
+                return `${text} is not in the current workspace`;
             }
             return null;
-        }
+        },
     });
-    if(newSrcFolder == undefined){
+    if (newSrcFolder == undefined) {
         vscode.window.showInformationMessage('Canceled problem archiving.');
         return;
     }
@@ -45,7 +49,7 @@ export async function archiveActiveProblem(context: vscode.ExtensionContext) {
     problem.srcPath = newSrcPath;
     saveProblem(newSrcPath, problem);
     fs.unlink(getProbSaveLocation(srcPath), (err) => {
-        if(err) {
+        if (err) {
             vscode.window.showErrorMessage(err.message);
             return;
         }
