@@ -27,6 +27,11 @@
                 "command": "cph.submitToCodeForces",
                 "title": "Submit to CodeForces",
                 "icon": "icon.png"
+            },
+            {
+                "command": "cph.archiveActiveProblem",
+                "title": "Archive active problem",
+                "icon": "icon.png"
             }
         ],
         "keybindings": [

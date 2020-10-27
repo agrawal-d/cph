@@ -7,6 +7,7 @@ import {
     checkLaunchWebview,
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
+import { archiveActiveProblem } from './archive';
 
 declare global {
     module NodeJS {
@@ -44,11 +45,18 @@ const registerCommands = (context: vscode.ExtensionContext) => {
             submitToKattis();
         },
     );
+    const disposable5 = vscode.commands.registerCommand(
+        'cph.archiveActiveProblem',
+        () => {
+            archiveActiveProblem(context);
+        },
+    );
 
     context.subscriptions.push(disposable);
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
+    context.subscriptions.push(disposable5);
 };
 
 // This method is called when the extension is activated
