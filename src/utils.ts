@@ -11,6 +11,7 @@ import {
     getPythonArgsPref,
     getRustArgsPref,
     getJavaArgsPref,
+    getPythonCommand,
 } from './preferences';
 import { Language } from './types';
 
@@ -53,7 +54,7 @@ export const getLanguage = (srcPath: string): Language => {
             return {
                 name: langName,
                 args: [...getPythonArgsPref()],
-                compiler: 'python',
+                compiler: getPythonCommand(),
                 skipCompile: true,
             };
         }

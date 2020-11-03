@@ -42,53 +42,108 @@
         "configuration": {
             "title": "Competitive Programming Helper",
             "properties": {
-                "cph.saveLocation": {
+                "cph.general.saveLocation": {
                     "type": "string",
                     "default": "",
                     "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
                 },
-                "cph.timeOut": {
+                "cph.general.timeOut": {
                     "type": "number",
                     "default": 3000,
                     "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
                 },
-                "cph.argsC": {
+                "cph.language.cArgs": {
                     "title": "Compilation flags for .c files",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to gcc ( for C) while compiling your file. Example '-O2 -Wall'"
                 },
-                "cph.argsCpp": {
+                "cph.language.cCompiler": {
+                    "type": "string",
+                    "default": "GNU GCC C11 5.1.0",
+                    "enum": [
+                        "GNU GCC C11 5.1.0"
+                    ],
+                    "description": "The compiler chosen in the drop down during submission for c"
+                },
+                "cph.language.cppArgs": {
                     "title": "Compilation flags for .cpp files",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
                 },
-                "cph.argsPython": {
+                "cph.language.cppCompiler": {
+                    "type": "string",
+                    "title": "check12344566",
+                    "default": "GNU G++17 7.3.0",
+                    "enum": [
+                        "GNU G++17 7.3.0",
+                        "GNU G++14 6.4.0",
+                        "GNU G++11 5.1.0",
+                        "Microsoft Visual C++ 2017",
+                        "Microsoft Visual C++ 2010",
+                        "Clang++17 Diagnostics"
+                    ],
+                    "description": "The compiler chosen in the drop down during submission for cpp"
+                },
+                "cph.language.pythonArgs": {
                     "title": "Compilation flags for Python",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to python while compiling your file. Example '-Wignore -u'"
                 },
-                "cph.argsRust": {
+                "cph.language.pythonCompiler": {
+                    "type": "string",
+                    "default": "PyPy 3.6 (7.2.0)",
+                    "enum": [
+                        "PyPy 3.6 (7.2.0)",
+                        "Python 3.7.2",
+                        "PyPy 2.7 (7.2.0)",
+                        "Python 2.7.15"
+                    ],
+                    "description": "The compiler chosen in the drop down during submission for python"
+                },
+                "cph.language.pythonCommand": {
+                    "type": "string",
+                    "default": "python",
+                    "description": "Command used to run python files. Example 'py', 'python3', 'python', etc."
+                },
+                "cph.language.rustArgs": {
                     "title": "Compilation flags for Rust",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
                 },
-                "cph.argsJava": {
+                "cph.language.rustCompiler": {
+                    "type": "string",
+                    "default": "Rust 1.35.0",
+                    "enum": [
+                        "Rust 1.35.0"
+                    ],
+                    "description": "The compiler chosen in the drop down during submission for rust"
+                },
+                "cph.language.javaArgs": {
                     "title": "Compilation flags for Java",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to javac while compiling your file. Example '-verbose'"
                 },
-                "cph.firstTime": {
+                "cph.language.javaCompiler": {
+                    "type": "string",
+                    "default": "Java 11.0.5",
+                    "enum": [
+                        "Java 11.0.5",
+                        "Java 1.8.0_162"
+                    ],
+                    "description": "The compiler chosen in the drop down during submission for java"
+                },
+                "cph.general.firstTime": {
                     "title": "Show welcome message",
                     "type": "boolean",
                     "default": true,
                     "description": "A welcome message is shown when you run a testcase for the first time."
                 },
-                "cph.defaultLanguage": {
+                "cph.general.defaultLanguage": {
                     "title": "Default language for new problems",
                     "type": "string",
                     "default": "",
@@ -102,32 +157,12 @@
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
-                "cph.languageIdCpp": {
-                    "type": "number",
-                    "default": 54,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for C++"
+                "cph.general.menuChoices": {
+                    "type": "string",
+                    "default": "cpp java python c rust",
+                    "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
-                "cph.languageIdJava": {
-                    "type": "number",
-                    "default": 60,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for Java"
-                },
-                "cph.languageIdPython": {
-                    "type": "number",
-                    "default": 31,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for Python"
-                },
-                "cph.languageIdC": {
-                    "type": "number",
-                    "default": 43,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for C"
-                },
-                "cph.languageIdRust": {
-                    "type": "number",
-                    "default": 49,
-                    "description": "The language ID chosen in the drop down for choosing the language during submission for Rust"
-                },
-                "cph.useShortCodeforcesName": {
+                "cph.general.useShortCodeForcesName": {
                     "type": "boolean",
                     "default": false,
                     "description": "Use a short ID for problem file generated ( like 144C ) instead of the complete problem name for codeforces problems"
