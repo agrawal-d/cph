@@ -15,6 +15,7 @@ import {
     getDefaultLangPref,
     getLanguageId,
     useShortCodeForcesName,
+    getMenuChoices,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -75,7 +76,6 @@ export const storeSubmitProblem = (problem: Problem) => {
     const problemName = getProblemName(problem.url);
     const sourceCode = readFileSync(srcPath).toString();
     const languageId = getLanguageId(problem.srcPath);
-
     savedResponse = {
         empty: false,
         problemName,
@@ -149,7 +149,9 @@ const handleNewProblem = async (problem: Problem) => {
     let extn: string;
 
     if (defaultLanguage == null) {
-        const choices = Object.keys(config.extensions);
+        const allChoices = new Set(Object.keys(config.extensions));
+        const userChoices = getMenuChoices();
+        const choices = userChoices.filter((x) => allChoices.has(x));
         const selected = await vscode.window.showQuickPick(choices);
         if (!selected) {
             vscode.window.showInformationMessage(

@@ -1,5 +1,6 @@
 import { workspace } from 'vscode';
 import type { prefSection } from './types';
+import config from './config';
 import path from 'path';
 
 const getPreference = (section: prefSection): any => {
@@ -15,30 +16,32 @@ export const updatePreference = (section: prefSection, value: any) => {
         .update(section, value);
 };
 
-export const getSaveLocationPref = (): string => getPreference('saveLocation');
+export const getSaveLocationPref = (): string =>
+    getPreference('general.saveLocation');
 
-export const getTimeOutPref = (): number => getPreference('timeOut') || 3000;
+export const getTimeOutPref = (): number =>
+    getPreference('general.timeOut') || 3000;
 
 export const getCppArgsPref = (): string[] =>
-    getPreference('argsCpp').split(' ') || [];
+    getPreference('language.cppArgs').split(' ') || [];
 
 export const getCArgsPref = (): string[] =>
-    getPreference('argsC').split(' ') || [];
+    getPreference('language.cArgs').split(' ') || [];
 
 export const getPythonArgsPref = (): string[] =>
-    getPreference('argsPython').split(' ') || [];
+    getPreference('language.pythonArgs').split(' ') || [];
 
 export const getRustArgsPref = (): string[] =>
-    getPreference('argsRust').split(' ') || [];
+    getPreference('language.rustArgs').split(' ') || [];
 
 export const getJavaArgsPref = (): string[] =>
-    getPreference('argsJava').split(' ') || [];
+    getPreference('language.javaArgs').split(' ') || [];
 
 export const getFirstTimePref = (): boolean =>
-    getPreference('firstTime') || 'true';
+    getPreference('general.firstTime') || 'true';
 
 export const getDefaultLangPref = (): string | null => {
-    const pref = getPreference('defaultLanguage');
+    const pref = getPreference('general.defaultLanguage');
     if (pref === 'none' || pref == ' ' || !pref) {
         return null;
     }
@@ -46,35 +49,51 @@ export const getDefaultLangPref = (): string | null => {
 };
 
 export const useShortCodeForcesName = (): boolean => {
-    return getPreference('useShortCodeforcesName');
+    return getPreference('general.useShortCodeforcesName');
 };
+
+export const getPythonCommand = (): string =>
+    getPreference('language.pythonCommand') || 'python';
+
+export const getMenuChoices = (): string[] =>
+    getPreference('general.menuChoices').split(' ') || [];
 
 /** The language ID preference for a particular extension. */
 export const getLanguageId = (srcPath: string): number => {
     const extension = path.extname(srcPath);
+    let compiler = null;
     switch (extension) {
         case '.cpp': {
-            return getPreference('languageIdCpp');
-        }
-
-        case '.c': {
-            return getPreference('languageIdC');
-        }
-
-        case '.rs': {
-            return getPreference('languageIdRust');
-        }
-
-        case '.py': {
-            return getPreference('languageIdPython');
+            compiler = getPreference('language.cppCompiler');
+            break;
         }
 
         case '.java': {
-            return getPreference('languageIdJava');
+            compiler = getPreference('language.javaCompiler');
+            break;
         }
 
-        default: {
-            return -1;
+        case '.c': {
+            compiler = getPreference('language.cCompiler');
+            break;
+        }
+
+        case '.rs': {
+            compiler = getPreference('language.rustCompiler');
+            break;
+        }
+
+        case '.py': {
+            compiler = getPreference('language.pythonCompiler');
+            break;
         }
     }
+    if (compiler == null) return -1;
+    for (const [_compiler, id] of Object.entries(config.compilerToId)) {
+        if (_compiler === compiler) {
+            return id;
+        }
+    }
+    console.error("Couldn't find id for compiler " + compiler);
+    return -1;
 };

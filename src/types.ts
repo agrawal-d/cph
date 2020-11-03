@@ -1,21 +1,22 @@
 /** Valid name for a VS Code preference section for the extension */
 export type prefSection =
-    | 'saveLocation'
-    | 'defaultLanguage'
-    | 'timeOut'
-    | 'argsC'
-    | 'argsCpp'
-    | 'argsRust'
-    | 'argsPython'
-    | 'argsJava'
-    | 'defaultLanguage'
-    | 'firstTime'
-    | 'languageIdCpp'
-    | 'languageIdC'
-    | 'languageIdJava'
-    | 'languageIdRust'
-    | 'languageIdPython'
-    | 'useShortCodeforcesName';
+    | 'general.saveLocation'
+    | 'general.defaultLanguage'
+    | 'general.timeOut'
+    | 'general.firstTime'
+    | 'general.useShortCodeforcesName'
+    | 'general.menuChoices'
+    | 'language.cArgs'
+    | 'language.cCompiler'
+    | 'language.cppArgs'
+    | 'language.cppCompiler'
+    | 'language.rustArgs'
+    | 'language.rustCompiler'
+    | 'language.javaArgs'
+    | 'language.javaCompiler'
+    | 'language.pythonArgs'
+    | 'language.pythonCompiler'
+    | 'language.pythonCommand';
 
 export type Language = {
     name: LangNames;
