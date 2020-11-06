@@ -23,19 +23,19 @@ export const getTimeOutPref = (): number =>
     getPreference('general.timeOut') || 3000;
 
 export const getCppArgsPref = (): string[] =>
-    getPreference('language.cppArgs').split(' ') || [];
+    getPreference('language.cpp.Args').split(' ') || [];
 
 export const getCArgsPref = (): string[] =>
-    getPreference('language.cArgs').split(' ') || [];
+    getPreference('language.c.Args').split(' ') || [];
 
 export const getPythonArgsPref = (): string[] =>
-    getPreference('language.pythonArgs').split(' ') || [];
+    getPreference('language.python.Args').split(' ') || [];
 
 export const getRustArgsPref = (): string[] =>
-    getPreference('language.rustArgs').split(' ') || [];
+    getPreference('language.rust.Args').split(' ') || [];
 
 export const getJavaArgsPref = (): string[] =>
-    getPreference('language.javaArgs').split(' ') || [];
+    getPreference('language.java.Args').split(' ') || [];
 
 export const getFirstTimePref = (): boolean =>
     getPreference('general.firstTime') || 'true';
@@ -53,10 +53,10 @@ export const useShortCodeForcesName = (): boolean => {
 };
 
 export const getPythonCommand = (): string =>
-    getPreference('language.pythonCommand') || 'python';
+    getPreference('language.python.Command') || 'python3';
 
 export const getMenuChoices = (): string[] =>
-    getPreference('general.menuChoices').split(' ') || [];
+    getPreference('general.menuChoices').split(' ');
 
 /** The language ID preference for a particular extension. */
 export const getLanguageId = (srcPath: string): number => {
@@ -64,27 +64,27 @@ export const getLanguageId = (srcPath: string): number => {
     let compiler = null;
     switch (extension) {
         case '.cpp': {
-            compiler = getPreference('language.cppCompiler');
+            compiler = getPreference('language.cpp.SubmissionCompiler');
             break;
         }
 
         case '.java': {
-            compiler = getPreference('language.javaCompiler');
+            compiler = getPreference('language.java.SubmissionCompiler');
             break;
         }
 
         case '.c': {
-            compiler = getPreference('language.cCompiler');
+            compiler = getPreference('language.c.SubmissionCompiler');
             break;
         }
 
         case '.rs': {
-            compiler = getPreference('language.rustCompiler');
+            compiler = getPreference('language.rust.SubmissionCompiler');
             break;
         }
 
         case '.py': {
-            compiler = getPreference('language.pythonCompiler');
+            compiler = getPreference('language.python.SubmissionCompiler');
             break;
         }
     }

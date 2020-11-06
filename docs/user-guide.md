@@ -66,22 +66,33 @@ This document contains instructions on how to use this extension.
 5. A new tab will open in the browser with the submissions page. 
 
 
-## Enviornment
+## Environment
 
 -   For C++, `ONLINE_JUDGE` and `CPH` are defined as a `#define` directive.
 
 ## Customizing preferences
 
-![Preferences](img/settings.png)
-
 Several options are available to customize the extension. Open VS Code settings
-( From the gear icon on bottom-left) and go to the
+(From the gear icon on bottom-left) and go to the
 'competitive-programming-helper' section. You can choose several settings like:
 
--   Default save location for generated meta-data.
--   Additional compilation flags for a specific language.
--   Timeout for testcases.
+![Preferences](img/settings2.png)
 
+### General Settings
+\
+![Preferences](img/generalSettings.png)
+   - Default save location for generated meta-data.
+   - Default language selected for new problems imported via Competitive Companion.
+   - Language choices offered in menu when new problem imported via Competitive Companion.
+   - Timeout for testcases.
+
+### Language Settings (for each language)
+\
+![Preferences](img/languageSettings.png)
+   - Additional compilation flags.
+   - [Requires [cph-submit](stc)] Compiler selected in drop down during codeforces submission.
+   - [Python] Command used to run python files. For eg. py, python3, pypy3, etc.
+   
 ## Getting help
 
 If you have trouble using the extension, find any bugs, or want to request a new
