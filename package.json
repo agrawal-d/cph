@@ -52,27 +52,27 @@
                     "default": 3000,
                     "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
                 },
-                "cph.language.cArgs": {
+                "cph.language.c.Args": {
                     "title": "Compilation flags for .c files",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to gcc ( for C) while compiling your file. Example '-O2 -Wall'"
+                    "description": "Space seperated additional flags passed to gcc ( for C ) while compiling your file. Example '-O2 -Wall'"
                 },
-                "cph.language.cCompiler": {
+                "cph.language.c.SubmissionCompiler": {
                     "type": "string",
                     "default": "GNU GCC C11 5.1.0",
                     "enum": [
                         "GNU GCC C11 5.1.0"
                     ],
-                    "description": "The compiler chosen in the drop down during submission for c"
+                    "description": "The compiler chosen in the drop down during Codeforces submission for c"
                 },
-                "cph.language.cppArgs": {
+                "cph.language.cpp.Args": {
                     "title": "Compilation flags for .cpp files",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
                 },
-                "cph.language.cppCompiler": {
+                "cph.language.cpp.SubmissionCompiler": {
                     "type": "string",
                     "title": "check12344566",
                     "default": "GNU G++17 7.3.0",
@@ -84,15 +84,15 @@
                         "Microsoft Visual C++ 2010",
                         "Clang++17 Diagnostics"
                     ],
-                    "description": "The compiler chosen in the drop down during submission for cpp"
+                    "description": "The compiler chosen in the drop down during Codeforces submission for cpp"
                 },
-                "cph.language.pythonArgs": {
+                "cph.language.python.Args": {
                     "title": "Compilation flags for Python",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to python while compiling your file. Example '-Wignore -u'"
                 },
-                "cph.language.pythonCompiler": {
+                "cph.language.python.SubmissionCompiler": {
                     "type": "string",
                     "default": "PyPy 3.6 (7.2.0)",
                     "enum": [
@@ -101,41 +101,41 @@
                         "PyPy 2.7 (7.2.0)",
                         "Python 2.7.15"
                     ],
-                    "description": "The compiler chosen in the drop down during submission for python"
+                    "description": "The compiler chosen in the drop down during Codeforces submission for python"
                 },
-                "cph.language.pythonCommand": {
+                "cph.language.python.Command": {
                     "type": "string",
-                    "default": "python",
-                    "description": "Command used to run python files. Example 'py', 'python3', 'python', etc."
+                    "default": "python3",
+                    "description": "Command used to run python files. Example 'py', 'python3', 'pypy3', etc."
                 },
-                "cph.language.rustArgs": {
+                "cph.language.rust.Args": {
                     "title": "Compilation flags for Rust",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
                 },
-                "cph.language.rustCompiler": {
+                "cph.language.rust.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Rust 1.35.0",
+                    "default": "Rust 1.42.0",
                     "enum": [
-                        "Rust 1.35.0"
+                        "Rust 1.42.0"
                     ],
-                    "description": "The compiler chosen in the drop down during submission for rust"
+                    "description": "The compiler chosen in the drop down during Codeforces submission for rust"
                 },
-                "cph.language.javaArgs": {
+                "cph.language.java.Args": {
                     "title": "Compilation flags for Java",
                     "type": "string",
                     "default": "",
                     "description": "Space seperated additional flags passed to javac while compiling your file. Example '-verbose'"
                 },
-                "cph.language.javaCompiler": {
+                "cph.language.java.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Java 11.0.5",
+                    "default": "Java 11.0.6",
                     "enum": [
-                        "Java 11.0.5",
-                        "Java 1.8.0_162"
+                        "Java 11.0.6",
+                        "Java 1.8.0_241"
                     ],
-                    "description": "The compiler chosen in the drop down during submission for java"
+                    "description": "The compiler chosen in the drop down during Codeforces submission for java"
                 },
                 "cph.general.firstTime": {
                     "title": "Show welcome message",

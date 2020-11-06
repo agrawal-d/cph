@@ -6,17 +6,17 @@ export type prefSection =
     | 'general.firstTime'
     | 'general.useShortCodeforcesName'
     | 'general.menuChoices'
-    | 'language.cArgs'
-    | 'language.cCompiler'
-    | 'language.cppArgs'
-    | 'language.cppCompiler'
-    | 'language.rustArgs'
-    | 'language.rustCompiler'
-    | 'language.javaArgs'
-    | 'language.javaCompiler'
-    | 'language.pythonArgs'
-    | 'language.pythonCompiler'
-    | 'language.pythonCommand';
+    | 'language.c.Args'
+    | 'language.c.SubmissionCompiler'
+    | 'language.cpp.Args'
+    | 'language.cpp.SubmissionCompiler'
+    | 'language.rust.Args'
+    | 'language.rust.SubmissionCompiler'
+    | 'language.java.Args'
+    | 'language.java.SubmissionCompiler'
+    | 'language.python.Args'
+    | 'language.python.SubmissionCompiler'
+    | 'language.python.Command';
 
 export type Language = {
     name: LangNames;
