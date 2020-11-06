@@ -90,7 +90,7 @@ Several options are available to customize the extension. Open VS Code settings
 \
 ![Preferences](img/languageSettings.png)
    - Additional compilation flags.
-   - [Requires [cph-submit](stc)] Compiler selected in drop down during codeforces submission.
+   - [Requires [cph-submit](#submit-to-codeforces)] Compiler selected in drop down during codeforces submission.
    - [Python] Command used to run python files. For eg. py, python3, pypy3, etc.
    
 ## Getting help
