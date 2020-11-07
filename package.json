@@ -2,7 +2,7 @@
     "name": "competitive-programming-helper",
     "displayName": "Competitive Programming Helper (cph)",
     "description": "Makes judging, compiling, and downloading problems for competitve programming easy. Also supports auto-submit for a few sites.",
-    "license": "GPLv3",
+    "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
     "version": "4.4.5",
