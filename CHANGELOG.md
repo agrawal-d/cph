@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.0
+
+-   Added support for changing python executable.
+-   Added support for changing default compiler for Codeforces submissions.
+
 ## 4.4.2
 
 -   Added support for Kattis auto submit.

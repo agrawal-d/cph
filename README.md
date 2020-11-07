@@ -3,10 +3,10 @@
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=master)
 [![Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
 
-cph allows you to quickly compile, run and judge competitive programming
-problems from within VS Code. You can automatically download testcases write &
-test your own problems. Once you are done, you can submit your solutions
-directly with the click of a button!
+This extension allows you to quickly compile, run and judge competitive
+programming problems from within VS Code. You can automatically download
+testcases write & test your own problems. Once you are done, you can submit your
+solutions directly with the click of a button!
 
 Using the competitive companion browser extension, cph supports a large number
 of popular platforms like Codeforces, Codechef, TopCoder etc.
