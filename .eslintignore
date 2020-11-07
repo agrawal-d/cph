@@ -2,6 +2,6 @@ jest.config.js
 tsconfig.js
 .eslintrc.js
 webpack.config.js
-webpack.frontend.js
+webpack.frontend.config.js
 out
 dist
