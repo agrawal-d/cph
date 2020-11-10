@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.1
+
+-   Added AppInsights.
+
 ## 4.5.0
 
 -   Added support for changing python executable.
