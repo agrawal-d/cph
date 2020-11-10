@@ -61,7 +61,7 @@ You can contribute to this extension in many ways:
 -   Develop this extension further - see [developer giude](docs/dev-guide.md).
 -   Spreading the word about this extension.
 
-## Telemetery
+## Telemetry
 
 The extension aggregates how many times the extension was used. Only this
 information is sent to AppInsights - no private information is collected. The
