@@ -61,6 +61,13 @@ You can contribute to this extension in many ways:
 -   Develop this extension further - see [developer giude](docs/dev-guide.md).
 -   Spreading the word about this extension.
 
+## Telemetery
+
+The extension aggregates how many times the extension was used. Only this
+information is sent to AppInsights - no private information is collected. The
+extension respects your VS Code telemetery settings, if it's disabled, the
+extension does not collect any statistics.
+
 ## License
 
 This software is licensed under [GPL Version 3](LICENSE).

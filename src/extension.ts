@@ -7,6 +7,7 @@ import {
     checkLaunchWebview,
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
+import { createTelemeteryReporter } from './telemetery';
 
 declare global {
     module NodeJS {
@@ -69,6 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
     registerCommands(context);
     setupCompanionServer();
     checkLaunchWebview(context);
+    createTelemeteryReporter(context);
 
     vscode.workspace.onDidCloseTextDocument((e) => {
         editorClosed(e, context);

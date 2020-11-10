@@ -208,7 +208,8 @@
         "python-shell": "^2.0.2",
         "react": "^16.13.1",
         "react-autosize-textarea": "^7.0.0",
-        "react-dom": "^16.13.1"
+        "react-dom": "^16.13.1",
+        "vscode-extension-telemetry": "^0.1.6"
     },
     "repository": {
         "type": "git",
