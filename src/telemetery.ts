@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import TelemetryReporter from 'vscode-extension-telemetry';
 import secrets from './secrets';
 // all events will be prefixed with this event name
-const extensionId = 'divyanshuagrawal.competitive-programming-helper';
+const extensionId = 'DivyanshuAgrawal.competitive-programming-helper';
 
 // extension version will be reported as a property with each event
 const extensionVersion = vscode.extensions.getExtension(extensionId)
