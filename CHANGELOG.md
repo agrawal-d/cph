@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.5.2
+
+-   Fix layout bugs.
+-   Add setting to load default template.
+
 ## 4.5.1
 
 -   Added AppInsights.
