@@ -31,7 +31,7 @@ const initializeWebView = (): void => {
     resultsPanel = vscode.window.createWebviewPanel(
         'evalResults',
         'Judge Results',
-        vscode.ViewColumn.Beside,
+        { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
         {
             enableScripts: true,
             retainContextWhenHidden: true,
@@ -186,10 +186,10 @@ export const extensionToWebWiewMessage = async (
     message: VSToWebViewMessage,
 ) => {
     if (!resultsPanel) {
-        console.error(
-            'Trying to post message to non existent webview',
-            message,
-        );
+        // console.error(
+        //     'Trying to post message to non existent webview',
+        //     message,
+        // );
         return;
     }
     await resultsPanel.webview.postMessage(message);
