@@ -16,7 +16,8 @@ export type prefSection =
     | 'language.java.SubmissionCompiler'
     | 'language.python.Args'
     | 'language.python.SubmissionCompiler'
-    | 'language.python.Command';
+    | 'language.python.Command'
+    | 'general.defaultLanguageTemplateFileLocation';
 
 export type Language = {
     name: LangNames;

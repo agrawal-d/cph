@@ -16,6 +16,7 @@ import {
     getLanguageId,
     useShortCodeForcesName,
     getMenuChoices,
+    getDefaultLanguageTemplateFileLocation,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -190,6 +191,24 @@ const handleNewProblem = async (problem: Problem) => {
     }
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
+
+    if (defaultLanguage) {
+        const templateLocation = getDefaultLanguageTemplateFileLocation();
+        if (templateLocation !== null) {
+            const templateExists = existsSync(templateLocation);
+            if (!templateExists) {
+                vscode.window.showErrorMessage(
+                    `Template file does not exist: ${templateLocation}`,
+                );
+            } else {
+                const templateContents = readFileSync(
+                    templateLocation,
+                ).toString();
+                writeFileSync(srcPath, templateContents);
+            }
+        }
+    }
+
     await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
     await startWebVeiwIfNotActive();
     await setBaseWebViewHTML(global.context, problem);

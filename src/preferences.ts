@@ -52,6 +52,14 @@ export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeforcesName');
 };
 
+export const getDefaultLanguageTemplateFileLocation = (): string | null => {
+    const pref = getPreference('general.defaultLanguageTemplateFileLocation');
+    if (pref === '') {
+        return null;
+    }
+    return pref;
+};
+
 export const getPythonCommand = (): string =>
     getPreference('language.python.Command') || 'python3';
 
