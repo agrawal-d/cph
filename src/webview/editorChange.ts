@@ -21,9 +21,9 @@ export const editorChanged = async (
     e: vscode.TextEditor | undefined,
     context: vscode.ExtensionContext,
 ) => {
-    console.log('Changed editor to', e?.document.fileName);
+    console.log('Changed editor to', e?.document.fileName, e?.document);
 
-    if (e === undefined || e.document.fileName === 'tasks') {
+    if (e === undefined || e.document.uri.scheme !== 'file') {
         return;
     }
 
