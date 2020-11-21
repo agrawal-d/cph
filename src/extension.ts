@@ -8,6 +8,7 @@ import {
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
 import { createTelemeteryReporter } from './telemetery';
+import { closeWebVeiw } from './webview/webview';
 
 declare global {
     module NodeJS {
@@ -78,6 +79,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.onDidChangeActiveTextEditor((e) => {
         editorChanged(e, context);
+    });
+
+    vscode.window.onDidChangeVisibleTextEditors((editors) => {
+        if (editors.length === 0) {
+            closeWebVeiw();
+        }
     });
 
     return;
