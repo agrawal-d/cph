@@ -23,7 +23,7 @@ export const editorChanged = async (
 ) => {
     console.log('Changed editor to', e?.document.fileName);
 
-    if (e === undefined || e.document.fileName) {
+    if (e === undefined || e.document.fileName === 'tasks') {
         return;
     }
 
