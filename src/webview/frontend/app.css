@@ -20,8 +20,10 @@
     cursor: text !important;
 }
 body {
+    margin: 0 auto;
     margin-bottom: 100px;
     padding: 0px;
+    max-width: 800px;
 }
 .btn:hover {
     opacity: 0.8;
