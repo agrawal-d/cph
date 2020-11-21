@@ -9,6 +9,7 @@ import {
     startWebVeiwIfNotActive,
     setBaseWebViewHTML,
     extensionToWebWiewMessage,
+    closeWebVeiw,
 } from './webview/webview';
 import { isCodeforcesUrl, randomId } from './utils';
 import {
@@ -140,7 +141,12 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
     }
 };
 
+/** Handle the `problem` sent by Competitive Companion, such as showing the webview, opening an editor, managing layout etc. */
 const handleNewProblem = async (problem: Problem) => {
+    // If webview may be focused, close it, to prevent layout bug.
+    if (vscode.window.activeTextEditor == undefined) {
+        closeWebVeiw();
+    }
     const folder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     if (folder === undefined) {
         vscode.window.showInformationMessage('Please open a folder first.');
