@@ -57,8 +57,8 @@ You can also use this extension locally, just open any supported file and press
 
 You can contribute to this extension in many ways:
 
--   File bug repots by creating issues.
--   Develop this extension further - see [developer giude](docs/dev-guide.md).
+-   File bug reports by creating issues.
+-   Develop this extension further - see [developer guide](docs/dev-guide.md).
 -   Spreading the word about this extension.
 
 ## Telemetry
