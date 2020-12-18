@@ -44,9 +44,12 @@ export const getProblem = (srcPath: string): Problem | null => {
 export const saveProblem = (srcPath: string, problem: Problem) => {
     const srcFolder = path.dirname(srcPath);
     const cphFolder = path.join(srcFolder, '.cph');
-    if (!fs.existsSync(cphFolder)) {
+
+    if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
+        console.log('Making .cph folder');
         fs.mkdirSync(cphFolder);
     }
+
     const probPath = getProbSaveLocation(srcPath);
     try {
         fs.writeFileSync(probPath, JSON.stringify(problem));
