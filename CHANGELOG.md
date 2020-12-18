@@ -1,4 +1,7 @@
 # Changelog
+## 4.5.3
+
+-  Fix ghost .cph folder creation bug.
 
 ## 4.5.2
 
