@@ -9,6 +9,7 @@ import {
 import { submitToCodeForces, submitToKattis } from './submit';
 import { createTelemeteryReporter } from './telemetery';
 import { closeWebVeiw } from './webview/webview';
+import JudgeViewProvider from './webview/JudeView';
 
 declare global {
     module NodeJS {
@@ -47,6 +48,19 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         },
     );
 
+    const provider = new JudgeViewProvider(context.extensionUri);
+
+    const webviewView = vscode.window.registerWebviewViewProvider(
+        JudgeViewProvider.viewType,
+        provider,
+        {
+            webviewOptions: {
+                retainContextWhenHidden: true,
+            },
+        },
+    );
+
+    context.subscriptions.push(webviewView);
     context.subscriptions.push(disposable);
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);

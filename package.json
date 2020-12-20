@@ -17,6 +17,24 @@
     ],
     "main": "dist/extension.js",
     "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "cph-judge-view-container",
+                    "title": "CPH Judge",
+                    "icon": "static/panel-view-icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "cph-judge-view-container": [
+                {
+                    "type": "webview",
+                    "id": "cph.judgeView",
+                    "name": "CPH Judge Results"
+                }
+            ]
+        },
         "commands": [
             {
                 "command": "cph.runTestCases",
