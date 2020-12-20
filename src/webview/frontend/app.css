@@ -252,7 +252,7 @@ button:disabled {
 
 .case {
     border-left: 5px solid var(--vscode-input-background);
-    border-radius: 5px;
+    border-radius: 0px;
 }
 
 .case.running {
