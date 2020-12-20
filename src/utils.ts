@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import { existsSync, readFileSync } from 'fs';
 import { platform } from 'os';
 import path from 'path';
 import * as vscode from 'vscode';
@@ -13,7 +14,7 @@ import {
     getJavaArgsPref,
     getPythonCommand,
 } from './preferences';
-import { Language } from './types';
+import { Language, Problem } from './types';
 
 const oc = vscode.window.createOutputChannel('cph');
 
@@ -133,4 +134,16 @@ export const deleteProblemFile = (srcPath: string) => {
     } catch (error) {
         console.error('Error while deleting problem file ', error);
     }
+};
+
+export const getProblemForDocument = (
+    document: vscode.TextDocument,
+): Problem | undefined => {
+    const srcPath = document.fileName;
+    const probPath = getProbSaveLocation(srcPath);
+    if (!existsSync(probPath)) {
+        return undefined;
+    }
+    const problem: Problem = JSON.parse(readFileSync(probPath).toString());
+    return problem;
 };

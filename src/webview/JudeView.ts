@@ -3,9 +3,10 @@ import { storeSubmitProblem, submitKattisProblem } from '../companion';
 import { killRunning } from '../executions';
 import { saveProblem } from '../parser';
 import { VSToWebViewMessage, WebviewToVSEvent } from '../types';
-import { deleteProblemFile } from '../utils';
+import { deleteProblemFile, getProblemForDocument } from '../utils';
 import { runSingleAndSave } from './processRunSingle';
 import runAllAndSave from './processRunAll';
+import runTestCases from '../runTestCases';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -14,11 +15,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
     constructor(private readonly _extensionUri: vscode.Uri) {}
 
-    public resolveWebviewView(
-        webviewView: vscode.WebviewView,
-        _context: vscode.WebviewViewResolveContext,
-        _token: vscode.CancellationToken,
-    ) {
+    public resolveWebviewView(webviewView: vscode.WebviewView) {
         this._view = webviewView;
 
         webviewView.webview.options = {
@@ -74,6 +71,16 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         break;
                     }
 
+                    case 'get-initial-problem': {
+                        this.getInitialProblem();
+                        break;
+                    }
+
+                    case 'create-local-problem': {
+                        runTestCases();
+                        break;
+                    }
+
                     default: {
                         console.error('Unknown event received from webview');
                     }
@@ -82,13 +89,41 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         );
     }
 
+    private getInitialProblem() {
+        const doc = vscode.window.activeTextEditor?.document;
+        if (doc === undefined) {
+            return;
+        }
+        this.extensionToJudgeViewMessage({
+            command: 'new-problem',
+            problem: getProblemForDocument(doc),
+        });
+        return;
+    }
+
     public problemPath: string | undefined;
+
+    private focusIfNeeded = (message: VSToWebViewMessage) => {
+        if (!this._view) {
+            return;
+        }
+
+        switch (message.command) {
+            case 'new-problem':
+            case 'waiting-for-submit':
+            case 'compiling-start':
+            case 'run-all': {
+                this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+            }
+        }
+    };
 
     /** Posts a message to the webview. */
     public extensionToJudgeViewMessage = async (
         message: VSToWebViewMessage,
     ) => {
         if (this._view) {
+            this.focusIfNeeded(message);
             // Always focus on the view whenever a command is posted. Meh.
             // this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
             this._view.webview.postMessage(message);
@@ -133,19 +168,20 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                             >report the bug on GitHub</a
                         >.
                     </div>
-                    <script src="${js}"></script>
                     <script>
                         // Since the react script takes time to load, the problem is sent to the webview before it has even loaded.
                         // So, for the initial request, ask for it again.
+                        const vscodeApi = acquireVsCodeApi();
                         document.addEventListener(
                             'DOMContentLoaded',
                             (event) => {
-                                acquireVsCodeApi().postMessage({
+                                vscodeApi.postMessage({
                                     command: 'get-initial-problem',
                                 });
                             },
                         );
                     </script>
+                    <script src="${js}"></script>
                 </body>
             </html>
         `;
