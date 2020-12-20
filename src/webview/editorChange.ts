@@ -30,6 +30,13 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
         });
         return;
     }
+
+    if (getJudgeViewPorivider().isViewUninitialized()) {
+        vscode.commands.executeCommand(
+            'workbench.view.extension.cph-judge-view-container',
+        );
+    }
+
     console.log('Sent problem @', Date.now());
     getJudgeViewPorivider().extensionToJudgeViewMessage({
         command: 'new-problem',
