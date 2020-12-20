@@ -3,6 +3,7 @@ import { getProbSaveLocation } from '../parser';
 import { existsSync, readFileSync } from 'fs';
 import { Problem } from '../types';
 import { getJudgeViewPorivider } from '../extension';
+import { getProblemForDocument } from '../utils';
 
 /**
  * Show the webview with the problem details if a source code with existing
@@ -19,17 +20,16 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
         return;
     }
 
-    const srcPath = e.document.fileName;
-    const probPath = getProbSaveLocation(srcPath);
+    const problem = getProblemForDocument(e.document);
 
-    if (!existsSync(probPath)) {
+    if (problem === undefined) {
+        console.log('NO problem!');
         getJudgeViewPorivider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: undefined,
         });
         return;
     }
-    const problem: Problem = JSON.parse(readFileSync(probPath).toString());
     console.log('Sent problem @', Date.now());
     getJudgeViewPorivider().extensionToJudgeViewMessage({
         command: 'new-problem',

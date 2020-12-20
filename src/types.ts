@@ -99,8 +99,18 @@ export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
 
+export type GetInitialProblem = {
+    command: 'get-initial-problem';
+};
+
+export type CreateLocalProblem = {
+    command: 'create-local-problem';
+};
+
 export type WebviewToVSEvent =
     | RunAllCommand
+    | GetInitialProblem
+    | CreateLocalProblem
     | RunSingleCommand
     | KillRunningCommand
     | SaveCommand

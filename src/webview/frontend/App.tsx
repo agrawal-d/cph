@@ -10,36 +10,28 @@ import {
     RunningCommand,
 } from '../../types';
 import CaseView from './CaseView';
-declare const acquireVsCodeApi: () => {
+declare const vscodeApi: {
     postMessage: (message: WebviewToVSEvent) => void;
-};
-const vscodeApi = acquireVsCodeApi();
-
-const getCasesFromProblem = (problem: Problem): Case[] => {
-    console.log('Get cases from problem!');
-    return problem.tests.map((testCase) => ({
-        id: testCase.id,
-        result: null,
-        testcase: testCase,
-    }));
 };
 
 function Judge(props: {
     problem: Problem;
     updateProblem: (problem: Problem) => void;
+    cases: Case[];
+    updateCases: (cases: Case[]) => void;
 }) {
     const problem = props.problem;
+    const cases = props.cases;
     const updateProblem = props.updateProblem;
-    const [cases, useCases] = useState<Case[]>(() =>
-        getCasesFromProblem(props.problem),
-    );
+    const updateCases = props.updateCases;
+
+    console.log('new cases:', cases);
+
     const [focusLast, useFocusLast] = useState<boolean>(false);
     const [forceRunning, useForceRunning] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
-    const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
+
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [saving, setSaving] = useState<boolean>(false);
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -58,10 +50,6 @@ function Judge(props: {
             const data: VSToWebViewMessage = event.data;
             console.log('Got event in web view', event.data);
             switch (data.command) {
-                case 'run-single-result': {
-                    handleRunSingleResult(data);
-                    break;
-                }
                 case 'running': {
                     handleRunning(data);
                     break;
@@ -96,20 +84,7 @@ function Judge(props: {
             console.log('Cleaned up event listeners');
             window.removeEventListener('message', fn);
         };
-    }, [problem, cases]);
-
-    const handleRunSingleResult = (data: ResultCommand) => {
-        const idx = cases.findIndex(
-            (testCase) => testCase.id === data.result.id,
-        );
-        if (idx === -1) {
-            console.error('Invalid single result', problem, data);
-            return;
-        }
-        const newCases = cases.slice();
-        newCases[idx].result = data.result;
-        useCases(newCases);
-    };
+    }, []);
 
     const handleRunning = (data: RunningCommand) => {
         useForceRunning(data.id);
@@ -136,20 +111,8 @@ function Judge(props: {
     // Remove a case.
     const remove = (id: number) => {
         const newCases = cases.filter((value) => value.id !== id);
-        useCases(newCases);
+        updateCases(newCases);
     };
-
-    // Save problem if it changes.
-    useEffect(() => {
-        if (deferSaveTimer !== null) {
-            clearTimeout(deferSaveTimer);
-        }
-        const timeOutId = window.setTimeout(() => {
-            setDeferSaveTimer(null);
-            save();
-        }, 500);
-        setDeferSaveTimer(timeOutId);
-    }, [problem]);
 
     // Create a new Case
     const newCase = () => {
@@ -160,7 +123,7 @@ function Judge(props: {
             input: '',
             output: '',
         };
-        useCases([
+        updateCases([
             ...cases,
             {
                 id,
@@ -169,19 +132,6 @@ function Judge(props: {
             },
         ]);
         useFocusLast(true);
-    };
-
-    // Save the problem
-    const save = () => {
-        setSaving(true);
-        console.log('Saved problem');
-        vscodeApi.postMessage({
-            command: 'save',
-            problem,
-        });
-        setTimeout(() => {
-            setSaving(false);
-        }, 500);
     };
 
     // Stop running executions.
@@ -263,7 +213,7 @@ function Judge(props: {
                 return testCase;
             }
         });
-        useCases(newCases);
+        updateCases(newCases);
     };
 
     const views: JSX.Element[] = [];
@@ -314,7 +264,7 @@ function Judge(props: {
 
         if (url.hostname == 'codeforces.com') {
             return (
-                <div className="pad-10 submit-area">
+                <div className="p10 submit-area">
                     <button className="btn" onClick={submitCf}>
                         Submit on CF <small>(beta)</small>
                     </button>
@@ -437,6 +387,18 @@ function Judge(props: {
     );
 }
 
+const getCasesFromProblem = (problem: Problem | undefined): Case[] => {
+    if (problem === undefined) {
+        return [];
+    }
+
+    return problem.tests.map((testCase) => ({
+        id: testCase.id,
+        result: null,
+        testcase: testCase,
+    }));
+};
+
 /**
  * A wrapper over the main component Judge.
  * Shows UI to create problem when no problem exists.
@@ -444,6 +406,50 @@ function Judge(props: {
  */
 function App() {
     const [problem, setProblem] = useState<Problem | undefined>(undefined);
+    const [cases, setCases] = useState<Case[]>([]);
+    const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
+    const [, setSaving] = useState<boolean>(false);
+
+    // Save the problem
+    const save = () => {
+        setSaving(true);
+        if (problem !== undefined) {
+            console.log('Saved problem');
+            vscodeApi.postMessage({
+                command: 'save',
+                problem,
+            });
+        }
+        setTimeout(() => {
+            setSaving(false);
+        }, 500);
+    };
+
+    const handleRunSingleResult = (data: ResultCommand) => {
+        const idx = cases.findIndex(
+            (testCase) => testCase.id === data.result.id,
+        );
+        if (idx === -1) {
+            console.error('Invalid single result', cases, cases.length, data);
+            return;
+        }
+        const newCases = cases.slice();
+        newCases[idx].result = data.result;
+        console.log('single result', data);
+        setCases(newCases);
+    };
+
+    // Save problem if it changes.
+    useEffect(() => {
+        if (deferSaveTimer !== null) {
+            clearTimeout(deferSaveTimer);
+        }
+        const timeOutId = window.setTimeout(() => {
+            setDeferSaveTimer(null);
+            save();
+        }, 500);
+        setDeferSaveTimer(timeOutId);
+    }, [problem]);
 
     useEffect(() => {
         console.log('Adding event listeners for App');
@@ -452,6 +458,11 @@ function App() {
             switch (data.command) {
                 case 'new-problem': {
                     setProblem(data.problem);
+                    setCases(getCasesFromProblem(data.problem));
+                    break;
+                }
+                case 'run-single-result': {
+                    handleRunSingleResult(data);
                     break;
                 }
             }
@@ -461,7 +472,13 @@ function App() {
             console.log('Cleaned up event listeners for App');
             window.removeEventListener('message', fn);
         };
-    }, []);
+    }, [cases]);
+
+    const createProblem = () => {
+        vscodeApi.postMessage({
+            command: 'create-local-problem',
+        });
+    };
 
     if (problem === undefined) {
         return (
@@ -472,13 +489,22 @@ function App() {
                         with it.
                     </p>
                     <br />
-                    <div className="btn btn-block">Create Problem</div>
+                    <div className="btn btn-block" onClick={createProblem}>
+                        Create Problem
+                    </div>
                 </div>
             </div>
         );
     }
 
-    return <Judge problem={problem} updateProblem={setProblem} />;
+    return (
+        <Judge
+            problem={problem}
+            updateProblem={setProblem}
+            cases={cases}
+            updateCases={setCases}
+        />
+    );
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));

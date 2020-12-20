@@ -31,7 +31,7 @@
                 {
                     "type": "webview",
                     "id": "cph.judgeView",
-                    "name": "CPH Judge Results"
+                    "name": "Results"
                 }
             ]
         },
