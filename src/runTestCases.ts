@@ -1,18 +1,12 @@
 import * as vscode from 'vscode';
 import { checkUnsupported, randomId } from './utils';
-import {
-    startWebVeiwIfNotActive,
-    setBaseWebViewHTML,
-    webViewExists,
-    getWebViewProblemName,
-    extensionToWebWiewMessage,
-} from './webview/webview';
 import { Problem } from './types';
 import { getProblem, saveProblem } from './parser';
 import { compileFile } from './compiler';
 import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import sendTelemetryEvent from './telemetery';
+import { getJudgeViewPorivider } from './extension';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -20,16 +14,14 @@ import sendTelemetryEvent from './telemetery';
  * option to the user to either download them from a codeforces URL or manually
  * create an empty testcases file and show it in the results section.
  */
-export default async (context: vscode.ExtensionContext) => {
+export default async () => {
     console.log('Running command "runTestCases"');
     const editor = vscode.window.activeTextEditor;
     if (editor === undefined) {
-        if (webViewExists()) {
-            console.log('Sending command to webview.');
-            extensionToWebWiewMessage({
-                command: 'run-all',
-            });
-        }
+        console.log('Sending command to webview.');
+        getJudgeViewPorivider().extensionToJudgeViewMessage({
+            command: 'run-all',
+        });
         return;
     }
     const srcPath = editor.document.fileName;
@@ -41,7 +33,7 @@ export default async (context: vscode.ExtensionContext) => {
 
     if (!problem) {
         console.log('No problem saved.');
-        createLocalProblem(context, editor);
+        createLocalProblem(editor);
         return;
     }
 
@@ -62,25 +54,15 @@ export default async (context: vscode.ExtensionContext) => {
         return;
     }
     await editor.document.save();
-    if (!webViewExists()) {
-        startWebVeiwIfNotActive();
-        await setBaseWebViewHTML(context, problem);
-    } else {
-        if (getWebViewProblemName() !== problem.name) {
-            console.log(
-                'Viewing different problem currenlty, changing base HTML',
-            );
-            await setBaseWebViewHTML(context, problem);
-        }
-    }
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
+        command: 'new-problem',
+        problem: problem,
+    });
     runAllAndSave(problem);
     vscode.window.showTextDocument(editor.document, vscode.ViewColumn.One);
 };
 
-const createLocalProblem = async (
-    context: vscode.ExtensionContext,
-    editor: vscode.TextEditor,
-) => {
+const createLocalProblem = async (editor: vscode.TextEditor) => {
     console.log('Creating local problem');
     const srcPath = editor.document.fileName;
     if (checkUnsupported(srcPath)) {
@@ -106,6 +88,8 @@ const createLocalProblem = async (
     };
     console.log(newProblem);
     saveProblem(srcPath, newProblem);
-    await startWebVeiwIfNotActive();
-    await setBaseWebViewHTML(context, newProblem);
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
+        command: 'new-problem',
+        problem: newProblem,
+    });
 };

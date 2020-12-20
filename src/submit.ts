@@ -1,7 +1,7 @@
 import { getProblem } from './parser';
 import * as vscode from 'vscode';
 import { storeSubmitProblem, submitKattisProblem } from './companion';
-import { extensionToWebWiewMessage } from './webview/webview';
+import { getJudgeViewPorivider } from './extension';
 
 export const submitToKattis = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
@@ -34,7 +34,9 @@ export const submitToKattis = () => {
     }
 
     submitKattisProblem(problem);
-    extensionToWebWiewMessage({ command: 'waiting-for-submit' });
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
+        command: 'waiting-for-submit',
+    });
 };
 
 export const submitToCodeForces = () => {
@@ -69,7 +71,9 @@ export const submitToCodeForces = () => {
     }
 
     storeSubmitProblem(problem);
-    extensionToWebWiewMessage({ command: 'waiting-for-submit' });
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
+        command: 'waiting-for-submit',
+    });
 };
 
 /** Get the problem name ( like 144C ) for a given Codeforces URL string. */

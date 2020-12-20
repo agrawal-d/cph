@@ -3,8 +3,8 @@ import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
 import { getSaveLocationPref } from './preferences';
-import { extensionToWebWiewMessage } from './webview/webview';
 import * as vscode from 'vscode';
+import { getJudgeViewPorivider } from './extension';
 
 /**
  *  Get the location to save the generated binary in. If save location is
@@ -92,7 +92,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     if (language.skipCompile) {
         return Promise.resolve(true);
     }
-    extensionToWebWiewMessage({
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
         command: 'compiling-start',
     });
     const flags: string[] = getFlags(language, srcPath);
@@ -119,13 +119,13 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                 ocShow();
                 console.error('Compilation failed');
                 resolve(false);
-                extensionToWebWiewMessage({
+                getJudgeViewPorivider().extensionToJudgeViewMessage({
                     command: 'compiling-stop',
                 });
                 return;
             }
             console.log('Compilation passed');
-            extensionToWebWiewMessage({
+            getJudgeViewPorivider().extensionToJudgeViewMessage({
                 command: 'compiling-stop',
             });
             resolve(true);

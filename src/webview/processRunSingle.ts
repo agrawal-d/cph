@@ -4,8 +4,8 @@ import { getBinSaveLocation, compileFile } from '../compiler';
 import { saveProblem } from '../parser';
 import { runTestCase, deleteBinary } from '../executions';
 import { isResultCorrect } from '../judge';
-import { extensionToWebWiewMessage } from './webview';
 import * as vscode from 'vscode';
+import { getJudgeViewPorivider } from '../extension';
 
 export const runSingleAndSave = async (
     problem: Problem,
@@ -55,7 +55,7 @@ export const runSingleAndSave = async (
     };
 
     console.log('Testcase judging complete. Result:', result);
-    await extensionToWebWiewMessage({
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
         command: 'run-single-result',
         result,
         problem,

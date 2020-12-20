@@ -15,12 +15,6 @@ declare const acquireVsCodeApi: () => {
 };
 const vscodeApi = acquireVsCodeApi();
 
-const getProblemFromDOM = (): Problem => {
-    console.log('Got problem from dom!');
-    const element = document.getElementById('problem') as HTMLElement;
-    return JSON.parse(element.innerText);
-};
-
 const getCasesFromProblem = (problem: Problem): Case[] => {
     console.log('Get cases from problem!');
     return problem.tests.map((testCase) => ({
@@ -30,10 +24,14 @@ const getCasesFromProblem = (problem: Problem): Case[] => {
     }));
 };
 
-function App() {
-    const [problem, useProblem] = useState<Problem>(() => getProblemFromDOM());
+function Judge(props: {
+    problem: Problem;
+    updateProblem: (problem: Problem) => void;
+}) {
+    const problem = props.problem;
+    const updateProblem = props.updateProblem;
     const [cases, useCases] = useState<Case[]>(() =>
-        getCasesFromProblem(getProblemFromDOM()),
+        getCasesFromProblem(props.problem),
     );
     const [focusLast, useFocusLast] = useState<boolean>(false);
     const [forceRunning, useForceRunning] = useState<number | false>(false);
@@ -43,12 +41,12 @@ function App() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [saving, setSaving] = useState<boolean>(false);
 
-    // Update problem if cases change. The only place where `useProblem` is
+    // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
     useEffect(() => {
         const testCases: TestCase[] = cases.map((c) => c.testcase);
         console.log(cases);
-        useProblem({
+        updateProblem({
             ...problem,
             tests: testCases,
         });
@@ -437,6 +435,50 @@ function App() {
             {renderSubmitButton()}
         </div>
     );
+}
+
+/**
+ * A wrapper over the main component Judge.
+ * Shows UI to create problem when no problem exists.
+ * Otherwise, shows the Judge view.
+ */
+function App() {
+    const [problem, setProblem] = useState<Problem | undefined>(undefined);
+
+    useEffect(() => {
+        console.log('Adding event listeners for App');
+        const fn = (event: any) => {
+            const data: VSToWebViewMessage = event.data;
+            switch (data.command) {
+                case 'new-problem': {
+                    setProblem(data.problem);
+                    break;
+                }
+            }
+        };
+        window.addEventListener('message', fn);
+        return () => {
+            console.log('Cleaned up event listeners for App');
+            window.removeEventListener('message', fn);
+        };
+    }, []);
+
+    if (problem === undefined) {
+        return (
+            <div className="ui p10">
+                <div className="text-center">
+                    <p className="o50">
+                        This document does not have a CPH problem associated
+                        with it.
+                    </p>
+                    <br />
+                    <div className="btn btn-block">Create Problem</div>
+                </div>
+            </div>
+        );
+    }
+
+    return <Judge problem={problem} updateProblem={setProblem} />;
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));

@@ -5,12 +5,6 @@ import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
-import {
-    startWebVeiwIfNotActive,
-    setBaseWebViewHTML,
-    extensionToWebWiewMessage,
-    closeWebVeiw,
-} from './webview/webview';
 import { isCodeforcesUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
@@ -21,6 +15,7 @@ import {
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
+import { getJudgeViewPorivider } from './extension';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -64,7 +59,11 @@ export const submitKattisProblem = (problem: Problem) => {
 
     pyshell.stdout.on('data', function (data) {
         console.log(data.toString());
-        extensionToWebWiewMessage({ command: 'submit-finished' });
+        getJudgeViewPorivider().extensionToJudgeViewMessage({
+            command: 'new-problem',
+            problem,
+        });
+        ({ command: 'submit-finished' });
     });
     pyshell.stderr.on('data', function (data) {
         console.log(data.tostring());
@@ -115,7 +114,8 @@ export const setupCompanionServer = () => {
                         savedResponse,
                     );
                 savedResponse = emptyResponse;
-                extensionToWebWiewMessage({
+
+                getJudgeViewPorivider().extensionToJudgeViewMessage({
                     command: 'submit-finished',
                 });
             }
@@ -145,7 +145,10 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
 const handleNewProblem = async (problem: Problem) => {
     // If webview may be focused, close it, to prevent layout bug.
     if (vscode.window.activeTextEditor == undefined) {
-        closeWebVeiw();
+        getJudgeViewPorivider().extensionToJudgeViewMessage({
+            command: 'new-problem',
+            problem: undefined,
+        });
     }
     const folder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     if (folder === undefined) {
@@ -216,6 +219,8 @@ const handleNewProblem = async (problem: Problem) => {
     }
 
     await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
-    await startWebVeiwIfNotActive();
-    await setBaseWebViewHTML(global.context, problem);
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
+        command: 'new-problem',
+        problem,
+    });
 };

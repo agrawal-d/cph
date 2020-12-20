@@ -1,9 +1,9 @@
 import { Problem } from '../types';
 import { runSingleAndSave } from './processRunSingle';
-import { extensionToWebWiewMessage } from './webview';
 import { compileFile, getBinSaveLocation } from '../compiler';
 import { deleteBinary } from '../executions';
 import { getLanguage } from '../utils';
+import { getJudgeViewPorivider } from '../extension';
 
 /**
  * Run every testcase in a problem one by one. Waits for the first to complete
@@ -16,7 +16,7 @@ export default async (problem: Problem) => {
         return;
     }
     for (const testCase of problem.tests) {
-        extensionToWebWiewMessage({
+        getJudgeViewPorivider().extensionToJudgeViewMessage({
             command: 'running',
             id: testCase.id,
             problem: problem,
