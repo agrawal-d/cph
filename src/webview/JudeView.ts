@@ -7,6 +7,7 @@ import { deleteProblemFile, getProblemForDocument } from '../utils';
 import { runSingleAndSave } from './processRunSingle';
 import runAllAndSave from './processRunAll';
 import runTestCases from '../runTestCases';
+import sendTelemetryEvent from '../telemetery';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -81,6 +82,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
 
                     case 'create-local-problem': {
+                        sendTelemetryEvent('create-local-problem');
                         runTestCases();
                         break;
                     }
@@ -115,12 +117,18 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         console.log(message.command);
 
         switch (message.command) {
-            case 'new-problem':
             case 'waiting-for-submit':
             case 'compiling-start':
             case 'run-all': {
                 this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
             }
+        }
+
+        if (
+            message.command === 'new-problem' &&
+            message.problem !== undefined
+        ) {
+            this._view.show?.(true);
         }
     };
 
