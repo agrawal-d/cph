@@ -138,6 +138,11 @@ export type SubmitFinishedCommand = {
     command: 'submit-finished';
 };
 
+export type NewProblemCommand = {
+    command: 'new-problem';
+    problem: Problem | undefined;
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
@@ -145,7 +150,8 @@ export type VSToWebViewMessage =
     | CompilingStartCommand
     | CompilingStopCommand
     | WaitingForSubmitCommand
-    | SubmitFinishedCommand;
+    | SubmitFinishedCommand
+    | NewProblemCommand;
 
 export type CphEmptyResponse = {
     empty: true;

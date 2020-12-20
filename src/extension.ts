@@ -8,8 +8,9 @@ import {
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
 import { createTelemeteryReporter } from './telemetery';
-import { closeWebVeiw } from './webview/webview';
 import JudgeViewProvider from './webview/JudeView';
+
+let judgeViewProvider: JudgeViewProvider;
 
 declare global {
     module NodeJS {
@@ -19,19 +20,23 @@ declare global {
     }
 }
 
+export const getJudgeViewPorivider = () => {
+    return judgeViewProvider;
+};
+
 const registerCommands = (context: vscode.ExtensionContext) => {
     console.log('Registering commands');
     const disposable = vscode.commands.registerCommand(
         'cph.runTestCases',
         () => {
-            runTestCases(context);
+            runTestCases();
         },
     );
 
     const disposable2 = vscode.commands.registerCommand(
         'extension.runCodeforcesTestcases',
         () => {
-            runTestCases(context);
+            runTestCases();
         },
     );
 
@@ -48,11 +53,11 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         },
     );
 
-    const provider = new JudgeViewProvider(context.extensionUri);
+    judgeViewProvider = new JudgeViewProvider(context.extensionUri);
 
     const webviewView = vscode.window.registerWebviewViewProvider(
         JudgeViewProvider.viewType,
-        provider,
+        judgeViewProvider,
         {
             webviewOptions: {
                 retainContextWhenHidden: true,
@@ -84,20 +89,23 @@ export function activate(context: vscode.ExtensionContext) {
 
     registerCommands(context);
     setupCompanionServer();
-    checkLaunchWebview(context);
+    checkLaunchWebview();
     createTelemeteryReporter(context);
 
     vscode.workspace.onDidCloseTextDocument((e) => {
-        editorClosed(e, context);
+        editorClosed(e);
     });
 
     vscode.window.onDidChangeActiveTextEditor((e) => {
-        editorChanged(e, context);
+        editorChanged(e);
     });
 
     vscode.window.onDidChangeVisibleTextEditors((editors) => {
         if (editors.length === 0) {
-            closeWebVeiw();
+            getJudgeViewPorivider().extensionToJudgeViewMessage({
+                command: 'new-problem',
+                problem: undefined,
+            });
         }
     });
 

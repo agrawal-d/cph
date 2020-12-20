@@ -145,6 +145,14 @@ textarea:active {
     color: rgb(37, 87, 37);
 }
 
+.p10 {
+    padding: 10px;
+}
+
+.o50 {
+    opacity: 0.5;
+}
+
 .pad-10 {
     padding: 10px;
     background: #9eabec0d;
@@ -159,6 +167,12 @@ textarea:active {
     margin-bottom: 5px;
     border: 2px solid transparent;
 }
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
 .btn-green {
     background: #70b92791;
 }
@@ -183,6 +197,10 @@ textarea:active {
 
 .margin-10 {
     margin: 10px;
+}
+
+.text-center {
+    text-align: center;
 }
 
 h4 {

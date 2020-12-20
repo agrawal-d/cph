@@ -1,13 +1,8 @@
 import * as vscode from 'vscode';
 import { getProbSaveLocation } from '../parser';
 import { existsSync, readFileSync } from 'fs';
-import {
-    startWebVeiwIfNotActive,
-    setBaseWebViewHTML,
-    closeWebVeiw,
-    getWebViewProblemName,
-} from './webview';
 import { Problem } from '../types';
+import { getJudgeViewPorivider } from '../extension';
 
 /**
  * Show the webview with the problem details if a source code with existing
@@ -17,10 +12,7 @@ import { Problem } from '../types';
  * @param e An editor
  * @param context The activation context
  */
-export const editorChanged = async (
-    e: vscode.TextEditor | undefined,
-    context: vscode.ExtensionContext,
-) => {
+export const editorChanged = async (e: vscode.TextEditor | undefined) => {
     console.log('Changed editor to', e?.document.fileName, e?.document);
 
     if (e === undefined || e.document.uri.scheme !== 'file') {
@@ -31,26 +23,21 @@ export const editorChanged = async (
     const probPath = getProbSaveLocation(srcPath);
 
     if (!existsSync(probPath)) {
-        closeWebVeiw();
+        getJudgeViewPorivider().extensionToJudgeViewMessage({
+            command: 'new-problem',
+            problem: undefined,
+        });
         return;
     }
-
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
-
-    if (getWebViewProblemName() === problem.name) {
-        console.log('Same problem. Skipping new webview.');
-        return;
-    }
-
-    await startWebVeiwIfNotActive();
-    await setBaseWebViewHTML(context, problem);
+    console.log('Sent problem @', Date.now());
+    getJudgeViewPorivider().extensionToJudgeViewMessage({
+        command: 'new-problem',
+        problem,
+    });
 };
 
-export const editorClosed = (
-    e: vscode.TextDocument,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _context: vscode.ExtensionContext,
-) => {
+export const editorClosed = (e: vscode.TextDocument) => {
     console.log('Closed editor:', e.uri.fsPath);
     const srcPath = e.uri.fsPath;
     const probPath = getProbSaveLocation(srcPath);
@@ -61,15 +48,18 @@ export const editorClosed = (
 
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
 
-    if (getWebViewProblemName() === problem.name) {
-        closeWebVeiw();
+    if (getJudgeViewPorivider().problemPath === problem.srcPath) {
+        getJudgeViewPorivider().extensionToJudgeViewMessage({
+            command: 'new-problem',
+            problem: undefined,
+        });
     }
 };
 
-export const checkLaunchWebview = (context: vscode.ExtensionContext) => {
+export const checkLaunchWebview = () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
         return;
     }
-    editorChanged(editor, context);
+    editorChanged(editor);
 };
