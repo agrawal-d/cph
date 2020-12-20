@@ -13,6 +13,10 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
     private _view?: vscode.WebviewView;
 
+    public isViewUninitialized() {
+        return this._view === undefined;
+    }
+
     constructor(private readonly _extensionUri: vscode.Uri) {}
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
@@ -107,6 +111,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         if (!this._view) {
             return;
         }
+
+        console.log(message.command);
 
         switch (message.command) {
             case 'new-problem':
