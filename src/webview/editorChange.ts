@@ -32,9 +32,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
     }
 
     if (getJudgeViewPorivider().isViewUninitialized()) {
-        vscode.commands.executeCommand(
-            'workbench.view.extension.cph-judge-view-container',
-        );
+        vscode.commands.executeCommand('cph.judgeView.focus');
     }
 
     console.log('Sent problem @', Date.now());

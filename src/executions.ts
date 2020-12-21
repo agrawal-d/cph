@@ -5,6 +5,7 @@ import config from './config';
 import { getTimeOutPref } from './preferences';
 import * as vscode from 'vscode';
 import path from 'path';
+import sendTelemetryEvent from './telemetery';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
