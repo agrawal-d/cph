@@ -60,7 +60,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         judgeViewProvider,
         {
             webviewOptions: {
-                retainContextWhenHidden: false,
+                retainContextWhenHidden: false, // until ghost-render bug is fixed.
             },
         },
     );
@@ -82,8 +82,9 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.StatusBarAlignment.Left,
         1000,
     );
-    statusBarItem.text = ' ▶  Run Testcases';
-    statusBarItem.tooltip = 'Competitive Programming Helper';
+    statusBarItem.text = ' $(run-all)  Run Testcases';
+    statusBarItem.tooltip =
+        'Competitive Programming Helper - Run all testcases or create if none exist.';
     statusBarItem.show();
     statusBarItem.command = 'cph.runTestCases';
 
