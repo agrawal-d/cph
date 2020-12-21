@@ -39,12 +39,12 @@
             {
                 "command": "cph.runTestCases",
                 "title": "Run Testcases",
-                "icon": "icon.png"
+                "icon": "dist/static/play.png"
             },
             {
                 "command": "cph.submitToCodeForces",
                 "title": "Submit to CodeForces",
-                "icon": "icon.png"
+                "icon": "dist/static/play.png"
             }
         ],
         "keybindings": [
