@@ -116,11 +116,13 @@ export const setupCompanionServer = () => {
                         'Request was from the cph-submit extension; sending savedResponse and clearing it',
                         savedResponse,
                     );
-                savedResponse = emptyResponse;
 
-                getJudgeViewPorivider().extensionToJudgeViewMessage({
-                    command: 'submit-finished',
-                });
+                if (savedResponse.empty != true) {
+                    getJudgeViewPorivider().extensionToJudgeViewMessage({
+                        command: 'submit-finished',
+                    });
+                }
+                savedResponse = emptyResponse;
             }
             res.end();
         });
