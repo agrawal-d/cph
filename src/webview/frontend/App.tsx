@@ -489,14 +489,20 @@ function App() {
         return (
             <div className="ui p10">
                 <div className="text-center">
-                    <p className="o50">
+                    <p>
                         This document does not have a CPH problem associated
                         with it.
                     </p>
                     <br />
                     <div className="btn btn-block" onClick={createProblem}>
-                        Create Problem
+                        + Create Problem
                     </div>
+                    <a
+                        className="btn btn-block btn-green"
+                        href="https://github.com/agrawal-d/cph/blob/master/docs/user-guide.md"
+                    >
+                        How to use this extension
+                    </a>
                 </div>
             </div>
         );
