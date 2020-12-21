@@ -60,7 +60,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         judgeViewProvider,
         {
             webviewOptions: {
-                retainContextWhenHidden: true,
+                retainContextWhenHidden: false,
             },
         },
     );
