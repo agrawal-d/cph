@@ -409,6 +409,7 @@ function App() {
     const [cases, setCases] = useState<Case[]>([]);
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [, setSaving] = useState<boolean>(false);
+    const [showFallback, setShowFallback] = useState<boolean>(false);
 
     // Save the problem
     const save = () => {
@@ -457,6 +458,10 @@ function App() {
             const data: VSToWebViewMessage = event.data;
             switch (data.command) {
                 case 'new-problem': {
+                    if (data.problem === undefined) {
+                        setShowFallback(true);
+                    }
+
                     setProblem(data.problem);
                     setCases(getCasesFromProblem(data.problem));
                     break;
@@ -480,7 +485,7 @@ function App() {
         });
     };
 
-    if (problem === undefined) {
+    if (problem === undefined && showFallback) {
         return (
             <div className="ui p10">
                 <div className="text-center">
@@ -495,16 +500,18 @@ function App() {
                 </div>
             </div>
         );
+    } else if (problem !== undefined) {
+        return (
+            <Judge
+                problem={problem}
+                updateProblem={setProblem}
+                cases={cases}
+                updateCases={setCases}
+            />
+        );
+    } else {
+        return null;
     }
-
-    return (
-        <Judge
-            problem={problem}
-            updateProblem={setProblem}
-            cases={cases}
-            updateCases={setCases}
-        />
-    );
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));
