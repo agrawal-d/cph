@@ -1,7 +1,15 @@
 # Changelog
+
+## 5.0.0
+
+-   Brand new UI with improved performance. The UI now appears in the activity
+    bar ( side bar ).
+-   No more weird layout bugs.
+-   Lower system resource usage when extension is in the background.
+
 ## 4.5.3
 
--  Fix ghost .cph folder creation bug.
+-   Fix ghost .cph folder creation bug.
 
 ## 4.5.2
 
