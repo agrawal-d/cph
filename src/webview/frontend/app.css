@@ -29,7 +29,7 @@ body {
     margin-bottom: 100px;
 }
 .btn:hover {
-    opacity: 0.8;
+    filter: brightness(125%);
 }
 .actions {
     position: fixed;
