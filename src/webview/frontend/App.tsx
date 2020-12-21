@@ -266,7 +266,7 @@ function Judge(props: {
             return (
                 <div className="p10 submit-area">
                     <button className="btn" onClick={submitCf}>
-                        Submit on CF <small>(beta)</small>
+                        Submit to Codeforces
                     </button>
                     {waitingForSubmit && (
                         <>
