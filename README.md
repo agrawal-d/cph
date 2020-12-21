@@ -70,4 +70,5 @@ extension does not collect any statistics.
 
 ## License
 
-This software is licensed under [GPL Version 3](LICENSE).
+This software is licensed under [GPL Version 3](LICENSE) or later ( at your
+choice ).
