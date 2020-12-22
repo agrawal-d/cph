@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getProbSaveLocation } from '../parser';
 import { existsSync, readFileSync } from 'fs';
 import { Problem } from '../types';
-import { getJudgeViewPorivider } from '../extension';
+import { getJudgeViewProvider } from '../extension';
 import { getProblemForDocument } from '../utils';
 
 /**
@@ -24,19 +24,19 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
 
     if (problem === undefined) {
         console.log('NO problem!');
-        getJudgeViewPorivider().extensionToJudgeViewMessage({
+        getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: undefined,
         });
         return;
     }
 
-    if (getJudgeViewPorivider().isViewUninitialized()) {
+    if (getJudgeViewProvider().isViewUninitialized()) {
         vscode.commands.executeCommand('cph.judgeView.focus');
     }
 
     console.log('Sent problem @', Date.now());
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem,
     });
@@ -53,8 +53,8 @@ export const editorClosed = (e: vscode.TextDocument) => {
 
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
 
-    if (getJudgeViewPorivider().problemPath === problem.srcPath) {
-        getJudgeViewPorivider().extensionToJudgeViewMessage({
+    if (getJudgeViewProvider().problemPath === problem.srcPath) {
+        getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: undefined,
         });

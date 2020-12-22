@@ -20,7 +20,7 @@ declare global {
     }
 }
 
-export const getJudgeViewPorivider = () => {
+export const getJudgeViewProvider = () => {
     return judgeViewProvider;
 };
 
@@ -103,7 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.onDidChangeVisibleTextEditors((editors) => {
         if (editors.length === 0) {
-            getJudgeViewPorivider().extensionToJudgeViewMessage({
+            getJudgeViewProvider().extensionToJudgeViewMessage({
                 command: 'new-problem',
                 problem: undefined,
             });

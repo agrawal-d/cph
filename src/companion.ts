@@ -15,7 +15,7 @@ import {
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
-import { getJudgeViewPorivider } from './extension';
+import { getJudgeViewProvider } from './extension';
 import sendTelemetryEvent from './telemetery';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
@@ -61,7 +61,7 @@ export const submitKattisProblem = (problem: Problem) => {
 
     pyshell.stdout.on('data', function (data) {
         console.log(data.toString());
-        getJudgeViewPorivider().extensionToJudgeViewMessage({
+        getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem,
         });
@@ -118,7 +118,7 @@ export const setupCompanionServer = () => {
                     );
 
                 if (savedResponse.empty != true) {
-                    getJudgeViewPorivider().extensionToJudgeViewMessage({
+                    getJudgeViewProvider().extensionToJudgeViewMessage({
                         command: 'submit-finished',
                     });
                 }
@@ -150,7 +150,7 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
 const handleNewProblem = async (problem: Problem) => {
     // If webview may be focused, close it, to prevent layout bug.
     if (vscode.window.activeTextEditor == undefined) {
-        getJudgeViewPorivider().extensionToJudgeViewMessage({
+        getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: undefined,
         });
@@ -224,7 +224,7 @@ const handleNewProblem = async (problem: Problem) => {
     }
 
     await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem,
     });

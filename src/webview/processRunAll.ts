@@ -3,7 +3,7 @@ import { runSingleAndSave } from './processRunSingle';
 import { compileFile, getBinSaveLocation } from '../compiler';
 import { deleteBinary } from '../executions';
 import { getLanguage } from '../utils';
-import { getJudgeViewPorivider } from '../extension';
+import { getJudgeViewProvider } from '../extension';
 
 /**
  * Run every testcase in a problem one by one. Waits for the first to complete
@@ -16,7 +16,7 @@ export default async (problem: Problem) => {
         return;
     }
     for (const testCase of problem.tests) {
-        getJudgeViewPorivider().extensionToJudgeViewMessage({
+        getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'running',
             id: testCase.id,
             problem: problem,
