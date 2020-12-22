@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 import path from 'path';
 import { getSaveLocationPref } from './preferences';
 import * as vscode from 'vscode';
-import { getJudgeViewPorivider } from './extension';
+import { getJudgeViewProvider } from './extension';
 
 /**
  *  Get the location to save the generated binary in. If save location is
@@ -92,7 +92,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     if (language.skipCompile) {
         return Promise.resolve(true);
     }
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'compiling-start',
     });
     const flags: string[] = getFlags(language, srcPath);
@@ -119,13 +119,13 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                 ocShow();
                 console.error('Compilation failed');
                 resolve(false);
-                getJudgeViewPorivider().extensionToJudgeViewMessage({
+                getJudgeViewProvider().extensionToJudgeViewMessage({
                     command: 'compiling-stop',
                 });
                 return;
             }
             console.log('Compilation passed');
-            getJudgeViewPorivider().extensionToJudgeViewMessage({
+            getJudgeViewProvider().extensionToJudgeViewMessage({
                 command: 'compiling-stop',
             });
             resolve(true);

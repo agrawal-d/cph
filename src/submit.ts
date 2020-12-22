@@ -1,7 +1,7 @@
 import { getProblem } from './parser';
 import * as vscode from 'vscode';
 import { storeSubmitProblem, submitKattisProblem } from './companion';
-import { getJudgeViewPorivider } from './extension';
+import { getJudgeViewProvider } from './extension';
 
 export const submitToKattis = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
@@ -34,7 +34,7 @@ export const submitToKattis = () => {
     }
 
     submitKattisProblem(problem);
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'waiting-for-submit',
     });
 };
@@ -71,7 +71,7 @@ export const submitToCodeForces = () => {
     }
 
     storeSubmitProblem(problem);
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'waiting-for-submit',
     });
 };

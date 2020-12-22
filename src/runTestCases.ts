@@ -6,7 +6,7 @@ import { compileFile } from './compiler';
 import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import sendTelemetryEvent from './telemetery';
-import { getJudgeViewPorivider } from './extension';
+import { getJudgeViewProvider } from './extension';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -19,7 +19,7 @@ export default async () => {
     const editor = vscode.window.activeTextEditor;
     if (editor === undefined) {
         console.log('Sending command to webview.');
-        getJudgeViewPorivider().extensionToJudgeViewMessage({
+        getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'run-all',
         });
         return;
@@ -54,7 +54,7 @@ export default async () => {
         return;
     }
     await editor.document.save();
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem: problem,
     });
@@ -88,7 +88,7 @@ const createLocalProblem = async (editor: vscode.TextEditor) => {
     };
     console.log(newProblem);
     saveProblem(srcPath, newProblem);
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem: newProblem,
     });

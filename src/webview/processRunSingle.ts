@@ -5,7 +5,7 @@ import { saveProblem } from '../parser';
 import { runTestCase, deleteBinary } from '../executions';
 import { isResultCorrect } from '../judge';
 import * as vscode from 'vscode';
-import { getJudgeViewPorivider } from '../extension';
+import { getJudgeViewProvider } from '../extension';
 import sendTelemetryEvent from '../telemetery';
 
 export const runSingleAndSave = async (
@@ -56,7 +56,7 @@ export const runSingleAndSave = async (
     };
 
     console.log('Testcase judging complete. Result:', result);
-    getJudgeViewPorivider().extensionToJudgeViewMessage({
+    getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'run-single-result',
         result,
         problem,
