@@ -264,32 +264,9 @@ function Judge(props: {
 
         if (url.hostname == 'codeforces.com') {
             return (
-                <div className="p10 submit-area">
-                    <button className="btn" onClick={submitCf}>
-                        Submit to Codeforces
-                    </button>
-                    {waitingForSubmit && (
-                        <>
-                            <span className="loader"></span> Waiting for
-                            extension ...
-                            <br />
-                            <small>
-                                To submit to codeforces, you need to have the{' '}
-                                <a href="https://github.com/agrawal-d/cph-submit">
-                                    cph-submit browser extension{' '}
-                                </a>
-                                installed, and a browser window open. You can
-                                change change language ID from VS Code settings.
-                                <br />
-                                <br />
-                                Hint: You can also press <kbd>
-                                    Ctrl+Alt+S
-                                </kbd>{' '}
-                                to submit.
-                            </small>
-                        </>
-                    )}
-                </div>
+                <button className="btn" onClick={submitCf}>
+                    Submit to Codeforces
+                </button>
             );
         } else if (url.hostname == 'open.kattis.com') {
             return (
@@ -345,13 +322,16 @@ function Judge(props: {
                 </h1>
             </div>
             <div className="results">{views}</div>
-            <button
-                className="btn margin-10 btn-green"
-                onClick={newCase}
-                title="Create a new empty testcase"
-            >
-                + New Testcase
-            </button>
+            <div className="margin-10">
+                <button
+                    className="btn btn-green"
+                    onClick={newCase}
+                    title="Create a new empty testcase"
+                >
+                    + New Testcase
+                </button>
+                {renderSubmitButton()}
+            </div>
 
             <div className="actions">
                 <button
@@ -390,7 +370,25 @@ function Judge(props: {
                     ☠ Delete
                 </button>
             </div>
-            {renderSubmitButton()}
+
+            {waitingForSubmit && (
+                <div className="margin-10">
+                    <span className="loader"></span> Waiting for extension ...
+                    <br />
+                    <small>
+                        To submit to codeforces, you need to have the{' '}
+                        <a href="https://github.com/agrawal-d/cph-submit">
+                            cph-submit browser extension{' '}
+                        </a>
+                        installed, and a browser window open. You can change
+                        change language ID from VS Code settings.
+                        <br />
+                        <br />
+                        Hint: You can also press <kbd>Ctrl+Alt+S</kbd> to
+                        submit.
+                    </small>
+                </div>
+            )}
         </div>
     );
 }

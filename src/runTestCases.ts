@@ -7,6 +7,7 @@ import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import sendTelemetryEvent from './telemetery';
 import { getJudgeViewProvider } from './extension';
+import { check } from 'prettier';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -18,10 +19,7 @@ export default async () => {
     console.log('Running command "runTestCases"');
     const editor = vscode.window.activeTextEditor;
     if (editor === undefined) {
-        console.log('Sending command to webview.');
-        getJudgeViewProvider().extensionToJudgeViewMessage({
-            command: 'run-all',
-        });
+        checkUnsupported('');
         return;
     }
     const srcPath = editor.document.fileName;
