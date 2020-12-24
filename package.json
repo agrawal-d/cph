@@ -5,7 +5,7 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "5.0.2",
+    "version": "5.0.3",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -22,7 +22,7 @@
                 {
                     "id": "cph-judge-view-container",
                     "title": "CPH Judge",
-                    "icon": "static/panel-view-icon.svg"
+                    "icon": "dist/static/panel-view-icon.svg"
                 }
             ]
         },
