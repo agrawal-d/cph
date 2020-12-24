@@ -51,7 +51,7 @@ const getFlags = (language: Language, srcPath: string): string[] => {
                 getBinSaveLocation(srcPath),
                 ...args,
                 '-D',
-                'ONLINE_JUDGE',
+                'DEBUG',
                 '-D',
                 'CPH',
             ];

@@ -45,30 +45,32 @@ This document contains instructions on how to use this extension.
 
 ## Submit to Kattis
 
-1. Install Kattis [config file](https://open.kattis.com/download/kattisrc) and [submission client](https://open.kattis.com/download/submit.py?e48b42=). Make sure you are logged in on another tab prior to accessing the files.
+1. Install Kattis [config file](https://open.kattis.com/download/kattisrc) and
+   [submission client](https://open.kattis.com/download/submit.py?e48b42=). Make
+   sure you are logged in on another tab prior to accessing the files.
 
-2. Move these files to a directory(folder) called .kattisrc in your home directory.
+2. Move these files to a directory(folder) called .kattisrc in your home
+   directory.
 
-   1. On MacOS, this is typically /Users/{username}/.kattisrc
-   2. On Linux, this is typically /home/{username}/.kattisrc
-   3. On Windows, this is typically C:\Users\\{username}\\.kattisrc
+    1. On MacOS, this is typically /Users/{username}/.kattisrc
+    2. On Linux, this is typically /home/{username}/.kattisrc
+    3. On Windows, this is typically C:\Users\\{username}\\.kattisrc
 
-3. If any errors come up, check which directory `~` is linked to, by running 
+3. If any errors come up, check which directory `~` is linked to, by running
 
-   ```bash
-   python -c "import os; print(os.path.expanduser('~'))"
-   ```
+    ```bash
+    python -c "import os; print(os.path.expanduser('~'))"
+    ```
 
-   in a terminal.
+    in a terminal.
 
 4. Click on the 'Submit to Kattis' button in the results window.
 
-5. A new tab will open in the browser with the submissions page. 
-
+5. A new tab will open in the browser with the submissions page.
 
 ## Environment
 
--   For C++, `ONLINE_JUDGE` and `CPH` are defined as a `#define` directive.
+-   For C++, `DEBUG` and `CPH` are defined as a `#define` directive.
 
 ## Customizing preferences
 
@@ -79,20 +81,27 @@ Several options are available to customize the extension. Open VS Code settings
 ![Preferences](img/settings2.png)
 
 ### General Settings
+
 \
 ![Preferences](img/generalSettings.png)
-   - Default save location for generated meta-data.
-   - Default language selected for new problems imported via Competitive Companion.
-   - Language choices offered in menu when new problem imported via Competitive Companion.
-   - Timeout for testcases.
+
+-   Default save location for generated meta-data.
+-   Default language selected for new problems imported via Competitive
+    Companion.
+-   Language choices offered in menu when new problem imported via Competitive
+    Companion.
+-   Timeout for testcases.
 
 ### Language Settings (for each language)
+
 \
 ![Preferences](img/languageSettings.png)
-   - Additional compilation flags.
-   - [Requires [cph-submit](#submit-to-codeforces)] Compiler selected in drop down during codeforces submission.
-   - [Python] Command used to run python files. For eg. py, python3, pypy3, etc.
-   
+
+-   Additional compilation flags.
+-   [Requires [cph-submit](#submit-to-codeforces)] Compiler selected in drop
+    down during codeforces submission.
+-   [Python] Command used to run python files. For eg. py, python3, pypy3, etc.
+
 ## Getting help
 
 If you have trouble using the extension, find any bugs, or want to request a new

@@ -31,7 +31,7 @@ export const runTestCase = (
     };
     const spawnOpts = {
         timeout: config.timeout,
-        env: { ONLINE_JUDGE: 'true', DEBUG: 'true', CPH: 'true' },
+        env: { DEBUG: 'true', CPH: 'true' },
     };
     let process: ChildProcessWithoutNullStreams;
 
