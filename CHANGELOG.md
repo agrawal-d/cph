@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.1
+
+-   Fix minor layout bugs.
+-   Improve URL rendering.
+-   Improve error messages.
+-   Add button to problem URL.
+
 ## 5.0.0
 
 -   Brand new UI with improved performance. The UI now appears in the activity
