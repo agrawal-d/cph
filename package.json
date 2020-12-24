@@ -7,7 +7,7 @@
     "publisher": "DivyanshuAgrawal",
     "version": "5.0.1",
     "engines": {
-        "vscode": "^1.5.2"
+        "vscode": "^1.52.0"
     },
     "categories": [
         "Other"
