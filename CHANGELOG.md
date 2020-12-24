@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.0.1
+## 5.0.2
 
 -   Fix minor layout bugs.
 -   Improve URL rendering.
