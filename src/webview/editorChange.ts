@@ -14,16 +14,19 @@ import { getProblemForDocument } from '../utils';
  * @param context The activation context
  */
 export const editorChanged = async (e: vscode.TextEditor | undefined) => {
-    console.log('Changed editor to', e?.document.fileName, e?.document);
+    console.log('Changed editor to', e?.document.fileName);
 
     if (e === undefined || e.document.uri.scheme !== 'file') {
+        getJudgeViewProvider().extensionToJudgeViewMessage({
+            command: 'new-problem',
+            problem: undefined,
+        });
         return;
     }
 
     const problem = getProblemForDocument(e.document);
 
     if (problem === undefined) {
-        console.log('NO problem!');
         getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: undefined,
