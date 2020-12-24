@@ -324,11 +324,19 @@ function Judge(props: {
         }
     };
 
+    const getHref = () => {
+        if (problem.local === undefined || problem.local === false) {
+            return problem.url;
+        } else {
+            return undefined;
+        }
+    };
+
     return (
         <div className="ui">
             <div className="meta">
                 <h1 className="problem-name">
-                    {problem.name}{' '}
+                    <a href={getHref()}>{problem.name}</a>{' '}
                     {compiling && (
                         <b className="compiling" title="Compiling">
                             <span className="loader"></span>

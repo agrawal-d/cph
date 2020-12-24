@@ -16,11 +16,15 @@ import { getProblemForDocument } from '../utils';
 export const editorChanged = async (e: vscode.TextEditor | undefined) => {
     console.log('Changed editor to', e?.document.fileName);
 
-    if (e === undefined || e.document.uri.scheme !== 'file') {
+    if (e === undefined) {
         getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: undefined,
         });
+        return;
+    }
+
+    if (e.document.uri.scheme !== 'file') {
         return;
     }
 
