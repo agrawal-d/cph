@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.4
+
+-   Add option to retain webview context.
+
 ## 5.0.2
 
 -   Fix minor layout bugs.
