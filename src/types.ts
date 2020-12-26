@@ -17,6 +17,7 @@ export type prefSection =
     | 'language.python.Args'
     | 'language.python.SubmissionCompiler'
     | 'language.python.Command'
+    | 'general.retainWebviewContext'
     | 'general.defaultLanguageTemplateFileLocation';
 
 export type Language = {

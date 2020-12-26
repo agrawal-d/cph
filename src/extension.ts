@@ -9,6 +9,7 @@ import {
 import { submitToCodeForces, submitToKattis } from './submit';
 import { createTelemeteryReporter } from './telemetery';
 import JudgeViewProvider from './webview/JudeView';
+import { getRetainWebviewContextPref } from './preferences';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -60,7 +61,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         judgeViewProvider,
         {
             webviewOptions: {
-                retainContextWhenHidden: false, // until ghost-render bug is fixed.
+                retainContextWhenHidden: getRetainWebviewContextPref(),
             },
         },
     );

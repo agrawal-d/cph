@@ -22,6 +22,9 @@ export const getSaveLocationPref = (): string =>
 export const getTimeOutPref = (): number =>
     getPreference('general.timeOut') || 3000;
 
+export const getRetainWebviewContextPref = (): boolean =>
+    getPreference('general.retainWebviewContext');
+
 export const getCppArgsPref = (): string[] =>
     getPreference('language.cpp.Args').split(' ') || [];
 

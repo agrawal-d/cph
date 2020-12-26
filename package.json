@@ -189,6 +189,11 @@
                     "default": false,
                     "description": "Use a short ID for problem file generated ( like 144C ) instead of the complete problem name for codeforces problems"
                 },
+                "cph.general.retainWebviewContext": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Keep the webview active even when it's hidden. May improve performance but may cause some rendering issues."
+                },
                 "cph.general.defaultLanguageTemplateFileLocation": {
                     "type": "string",
                     "default": "",
