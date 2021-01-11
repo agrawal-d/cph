@@ -16,6 +16,9 @@ export const updatePreference = (section: prefSection, value: any) => {
         .update(section, value);
 };
 
+export const getAutoShowJudgePref = (): boolean =>
+    getPreference('general.autoShowJudge');
+
 export const getSaveLocationPref = (): string =>
     getPreference('general.saveLocation');
 

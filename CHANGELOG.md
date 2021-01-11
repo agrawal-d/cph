@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.5
+
+-   Add option to disable auto focus of judge view.
+
 ## 5.0.4
 
 -   Add option to retain webview context.

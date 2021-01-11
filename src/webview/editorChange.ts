@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from 'fs';
 import { Problem } from '../types';
 import { getJudgeViewProvider } from '../extension';
 import { getProblemForDocument } from '../utils';
+import { getAutoShowJudgePref } from '../preferences';
 
 /**
  * Show the webview with the problem details if a source code with existing
@@ -38,7 +39,10 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
         return;
     }
 
-    if (getJudgeViewProvider().isViewUninitialized()) {
+    if (
+        getAutoShowJudgePref() &&
+        getJudgeViewProvider().isViewUninitialized()
+    ) {
         vscode.commands.executeCommand('cph.judgeView.focus');
     }
 

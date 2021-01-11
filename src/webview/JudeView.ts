@@ -8,6 +8,7 @@ import { runSingleAndSave } from './processRunSingle';
 import runAllAndSave from './processRunAll';
 import runTestCases from '../runTestCases';
 import sendTelemetryEvent from '../telemetery';
+import { getAutoShowJudgePref } from '../preferences';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -126,7 +127,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
         if (
             message.command === 'new-problem' &&
-            message.problem !== undefined
+            message.problem !== undefined &&
+            getAutoShowJudgePref()
         ) {
             this._view.show?.(true);
         }
