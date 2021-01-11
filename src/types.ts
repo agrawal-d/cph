@@ -170,6 +170,7 @@ export type CphEmptyResponse = {
 };
 
 export type CphSubmitResponse = {
+    url: string;
     empty: false;
     problemName: string;
     sourceCode: string;

@@ -82,6 +82,7 @@ export const storeSubmitProblem = (problem: Problem) => {
     const languageId = getLanguageId(problem.srcPath);
     savedResponse = {
         empty: false,
+        url: problem.url,
         problemName,
         sourceCode,
         languageId,
