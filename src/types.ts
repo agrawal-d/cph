@@ -4,7 +4,7 @@ export type prefSection =
     | 'general.defaultLanguage'
     | 'general.timeOut'
     | 'general.firstTime'
-    | 'general.useShortCodeforcesName'
+    | 'general.useShortCodeForcesName'
     | 'general.menuChoices'
     | 'language.c.Args'
     | 'language.c.SubmissionCompiler'
