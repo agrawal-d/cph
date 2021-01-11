@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.6
+
+-   Fix codeforces short name bug.
+
 ## 5.0.5
 
 -   Add option to disable auto focus of judge view.
