@@ -15,6 +15,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
     private _view?: vscode.WebviewView;
 
+    private messageBuffer: VSToWebViewMessage[] = [];
+
     public isViewUninitialized() {
         return this._view === undefined;
     }
@@ -98,30 +100,41 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
     private getInitialProblem() {
         const doc = vscode.window.activeTextEditor?.document;
-        if (doc === undefined) {
-            return;
-        }
         this.extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: getProblemForDocument(doc),
         });
+
+        // also load any messages from before that were lost.
+        this.messageBuffer.forEach((message) => {
+            console.log('Restored buffer command', message.command);
+            this._view?.webview.postMessage(message);
+        });
+
+        this.messageBuffer = [];
+
         return;
     }
 
     public problemPath: string | undefined;
 
-    private focusIfNeeded = (message: VSToWebViewMessage) => {
+    public async focus() {
+        console.log('focusing');
         if (!this._view) {
-            return;
+            await vscode.commands.executeCommand('cph.judgeView.focus');
+        } else {
+            this._view.show?.(true);
         }
+    }
 
+    private focusIfNeeded = (message: VSToWebViewMessage) => {
         console.log(message.command);
 
         switch (message.command) {
             case 'waiting-for-submit':
             case 'compiling-start':
             case 'run-all': {
-                this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+                this.focus();
             }
         }
 
@@ -130,7 +143,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             message.problem !== undefined &&
             getAutoShowJudgePref()
         ) {
-            this._view.show?.(true);
+            this.focus();
         }
     };
 
@@ -138,8 +151,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
     public extensionToJudgeViewMessage = async (
         message: VSToWebViewMessage,
     ) => {
-        if (this._view) {
-            this.focusIfNeeded(message);
+        this.focusIfNeeded(message);
+        if (this._view && this._view.visible) {
             // Always focus on the view whenever a command is posted. Meh.
             // this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
             this._view.webview.postMessage(message);
@@ -152,6 +165,13 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                 } else {
                     this.problemPath = message.problem.srcPath;
                 }
+            }
+        } else {
+            if (message.command !== 'new-problem') {
+                console.log('Pushing to buffer', message.command);
+                this.messageBuffer.push(message);
+            } else {
+                this.messageBuffer = [];
             }
         }
     };
@@ -194,6 +214,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                                 vscodeApi.postMessage({
                                     command: 'get-initial-problem',
                                 });
+                                console.log("Requested initial problem");
                             },
                         );
                     </script>

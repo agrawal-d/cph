@@ -7,7 +7,6 @@ import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import sendTelemetryEvent from './telemetery';
 import { getJudgeViewProvider } from './extension';
-import { check } from 'prettier';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -52,6 +51,7 @@ export default async () => {
         return;
     }
     await editor.document.save();
+    getJudgeViewProvider().focus();
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem: problem,

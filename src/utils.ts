@@ -137,8 +137,12 @@ export const deleteProblemFile = (srcPath: string) => {
 };
 
 export const getProblemForDocument = (
-    document: vscode.TextDocument,
+    document: vscode.TextDocument | undefined,
 ): Problem | undefined => {
+    if (document === undefined) {
+        return undefined;
+    }
+
     const srcPath = document.fileName;
     const probPath = getProbSaveLocation(srcPath);
     if (!existsSync(probPath)) {
