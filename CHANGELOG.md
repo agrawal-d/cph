@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.7
+
+-   Fix missed messages bug when webview is not focussed.
+
 ## 5.0.6
 
 -   Fix codeforces short name bug.
