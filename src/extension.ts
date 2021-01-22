@@ -8,7 +8,7 @@ import {
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
 import { createTelemeteryReporter } from './telemetery';
-import JudgeViewProvider from './webview/JudeView';
+import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
 
 let judgeViewProvider: JudgeViewProvider;
