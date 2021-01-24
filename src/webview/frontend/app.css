@@ -324,8 +324,37 @@ button:disabled {
     }
 }
 
+.clipboard {
+    filter: grayscale(100%);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 80%;
+}
+
+.textarea-container {
+    position: relative;
+}
+
+.clipboard:hover {
+    opacity: 1;
+}
+
 .compiling {
     color: orange;
+}
+
+.notification {
+    padding: 5px;
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    background: rgb(58, 57, 57);
+    color: white;
+    border: 1px solid rgb(92, 95, 97);
 }
 /* @keyframes runs {
     50% {

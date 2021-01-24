@@ -12,6 +12,7 @@ export default function CaseView(props: {
     rerun: (id: number, input: string, output: string) => void;
     updateCase: (id: number, input: string, output: string) => void;
     remove: (num: number) => void;
+    notify: (text: string) => void;
     doFocus?: boolean;
     forceRunning: boolean;
 }) {
@@ -73,6 +74,12 @@ export default function CaseView(props: {
     };
 
     const toggle = () => (minimized ? expand() : minimize());
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        console.log('Copied', text);
+        props.notify('✅ Copied to clipboard');
+    };
 
     useEffect(() => {
         if (props.case.result !== null) {
@@ -159,29 +166,66 @@ export default function CaseView(props: {
             </div>
             {!minimized && (
                 <>
-                    Input:
-                    <TextareaAutosize
-                        className="selectable input-textarea"
-                        onChange={handleInputChange}
-                        value={input}
-                        ref={inputBox}
-                        autoFocus={props.doFocus}
-                    />
-                    Expected Output:
-                    <TextareaAutosize
-                        className="selectable expected-textarea"
-                        onChange={handleOutputChange}
-                        value={output}
-                    />
+                    <div className="textarea-container">
+                        Input:
+                        <div
+                            className="clipboard"
+                            onClick={() => {
+                                copyToClipboard(input);
+                            }}
+                            title="Copy to clipboard"
+                        >
+                            Copy
+                        </div>
+                        <TextareaAutosize
+                            className="selectable input-textarea"
+                            onChange={handleInputChange}
+                            value={input}
+                            ref={inputBox}
+                            autoFocus={props.doFocus}
+                        />
+                    </div>
+                    <div className="textarea-container">
+                        Expected Output:
+                        <div
+                            className="clipboard"
+                            onClick={() => {
+                                copyToClipboard(output);
+                            }}
+                            title="Copy to clipboard"
+                        >
+                            Copy
+                        </div>
+                        <TextareaAutosize
+                            className="selectable expected-textarea"
+                            onChange={handleOutputChange}
+                            value={output}
+                            onClick={() => {
+                                copyToClipboard(output);
+                            }}
+                        />
+                    </div>
                     {props.case.result != null && (
-                        <>
-                            Received Output:
-                            <TextareaAutosize
-                                className="selectable received-textarea"
-                                value={trunctateStdout(resultText)}
-                                readOnly
-                            />
-                        </>
+                        <div className="textarea-container">
+                            Expected Output:
+                            <div
+                                className="clipboard"
+                                onClick={() => {
+                                    copyToClipboard(resultText);
+                                }}
+                                title="Copy to clipboard"
+                            >
+                                Copy
+                            </div>
+                            <>
+                                Received Output:
+                                <TextareaAutosize
+                                    className="selectable received-textarea"
+                                    value={trunctateStdout(resultText)}
+                                    readOnly
+                                />
+                            </>
+                        </div>
                     )}
                     {stderror && stderror.length > 0 && (
                         <>

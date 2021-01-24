@@ -30,7 +30,7 @@ function Judge(props: {
     const [focusLast, useFocusLast] = useState<boolean>(false);
     const [forceRunning, useForceRunning] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
-
+    const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
 
     // Update problem if cases change. The only place where `updateProblem` is
@@ -216,11 +216,19 @@ function Judge(props: {
         updateCases(newCases);
     };
 
+    const notify = (text: string) => {
+        setNotification(text);
+        setTimeout(() => {
+            setNotification(null);
+        }, 1000);
+    };
+
     const views: JSX.Element[] = [];
     cases.forEach((value, index) => {
         if (focusLast && index === cases.length - 1) {
             views.push(
                 <CaseView
+                    notify={notify}
                     num={index + 1}
                     case={value}
                     rerun={rerun}
@@ -235,6 +243,7 @@ function Judge(props: {
         } else {
             views.push(
                 <CaseView
+                    notify={notify}
                     num={index + 1}
                     case={value}
                     rerun={rerun}
@@ -311,6 +320,7 @@ function Judge(props: {
 
     return (
         <div className="ui">
+            {notification && <div className="notification">{notification}</div>}
             <div className="meta">
                 <h1 className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
