@@ -207,7 +207,7 @@ export default function CaseView(props: {
                     </div>
                     {props.case.result != null && (
                         <div className="textarea-container">
-                            Expected Output:
+                            Received Output:
                             <div
                                 className="clipboard"
                                 onClick={() => {
@@ -218,7 +218,6 @@ export default function CaseView(props: {
                                 Copy
                             </div>
                             <>
-                                Received Output:
                                 <TextareaAutosize
                                     className="selectable received-textarea"
                                     value={trunctateStdout(resultText)}
