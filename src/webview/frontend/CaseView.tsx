@@ -200,9 +200,6 @@ export default function CaseView(props: {
                             className="selectable expected-textarea"
                             onChange={handleOutputChange}
                             value={output}
-                            onClick={() => {
-                                copyToClipboard(output);
-                            }}
                         />
                     </div>
                     {props.case.result != null && (
