@@ -16,7 +16,7 @@ const config = {
         libraryTarget: 'window',
         devtoolModuleFilenameTemplate: '../[resource-path]',
     },
-    devtool: 'source-map',
+    devtool: false,
     externals: {
         vscode: 'vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     },
