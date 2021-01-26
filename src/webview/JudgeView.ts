@@ -8,7 +8,10 @@ import { runSingleAndSave } from './processRunSingle';
 import runAllAndSave from './processRunAll';
 import runTestCases from '../runTestCases';
 import sendTelemetryEvent from '../telemetery';
-import { getAutoShowJudgePref } from '../preferences';
+import {
+    getAutoShowJudgePref,
+    getRetainWebviewContextPref,
+} from '../preferences';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -152,7 +155,10 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         message: VSToWebViewMessage,
     ) => {
         this.focusIfNeeded(message);
-        if (this._view && this._view.visible) {
+        if (
+            (this._view && this._view.visible) ||
+            (this._view && getRetainWebviewContextPref())
+        ) {
             // Always focus on the view whenever a command is posted. Meh.
             // this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
             this._view.webview.postMessage(message);
