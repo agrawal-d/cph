@@ -86,6 +86,7 @@ const createLocalProblem = async (editor: vscode.TextEditor) => {
     };
     console.log(newProblem);
     saveProblem(srcPath, newProblem);
+    getJudgeViewProvider().focus();
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem: newProblem,
