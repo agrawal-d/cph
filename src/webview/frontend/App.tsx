@@ -32,6 +32,7 @@ function Judge(props: {
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
+    const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -50,6 +51,11 @@ function Judge(props: {
             const data: VSToWebViewMessage = event.data;
             console.log('Got event in web view', event.data);
             switch (data.command) {
+                case 'new-problem': {
+                    setOnlineJudgeEnv(false);
+                    break;
+                }
+
                 case 'running': {
                     handleRunning(data);
                     break;
@@ -197,6 +203,16 @@ function Judge(props: {
         return false;
     };
 
+    const toggleOnlineJudgeEnv = () => {
+        const newEnv = !onlineJudgeEnv;
+        setOnlineJudgeEnv(newEnv);
+        vscodeApi.postMessage({
+            command: 'online-judge-env',
+            value: newEnv,
+        });
+        console.log('env', newEnv);
+    };
+
     const updateCase = (id: number, input: string, output: string) => {
         const newCases: Case[] = cases.map((testCase) => {
             if (testCase.id === id) {
@@ -340,6 +356,12 @@ function Judge(props: {
                 >
                     + New Testcase
                 </button>
+                <span onClick={toggleOnlineJudgeEnv}>
+                    <input type="checkbox" checked={onlineJudgeEnv} />
+                    <span>
+                        Set <code>ONLINE_JUDGE</code>
+                    </span>
+                </span>
                 {renderSubmitButton()}
             </div>
 

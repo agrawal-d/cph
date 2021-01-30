@@ -5,6 +5,12 @@ import path from 'path';
 import { getSaveLocationPref } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
+let onlineJudgeEnv = false;
+
+export const setOnlineJudgeEnv = (value: boolean) => {
+    onlineJudgeEnv = value;
+    console.log('online judge env:', onlineJudgeEnv);
+};
 
 /**
  *  Get the location to save the generated binary in. If save location is
@@ -42,10 +48,10 @@ const getFlags = (language: Language, srcPath: string): string[] => {
     // The language.args are fetched from user saved preferences, if any.
     let args = language.args;
     if (args[0] === '') args = [];
-
+    let ret: string[];
     switch (language.name) {
         case 'cpp': {
-            return [
+            ret = [
                 srcPath,
                 '-o',
                 getBinSaveLocation(srcPath),
@@ -55,23 +61,41 @@ const getFlags = (language: Language, srcPath: string): string[] => {
                 '-D',
                 'CPH',
             ];
+            if (onlineJudgeEnv) {
+                ret.push('-D');
+                ret.push('ONLINE_JUDGE');
+            }
+            break;
         }
         case 'c': {
             {
-                return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+                ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+                if (onlineJudgeEnv) {
+                    ret.push('-D');
+                    ret.push('ONLINE_JUDGE');
+                }
+                break;
             }
         }
         case 'rust': {
-            return [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+            ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+            break;
         }
         case 'java': {
             const binDir = path.dirname(getBinSaveLocation(srcPath));
-            return [srcPath, '-d', binDir, ...args];
+            ret = [srcPath, '-d', binDir, ...args];
+            if (onlineJudgeEnv) {
+                ret.push('-D');
+                ret.push('ONLINE_JUDGE');
+            }
+            break;
         }
         default: {
-            return [];
+            ret = [];
+            break;
         }
     }
+    return ret;
 };
 
 /**

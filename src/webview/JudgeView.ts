@@ -12,6 +12,7 @@ import {
     getAutoShowJudgePref,
     getRetainWebviewContextPref,
 } from '../preferences';
+import { setOnlineJudgeEnv } from '../compiler';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -79,6 +80,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
                     case 'submitKattis': {
                         submitKattisProblem(message.problem);
+                        break;
+                    }
+
+                    case 'online-judge-env': {
+                        setOnlineJudgeEnv(message.value);
                         break;
                     }
 

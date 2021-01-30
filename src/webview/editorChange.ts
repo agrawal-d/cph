@@ -5,6 +5,7 @@ import { Problem } from '../types';
 import { getJudgeViewProvider } from '../extension';
 import { getProblemForDocument } from '../utils';
 import { getAutoShowJudgePref } from '../preferences';
+import { setOnlineJudgeEnv } from '../compiler';
 
 /**
  * Show the webview with the problem details if a source code with existing
@@ -22,12 +23,15 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
             command: 'new-problem',
             problem: undefined,
         });
+        setOnlineJudgeEnv(false); // reset the non-debug mode set in webview.
         return;
     }
 
     if (e.document.uri.scheme !== 'file') {
         return;
     }
+
+    setOnlineJudgeEnv(false); // reset the non-debug mode set in webview.
 
     const problem = getProblemForDocument(e.document);
 

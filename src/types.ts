@@ -81,6 +81,11 @@ export type RunAllCommand = {
     command: 'run-all-and-save';
 } & WebviewMessageCommon;
 
+export type OnlineJudgeEnv = {
+    command: 'online-judge-env';
+    value: boolean;
+};
+
 export type KillRunningCommand = {
     command: 'kill-running';
 } & WebviewMessageCommon;
@@ -118,6 +123,7 @@ export type WebviewToVSEvent =
     | SaveCommand
     | DeleteTcsCommand
     | SubmitCf
+    | OnlineJudgeEnv
     | SubmitKattis;
 
 export type RunningCommand = {
