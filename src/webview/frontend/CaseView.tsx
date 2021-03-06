@@ -1,4 +1,4 @@
-import { Case } from '../../types';
+import { Case, VSToWebViewMessage } from '../../types';
 import { useState, createRef, useEffect } from 'react';
 import TextareaAutosize from 'react-autosize-textarea/lib';
 import React from 'react';
@@ -94,6 +94,18 @@ export default function CaseView(props: {
             setMinimized(true);
         }
     }, [running]);
+
+    useEffect(() => {
+        window.addEventListener('message', function (event) {
+            const data: VSToWebViewMessage = event.data;
+            switch (data.command) {
+                case 'not-running': {
+                    setRunning(false);
+                    break;
+                }
+            }
+        });
+    }, [props.case]);
 
     let resultText = '';
     const stderror = result?.stderr;

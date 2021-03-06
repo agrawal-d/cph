@@ -131,6 +131,10 @@ export type RunningCommand = {
     id: number;
 } & WebviewMessageCommon;
 
+export type NotRunningCommand = {
+    command: 'not-running';
+};
+
 export type ResultCommand = {
     command: 'run-single-result';
     result: RunResult;
@@ -169,6 +173,7 @@ export type VSToWebViewMessage =
     | CompilingStopCommand
     | WaitingForSubmitCommand
     | SubmitFinishedCommand
+    | NotRunningCommand
     | NewProblemCommand;
 
 export type CphEmptyResponse = {

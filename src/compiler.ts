@@ -146,6 +146,9 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                 getJudgeViewProvider().extensionToJudgeViewMessage({
                     command: 'compiling-stop',
                 });
+                getJudgeViewProvider().extensionToJudgeViewMessage({
+                    command: 'not-running',
+                });
                 return;
             }
             console.log('Compilation passed');
