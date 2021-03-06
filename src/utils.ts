@@ -103,6 +103,7 @@ export const ocShow = () => {
 };
 
 export const ocHide = () => {
+    oc.clear();
     oc.hide();
 };
 
