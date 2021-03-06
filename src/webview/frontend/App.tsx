@@ -305,7 +305,7 @@ function Judge(props: {
                             <br />
                             <small>
                                 To submit to Kattis, you need to have the{' '}
-                                <a href="https://github.com/Kattis/kattis-cli/blob/master/submit.py">
+                                <a href="https://github.com/Kattis/kattis-cli/blob/main/submit.py">
                                     submission client{' '}
                                 </a>
                                 and the{' '}
@@ -390,7 +390,7 @@ function Judge(props: {
                 <a
                     className="btn"
                     title="Help"
-                    href="https://github.com/agrawal-d/cph/blob/master/docs/user-guide.md"
+                    href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
                 >
                     ?
                 </a>
@@ -537,7 +537,7 @@ function App() {
                     </div>
                     <a
                         className="btn btn-block btn-green"
-                        href="https://github.com/agrawal-d/cph/blob/master/docs/user-guide.md"
+                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
                     >
                         How to use this extension
                     </a>

@@ -1,6 +1,6 @@
 # Competitive Programming Helper (cph)
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=master)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmain&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=main)
 [![Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
 
 This extension allows you to quickly compile, run and judge competitive

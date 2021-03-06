@@ -1,28 +1,28 @@
 name: Webpack
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [13.x]
+        strategy:
+            matrix:
+                node-version: [13.x]
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm install -g webpack-cli
-      - run: npm run webpack-production
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - run: npm install
+            - run: npm install -g webpack-cli
+            - run: npm run webpack-production
 # For help, see
 #See also https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
