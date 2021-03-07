@@ -27,8 +27,8 @@ function Judge(props: {
 
     console.log('new cases:', cases);
 
-    const [focusLast, useFocusLast] = useState<boolean>(false);
-    const [forceRunning, useForceRunning] = useState<number | false>(false);
+    const [focusLast, setFocusLast] = useState<boolean>(false);
+    const [forceRunning, setForceRunning] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
@@ -93,7 +93,7 @@ function Judge(props: {
     }, []);
 
     const handleRunning = (data: RunningCommand) => {
-        useForceRunning(data.id);
+        setForceRunning(data.id);
     };
 
     const rerun = (id: number, input: string, output: string) => {
@@ -137,7 +137,7 @@ function Judge(props: {
                 testcase: testCase,
             },
         ]);
-        useFocusLast(true);
+        setFocusLast(true);
     };
 
     // Stop running executions.
@@ -184,13 +184,13 @@ function Judge(props: {
 
     const debounceFocusLast = () => {
         setTimeout(() => {
-            useFocusLast(false);
+            setFocusLast(false);
         }, 100);
     };
 
     const debounceForceRunning = () => {
         setTimeout(() => {
-            useForceRunning(false);
+            setForceRunning(false);
         }, 100);
     };
 
