@@ -90,7 +90,7 @@ textarea {
     max-height: 250px !important;
     overflow-y: auto;
     resize: none;
-    border: 1px solid transparent;
+    border: 1px solid var(--input-background);
     margin-bottom: 4px;
 }
 
@@ -232,11 +232,13 @@ body.vscode-light textarea,
 pre {
     background: rgba(209, 209, 209, 0.2);
     outline: none !important;
-    border: 1px solid rgb(243, 243, 243);
+    border: 1px solid lightgrey;
 }
 
 body.vscode-light .case {
-    background: rgba(235, 228, 228, 0.2);
+    background: rgba(251, 247, 247, 0.5);
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.2);
+    border-left: 5px solid rgba(0, 0, 0, 0.3);
 }
 
 body.vscode-light textarea:focus {
@@ -287,16 +289,15 @@ button:disabled {
 }
 
 .case.running {
-    /* animation: runs 1s linear infinite; */
-    border-color: yellow;
+    border-color: yellow !important;
 }
 
 .case.passed {
-    border-left-color: green;
+    border-left-color: green !important;
 }
 
 .case.failed {
-    border-left-color: orangered;
+    border-left-color: orange !important;
 }
 
 .signal {
@@ -347,13 +348,14 @@ button:disabled {
     color: orange;
 }
 
-.notification {
+.notification,
+body.vscode-light .notification {
     padding: 5px;
     position: fixed;
     top: 5px;
     right: 5px;
     background: rgb(58, 57, 57);
-    color: white;
+    color: white !important;
     border: 1px solid rgb(92, 95, 97);
 }
 /* @keyframes runs {
