@@ -5,7 +5,6 @@ import config from './config';
 import { getTimeOutPref } from './preferences';
 import * as vscode from 'vscode';
 import path from 'path';
-import sendTelemetryEvent from './telemetery';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
@@ -136,7 +135,6 @@ export const deleteBinary = (language: Language, binPath: string) => {
 
 /** Kill all running binaries. Usually, only one should be running at a time. */
 export const killRunning = () => {
-    sendTelemetryEvent('kill-running');
     console.log('Killling binaries');
     runningBinaries.forEach((process) => process.kill());
 };

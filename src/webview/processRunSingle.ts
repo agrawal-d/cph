@@ -6,7 +6,6 @@ import { runTestCase, deleteBinary } from '../executions';
 import { isResultCorrect } from '../judge';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
-import sendTelemetryEvent from '../telemetery';
 
 export const runSingleAndSave = async (
     problem: Problem,
@@ -14,7 +13,6 @@ export const runSingleAndSave = async (
     skipCompile = false,
 ) => {
     console.log('Run and save started', problem, id);
-    sendTelemetryEvent('run-single');
     const srcPath = problem.srcPath;
     const language = getLanguage(srcPath);
     const binPath = getBinSaveLocation(srcPath);

@@ -7,7 +7,6 @@ import { deleteProblemFile, getProblemForDocument } from '../utils';
 import { runSingleAndSave } from './processRunSingle';
 import runAllAndSave from './processRunAll';
 import runTestCases from '../runTestCases';
-import sendTelemetryEvent from '../telemetery';
 import {
     getAutoShowJudgePref,
     getRetainWebviewContextPref,
@@ -94,7 +93,6 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
 
                     case 'create-local-problem': {
-                        sendTelemetryEvent('create-local-problem');
                         runTestCases();
                         break;
                     }
