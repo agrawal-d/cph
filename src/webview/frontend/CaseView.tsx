@@ -32,7 +32,6 @@ export default function CaseView(props: {
 
     useEffect(() => {
         if (props.doFocus) {
-            console.log('Scrolling', inputBox.current);
             inputBox.current?.scrollIntoView({ behavior: 'smooth' });
         }
     }, [props.doFocus]);
@@ -43,7 +42,6 @@ export default function CaseView(props: {
 
     useEffect(() => {
         if (props.forceRunning) {
-            console.log('Case was forced to run!');
             setRunning(true);
         }
     }, [props.forceRunning]);
@@ -77,7 +75,6 @@ export default function CaseView(props: {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
-        console.log('Copied', text);
         props.notify('✅ Copied to clipboard');
     };
 
@@ -85,7 +82,6 @@ export default function CaseView(props: {
         if (props.case.result !== null) {
             setRunning(false);
             props.case.result.pass ? setMinimized(true) : setMinimized(false);
-            console.log('minimizing', props.case.id, props.case.result);
         }
     }, [props.case.result]);
 

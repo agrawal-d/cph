@@ -25,8 +25,6 @@ function Judge(props: {
     const updateProblem = props.updateProblem;
     const updateCases = props.updateCases;
 
-    console.log('new cases:', cases);
-
     const [focusLast, setFocusLast] = useState<boolean>(false);
     const [forceRunning, setForceRunning] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
@@ -38,7 +36,6 @@ function Judge(props: {
     // allowed to ensure sync.
     useEffect(() => {
         const testCases: TestCase[] = cases.map((c) => c.testcase);
-        console.log(cases);
         updateProblem({
             ...problem,
             tests: testCases,
@@ -46,10 +43,8 @@ function Judge(props: {
     }, [cases]);
 
     useEffect(() => {
-        console.log('Adding event listeners');
         const fn = (event: any) => {
             const data: VSToWebViewMessage = event.data;
-            console.log('Got event in web view', event.data);
             switch (data.command) {
                 case 'new-problem': {
                     setOnlineJudgeEnv(false);
@@ -87,7 +82,6 @@ function Judge(props: {
         };
         window.addEventListener('message', fn);
         return () => {
-            console.log('Cleaned up event listeners');
             window.removeEventListener('message', fn);
         };
     }, []);
@@ -96,7 +90,15 @@ function Judge(props: {
         setForceRunning(data.id);
     };
 
+    const refreshOnlineJudge = () => {
+        vscodeApi.postMessage({
+            command: 'online-judge-env',
+            value: onlineJudgeEnv,
+        });
+    };
+
     const rerun = (id: number, input: string, output: string) => {
+        refreshOnlineJudge();
         const idx = problem.tests.findIndex((testCase) => testCase.id === id);
 
         if (idx === -1) {
@@ -122,7 +124,6 @@ function Judge(props: {
 
     // Create a new Case
     const newCase = () => {
-        console.log(cases);
         const id = Date.now();
         const testCase: TestCase = {
             id,
@@ -157,7 +158,7 @@ function Judge(props: {
     };
 
     const runAll = () => {
-        console.log(problem);
+        refreshOnlineJudge();
         vscodeApi.postMessage({
             command: 'run-all-and-save',
             problem,
@@ -196,7 +197,6 @@ function Judge(props: {
 
     const getRunningProp = (value: Case) => {
         if (forceRunning === value.id) {
-            console.log('Forcing Running');
             debounceForceRunning();
             return forceRunning === value.id;
         }
@@ -210,7 +210,6 @@ function Judge(props: {
             command: 'online-judge-env',
             value: newEnv,
         });
-        console.log('env', newEnv);
     };
 
     const updateCase = (id: number, input: string, output: string) => {
@@ -453,7 +452,6 @@ function App() {
     const save = () => {
         setSaving(true);
         if (problem !== undefined) {
-            console.log('Saved problem');
             vscodeApi.postMessage({
                 command: 'save',
                 problem,
@@ -474,7 +472,6 @@ function App() {
         }
         const newCases = cases.slice();
         newCases[idx].result = data.result;
-        console.log('single result', data);
         setCases(newCases);
     };
 
@@ -491,7 +488,6 @@ function App() {
     }, [problem]);
 
     useEffect(() => {
-        console.log('Adding event listeners for App');
         const fn = (event: any) => {
             const data: VSToWebViewMessage = event.data;
             switch (data.command) {
@@ -512,7 +508,6 @@ function App() {
         };
         window.addEventListener('message', fn);
         return () => {
-            console.log('Cleaned up event listeners for App');
             window.removeEventListener('message', fn);
         };
     }, [cases]);

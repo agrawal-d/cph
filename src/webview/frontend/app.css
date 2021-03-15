@@ -111,12 +111,6 @@ textarea:active {
     border: 1px solid #3393cc;
 }
 
-.case-number {
-    /* font-weight: bold; */
-    font-size: 1.15em;
-    color: rgb(25, 152, 211);
-}
-
 .case-metadata {
     display: flex;
 }
@@ -226,7 +220,7 @@ h4 {
     padding: 10px;
 }
 body.vscode-light * {
-    color: black !important;
+    color: black;
 }
 body.vscode-light textarea,
 pre {
@@ -236,7 +230,7 @@ pre {
 }
 
 body.vscode-light .case {
-    background: rgba(251, 247, 247, 0.5);
+    background: rgb(255, 255, 255);
     box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.2);
     border-left: 5px solid rgba(0, 0, 0, 0.3);
 }
@@ -267,7 +261,7 @@ button:disabled {
     padding-right: 5px;
 }
 .result-fail {
-    color: orangered;
+    color: red;
     padding-right: 5px;
 }
 .running-text {
@@ -297,7 +291,7 @@ button:disabled {
 }
 
 .case.failed {
-    border-left-color: orange !important;
+    border-left-color: red !important;
 }
 
 .signal {
@@ -366,3 +360,11 @@ body.vscode-light .notification {
         border-color: var(--input-background);
     }
 } */
+
+.case-number {
+    font-weight: bolder;
+    color: rgb(25, 152, 211) !important;
+}
+body.vscode-light .case-number {
+    color: rgb(11, 93, 131) !important;
+}
