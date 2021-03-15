@@ -16,14 +16,12 @@ import {
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
-import sendTelemetryEvent from './telemetery';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 const COMPANION_LOGGING = false;
 
 export const submitKattisProblem = (problem: Problem) => {
-    sendTelemetryEvent('submit-to-kattis');
     const srcPath = problem.srcPath;
     const homedir = require('os').homedir();
     let submitPath = `${homedir}/.kattis/submit.py`;
@@ -75,7 +73,6 @@ export const submitKattisProblem = (problem: Problem) => {
 
 /** Stores a response to be submitted to CF page soon. */
 export const storeSubmitProblem = (problem: Problem) => {
-    sendTelemetryEvent('submit-to-cf');
     const srcPath = problem.srcPath;
     const problemName = getProblemName(problem.url);
     const sourceCode = readFileSync(srcPath).toString();

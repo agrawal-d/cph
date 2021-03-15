@@ -7,7 +7,6 @@ import {
     checkLaunchWebview,
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
-import { createTelemeteryReporter } from './telemetery';
 import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
 
@@ -92,7 +91,6 @@ export function activate(context: vscode.ExtensionContext) {
     registerCommands(context);
     setupCompanionServer();
     checkLaunchWebview();
-    createTelemeteryReporter(context);
 
     vscode.workspace.onDidCloseTextDocument((e) => {
         editorClosed(e);

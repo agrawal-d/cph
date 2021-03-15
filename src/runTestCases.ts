@@ -5,7 +5,6 @@ import { getProblem, saveProblem } from './parser';
 import { compileFile } from './compiler';
 import runAllAndSave from './webview/processRunAll';
 import path from 'path';
-import sendTelemetryEvent from './telemetery';
 import { getJudgeViewProvider } from './extension';
 
 /**
@@ -33,16 +32,6 @@ export default async () => {
         createLocalProblem(editor);
         return;
     }
-
-    sendTelemetryEvent(
-        'run-all-testcases',
-        {
-            language: path.extname(srcPath),
-        },
-        {
-            numTestCases: problem.tests.length,
-        },
-    );
 
     const didCompile = await compileFile(srcPath);
 

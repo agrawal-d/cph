@@ -5,12 +5,12 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "5.4.0",
+    "version": "5.5.0",
     "engines": {
         "vscode": "^1.52.0"
     },
     "categories": [
-        "Other"
+        "Testing"
     ],
     "activationEvents": [
         "*"
@@ -246,8 +246,7 @@
         "python-shell": "^2.0.2",
         "react": "^16.13.1",
         "react-autosize-textarea": "^7.0.0",
-        "react-dom": "^16.13.1",
-        "vscode-extension-telemetry": "^0.1.6"
+        "react-dom": "^16.13.1"
     },
     "repository": {
         "type": "git",
