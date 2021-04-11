@@ -88,6 +88,11 @@
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for c"
                 },
+                "cph.language.c.Command": {
+                    "type": "string",
+                    "default": "gcc",
+                    "description": "Command used to compile .c files. Example 'gcc', 'gcc-10', 'clang', etc."
+                },
                 "cph.language.cpp.Args": {
                     "title": "Compilation flags for .cpp files",
                     "type": "string",
@@ -108,6 +113,11 @@
                         "Clang++17 Diagnostics"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for cpp"
+                },
+                "cph.language.cpp.Command": {
+                    "type": "string",
+                    "default": "g++",
+                    "description": "Command used to compile .cpp files. Example 'g++', 'g++-10', 'clang++', etc."
                 },
                 "cph.language.python.Args": {
                     "title": "Compilation flags for Python",
@@ -145,6 +155,11 @@
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for rust"
                 },
+                "cph.language.rust.Command": {
+                    "type": "string",
+                    "default": "rustc",
+                    "description": "Command used to compile rust files."
+                },
                 "cph.language.java.Args": {
                     "title": "Compilation flags for Java",
                     "type": "string",
@@ -159,6 +174,11 @@
                         "Java 1.8.0_241"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for java"
+                },
+                "cph.language.java.Command": {
+                    "type": "string",
+                    "default": "javac",
+                    "description": "Command used to compile java files."
                 },
                 "cph.general.firstTime": {
                     "title": "Show welcome message",
