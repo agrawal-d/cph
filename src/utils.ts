@@ -12,7 +12,11 @@ import {
     getPythonArgsPref,
     getRustArgsPref,
     getJavaArgsPref,
+    getCCommand,
+    getCppCommand,
     getPythonCommand,
+    getRustCommand,
+    getJavaCommand,
 } from './preferences';
 import { Language, Problem } from './types';
 
@@ -39,7 +43,7 @@ export const getLanguage = (srcPath: string): Language => {
             return {
                 name: langName,
                 args: [...getCppArgsPref()],
-                compiler: 'g++',
+                compiler: getCppCommand(),
                 skipCompile: false,
             };
         }
@@ -47,7 +51,7 @@ export const getLanguage = (srcPath: string): Language => {
             return {
                 name: langName,
                 args: [...getCArgsPref()],
-                compiler: 'gcc',
+                compiler: getCCommand(),
                 skipCompile: false,
             };
         }
@@ -63,7 +67,7 @@ export const getLanguage = (srcPath: string): Language => {
             return {
                 name: langName,
                 args: [...getRustArgsPref()],
-                compiler: 'rustc',
+                compiler: getRustCommand(),
                 skipCompile: false,
             };
         }
@@ -71,7 +75,7 @@ export const getLanguage = (srcPath: string): Language => {
             return {
                 name: langName,
                 args: [...getJavaArgsPref()],
-                compiler: 'javac',
+                compiler: getJavaCommand(),
                 skipCompile: false,
             };
         }

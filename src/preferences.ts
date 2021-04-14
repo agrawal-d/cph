@@ -65,8 +65,16 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     return pref;
 };
 
+export const getCCommand = (): string =>
+    getPreference('language.c.Command') || 'gcc';
+export const getCppCommand = (): string =>
+    getPreference('language.cpp.Command') || 'g++';
 export const getPythonCommand = (): string =>
     getPreference('language.python.Command') || 'python3';
+export const getRustCommand = (): string =>
+    getPreference('language.rust.Command') || 'rustc';
+export const getJavaCommand = (): string =>
+    getPreference('language.java.Command') || 'javac';
 
 export const getMenuChoices = (): string[] =>
     getPreference('general.menuChoices').split(' ');
