@@ -137,6 +137,23 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
             error += data;
         });
 
+        compiler.on('error', (err) => {
+            console.error(err);
+            ocWrite(
+                'Errors while compiling:\n' +
+                    err.message +
+                    `\n\nHint: Is the compiler ${language.compiler} installed? Check the compiler command in cph settings for the current language.`,
+            );
+            getJudgeViewProvider().extensionToJudgeViewMessage({
+                command: 'compiling-stop',
+            });
+            getJudgeViewProvider().extensionToJudgeViewMessage({
+                command: 'not-running',
+            });
+            ocShow();
+            resolve(false);
+        });
+
         compiler.on('exit', (exitcode) => {
             if (exitcode === 1 || error !== '') {
                 ocWrite('Errors while compiling:\n' + error);
