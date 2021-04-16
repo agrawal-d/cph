@@ -355,13 +355,14 @@ function Judge(props: {
                 >
                     + New Testcase
                 </button>
+                {renderSubmitButton()}
+                <br />
                 <span onClick={toggleOnlineJudgeEnv}>
                     <input type="checkbox" checked={onlineJudgeEnv} />
                     <span>
                         Set <code>ONLINE_JUDGE</code>
                     </span>
                 </span>
-                {renderSubmitButton()}
             </div>
 
             <div className="actions">
