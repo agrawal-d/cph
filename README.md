@@ -65,3 +65,5 @@ You can contribute to this extension in many ways:
 
 This software is licensed under [GPL Version 3](LICENSE) or later ( at your
 choice ).
+
+useful link : https://stackoverflow.com/questions/50714638/install-extension-from-a-specific-repo-branch-on-github
