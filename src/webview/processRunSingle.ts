@@ -8,7 +8,6 @@ import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
 
 import { writeFile, readFile, mkdir } from 'fs';
-import * as customEnvironmentVariables from '../customEnvironmentVariables';
 const homedir = require('os').homedir();
 
 export const runSingleAndSave = async (
@@ -63,26 +62,29 @@ export const runSingleAndSave = async (
         // add the meta-data in source-file's string
         file_contents = file_meta_data + file_contents;
 
-        // create the required directory if it doesn't exists
-        mkdir(customEnvironmentVariables.getArchiveFolderPath() + "/" + problem.group, { recursive: true }, (err: any) => {
-            if (err) throw err;
-        })
+        const archiveFolderPath = vscode.workspace.getConfiguration('cph').get("general.archiveFolderLocation");
+        if (archiveFolderPath != "") {
+            // create the required directory if it doesn't exists
+            mkdir(archiveFolderPath + "/" + problem.group, { recursive: true }, (err: any) => {
+                if (err) throw err;
+            })
 
-        // create the file in the required directory
-        writeFile(customEnvironmentVariables.getArchiveFolderPath() + "/" + problem.group + '/' + filename, file_contents, (err: any) => {
+            // create the file in the required directory
+            writeFile(archiveFolderPath + "/" + problem.group + '/' + filename, file_contents, (err: any) => {
 
-            if (err) {
-                // if there is some error in creating file in required directory, make file in the home-directory, also add the error message
-                var error_message="";
-                error_message+="//   there was some error in creating file in the directory "+customEnvironmentVariables.getArchiveFolderPath() + "/" + problem.group+"\n";
-                error_message+="//   so creating the file in home directory "+homedir+"\n";
-                file_contents=error_message+file_contents;
-                
-                writeFile(homedir +"/"+ filename, file_contents, (err: any) => {
-                    if (err) throw err;
-                })
-            }
-        })
+                if (err) {
+                    // if there is some error in creating file in required directory, make file in the home-directory, also add the error message
+                    var error_message = "";
+                    error_message += "//   there was some error in creating file in the directory " + archiveFolderPath + "/" + problem.group + "\n";
+                    error_message += "//   so creating the file in home directory " + homedir + "\n";
+                    file_contents = error_message + file_contents;
+
+                    writeFile(homedir + "/" + filename, file_contents, (err: any) => {
+                        if (err) throw err;
+                    })
+                }
+            })
+        }
     });
 
     if (!skipCompile) {

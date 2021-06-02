@@ -64,6 +64,11 @@
         "configuration": {
             "title": "Competitive Programming Helper",
             "properties": {
+                "cph.general.archiveFolderLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where the copy of files will be saved for an archive.\nFor Example: /home/bob/cp-archive.\nLeave empty if you don't want it."
+                },
                 "cph.general.saveLocation": {
                     "type": "string",
                     "default": "",
