@@ -127,5 +127,6 @@ dist
 
 # .vsix packages
 releases/
+*.vsix
 
 src/secrets.ts

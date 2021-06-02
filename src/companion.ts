@@ -16,6 +16,7 @@ import {
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
+import * as customEnvironmentVariables from './customEnvironmentVariables';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -199,26 +200,7 @@ const handleNewProblem = async (problem: Problem) => {
         id: randomId(),
     }));
     if (!existsSync(srcPath)) {
-
-        let date_ob = new Date();
-
-        // current date
-        // adjust 0 before single digit date
-        let date = ("0" + date_ob.getDate()).slice(-2);
-
-        // current month
-        let month_name = date_ob.toLocaleString('default', { month: 'long' });
-
-        // current year
-        let year = date_ob.getFullYear();
-
-        let today_string = date + "-" + month_name + "-" + year + " " + date_ob.toLocaleTimeString('en-US', { hour12: false });
-
-        let str='';
-        str+='\n';
-        str+='//\tparsed : '+today_string+' IST';
-
-        writeFileSync(srcPath, str);
+        writeFileSync(srcPath, customEnvironmentVariables.getInitialText());
     }
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
