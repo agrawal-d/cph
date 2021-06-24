@@ -577,15 +577,17 @@ function App() {
         return (
             <>
                 <div className="size-warning">
-                    <h1 className="icon">
+                    <h4 className="icon">
                         <i
                             className="codicon codicon-warning"
                             style={{ fontSize: '20px' }}
-                        ></i>
-                    </h1>
+                        ></i>{' '}
+                        Competitive Programming Helper
+                    </h4>
                     <p>
                         The sidebar width is too small to display the UI. Please
-                        drag from the edge of the sidebar to increase the width.
+                        click and drag from the edge of the sidebar to increase
+                        the width.
                     </p>
                     <small>
                         This warning will go away once the width is large
