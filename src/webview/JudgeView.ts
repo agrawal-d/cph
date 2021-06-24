@@ -192,13 +192,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         );
 
         const codiconsUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(
-                this._extensionUri,
-                'node_modules',
-                'vscode-codicons',
-                'dist',
-                'codicon.css',
-            ),
+            vscode.Uri.joinPath(this._extensionUri, 'dist', 'codicon.css'),
         );
 
         const scriptUri = webview.asWebviewUri(

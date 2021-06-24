@@ -45,6 +45,14 @@ const config = {
                     to: 'app.css',
                 },
                 { from: 'src/webview/frontend/index.html', to: 'index.html' },
+                {
+                    from: 'node_modules/vscode-codicons/dist/codicon.css',
+                    to: 'codicon.css',
+                },
+                {
+                    from: 'node_modules/vscode-codicons/dist/codicon.ttf',
+                    to: 'codicon.ttf',
+                },
             ],
         }),
     ],
