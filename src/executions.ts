@@ -43,6 +43,11 @@ export const runTestCase = (
         process.kill();
     }, getTimeOutPref());
 
+    // HACK - On Windows, `python3` will be changed to `python`!
+    if (platform() === 'win32' && language.compiler === 'python3') {
+        language.compiler = 'python';
+    }
+
     // Start the binary or the interpreter.
     switch (language.name) {
         case 'python': {
