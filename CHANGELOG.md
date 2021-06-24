@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.8.1
+
+-   Add icons to UI.
+-   Add minimum width warning.
+
 ## 5.0.7
 
 -   Fix missed messages bug when webview is not focussed.

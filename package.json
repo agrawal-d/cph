@@ -5,7 +5,7 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "5.7.1",
+    "version": "5.8.1",
     "engines": {
         "vscode": "^1.52.0"
     },
