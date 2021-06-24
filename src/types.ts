@@ -191,3 +191,7 @@ export type CphSubmitResponse = {
     sourceCode: string;
     languageId: number;
 };
+
+export type WebViewpersistenceState = {
+    ignoreSpaceWarning: boolean;
+};

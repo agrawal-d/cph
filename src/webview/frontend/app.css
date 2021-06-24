@@ -396,4 +396,12 @@ body.vscode-light .case-number {
     .ui {
         display: none;
     }
+
+    .noSpaceWarning .size-warning {
+        display: none !important;
+    }
+
+    .noSpaceWarning .ui {
+        display: block !important;
+    }
 }

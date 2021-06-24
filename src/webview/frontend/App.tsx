@@ -8,12 +8,13 @@ import {
     VSToWebViewMessage,
     ResultCommand,
     RunningCommand,
+    WebViewpersistenceState,
 } from '../../types';
 import CaseView from './CaseView';
 declare const vscodeApi: {
     postMessage: (message: WebviewToVSEvent) => void;
-    // getState: () => WebViewpersistenceState | undefined;
-    // setState: (state: WebViewpersistenceState) => void;
+    getState: () => WebViewpersistenceState | undefined;
+    setState: (state: WebViewpersistenceState) => void;
 };
 
 function Judge(props: {
@@ -473,6 +474,7 @@ function App() {
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [, setSaving] = useState<boolean>(false);
     const [showFallback, setShowFallback] = useState<boolean>(false);
+    const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
     // Save the problem
     const save = () => {
@@ -486,6 +488,11 @@ function App() {
         setTimeout(() => {
             setSaving(false);
         }, 500);
+    };
+
+    const ignoreSpaceWarning = () => {
+        vscodeApi.setState({ ignoreSpaceWarning: true });
+        forceUpdate();
     };
 
     const handleRunSingleResult = (data: ResultCommand) => {
@@ -575,7 +582,13 @@ function App() {
         );
     } else if (problem !== undefined) {
         return (
-            <>
+            <div
+                className={
+                    vscodeApi.getState()?.ignoreSpaceWarning === true
+                        ? 'noSpaceWarning'
+                        : 'spaceWarning'
+                }
+            >
                 <div className="size-warning">
                     <h4 className="icon">
                         <i
@@ -593,6 +606,20 @@ function App() {
                         This warning will go away once the width is large
                         enough.
                     </small>
+                    <br />
+                    <br />
+                    <div
+                        className="btn btn-primary"
+                        onClick={ignoreSpaceWarning}
+                    >
+                        <span className="icon">
+                            <i
+                                className="codicon codicon-eye-closed"
+                                style={{ fontSize: '20px' }}
+                            ></i>{' '}
+                            Ignore warning forever
+                        </span>
+                    </div>
                 </div>
                 <Judge
                     problem={problem}
@@ -600,7 +627,7 @@ function App() {
                     cases={cases}
                     updateCases={setCases}
                 />
-            </>
+            </div>
         );
     } else {
         return (
