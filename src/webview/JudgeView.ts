@@ -187,11 +187,21 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
     };
 
     private _getHtmlForWebview(webview: vscode.Webview) {
-        const css = webview.asWebviewUri(
+        const styleUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'dist', 'app.css'),
         );
 
-        const js = webview.asWebviewUri(
+        const codiconsUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(
+                this._extensionUri,
+                'node_modules',
+                'vscode-codicons',
+                'dist',
+                'codicon.css',
+            ),
+        );
+
+        const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 this._extensionUri,
                 'dist',
@@ -203,7 +213,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             <!DOCTYPE html lang="EN">
             <html>
                 <head>
-                    <link rel="stylesheet" href="${css}" />
+                    <link rel="stylesheet" href="${styleUri}" />
+                    <link rel="stylesheet" href="${codiconsUri}" />
                     <meta charset="UTF-8" />
                 </head>
                 <body>
@@ -217,7 +228,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     <script>
                         // Since the react script takes time to load, the problem is sent to the webview before it has even loaded.
                         // So, for the initial request, ask for it again.
-                        const vscodeApi = acquireVsCodeApi();
+                        window.vscodeApi = acquireVsCodeApi();
                         document.addEventListener(
                             'DOMContentLoaded',
                             (event) => {
@@ -232,7 +243,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                             },
                         );
                     </script>
-                    <script src="${js}"></script>
+                    <script src="${scriptUri}"></script>
                 </body>
             </html>
         `;

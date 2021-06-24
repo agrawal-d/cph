@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import ReactDOM from 'react-dom';
 import {
     Problem,
@@ -12,6 +12,8 @@ import {
 import CaseView from './CaseView';
 declare const vscodeApi: {
     postMessage: (message: WebviewToVSEvent) => void;
+    // getState: () => WebViewpersistenceState | undefined;
+    // setState: (state: WebViewpersistenceState) => void;
 };
 
 function Judge(props: {
@@ -289,6 +291,9 @@ function Judge(props: {
         if (url.hostname == 'codeforces.com') {
             return (
                 <button className="btn" onClick={submitCf}>
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
                     Submit to Codeforces
                 </button>
             );
@@ -296,6 +301,9 @@ function Judge(props: {
             return (
                 <div className="pad-10 submit-area">
                     <button className="btn" onClick={submitKattis}>
+                        <span className="icon">
+                            <i className="codicon codicon-cloud-upload"></i>
+                        </span>{' '}
                         Submit on Kattis
                     </button>
                     {waitingForSubmit && (
@@ -353,7 +361,10 @@ function Judge(props: {
                     onClick={newCase}
                     title="Create a new empty testcase"
                 >
-                    + New Testcase
+                    <span className="icon">
+                        <i className="codicon codicon-add"></i>
+                    </span>{' '}
+                    New Testcase
                 </button>
                 {renderSubmitButton()}
                 <br />
@@ -371,35 +382,49 @@ function Judge(props: {
                     onClick={runAll}
                     title="Run all testcases again"
                 >
-                    ↺ Run All
+                    <span className="icon">
+                        <i className="codicon codicon-debug-restart"></i>
+                    </span>{' '}
+                    Run All
                 </button>
                 <button
                     className="btn btn-green"
                     onClick={newCase}
                     title="Create a new empty testcase"
                 >
-                    + New
+                    <span className="icon">
+                        <i className="codicon codicon-add"></i>
+                    </span>{' '}
+                    New
                 </button>
                 <button
                     className="btn btn-orange"
                     onClick={stop}
                     title="Kill all running testcases"
                 >
-                    ⊗ Stop
+                    <span className="icon">
+                        <i className="codicon codicon-circle-slash"></i>
+                    </span>{' '}
+                    Stop
                 </button>
                 <a
                     className="btn"
                     title="Help"
                     href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
                 >
-                    ?
+                    <span className="icon">
+                        <i className="codicon codicon-question"></i>
+                    </span>{' '}
                 </a>
                 <button
                     className="btn btn-red right"
                     onClick={deleteTcs}
                     title="Delete all testcases and close results window"
                 >
-                    ☠ Delete
+                    <span className="icon">
+                        <i className="codicon codicon-trash"></i>
+                    </span>{' '}
+                    Delete
                 </button>
             </div>
 
@@ -521,33 +546,59 @@ function App() {
 
     if (problem === undefined && showFallback) {
         return (
-            <div className="ui p10">
-                <div className="text-center">
-                    <p>
-                        This document does not have a CPH problem associated
-                        with it.
-                    </p>
-                    <br />
-                    <div className="btn btn-block" onClick={createProblem}>
-                        + Create Problem
+            <>
+                <div className="ui p10">
+                    <div className="text-center">
+                        <p>
+                            This document does not have a CPH problem associated
+                            with it.
+                        </p>
+                        <br />
+                        <div className="btn btn-block" onClick={createProblem}>
+                            <span className="icon">
+                                <i className="codicon codicon-add"></i>
+                            </span>{' '}
+                            Create Problem
+                        </div>
+                        <a
+                            className="btn btn-block btn-green"
+                            href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
+                        >
+                            <span className="icon">
+                                <i className="codicon codicon-question"></i>
+                            </span>{' '}
+                            How to use this extension
+                        </a>
                     </div>
-                    <a
-                        className="btn btn-block btn-green"
-                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
-                    >
-                        How to use this extension
-                    </a>
                 </div>
-            </div>
+            </>
         );
     } else if (problem !== undefined) {
         return (
-            <Judge
-                problem={problem}
-                updateProblem={setProblem}
-                cases={cases}
-                updateCases={setCases}
-            />
+            <>
+                <div className="size-warning">
+                    <h1 className="icon">
+                        <i
+                            className="codicon codicon-warning"
+                            style={{ fontSize: '20px' }}
+                        ></i>
+                    </h1>
+                    <p>
+                        The sidebar width is too small to display the UI. Please
+                        drag from the edge of the sidebar to increase the width.
+                    </p>
+                    <small>
+                        This warning will go away once the width is large
+                        enough.
+                    </small>
+                </div>
+                <Judge
+                    problem={problem}
+                    updateProblem={setProblem}
+                    cases={cases}
+                    updateCases={setCases}
+                />
+            </>
         );
     } else {
         return (

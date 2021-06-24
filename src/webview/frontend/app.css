@@ -80,6 +80,7 @@ a[href]:hover {
 pre,
 textarea {
     background: var(--input-background);
+    font-family: 'Courier New', Courier, monospace;
     width: 100%;
     display: block;
     background: rgba(0, 0, 0, 0.2);
@@ -136,6 +137,10 @@ textarea:active {
     margin-right: 0px;
 }
 
+.toggle-minimize:hover .case-title {
+    filter: brightness(150%);
+}
+
 .feedback:hover {
     background-color: rgba(50, 50, 50, 0.3);
 }
@@ -172,6 +177,7 @@ textarea:active {
     outline: none;
     margin-right: 4px;
     margin-bottom: 5px;
+    text-align: center;
     border: 2px solid transparent;
 }
 
@@ -368,4 +374,26 @@ body.vscode-light .notification {
 }
 body.vscode-light .case-number {
     color: rgb(11, 93, 131) !important;
+}
+
+.icon,
+.codicon {
+    vertical-align: middle;
+    font-size: 80%;
+}
+
+.size-warning {
+    padding: 10px;
+    margin: 10px;
+    border: 2px solid rgb(11, 93, 131);
+    display: none;
+}
+
+@media only screen and (max-width: 365px) {
+    .size-warning {
+        display: block;
+    }
+    .ui {
+        display: none;
+    }
 }

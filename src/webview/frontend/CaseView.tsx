@@ -3,9 +3,6 @@ import { useState, createRef, useEffect } from 'react';
 import TextareaAutosize from 'react-autosize-textarea/lib';
 import React from 'react';
 
-const reloadIcon = '↺';
-const deleteIcon = '⨯';
-
 export default function CaseView(props: {
     num: number;
     case: Case;
@@ -75,7 +72,7 @@ export default function CaseView(props: {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
-        props.notify('✅ Copied to clipboard');
+        props.notify('Copied to clipboard');
     };
 
     useEffect(() => {
@@ -128,12 +125,16 @@ export default function CaseView(props: {
                     <span className="case-number case-title">
                         {minimized && (
                             <span onClick={expand} title="Expand">
-                                [+]
+                                <span className="icon">
+                                    <i className="codicon codicon-chevron-down"></i>
+                                </span>
                             </span>
                         )}
                         {!minimized && (
                             <span onClick={minimize} title="Minimize">
-                                [-]
+                                <span className="icon">
+                                    <i className="codicon codicon-chevron-up"></i>
+                                </span>
                             </span>
                         )}
                         &nbsp;Testcase {props.num}
@@ -159,7 +160,9 @@ export default function CaseView(props: {
                         onClick={rerun}
                         disabled={running}
                     >
-                        {reloadIcon}
+                        <span className="icon">
+                            <i className="codicon codicon-debug-restart"></i>
+                        </span>{' '}
                     </button>
                     <button
                         className="btn btn-red"
@@ -168,7 +171,9 @@ export default function CaseView(props: {
                             props.remove(id);
                         }}
                     >
-                        {deleteIcon}
+                        <span className="icon">
+                            <i className="codicon codicon-trash"></i>
+                        </span>{' '}
                     </button>
                 </div>
             </div>
