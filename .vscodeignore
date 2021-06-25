@@ -8,7 +8,6 @@ jest.config.js
 webpack.frontend.config.js
 .eslintrc.js
 .eslintignore
-static/
 .prettierrc.json
 .gitignore
 docs/
