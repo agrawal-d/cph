@@ -551,10 +551,15 @@ function App() {
         });
     };
 
+    const getSpaceClassName = () =>
+        vscodeApi.getState()?.ignoreSpaceWarning === true
+            ? 'noSpaceWarning'
+            : 'spaceWarning';
+
     if (problem === undefined && showFallback) {
         return (
             <>
-                <div className="ui p10">
+                <div className={`ui p10 fallback`}>
                     <div className="text-center">
                         <p>
                             This document does not have a CPH problem associated
@@ -582,13 +587,7 @@ function App() {
         );
     } else if (problem !== undefined) {
         return (
-            <div
-                className={
-                    vscodeApi.getState()?.ignoreSpaceWarning === true
-                        ? 'noSpaceWarning'
-                        : 'spaceWarning'
-                }
-            >
+            <div className={getSpaceClassName()}>
                 <div className="size-warning">
                     <h4 className="icon">
                         <i
