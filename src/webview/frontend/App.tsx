@@ -438,7 +438,8 @@ function Judge(props: {
                         <a href="https://github.com/agrawal-d/cph-submit">
                             cph-submit browser extension{' '}
                         </a>
-                        installed, and a browser window open. You can change language ID from VS Code settings.
+                        installed, and a browser window open. You can change
+                        language ID from VS Code settings.
                         <br />
                         <br />
                         Hint: You can also press <kbd>Ctrl+Alt+S</kbd> to
