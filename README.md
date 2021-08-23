@@ -55,6 +55,8 @@ You can also use this extension locally, just open any supported file and press
 
 ## Contributing
 
+**CPH is in a steady-state.** There are no new features planned for the extension. Only bug-fixes will be worked on.
+
 You can contribute to this extension in many ways:
 
 -   File bug reports by creating issues.
