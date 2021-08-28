@@ -22,6 +22,9 @@ export const getAutoShowJudgePref = (): boolean =>
 export const getSaveLocationPref = (): string =>
     getPreference('general.saveLocation');
 
+export const getIgnoreSTDERRORPref = (): string =>
+    getPreference('general.ignoreSTDERROR');
+
 export const getTimeOutPref = (): number =>
     getPreference('general.timeOut') || 3000;
 

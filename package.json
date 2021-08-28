@@ -5,7 +5,7 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "5.8.5",
+    "version": "5.8.7",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -73,6 +73,11 @@
                     "type": "number",
                     "default": 3000,
                     "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
+                },
+                "cph.general.ignoreSTDERROR": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled, non-empty standard error will not result in testcase failing."
                 },
                 "cph.language.c.Args": {
                     "title": "Compilation flags for .c files",

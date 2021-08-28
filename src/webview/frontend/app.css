@@ -80,7 +80,7 @@ a[href]:hover {
 pre,
 textarea {
     background: var(--input-background);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier New', Courier, Consolas, 'Ubuntu Mono', monospace;
     width: 100%;
     display: block;
     background: rgba(0, 0, 0, 0.2);
@@ -93,6 +93,11 @@ textarea {
     resize: none;
     border: 1px solid var(--input-background);
     margin-bottom: 4px;
+}
+
+pre,
+code {
+    font-family: 'Courier New', Courier, Consolas, 'Ubuntu Mono', monospace;
 }
 
 .clearfix {

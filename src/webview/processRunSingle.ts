@@ -6,6 +6,7 @@ import { runTestCase, deleteBinary } from '../executions';
 import { isResultCorrect } from '../judge';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
+import { getIgnoreSTDERRORPref } from '../preferences';
 
 export const runSingleAndSave = async (
     problem: Problem,
@@ -43,10 +44,12 @@ export const runSingleAndSave = async (
         deleteBinary(language, binPath);
     }
 
+    const stderrorFailure = getIgnoreSTDERRORPref() ? false : run.stderr !== '';
+
     const didError =
         (run.code !== null && run.code !== 0) ||
         run.signal !== null ||
-        run.stderr !== '';
+        stderrorFailure;
     const result: RunResult = {
         ...run,
         pass: didError ? false : isResultCorrect(testCase, run.stdout),
