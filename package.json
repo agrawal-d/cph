@@ -191,6 +191,12 @@
                     "default": true,
                     "description": "A welcome message is shown when you run a testcase for the first time."
                 },
+                "cph.general.compileOnSave": {
+                    "title": "Compile on Save",
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Each time you save the document, the extension will compile it, so a cached version will be ready to be run very fast."
+                },
                 "cph.general.defaultLanguage": {
                     "title": "Default language for new problems",
                     "type": "string",

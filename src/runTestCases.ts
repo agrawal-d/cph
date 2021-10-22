@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import { checkUnsupported, randomId } from './utils';
 import { Problem } from './types';
 import { getProblem, saveProblem } from './parser';
-import { compileFile } from './compiler';
 import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import { getJudgeViewProvider } from './extension';
+import { shouldCompile } from './compiler';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -33,19 +33,24 @@ export default async () => {
         return;
     }
 
-    const didCompile = await compileFile(srcPath);
-
-    if (!didCompile) {
-        console.error('Could not compile', srcPath);
-        return;
+    if (editor.document.isDirty) {
+        problem.skipNextCompile = false;
     }
-    await editor.document.save();
+
+    const compile = shouldCompile(problem);
+    if (compile) {
+        await editor.document.save();
+    } else {
+        console.log('Already have a cached compiled version.');
+    }
+
     getJudgeViewProvider().focus();
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem: problem,
     });
-    runAllAndSave(problem);
+    runAllAndSave(problem, compile);
+
     vscode.window.showTextDocument(editor.document, vscode.ViewColumn.One);
 };
 

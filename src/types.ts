@@ -7,6 +7,7 @@ export type prefSection =
     | 'general.firstTime'
     | 'general.useShortCodeForcesName'
     | 'general.menuChoices'
+    | 'general.compileOnSave'
     | 'language.c.Args'
     | 'language.c.SubmissionCompiler'
     | 'language.c.Command'
@@ -51,6 +52,7 @@ export type Problem = {
     tests: TestCase[];
     srcPath: string;
     local?: boolean;
+    skipNextCompile?: boolean;
 };
 
 export type Case = {

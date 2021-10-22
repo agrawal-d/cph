@@ -1,10 +1,11 @@
 import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
-import { Language } from './types';
+import { Language, Problem } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
-import { getSaveLocationPref } from './preferences';
+import { getCompileOnSavePref, getSaveLocationPref } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
+import { getProblem, saveProblem } from './parser';
 let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {
@@ -177,4 +178,36 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         });
     });
     return result;
+};
+
+/**
+ * Should the problem be compiled?
+ *
+ * @param problem The Problem Data Structure
+ * @returns boolean
+ */
+export const shouldCompile = (problem: Problem): boolean => {
+    if (getCompileOnSavePref() && problem.skipNextCompile) {
+        return false;
+    }
+
+    return true;
+};
+
+export const compileOnSave = async (e: vscode.TextDocument) => {
+    const srcPath = e.uri.fsPath;
+    const didCompile = await compileFile(srcPath);
+    if (!didCompile) {
+        return;
+    }
+
+    const problem = getProblem(srcPath);
+    if (!problem) return;
+    problem.skipNextCompile = true;
+    console.log('Saving problem ', problem);
+    getJudgeViewProvider().extensionToJudgeViewMessage({
+        command: 'new-problem',
+        problem: problem,
+    });
+    saveProblem(srcPath, problem);
 };

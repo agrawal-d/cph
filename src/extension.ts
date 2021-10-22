@@ -8,7 +8,8 @@ import {
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
 import JudgeViewProvider from './webview/JudgeView';
-import { getRetainWebviewContextPref } from './preferences';
+import { getCompileOnSavePref, getRetainWebviewContextPref } from './preferences';
+import { compileOnSave } from './compiler';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -106,6 +107,12 @@ export function activate(context: vscode.ExtensionContext) {
                 command: 'new-problem',
                 problem: undefined,
             });
+        }
+    });
+
+    vscode.workspace.onDidSaveTextDocument((e) => {
+        if (getCompileOnSavePref()) {
+            compileOnSave(e);
         }
     });
 

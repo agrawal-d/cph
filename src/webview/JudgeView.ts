@@ -11,7 +11,7 @@ import {
     getAutoShowJudgePref,
     getRetainWebviewContextPref,
 } from '../preferences';
-import { setOnlineJudgeEnv } from '../compiler';
+import { setOnlineJudgeEnv, shouldCompile } from '../compiler';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -44,13 +44,17 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     case 'run-single-and-save': {
                         const problem = message.problem;
                         const id = message.id;
-                        runSingleAndSave(problem, id);
+                        const compile = shouldCompile(message.problem);
+
+                        runSingleAndSave(problem, id, !compile);
                         break;
                     }
 
                     case 'run-all-and-save': {
                         const problem = message.problem;
-                        runAllAndSave(problem);
+                        const compile = shouldCompile(message.problem);
+
+                        runAllAndSave(problem, compile);
                         break;
                     }
 

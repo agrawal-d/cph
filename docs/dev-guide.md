@@ -66,7 +66,7 @@ We recommend installing `Prettier` and `ESLint` VS Code extensions. Before
 commiting, make sure you are passing the following tests:
 
 -   ESLint lint: `npm run lint`.
--   Jest unit tests: `npm run jest`.
+-   Jest unit tests: `npm run test`.
 -   Typescript compilation: `npm run test-compile`.
 -   Pre-publish bundling: `npm run vscode:prepublish`.
 

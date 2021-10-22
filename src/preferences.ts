@@ -57,6 +57,9 @@ export const getDefaultLangPref = (): string | null => {
     return pref;
 };
 
+export const getCompileOnSavePref = (): boolean =>
+    getPreference('general.compileOnSave');
+
 export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeForcesName');
 };
