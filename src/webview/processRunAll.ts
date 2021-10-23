@@ -17,7 +17,16 @@ export default async (problem: Problem, compile: boolean) => {
         if (!didCompile) {
             return;
         }
+    } else {
+        // If there was a cached compiled version,
+        // next time it will definitely compile it again
+        problem.skipNextCompile = false;
+        getJudgeViewProvider().extensionToJudgeViewMessage({
+            command: 'new-problem',
+            problem: problem,
+        });
     }
+
     for (const testCase of problem.tests) {
         getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'running',
@@ -33,9 +42,6 @@ export default async (problem: Problem, compile: boolean) => {
     );
 
     if (!compile) {
-        // If there was a cached compiled version,
-        // next time it will definitely compile it again
-        problem.skipNextCompile = false;
         saveProblem(problem.srcPath, problem);
     }
 };
