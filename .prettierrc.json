@@ -4,6 +4,5 @@
     "semi": true,
     "singleQuote": true,
     "trailingComma": "all",
-    "proseWrap": "always",
-    "endOfLine": "auto"
+    "proseWrap": "always"
 }
