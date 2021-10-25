@@ -196,4 +196,5 @@ export type CphSubmitResponse = {
 
 export type WebViewpersistenceState = {
     ignoreSpaceWarning: boolean;
+    newsRead: number;
 };

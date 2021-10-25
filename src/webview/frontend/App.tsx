@@ -1,3 +1,11 @@
+// News shown to user.
+const newsVersion = 5;
+const news = `
+<h2>Speed up judging</h2>
+Use the new 'compileOnSave' setting to compile and cache probles for instant judging later.
+Re-judging is also faster if there are no changes. Go to VS Code settings to enable.
+`;
+
 import React, { useState, useEffect, useReducer } from 'react';
 import ReactDOM from 'react-dom';
 import {
@@ -490,8 +498,20 @@ function App() {
         }, 500);
     };
 
+    const markAsRead = () => {
+        vscodeApi.setState({
+            newsRead: newsVersion,
+            ignoreSpaceWarning:
+                vscodeApi.getState()?.ignoreSpaceWarning || false,
+        });
+        forceUpdate();
+    };
+
     const ignoreSpaceWarning = () => {
-        vscodeApi.setState({ ignoreSpaceWarning: true });
+        vscodeApi.setState({
+            newsRead: vscodeApi.getState()?.newsRead || 0,
+            ignoreSpaceWarning: true,
+        });
         forceUpdate();
     };
 
@@ -620,6 +640,23 @@ function App() {
                         </span>
                     </div>
                 </div>
+                {newsVersion > (vscodeApi.getState()?.newsRead || 0) && (
+                    <div className="news">
+                        <h1>New features </h1>
+                        <div dangerouslySetInnerHTML={{ __html: news }}></div>
+                        <br />
+                        <div className="btn btn-primary" onClick={markAsRead}>
+                            <span className="icon">
+                                <i
+                                    className="codicon codicon-notebook-state-success"
+                                    style={{ fontSize: '20px' }}
+                                ></i>{' '}
+                                Mark as read
+                            </span>
+                        </div>
+                    </div>
+                )}
+
                 <Judge
                     problem={problem}
                     updateProblem={setProblem}
