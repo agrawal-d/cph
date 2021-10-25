@@ -9,6 +9,7 @@ import {
 import { submitToCodeForces, submitToKattis } from './submit';
 import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
+import { compileOnSave } from './compiler';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -16,6 +17,7 @@ declare global {
     module NodeJS {
         interface Global {
             context: vscode.ExtensionContext;
+            cachedVersion: number;
         }
     }
 }
@@ -26,6 +28,8 @@ export const getJudgeViewProvider = () => {
 
 const registerCommands = (context: vscode.ExtensionContext) => {
     console.log('Registering commands');
+    global.cachedVersion = -1; // initialize cache.
+
     const disposable = vscode.commands.registerCommand(
         'cph.runTestCases',
         () => {
@@ -98,6 +102,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.onDidChangeActiveTextEditor((e) => {
         editorChanged(e);
+    });
+
+    vscode.workspace.onDidSaveTextDocument((e) => {
+        compileOnSave(e);
     });
 
     vscode.window.onDidChangeVisibleTextEditors((editors) => {

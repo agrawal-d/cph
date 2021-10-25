@@ -6,7 +6,7 @@ import { runTestCase, deleteBinary } from '../executions';
 import { isResultCorrect } from '../judge';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
-import { getIgnoreSTDERRORPref } from '../preferences';
+import { getCompileOnSave, getIgnoreSTDERRORPref } from '../preferences';
 
 export const runSingleAndSave = async (
     problem: Problem,
@@ -40,7 +40,7 @@ export const runSingleAndSave = async (
 
     const run = await runTestCase(language, binPath, testCase.input);
 
-    if (!skipCompile) {
+    if (!skipCompile && !getCompileOnSave()) {
         deleteBinary(language, binPath);
     }
 
