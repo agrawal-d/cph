@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.9.0
+
+-   Add feature to cache compilation on save.
+
 ## 5.8.1
 
 -   Add icons to UI.
