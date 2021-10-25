@@ -2,9 +2,11 @@ import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
-import { getSaveLocationPref } from './preferences';
+import { getCompileOnSave, getSaveLocationPref } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
+import { existsSync } from 'fs';
+import { getProblem } from './parser';
 let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {
@@ -110,7 +112,28 @@ const getFlags = (language: Language, srcPath: string): string[] => {
  */
 export const compileFile = async (srcPath: string): Promise<boolean> => {
     console.log('Compilation Started');
-    await vscode.workspace.openTextDocument(srcPath).then((doc) => doc.save());
+    const doc = await vscode.workspace.openTextDocument(srcPath);
+
+    const cachedVersion = global.cachedVersion;
+    const editorVersion = doc.version;
+
+    doc.save();
+
+    console.log(
+        'cached version: ',
+        cachedVersion,
+        'editor version: ',
+        editorVersion,
+    );
+
+    if (
+        cachedVersion == editorVersion &&
+        existsSync(getBinSaveLocation(srcPath))
+    ) {
+        console.log('Skipping compilation - using cached binary.');
+        return Promise.resolve(true);
+    }
+
     ocHide();
     const language: Language = getLanguage(srcPath);
     if (language.skipCompile) {
@@ -168,6 +191,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                 });
                 return;
             }
+            global.cachedVersion = doc.version; // update cache only if compilation is successful.
             console.log('Compilation passed');
             getJudgeViewProvider().extensionToJudgeViewMessage({
                 command: 'compiling-stop',
@@ -176,5 +200,21 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
             return;
         });
     });
+
     return result;
+};
+
+export const compileOnSave = async (e: vscode.TextDocument) => {
+    if (!getCompileOnSave()) {
+        return;
+    }
+
+    const srcPath = e.uri.fsPath;
+    const problem = getProblem(srcPath);
+
+    if (!problem) {
+        return;
+    }
+
+    await compileFile(srcPath);
 };
