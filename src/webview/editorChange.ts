@@ -17,7 +17,6 @@ import { setOnlineJudgeEnv } from '../compiler';
  */
 export const editorChanged = async (e: vscode.TextEditor | undefined) => {
     console.log('Changed editor to', e?.document.fileName);
-    global.cachedVersion = -1; // reset cached compilation
 
     if (e === undefined) {
         getJudgeViewProvider().extensionToJudgeViewMessage({
