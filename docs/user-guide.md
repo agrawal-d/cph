@@ -6,6 +6,9 @@ This document contains instructions on how to use this extension.
 
 ![Basic Usage](img/user-guide-image.png)
 
+This image is outdated. Please refer to README for an updated UI. The button
+actions remain the same.
+
 ## Using with competitive companion
 
 1. [Install cph](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
