@@ -24,7 +24,6 @@ export type prefSection =
     | 'language.python.Command'
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
-    | 'general.compileOnSave'
     | 'general.defaultLanguageTemplateFileLocation';
 
 export type Language = {

@@ -4,7 +4,6 @@ import { compileFile, getBinSaveLocation } from '../compiler';
 import { deleteBinary } from '../executions';
 import { getLanguage } from '../utils';
 import { getJudgeViewProvider } from '../extension';
-import { getCompileOnSave } from '../preferences';
 
 /**
  * Run every testcase in a problem one by one. Waits for the first to complete
@@ -25,11 +24,8 @@ export default async (problem: Problem) => {
         await runSingleAndSave(problem, testCase.id, true);
     }
     console.log('Run all finished');
-
-    if (!getCompileOnSave()) {
-        deleteBinary(
-            getLanguage(problem.srcPath),
-            getBinSaveLocation(problem.srcPath),
-        );
-    }
+    deleteBinary(
+        getLanguage(problem.srcPath),
+        getBinSaveLocation(problem.srcPath),
+    );
 };

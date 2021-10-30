@@ -69,12 +69,6 @@
                     "default": "",
                     "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
                 },
-                "cph.general.compileOnSave": {
-                    "title": "Compile on Save",
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Compile the file every time you save it, so that judging is faster. Caches compilation so unchanged files are not re-compiled."
-                },
                 "cph.general.timeOut": {
                     "type": "number",
                     "default": 3000,
