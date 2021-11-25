@@ -21,7 +21,7 @@ of popular platforms like Codeforces, Codechef, TopCoder etc.
    in your browser.
 1. Use Companion by pressing the green plus (+) circle from the browser toolbar
    when visiting any problem page.
-1. The file opens in VS Code with testcases preloaded. Press `Ctrl+Alt+B` to run
+1. The file opens in VS Code with testcases preloaded. Press <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd> to run
    them.
 
 -   (Optional) Install the [cph-submit](https://github.com/agrawal-d/cph-submit)
@@ -30,7 +30,7 @@ of popular platforms like Codeforces, Codechef, TopCoder etc.
     [Kattis help page](https://open.kattis.com/help/submit) after logging in.
 
 You can also use this extension locally, just open any supported file and press
-'Run Testcases' (or `Ctrl+Alt+B`) to manually enter testcases.
+'Run Testcases' (or <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd>) to manually enter testcases.
 
 [![See detailed user guide](https://img.shields.io/badge/-Read%20detailed%20usage%20guide-blue?style=for-the-badge)](docs/user-guide.md)
 
