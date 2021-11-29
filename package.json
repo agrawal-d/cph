@@ -190,7 +190,7 @@
                     "title": "Show welcome message",
                     "type": "boolean",
                     "default": true,
-                    "description": "A welcome message is shown when you run a testcase for the first time."
+                    "description": "A welcome message is shown when you run a testcase for the first time. This setting is updated automatically after the first message is shown."
                 },
                 "cph.general.defaultLanguage": {
                     "title": "Default language for new problems",
