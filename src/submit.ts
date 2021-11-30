@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { storeSubmitProblem, submitKattisProblem } from './companion';
 import { getJudgeViewProvider } from './extension';
 
-export const submitToKattis = async () => {
+export const submitToKattis = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
     if (!srcPath) {
         vscode.window.showErrorMessage(
@@ -11,10 +11,6 @@ export const submitToKattis = async () => {
         );
         return;
     }
-
-    const textEditor = await vscode.workspace.openTextDocument(srcPath);
-    await vscode.window.showTextDocument(textEditor, vscode.ViewColumn.One);
-    await textEditor.save();
 
     const problem = getProblem(srcPath);
 
@@ -43,7 +39,7 @@ export const submitToKattis = async () => {
     });
 };
 
-export const submitToCodeForces = async () => {
+export const submitToCodeForces = () => {
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
 
     if (!srcPath) {
@@ -52,10 +48,6 @@ export const submitToCodeForces = async () => {
         );
         return;
     }
-
-    const textEditor = await vscode.workspace.openTextDocument(srcPath);
-    await vscode.window.showTextDocument(textEditor, vscode.ViewColumn.One);
-    await textEditor.save();
 
     const problem = getProblem(srcPath);
 
