@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.8.8
+
+- Add support for C++ 20.
+- Save file before submission.
+
 ## 5.8.1
 
 -   Add icons to UI.
