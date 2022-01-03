@@ -125,6 +125,11 @@ export const setupCompanionServer = () => {
             res.end();
         });
         server.listen(config.port);
+        server.on('error', (err) => {
+            vscode.window.showErrorMessage(
+                `CPH server encountered an error: "${err.message}" , companion may not work.`,
+            );
+        });
         console.log('Companion server listening on port', config.port);
         return server;
     } catch (e) {

@@ -1,9 +1,13 @@
 # Changelog
 
+## 5.8.9
+
+-   Companion server now listens for errors and notifies users.
+
 ## 5.8.8
 
-- Add support for C++ 20.
-- Save file before submission.
+-   Add support for C++ 20.
+-   Save file before submission.
 
 ## 5.8.1
 
