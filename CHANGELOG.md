@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.9.0
+
+-   Support non-latin alphabet for problem names.
+
 ## 5.8.9
 
 -   Companion server now listens for errors and notifies users.
