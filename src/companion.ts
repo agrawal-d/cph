@@ -5,7 +5,7 @@ import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { isCodeforcesUrl, randomId } from './utils';
+import { isCodeforcesUrl, randomId, words_in_text } from './utils';
 import {
     getDefaultLangPref,
     getLanguageId,
@@ -145,7 +145,13 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
             isCodeforcesUrl(new URL(problem.url)),
             useShortCodeForcesName(),
         );
-        return `${problem.name.replace(/\W+/g, '_')}.${ext}`;
+
+        const words = words_in_text(problem.name);
+        if (words === null) {
+            return `${problem.name.replace(/\W+/g, '_')}.${ext}`;
+        } else {
+            return `${words.join('_')}.${ext}`;
+        }
     }
 };
 
