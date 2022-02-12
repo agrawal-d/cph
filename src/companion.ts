@@ -5,7 +5,7 @@ import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { isCodeforcesUrl, randomId, words_in_text } from './utils';
+import { isCodeforcesUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
     getLanguageId,
@@ -16,6 +16,7 @@ import {
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
+import { words_in_text } from './utilsPure';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;

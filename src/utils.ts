@@ -156,8 +156,3 @@ export const getProblemForDocument = (
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
     return problem;
 };
-
-export const words_in_text = function (text: string) {
-    const regex = /[\p{L}-]+/gu;
-    return text.match(regex);
-};
