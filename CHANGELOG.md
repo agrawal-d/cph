@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.9.1
+
+-   Improve problem name parser to handle numbers.
+
 ## 5.9.0
 
 -   Support non-latin alphabet for problem names.
