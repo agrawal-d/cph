@@ -295,7 +295,7 @@ function Judge(props: {
                     <span className="icon">
                         <i className="codicon codicon-cloud-upload"></i>
                     </span>{' '}
-                    Submit to Codeforces
+                    Submit
                 </button>
             );
         } else if (url.hostname == 'open.kattis.com') {
@@ -357,17 +357,20 @@ function Judge(props: {
             </div>
             <div className="results">{views}</div>
             <div className="margin-10">
-                <button
-                    className="btn btn-green"
-                    onClick={newCase}
-                    title="Create a new empty testcase"
-                >
-                    <span className="icon">
-                        <i className="codicon codicon-add"></i>
-                    </span>{' '}
-                    New Testcase
-                </button>
-                {renderSubmitButton()}
+                <div className="row">
+                    <button
+                        className="btn btn-green"
+                        onClick={newCase}
+                        title="Create a new empty testcase"
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-add"></i>
+                        </span>{' '}
+                        New Testcase
+                    </button>
+                    {renderSubmitButton()}
+                </div>
+
                 <br />
                 <span onClick={toggleOnlineJudgeEnv}>
                     <input type="checkbox" checked={onlineJudgeEnv} />
@@ -378,55 +381,60 @@ function Judge(props: {
             </div>
 
             <div className="actions">
-                <button
-                    className="btn"
-                    onClick={runAll}
-                    title="Run all testcases again"
-                >
-                    <span className="icon">
-                        <i className="codicon codicon-debug-restart"></i>
-                    </span>{' '}
-                    Run All
-                </button>
-                <button
-                    className="btn btn-green"
-                    onClick={newCase}
-                    title="Create a new empty testcase"
-                >
-                    <span className="icon">
-                        <i className="codicon codicon-add"></i>
-                    </span>{' '}
-                    New
-                </button>
-                <button
-                    className="btn btn-orange"
-                    onClick={stop}
-                    title="Kill all running testcases"
-                >
-                    <span className="icon">
-                        <i className="codicon codicon-circle-slash"></i>
-                    </span>{' '}
-                    Stop
-                </button>
-                <a
-                    className="btn"
-                    title="Help"
-                    href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
-                >
-                    <span className="icon">
-                        <i className="codicon codicon-question"></i>
-                    </span>{' '}
-                </a>
-                <button
-                    className="btn btn-red right"
-                    onClick={deleteTcs}
-                    title="Delete all testcases and close results window"
-                >
-                    <span className="icon">
-                        <i className="codicon codicon-trash"></i>
-                    </span>{' '}
-                    Delete
-                </button>
+                <div className="row">
+                    <button
+                        className="btn"
+                        onClick={runAll}
+                        title="Run all testcases again"
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-debug-restart"></i>
+                        </span>{' '}
+                        Run All
+                    </button>
+                    <button
+                        className="btn btn-green"
+                        onClick={newCase}
+                        title="Create a new empty testcase"
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-add"></i>
+                        </span>{' '}
+                        New
+                    </button>
+                </div>
+                <div className="row">
+                    <button
+                        className="btn btn-orange"
+                        onClick={stop}
+                        title="Kill all running testcases"
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-circle-slash"></i>
+                        </span>{' '}
+                        Stop
+                    </button>
+                    <a
+                        className="btn"
+                        title="Help"
+                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-question"></i>
+                        </span>{' '}
+                        Help
+                    </a>
+                    <button
+                        className="btn btn-red right"
+                        onClick={deleteTcs}
+                        title="Delete all testcases and close results window"
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-trash"></i>
+                        </span>{' '}
+                        Delete
+                    </button>
+                </div>
             </div>
 
             {waitingForSubmit && (

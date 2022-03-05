@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.9.2
+
+-   Minor UI improvments for small sidebar widths.
+
 ## 5.9.1
 
 -   Improve problem name parser to handle numbers.

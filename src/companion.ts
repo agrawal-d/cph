@@ -128,7 +128,7 @@ export const setupCompanionServer = () => {
         server.listen(config.port);
         server.on('error', (err) => {
             vscode.window.showErrorMessage(
-                `CPH server encountered an error: "${err.message}" , companion may not work.`,
+                `Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: "${err.message}" , companion may not work.`,
             );
         });
         console.log('Companion server listening on port', config.port);
