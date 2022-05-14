@@ -11,9 +11,7 @@ const getPreference = (section: prefSection): any => {
 };
 
 export const updatePreference = (section: prefSection, value: any) => {
-    return workspace
-        .getConfiguration('competitive-programming-helper')
-        .update(section, value);
+    return workspace.getConfiguration('cph').update(section, value);
 };
 
 export const getAutoShowJudgePref = (): boolean =>
