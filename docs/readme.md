@@ -9,7 +9,7 @@ the competitive programming helper extension (cph).
 
 [Developer Guide](dev-guide.md)
 
-[Get Support](suppport.md)
+[Get Support](support.md)
 
 ## About cph
 
