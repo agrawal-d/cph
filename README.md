@@ -36,8 +36,8 @@ You can also use this extension locally, just open any supported file and press
 
 ## Features
 
--   Autmatic compilation with display for compilation errors.
--   Intelligent judge with support for signals, time outs and run time errors.
+-   Automatic compilation with display for compilation errors.
+-   Intelligent judge with support for signals, timeouts and runtime errors.
 -   Works with Competitive Companion.
 -   [Codeforces auto-submit](https://github.com/agrawal-d/cph-submit)
     integration.
