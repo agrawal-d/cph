@@ -72,7 +72,7 @@ commiting, make sure you are passing the following tests:
 ## Bundling as `.vsix`
 
 To generate the extension bundle for publishing, install
-[VSCE package](https://www.npmjs.com/package/vsce) fist (globally).
+[VSCE package](https://www.npmjs.com/package/vsce) first (globally).
 
 Then, in the root directory, run `vsce package` to generate the extension file.
 
