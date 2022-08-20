@@ -5,6 +5,7 @@ import config from './config';
 import { getTimeOutPref } from './preferences';
 import * as vscode from 'vscode';
 import path from 'path';
+import { onlineJudgeEnv } from './compiler';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
@@ -59,9 +60,19 @@ export const runTestCase = (
             break;
         }
         case 'java': {
-            const binFileName = path.parse(binPath).name.slice(0, -1);
+            const args: string[] = [];
+            if (onlineJudgeEnv) {
+                args.push('-DONLINE_JUDGE');
+            }
+
             const binDir = path.dirname(binPath);
-            process = spawn('java', ['-cp', binDir, binFileName]);
+            args.push('-cp');
+            args.push(binDir);
+
+            const binFileName = path.parse(binPath).name.slice(0, -1);
+            args.push(binFileName);
+
+            process = spawn('java', args);
             break;
         }
         default: {
@@ -143,3 +154,4 @@ export const killRunning = () => {
     console.log('Killling binaries');
     runningBinaries.forEach((process) => process.kill());
 };
+
