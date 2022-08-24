@@ -23,7 +23,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
             command: 'new-problem',
             problem: undefined,
         });
-        setOnlineJudgeEnv(false); // reset the non-debug mode set in webview.
+        setOnlineJudgeEnv(true); // reset the non-debug mode set in webview.
         return;
     }
 
@@ -31,7 +31,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
         return;
     }
 
-    setOnlineJudgeEnv(false); // reset the non-debug mode set in webview.
+    setOnlineJudgeEnv(true); // reset the non-debug mode set in webview.
 
     const problem = getProblemForDocument(e.document);
 

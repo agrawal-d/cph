@@ -33,7 +33,7 @@ function Judge(props: {
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
-    const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
+    const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(true);
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -50,7 +50,7 @@ function Judge(props: {
             const data: VSToWebViewMessage = event.data;
             switch (data.command) {
                 case 'new-problem': {
-                    setOnlineJudgeEnv(false);
+                    setOnlineJudgeEnv(true);
                     break;
                 }
 
