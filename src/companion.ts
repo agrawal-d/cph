@@ -4,7 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { isCodeforcesUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
@@ -21,6 +21,22 @@ import { words_in_text } from './utilsPure';
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 const COMPANION_LOGGING = false;
+
+function writeFileSyncRecursive(filename: string, content: any, charset?: any) {
+    // https://gist.github.com/drodsou/de2ba6291aea67ffc5bc4b52d8c32abd?permalink_comment_id=2943513#gistcomment-2943513
+    const folders = filename.split(path.sep).slice(0, -1);
+    if (folders.length) {
+        // create folder path if it doesn't exist
+        folders.reduce((last, folder) => {
+            const folderPath = last ? last + path.sep + folder : folder;
+            if (!existsSync(folderPath)) {
+                mkdirSync(folderPath);
+            }
+            return folderPath;
+        });
+    }
+    writeFileSync(filename, content, charset);
+}
 
 export const submitKattisProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
@@ -139,8 +155,9 @@ export const setupCompanionServer = () => {
 };
 
 export const getProblemFileName = (problem: Problem, ext: string) => {
+    const folder = problem.group;
     if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
-        return `${getProblemName(problem.url)}.${ext}`;
+        return `${folder}/${getProblemName(problem.url)}.${ext}`;
     } else {
         console.log(
             isCodeforcesUrl(new URL(problem.url)),
@@ -149,9 +166,9 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
 
         const words = words_in_text(problem.name);
         if (words === null) {
-            return `${problem.name.replace(/\W+/g, '_')}.${ext}`;
+            return `${folder}/${problem.name.replace(/\W+/g, '_')}.${ext}`;
         } else {
-            return `${words.join('_')}.${ext}`;
+            return `${folder}/${words.join('_')}.${ext}`;
         }
     }
 };
@@ -211,7 +228,7 @@ const handleNewProblem = async (problem: Problem) => {
         id: randomId(),
     }));
     if (!existsSync(srcPath)) {
-        writeFileSync(srcPath, '');
+        writeFileSyncRecursive(srcPath, '');
     }
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
@@ -228,7 +245,7 @@ const handleNewProblem = async (problem: Problem) => {
                 const templateContents = readFileSync(
                     templateLocation,
                 ).toString();
-                writeFileSync(srcPath, templateContents);
+                writeFileSyncRecursive(srcPath, templateContents);
             }
         }
     }

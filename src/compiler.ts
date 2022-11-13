@@ -34,7 +34,7 @@ export const getBinSaveLocation = (srcPath: string): string => {
     if (savePreference && savePreference !== '') {
         return path.join(savePreference, binFileName);
     }
-    return path.join(binDir, binFileName);
+    return path.join(binDir, '.cph', binFileName);
 };
 
 /**
