@@ -13,6 +13,9 @@ export type prefSection =
     | 'language.cpp.Args'
     | 'language.cpp.SubmissionCompiler'
     | 'language.cpp.Command'
+    | 'language.go.Args'
+    | 'language.go.SubmissionCompiler'
+    | 'language.go.Command'
     | 'language.rust.Args'
     | 'language.rust.SubmissionCompiler'
     | 'language.rust.Command'
@@ -33,7 +36,7 @@ export type Language = {
     skipCompile: boolean;
 };
 
-export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java';
+export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java' | 'go';
 
 export type TestCase = {
     input: string;

@@ -46,6 +46,9 @@ export const getRustArgsPref = (): string[] =>
 export const getJavaArgsPref = (): string[] =>
     getPreference('language.java.Args').split(' ') || [];
 
+export const getGoArgsPref = (): string[] =>
+    getPreference('language.go.Args').split(' ') || [];
+
 export const getFirstTimePref = (): boolean =>
     getPreference('general.firstTime') || 'true';
 
@@ -78,6 +81,8 @@ export const getRustCommand = (): string =>
     getPreference('language.rust.Command') || 'rustc';
 export const getJavaCommand = (): string =>
     getPreference('language.java.Command') || 'javac';
+export const getGoCommand = (): string =>
+    getPreference('language.go.Command') || 'go';
 
 export const getMenuChoices = (): string[] =>
     getPreference('general.menuChoices').split(' ');
@@ -109,6 +114,11 @@ export const getLanguageId = (srcPath: string): number => {
 
         case '.py': {
             compiler = getPreference('language.python.SubmissionCompiler');
+            break;
+        }
+
+        case '.go': {
+            compiler = getPreference('language.go.SubmissionCompiler');
             break;
         }
     }

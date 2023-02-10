@@ -12,6 +12,7 @@ export default {
         python: 'py',
         rust: 'rs',
         java: 'java',
+        go: 'go',
     },
     compilers: {
         c: 'gcc',
@@ -19,6 +20,7 @@ export default {
         python: 'python',
         rust: 'rustc',
         java: 'javac',
+        go: 'go',
     },
     compilerToId: {
         'GNU G++17 7.3.0': 54,
@@ -37,7 +39,8 @@ export default {
         'Python 2.7.15': 7,
         'GNU GCC C11 5.1.0': 43,
         'Rust 1.42.0': 49,
+        'Go 1.20': 69,
     },
-    supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java'],
+    supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java', 'go'],
     skipCompile: ['py'],
 };

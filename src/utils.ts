@@ -12,11 +12,13 @@ import {
     getPythonArgsPref,
     getRustArgsPref,
     getJavaArgsPref,
+    getGoArgsPref,
     getCCommand,
     getCppCommand,
     getPythonCommand,
     getRustCommand,
     getJavaCommand,
+    getGoCommand,
 } from './preferences';
 import { Language, Problem } from './types';
 
@@ -76,6 +78,14 @@ export const getLanguage = (srcPath: string): Language => {
                 name: langName,
                 args: [...getJavaArgsPref()],
                 compiler: getJavaCommand(),
+                skipCompile: false,
+            };
+        }
+        case 'go': {
+            return {
+                name: langName,
+                args: [...getGoArgsPref()],
+                compiler: getGoCommand(),
                 skipCompile: false,
             };
         }
