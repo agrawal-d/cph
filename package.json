@@ -166,6 +166,25 @@
                     "default": "rustc",
                     "description": "Command used to compile rust files."
                 },
+                "cph.language.go.Args": {
+                    "title": "Compilation flags for .go files",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to go while compiling your file. Example '-gcflags=-S'"
+                },
+                "cph.language.go.SubmissionCompiler": {
+                    "type": "string",
+                    "default": "Go 1.20",
+                    "enum": [
+                        "Go 1.20"
+                    ],
+                    "description": "The compiler chosen in the drop down during Codeforces submission for go"
+                },
+                "cph.language.go.Command": {
+                    "type": "string",
+                    "default": "go",
+                    "description": "Command used to compile .go files."
+                },
                 "cph.language.java.Args": {
                     "title": "Compilation flags for Java",
                     "type": "string",
