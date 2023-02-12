@@ -174,9 +174,9 @@
                 },
                 "cph.language.go.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Go 1.20",
+                    "default": "Go 1.19.5",
                     "enum": [
-                        "Go 1.20"
+                        "Go 1.19.5"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for go"
                 },
