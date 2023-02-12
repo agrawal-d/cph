@@ -50,6 +50,7 @@ You can also use this extension locally, just open any supported file and press
 -   C++
 -   C
 -   Rust
+-   Go
 -   Python
 -   Java
 
