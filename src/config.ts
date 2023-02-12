@@ -39,7 +39,7 @@ export default {
         'Python 2.7.15': 7,
         'GNU GCC C11 5.1.0': 43,
         'Rust 1.42.0': 49,
-        'Go 1.20': 69,
+        'Go 1.19.5': 32,
     },
     supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java', 'go'],
     skipCompile: ['py'],
