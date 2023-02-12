@@ -84,9 +84,9 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         case 'go': {
             ret = [
                 'build',
-                srcPath,
                 '-o',
                 getBinSaveLocation(srcPath),
+                srcPath,
                 ...args,
             ];
             break;
