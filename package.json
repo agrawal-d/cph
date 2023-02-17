@@ -155,9 +155,9 @@
                 },
                 "cph.language.rust.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Rust 1.42.0",
+                    "default": "Rust 1.66.0 (2021)",
                     "enum": [
-                        "Rust 1.42.0"
+                        "Rust 1.66.0 (2021)"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for rust"
                 },
