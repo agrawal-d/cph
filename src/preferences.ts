@@ -2,6 +2,8 @@ import { workspace } from 'vscode';
 import type { prefSection } from './types';
 import config from './config';
 import path from 'path';
+import fs from 'fs';
+import * as vscode from 'vscode';
 
 const getPreference = (section: prefSection): any => {
     const ret = workspace.getConfiguration('cph').get(section);
@@ -11,16 +13,24 @@ const getPreference = (section: prefSection): any => {
 };
 
 export const updatePreference = (section: prefSection, value: any) => {
-    return workspace
-        .getConfiguration('competitive-programming-helper')
-        .update(section, value);
+    return workspace.getConfiguration('cph').update(section, value);
 };
 
 export const getAutoShowJudgePref = (): boolean =>
     getPreference('general.autoShowJudge');
 
-export const getSaveLocationPref = (): string =>
-    getPreference('general.saveLocation');
+export const getSaveLocationPref = (): string => {
+    const pref = getPreference('general.saveLocation');
+    const validSaveLocation = pref == '' || fs.existsSync(pref);
+    if (!validSaveLocation) {
+        vscode.window.showErrorMessage(
+            `Invalid save location, reverting to default. path not exists: ${pref}`,
+        );
+        updatePreference('general.saveLocation', '');
+        return '';
+    }
+    return pref;
+};
 
 export const getIgnoreSTDERRORPref = (): string =>
     getPreference('general.ignoreSTDERROR');
