@@ -154,4 +154,3 @@ export const killRunning = () => {
     console.log('Killling binaries');
     runningBinaries.forEach((process) => process.kill());
 };
-

@@ -11,8 +11,9 @@ user-facingterms.
 The extension runs in a Node.JS context with the
 [VS Code API](https://code.visualstudio.com/api/references/vscode-api). The
 extension shows the results in a web-view (code in `src/webview`). It
-communicates to-and-from the extension by posting messages. See the [webview API](https://code.visualstudio.com/api/extension-guides/webview) for details.
-The webview is currently a React App.
+communicates to-and-from the extension by posting messages. See the
+[webview API](https://code.visualstudio.com/api/extension-guides/webview) for
+details. The webview is currently a React App.
 
 It compiles and runs code by spawning binaries, and pipes input to STDIN and
 compares each line of STDOUT with expected output to judge results.

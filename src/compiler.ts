@@ -184,4 +184,3 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     });
     return result;
 };
-
