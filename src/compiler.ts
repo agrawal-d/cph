@@ -5,7 +5,7 @@ import path from 'path';
 import { getSaveLocationPref } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
-let onlineJudgeEnv = false;
+export let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {
     onlineJudgeEnv = value;
@@ -94,10 +94,6 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         case 'java': {
             const binDir = path.dirname(getBinSaveLocation(srcPath));
             ret = [srcPath, '-d', binDir, ...args];
-            if (onlineJudgeEnv) {
-                ret.push('-D');
-                ret.push('ONLINE_JUDGE');
-            }
             break;
         }
         default: {
@@ -188,3 +184,4 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     });
     return result;
 };
+
