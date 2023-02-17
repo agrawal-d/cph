@@ -81,6 +81,16 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
             break;
         }
+        case 'go': {
+            ret = [
+                'build',
+                '-o',
+                getBinSaveLocation(srcPath),
+                srcPath,
+                ...args,
+            ];
+            break;
+        }
         case 'java': {
             const binDir = path.dirname(getBinSaveLocation(srcPath));
             ret = [srcPath, '-d', binDir, ...args];
