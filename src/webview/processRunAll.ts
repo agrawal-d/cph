@@ -2,7 +2,7 @@ import { Problem } from '../types';
 import { runSingleAndSave } from './processRunSingle';
 import { compileFile, getBinSaveLocation } from '../compiler';
 import { deleteBinary } from '../executions';
-import { getLanguage } from '../utils';
+import { getLanguage, showMaintainerMessage } from '../utils';
 import { getJudgeViewProvider } from '../extension';
 
 /**
@@ -11,6 +11,7 @@ import { getJudgeViewProvider } from '../extension';
  **/
 export default async (problem: Problem) => {
     console.log('Run all started', problem);
+    showMaintainerMessage();
     const didCompile = await compileFile(problem.srcPath);
     if (!didCompile) {
         return;
