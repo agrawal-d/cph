@@ -19,6 +19,8 @@ import {
     getRustCommand,
     getJavaCommand,
     getGoCommand,
+    getLookingForMaintainerPerf,
+    updatePreference,
 } from './preferences';
 import { Language, Problem } from './types';
 
@@ -165,4 +167,23 @@ export const getProblemForDocument = (
     }
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
     return problem;
+};
+
+export const showMaintainerMessage = async () => {
+    /** Temporary maintainer's messaage **/
+    if (getLookingForMaintainerPerf()) {
+        console.log("Showing maintainer's message");
+        updatePreference('general.onceMaintainerMessage', false);
+        const openIssue = 'Details';
+        const issueUrl = 'https://rb.gy/ohx17';
+        const result = await vscode.window.showInformationMessage(
+            'CPH is looking for a maintainer to continue development of extension!' +
+                'Help the community by keeping this extension alive.',
+            openIssue,
+        );
+
+        if (result === openIssue) {
+            vscode.env.openExternal(vscode.Uri.parse(issueUrl));
+        }
+    }
 };
