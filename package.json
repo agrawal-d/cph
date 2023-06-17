@@ -5,7 +5,7 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "5.11.0",
+    "version": "5.10.0",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -210,12 +210,6 @@
                     "type": "boolean",
                     "default": true,
                     "description": "A welcome message is shown when you run a testcase for the first time. This setting is updated automatically after the first message is shown."
-                },
-                "cph.general.onceMaintainerMessage": {
-                    "title": "Show 'looking for a maintainer' message",
-                    "type": "boolean",
-                    "default": true,
-                    "description": "A message from the maintainer is shown when you run a testcase for the first time. This setting is updated automatically after the first message is shown."
                 },
                 "cph.general.defaultLanguage": {
                     "title": "Default language for new problems",
