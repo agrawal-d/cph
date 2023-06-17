@@ -62,9 +62,6 @@ export const getGoArgsPref = (): string[] =>
 export const getFirstTimePref = (): boolean =>
     getPreference('general.firstTime') || 'true';
 
-export const getLookingForMaintainerPerf = (): boolean =>
-    getPreference('general.onceMaintainerMessage');
-
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
     if (pref === 'none' || pref == ' ' || !pref) {
