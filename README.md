@@ -57,9 +57,6 @@ enter testcases.
 
 ## Contributing
 
-**CPH is in a steady-state.** There are no new features planned for the
-extension. Only bug-fixes will be worked on.
-
 You can contribute to this extension in many ways:
 
 -   File bug reports by creating issues.
@@ -68,6 +65,8 @@ You can contribute to this extension in many ways:
 
 **Before creating a Pull Request, please create an issue to discuss the
 approach. It makes reviewing and accepting the PR much easier.**
+
+Since July 2023, CPH is being maintained by @tesla59.
 
 ## License
 
