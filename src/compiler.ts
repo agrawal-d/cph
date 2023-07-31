@@ -2,7 +2,7 @@ import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
-import { getSaveLocationPref, getZeroExitCodeIsWarningPref as getZeroExitCodeIsWarningPref } from './preferences';
+import { getSaveLocationPref, getZeroExitCodeIsWarningPref } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
 export let onlineJudgeEnv = false;
