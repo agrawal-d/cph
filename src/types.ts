@@ -3,6 +3,7 @@ export type prefSection =
     | 'general.saveLocation'
     | 'general.defaultLanguage'
     | 'general.timeOut'
+    | 'general.zeroExitCodeIsWarning'
     | 'general.ignoreSTDERROR'
     | 'general.firstTime'
     | 'general.useShortCodeForcesName'
