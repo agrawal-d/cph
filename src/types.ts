@@ -27,7 +27,8 @@ export type prefSection =
     | 'language.python.Command'
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
-    | 'general.defaultLanguageTemplateFileLocation';
+    | 'general.defaultLanguageTemplateFileLocation'
+    | 'general.enableClassify';
 
 export type Language = {
     name: LangNames;

@@ -18,6 +18,8 @@ import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
 import { words_in_text } from './utilsPure';
 import fs from 'fs';
+import { getEnableClassification } from './preferences';
+
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 const COMPANION_LOGGING = false;
@@ -254,13 +256,18 @@ const handleNewProblem = async (problem: Problem) => {
         problem.name = splitUrl[splitUrl.length - 1];
     }
     const problemFileName = getProblemFileName(problem, extn);
-    const stem = getProblemStem(problem);
-    const dir = path.join(folder, stem);
-    const srcPath = path.join(folder, stem, problemFileName);
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+    let srcPath_;
+    if (getEnableClassification()) {
+        const stem = getProblemStem(problem);
+        const dir = path.join(folder, stem);
+        srcPath_ = path.join(folder, stem, problemFileName);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+    } else {
+        srcPath_ = path.join(folder, problemFileName);
     }
-
+    const srcPath = srcPath_;
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
     problem.tests = problem.tests.map((testcase) => ({
