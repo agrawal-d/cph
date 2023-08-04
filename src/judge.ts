@@ -11,7 +11,7 @@ export const isResultCorrect = (
     stdout: string,
 ): boolean => {
     const expectedLines = testCase.output.trim().split('\n');
-    const resultLines = stdout.trim().split('\n');
+    const resultLines = stdout.trim().split(EOL);
     if (expectedLines.length !== resultLines.length) {
         console.log('Failed precheck', expectedLines, resultLines);
         return false;
