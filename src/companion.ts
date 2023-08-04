@@ -17,7 +17,7 @@ import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
 import { words_in_text } from './utilsPure';
-
+import fs from 'fs';
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 const COMPANION_LOGGING = false;
@@ -156,6 +156,58 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
     }
 };
 
+export const getProblemPlatform = (problem: Problem) => {
+    const platform_key = ['codeforces', 'atcoder'];
+    const platform = problem.group.split('-')[0].trim().toLowerCase();
+    console.log('Got platform : ' + platform);
+    const idx = platform_key.indexOf(platform);
+    if (idx >= 0) {
+        return platform_key[idx];
+    }
+    return '';
+};
+
+class ProblemInfo {
+    platform: string;
+    type: string;
+    pid: string;
+    constructor(type: string, pid: string, platform: string) {
+        this.type = type;
+        this.pid = pid;
+        this.platform = platform;
+    }
+}
+export const getProblemInfo = (problem: Problem) => {
+    const platform = getProblemPlatform(problem);
+    const part = problem.url.split('/');
+    if (platform == 'codeforces') {
+        for (let i = 0; i < part.length; i++) {
+            switch (part[i]) {
+                case 'contest':
+                    return new ProblemInfo(part[i], part[i + 1], platform);
+                case 'problemset':
+                    return new ProblemInfo(part[i], part[i + 2], platform);
+                case 'gym':
+                    return new ProblemInfo(part[i], part[i + 1], platform);
+            }
+        }
+    } else if (platform == 'atcoder') {
+        for (let i = 0; i < part.length; i++) {
+            switch (part[i]) {
+                case 'contests':
+                    return new ProblemInfo(part[i], part[i + 1], platform);
+            }
+        }
+    }
+    return new ProblemInfo('', '', platform);
+};
+
+export const getProblemStem = (problem: Problem) => {
+    const info = getProblemInfo(problem);
+    const res = path.join(info.platform, info.type, info.pid);
+    return res;
+};
+
 /** Handle the `problem` sent by Competitive Companion, such as showing the webview, opening an editor, managing layout etc. */
 const handleNewProblem = async (problem: Problem) => {
     // If webview may be focused, close it, to prevent layout bug.
@@ -202,7 +254,12 @@ const handleNewProblem = async (problem: Problem) => {
         problem.name = splitUrl[splitUrl.length - 1];
     }
     const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+    const stem = getProblemStem(problem);
+    const dir = path.join(folder, stem);
+    const srcPath = path.join(folder, stem, problemFileName);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
