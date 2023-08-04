@@ -20,7 +20,12 @@ module.exports = {
     },
     plugins: ['@typescript-eslint', 'prettier'],
     rules: {
-        'prettier/prettier': 'error',
+        'prettier/prettier': [
+            'error',
+            {
+                "endOfLine": "auto"
+            },
+        ],
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/prefer-namespace-keyword': 'off',
