@@ -2,7 +2,10 @@ import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
-import { getSaveLocationPref, getZeroExitCodeIsWarningPref } from './preferences';
+import {
+    getSaveLocationPref,
+    getZeroExitCodeIsWarningPref,
+} from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
 export let onlineJudgeEnv = false;
@@ -161,8 +164,10 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         });
 
         compiler.on('exit', (exitcode) => {
-            if ((!getZeroExitCodeIsWarningPref() || exitcode !== 0) 
-                && (exitcode === 1 || error !== '')) { 
+            if (
+                (!getZeroExitCodeIsWarningPref() || exitcode !== 0) &&
+                (exitcode === 1 || error !== '')
+            ) {
                 ocWrite('Errors while compiling:\n' + error);
                 ocShow();
                 console.error('Compilation failed');
@@ -174,7 +179,11 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                     command: 'not-running',
                 });
                 return;
-            } else if (getZeroExitCodeIsWarningPref() && exitcode === 0 && error !== '') {
+            } else if (
+                getZeroExitCodeIsWarningPref() &&
+                exitcode === 0 &&
+                error !== ''
+            ) {
                 ocWrite('Warnings while compiling:\n' + error);
                 ocShow();
             }
