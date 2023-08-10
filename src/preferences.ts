@@ -32,6 +32,9 @@ export const getSaveLocationPref = (): string => {
     return pref;
 };
 
+export const getZeroExitCodeIsWarningPref = (): string =>
+    getPreference('general.zeroExitCodeIsWarning');
+
 export const getIgnoreSTDERRORPref = (): string =>
     getPreference('general.ignoreSTDERROR');
 

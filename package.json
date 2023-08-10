@@ -74,6 +74,11 @@
                     "default": 3000,
                     "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
                 },
+                "cph.general.zeroExitCodeIsWarning": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled, zero exit code when compilation will be considered as warning and will not cause the compilation to fail."
+                },
                 "cph.general.ignoreSTDERROR": {
                     "type": "boolean",
                     "default": false,
