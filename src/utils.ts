@@ -18,6 +18,7 @@ import {
     getPythonCommand,
     getRustCommand,
     getJavaCommand,
+    getJavaScriptCommand,
     getGoCommand,
 } from './preferences';
 import { Language, Problem } from './types';
@@ -79,6 +80,14 @@ export const getLanguage = (srcPath: string): Language => {
                 args: [...getJavaArgsPref()],
                 compiler: getJavaCommand(),
                 skipCompile: false,
+            };
+        }
+        case 'javascript': {
+            return {
+                name: langName,
+                args: [],
+                compiler: getJavaScriptCommand(),
+                skipCompile: true,
             };
         }
         case 'go': {
