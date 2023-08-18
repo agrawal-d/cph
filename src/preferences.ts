@@ -94,6 +94,8 @@ export const getRustCommand = (): string =>
     getPreference('language.rust.Command') || 'rustc';
 export const getJavaCommand = (): string =>
     getPreference('language.java.Command') || 'javac';
+export const getJavaScriptCommand = (): string =>
+    getPreference('language.javascript.Command') || 'node';
 export const getGoCommand = (): string =>
     getPreference('language.go.Command') || 'go';
 
@@ -112,6 +114,11 @@ export const getLanguageId = (srcPath: string): number => {
 
         case '.java': {
             compiler = getPreference('language.java.SubmissionCompiler');
+            break;
+        }
+       
+        case '.js': {
+            compiler = getPreference('language.javascript.SubmissionCompiler');
             break;
         }
 

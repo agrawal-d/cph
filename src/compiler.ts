@@ -41,7 +41,7 @@ export const getBinSaveLocation = (srcPath: string): string => {
 };
 
 /**
- * Get the complete lsit of required arguments to be passed to the compiler.
+ * Get the complete list of required arguments to be passed to the compiler.
  * Loads additional args from preferences if available.
  *
  * @param language The Language object for the source code

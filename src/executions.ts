@@ -59,6 +59,14 @@ export const runTestCase = (
             );
             break;
         }
+        case 'javascript': {
+            process = spawn(
+                language.compiler,
+                [binPath, ...language.args],
+                // spawnOpts, // `spawnOpts.env` will make PATH be empty, then can't find `node` command
+            );
+            break;
+        }
         case 'java': {
             const args: string[] = [];
             if (onlineJudgeEnv) {
