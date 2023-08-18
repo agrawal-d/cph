@@ -13,7 +13,7 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
-			// "preLaunchTask": "npm: webpack",
+			"preLaunchTask": "npm: webpack",
 		},
 		{
 			"name": "Extension Tests",
