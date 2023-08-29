@@ -239,6 +239,7 @@
                         "cpp",
                         "python",
                         "rust",
+                        "javascript",
                         "java"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
