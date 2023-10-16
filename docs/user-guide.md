@@ -49,7 +49,7 @@ actions remain the same.
 ## Submit to Kattis
 
 1. Install Kattis [config file](https://open.kattis.com/download/kattisrc) and
-   [submission client](https://open.kattis.com/download/submit.py?e48b42=). Make
+   [submission client](https://github.com/Kattis/kattis-cli). Make
    sure you are logged in on another tab prior to accessing the files.
 
 2. Move these files to a directory(folder) called .kattisrc in your home
