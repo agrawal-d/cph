@@ -84,6 +84,9 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     return pref;
 };
 
+export const getSaveProblemToActiveFile = (): string =>
+    getPreference('general.saveProblemToActiveFile');
+
 export const getCCommand = (): string =>
     getPreference('language.c.Command') || 'gcc';
 export const getCppCommand = (): string =>

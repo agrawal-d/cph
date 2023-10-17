@@ -254,6 +254,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Automatically show the judge view when opening a file that has a problem associated with it"
+                },
+                "cph.general.saveProblemToActiveFile": {
+                    "type": "boolean",
+                    "default": "false",
+                    "description": "Choose to save problem to active file when using Competitive Companion"
                 }
             }
         }

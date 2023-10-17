@@ -12,6 +12,7 @@ import {
     useShortCodeForcesName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    getSaveProblemToActiveFile
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -201,8 +202,18 @@ const handleNewProblem = async (problem: Problem) => {
         const splitUrl = problem.url.split('/');
         problem.name = splitUrl[splitUrl.length - 1];
     }
+
     const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+    let srcPath;
+    if(getSaveProblemToActiveFile()) {
+        srcPath = vscode.window.activeTextEditor?.document.fileName;
+        if (srcPath == undefined) {
+            vscode.window.showInformationMessage('Please open a file first.');
+            return;
+        }
+    } else {
+        srcPath = path.join(folder, problemFileName);
+    }
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
