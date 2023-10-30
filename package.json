@@ -138,9 +138,10 @@
                 },
                 "cph.language.python.SubmissionCompiler": {
                     "type": "string",
-                    "default": "PyPy 3.6 (7.2.0)",
+                    "default": "PyPy 3.9.10 (7.3.9, 64bit)",
                     "enum": [
                         "PyPy 3.6 (7.2.0)",
+                        "PyPy 3.9.10 (7.3.9, 64bit)",
                         "Python 3.7.2",
                         "PyPy 2.7 (7.2.0)",
                         "Python 2.7.15"
