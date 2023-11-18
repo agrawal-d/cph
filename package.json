@@ -5,7 +5,7 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "5.13.0",
+    "version": "5.14.0",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -74,10 +74,10 @@
                     "default": 3000,
                     "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
                 },
-                "cph.general.zeroExitCodeIsWarning": {
+                "cph.general.hideStderrorWhenCompiledOK": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "If enabled, zero exit code when compilation will be considered as warning and will not cause the compilation to fail."
+                    "default": true,
+                    "description": "Ignore and don't show stderror when compilation exit code is zero."
                 },
                 "cph.general.ignoreSTDERROR": {
                     "type": "boolean",

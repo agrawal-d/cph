@@ -137,20 +137,25 @@ export default function CaseView(props: {
                                 </span>
                             </span>
                         )}
-                        &nbsp;Testcase {props.num}
+                        &nbsp;TC {props.num}
                     </span>
                     {running && <span className="running-text">Running</span>}
                     {result && !running && (
-                        <span className="result-data">
-                            <span
-                                className={
-                                    result.pass ? 'result-pass' : 'result-fail'
-                                }
-                            >
-                                {result.pass ? 'Passed' : 'Failed'}
+                        <>
+                            <span className="result-data">
+                                <span
+                                    className={
+                                        result.pass
+                                            ? 'result-pass'
+                                            : 'result-fail'
+                                    }
+                                >
+                                    &nbsp; &nbsp;
+                                    {result.pass ? 'Passed' : 'Failed'}
+                                </span>
                             </span>
                             <span className="exec-time">{timeText}</span>
-                        </span>
+                        </>
                     )}
                 </div>
                 <div className="time">

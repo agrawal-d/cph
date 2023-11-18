@@ -34,6 +34,7 @@ function Judge(props: {
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
     const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
+    const [remoteMessage, setRemoteMessage] = useState<string>('');
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -44,6 +45,21 @@ function Judge(props: {
             tests: testCases,
         });
     }, [cases]);
+
+    useEffect(() => {
+        console.log('Fetching remote text message');
+        const url =
+            'https://github.com/agrawal-d/cph/raw/main/static/remote-message.txt';
+        try {
+            fetch(url, { mode: 'no-cors' }).then((response) => {
+                response.text().then((text) => {
+                    setRemoteMessage(text);
+                });
+            });
+        } catch (err) {
+            console.error('Error fetching remote-message.txt: ', err);
+        }
+    }, []);
 
     useEffect(() => {
         const fn = (event: any) => {
@@ -373,11 +389,28 @@ function Judge(props: {
 
                 <br />
                 <span onClick={toggleOnlineJudgeEnv}>
-                    <input type="checkbox" checked={onlineJudgeEnv} />
+                    <input
+                        type="checkbox"
+                        className="oj"
+                        checked={onlineJudgeEnv}
+                    />
                     <span>
                         Set <code>ONLINE_JUDGE</code>
                     </span>
                 </span>
+                <br />
+                <br />
+                <div>
+                    <small>
+                        <a href="https://rb.gy/vw82u5" className="btn">
+                            <i className="codicon codicon-feedback"></i>{' '}
+                            Feedback
+                        </a>
+                    </small>
+                </div>
+                <div className="remote-message">
+                    <p>{remoteMessage}</p>
+                </div>
             </div>
 
             <div className="actions">
@@ -390,7 +423,7 @@ function Judge(props: {
                         <span className="icon">
                             <i className="codicon codicon-debug-restart"></i>
                         </span>{' '}
-                        Run All
+                        <span className="action-text">Run All</span>
                     </button>
                     <button
                         className="btn btn-green"
@@ -400,7 +433,7 @@ function Judge(props: {
                         <span className="icon">
                             <i className="codicon codicon-add"></i>
                         </span>{' '}
-                        New
+                        <span className="action-text">New</span>
                     </button>
                 </div>
                 <div className="row">
@@ -412,7 +445,7 @@ function Judge(props: {
                         <span className="icon">
                             <i className="codicon codicon-circle-slash"></i>
                         </span>{' '}
-                        Stop
+                        <span className="action-text">Stop</span>
                     </button>
                     <a
                         className="btn"
@@ -422,7 +455,7 @@ function Judge(props: {
                         <span className="icon">
                             <i className="codicon codicon-question"></i>
                         </span>{' '}
-                        Help
+                        <span className="action-text">Help</span>
                     </a>
                     <button
                         className="btn btn-red right"
@@ -432,7 +465,7 @@ function Judge(props: {
                         <span className="icon">
                             <i className="codicon codicon-trash"></i>
                         </span>{' '}
-                        Delete
+                        <span className="action-text">Delete</span>
                     </button>
                 </div>
             </div>

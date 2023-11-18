@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 import path from 'path';
 import {
     getSaveLocationPref,
-    getZeroExitCodeIsWarningPref,
+    getHideStderrorWhenCompiledOK,
 } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
@@ -164,29 +164,33 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         });
 
         compiler.on('exit', (exitcode) => {
-            if (
-                (!getZeroExitCodeIsWarningPref() || exitcode !== 0) &&
-                (exitcode === 1 || error !== '')
-            ) {
-                ocWrite('Errors while compiling:\n' + error);
+            const exitCode = exitcode || 0;
+            const hideWarningsWhenCompiledOK = getHideStderrorWhenCompiledOK();
+
+            if (exitCode !== 0) {
+                ocWrite(
+                    `Exit code: ${exitCode} Errors while compiling:\n` + error,
+                );
                 ocShow();
                 console.error('Compilation failed');
-                resolve(false);
                 getJudgeViewProvider().extensionToJudgeViewMessage({
                     command: 'compiling-stop',
                 });
                 getJudgeViewProvider().extensionToJudgeViewMessage({
                     command: 'not-running',
                 });
+                resolve(false);
                 return;
-            } else if (
-                getZeroExitCodeIsWarningPref() &&
-                exitcode === 0 &&
-                error !== ''
-            ) {
-                ocWrite('Warnings while compiling:\n' + error);
+            }
+
+            if (!hideWarningsWhenCompiledOK && error.trim() !== '') {
+                ocWrite(
+                    `Exit code: ${exitCode} Warnings while compiling:\n ` +
+                        error,
+                );
                 ocShow();
             }
+
             console.log('Compilation passed');
             getJudgeViewProvider().extensionToJudgeViewMessage({
                 command: 'compiling-stop',
