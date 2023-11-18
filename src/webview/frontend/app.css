@@ -25,6 +25,14 @@ body {
     max-width: 800px;
 }
 
+.oj {
+    vertical-align: bottom;
+}
+
+* {
+    border-radius: 2px;
+}
+
 #app {
     margin-bottom: 100px;
 }
@@ -51,7 +59,7 @@ body {
     color: white;
     padding: 2px 5px 2px 5px;
     font-size: 80%;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 a.btn {
@@ -177,7 +185,7 @@ textarea:active {
 
 .btn {
     padding: 2px 5px 2px 5px;
-    background: #3393cc91;
+    background: #2fadf5a7;
     color: white;
     outline: none;
     margin-right: 4px;
@@ -192,16 +200,16 @@ textarea:active {
 }
 
 .btn-green {
-    background: #70b92791;
+    background: #8ae33291;
 }
 .btn-red {
-    background: #b9274391;
+    background: #eb244c91;
 }
 .btn:focus {
     border-color: var(--vscode-focusBorder);
 }
 .btn-orange {
-    background: orange;
+    background: rgba(244, 164, 15, 0.781);
 }
 
 .btn-submit {
@@ -265,7 +273,6 @@ button:disabled {
 
 .result-data {
     font-size: 1.15em;
-    margin-left: 5px;
 }
 
 .result-pass {
@@ -291,7 +298,6 @@ button:disabled {
 
 .case {
     border-left: 5px solid var(--vscode-input-background);
-    border-radius: 0px;
 }
 
 .case.running {
@@ -398,7 +404,7 @@ body.vscode-light .case-number {
     display: inline;
 }
 
-@media only screen and (max-width: 365px) {
+@media only screen and (max-width: 370px) {
     .actions {
         border-top: 1px solid rgba(0, 0, 0, 0.5);
     }
@@ -426,5 +432,9 @@ body.vscode-light .case-number {
 
     .noSpaceWarning .ui {
         display: block !important;
+    }
+
+    .action-text {
+        display: none;
     }
 }
