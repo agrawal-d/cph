@@ -26,6 +26,9 @@ export type prefSection =
     | 'language.python.Args'
     | 'language.python.SubmissionCompiler'
     | 'language.python.Command'
+    | 'language.javascript.Args'
+    | 'language.javascript.SubmissionCompiler'
+    | 'language.javascript.Command'
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation';
@@ -37,7 +40,14 @@ export type Language = {
     skipCompile: boolean;
 };
 
-export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java' | 'go';
+export type LangNames =
+    | 'python'
+    | 'c'
+    | 'cpp'
+    | 'rust'
+    | 'java'
+    | 'go'
+    | 'javascript';
 
 export type TestCase = {
     input: string;

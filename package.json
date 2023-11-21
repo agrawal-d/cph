@@ -152,6 +152,23 @@
                     "default": "python3",
                     "description": "Command used to run python files. Example 'py', 'python3', 'pypy3', etc."
                 },
+                "cph.language.javascript.Args": {
+                    "title": "Compilation flags for Javascript",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to javascript while compiling your file."
+                },
+                "cph.language.javascript.SubmissionCompiler": {
+                    "type": "string",
+                    "default": "",
+                    "enum": [],
+                    "description": "The compiler chosen in the drop down during Codeforces submission for javascript"
+                },
+                "cph.language.javascript.Command": {
+                    "type": "string",
+                    "default": "node",
+                    "description": "Command used to run javascript files. Example 'node', 'deno run', 'bun', etc."
+                },
                 "cph.language.rust.Args": {
                     "title": "Compilation flags for Rust",
                     "type": "string",
@@ -226,13 +243,15 @@
                         "cpp",
                         "python",
                         "rust",
-                        "java"
+                        "java",
+                        "go",
+                        "javascript"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java python c rust",
+                    "default": "cpp java python c rust javascript go",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
                 "cph.general.useShortCodeForcesName": {
@@ -273,7 +292,7 @@
     },
     "devDependencies": {
         "@types/jest": "^25.2.3",
-        "@types/node": "^13.11.0",
+        "@types/node": "^13.13.52",
         "@types/react": "^16.9.35",
         "@types/react-dom": "^16.9.8",
         "@types/vscode": "^1.52.0",

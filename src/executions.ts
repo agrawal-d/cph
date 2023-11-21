@@ -34,14 +34,15 @@ export const runTestCase = (
         env: {
             DEBUG: 'true',
             CPH: 'true',
+            PATH: process.env.PATH,
         },
     };
 
-    let process: ChildProcessWithoutNullStreams;
+    let testProcess: ChildProcessWithoutNullStreams;
 
     const killer = setTimeout(() => {
         result.timeOut = true;
-        process.kill();
+        testProcess.kill();
     }, getTimeOutPref());
 
     // HACK - On Windows, `python3` will be changed to `python`!
@@ -52,8 +53,16 @@ export const runTestCase = (
     // Start the binary or the interpreter.
     switch (language.name) {
         case 'python': {
-            process = spawn(
+            testProcess = spawn(
                 language.compiler, // 'python3' or 'python' TBD
+                [binPath, ...language.args],
+                spawnOpts,
+            );
+            break;
+        }
+        case 'javascript': {
+            testProcess = spawn(
+                language.compiler,
                 [binPath, ...language.args],
                 spawnOpts,
             );
@@ -72,15 +81,15 @@ export const runTestCase = (
             const binFileName = path.parse(binPath).name.slice(0, -1);
             args.push(binFileName);
 
-            process = spawn('java', args);
+            testProcess = spawn('java', args);
             break;
         }
         default: {
-            process = spawn(binPath, spawnOpts);
+            testProcess = spawn(binPath, spawnOpts);
         }
     }
 
-    process.on('error', (err) => {
+    testProcess.on('error', (err) => {
         console.error(err);
         vscode.window.showErrorMessage(
             `Could not launch testcase process. Is '${language.compiler}' in your PATH?`,
@@ -89,8 +98,8 @@ export const runTestCase = (
 
     const begin = Date.now();
     const ret: Promise<Run> = new Promise((resolve) => {
-        runningBinaries.push(process);
-        process.on('exit', (code, signal) => {
+        runningBinaries.push(testProcess);
+        testProcess.on('exit', (code, signal) => {
             const end = Date.now();
             clearTimeout(killer);
             result.code = code;
@@ -101,20 +110,20 @@ export const runTestCase = (
             resolve(result);
         });
 
-        process.stdout.on('data', (data) => {
+        testProcess.stdout.on('data', (data) => {
             result.stdout += data;
         });
-        process.stderr.on('data', (data) => (result.stderr += data));
+        testProcess.stderr.on('data', (data) => (result.stderr += data));
 
         console.log('Wrote to STDIN');
         try {
-            process.stdin.write(input);
+            testProcess.stdin.write(input);
         } catch (err) {
             console.error('WRITEERROR', err);
         }
 
-        process.stdin.end();
-        process.on('error', (err) => {
+        testProcess.stdin.end();
+        testProcess.on('error', (err) => {
             const end = Date.now();
             clearTimeout(killer);
             result.code = 1;
