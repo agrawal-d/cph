@@ -12,7 +12,7 @@ export default {
         python: 'py',
         rust: 'rs',
         java: 'java',
-        javascript: 'js',
+        js: 'js',
         go: 'go',
     },
     compilers: {
@@ -21,7 +21,7 @@ export default {
         python: 'python',
         rust: 'rustc',
         java: 'javac',
-        javascript: 'node',
+        js: 'node',
         go: 'go',
     },
     compilerToId: {
@@ -35,7 +35,7 @@ export default {
         'Clang++17 Diagnostics': 52,
         'Java 11.0.6': 60,
         'Java 1.8.0_241': 36,
-        'Node.js 12.16.3': 55,
+        'Node.js 15.8.0 (64bit)': 55,
         'PyPy 3.6 (7.2.0)': 41,
         'Python 3.7.2': 31,
         'PyPy 2.7 (7.2.0)': 40,
