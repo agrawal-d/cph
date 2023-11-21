@@ -239,14 +239,14 @@
                         "cpp",
                         "python",
                         "rust",
-                        "javascript",
+                        "js",
                         "java"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java javascript python c rust",
+                    "default": "cpp java js python c rust",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
                 "cph.general.useShortCodeForcesName": {

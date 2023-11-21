@@ -39,7 +39,7 @@ export type Language = {
     skipCompile: boolean;
 };
 
-export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java' | 'javascript' | 'go';
+export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java' | 'js' | 'go';
 
 export type TestCase = {
     input: string;

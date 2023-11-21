@@ -32,6 +32,7 @@ export const runTestCase = (
     const spawnOpts = {
         timeout: config.timeout,
         env: {
+            ...global.process.env,
             DEBUG: 'true',
             CPH: 'true',
         },
@@ -59,11 +60,11 @@ export const runTestCase = (
             );
             break;
         }
-        case 'javascript': {
+        case 'js': {
             process = spawn(
                 language.compiler,
                 [binPath, ...language.args],
-                // spawnOpts, // `spawnOpts.env` will make PATH be empty, then can't find `node` command
+                spawnOpts,
             );
             break;
         }

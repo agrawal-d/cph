@@ -82,7 +82,7 @@ export const getLanguage = (srcPath: string): Language => {
                 skipCompile: false,
             };
         }
-        case 'javascript': {
+        case 'js': {
             return {
                 name: langName,
                 args: [],
