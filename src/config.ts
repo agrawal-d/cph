@@ -12,6 +12,7 @@ export default {
         python: 'py',
         rust: 'rs',
         java: 'java',
+        js: 'js',
         go: 'go',
     },
     compilers: {
@@ -20,6 +21,7 @@ export default {
         python: 'python',
         rust: 'rustc',
         java: 'javac',
+        js: 'node',
         go: 'go',
     },
     compilerToId: {
@@ -33,6 +35,7 @@ export default {
         'Clang++17 Diagnostics': 52,
         'Java 11.0.6': 60,
         'Java 1.8.0_241': 36,
+        'Node.js 15.8.0 (64bit)': 55,
         'PyPy 3.6.9 (7.3.0)': 41,
         'PyPy 3.9.10 (7.3.9, 64bit)': 70,
         'Python 3.8.10': 31,
@@ -42,6 +45,6 @@ export default {
         'Go 1.19.5': 32,
         'Rust 1.66.0 (2021)': 75,
     },
-    supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java', 'go'],
-    skipCompile: ['py'],
+    supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java', 'js', 'go'],
+    skipCompile: ['py', 'js'],
 };

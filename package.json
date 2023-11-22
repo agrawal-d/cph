@@ -5,7 +5,7 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "5.14.0",
+    "version": "5.16.0",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -211,6 +211,25 @@
                     "default": "javac",
                     "description": "Command used to compile java files."
                 },
+                "cph.language.js.Args": {
+                    "title": "Compilation flags for JavaScript",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to node (for JavaScript) while compiling your file. Example '--abort-on-uncaught-exception'"
+                },
+                "cph.language.js.SubmissionCompiler": {
+                    "type": "string",
+                    "default": "Node.js 15.8.0 (64bit)",
+                    "enum": [
+                        "Node.js 15.8.0 (64bit)"
+                    ],
+                    "description": "The compiler chosen in the drop down during Codeforces submission for js"
+                },
+                "cph.language.js.Command": {
+                    "type": "string",
+                    "default": "node",
+                    "description": "Command used to compile .js files."
+                },
                 "cph.general.firstTime": {
                     "title": "Show welcome message",
                     "type": "boolean",
@@ -227,13 +246,14 @@
                         "cpp",
                         "python",
                         "rust",
+                        "js",
                         "java"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java python c rust",
+                    "default": "cpp java js python c rust",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
                 "cph.general.useShortCodeForcesName": {

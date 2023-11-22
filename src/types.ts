@@ -23,6 +23,9 @@ export type prefSection =
     | 'language.java.Args'
     | 'language.java.SubmissionCompiler'
     | 'language.java.Command'
+    | 'language.js.Args'
+    | 'language.js.SubmissionCompiler'
+    | 'language.js.Command'
     | 'language.python.Args'
     | 'language.python.SubmissionCompiler'
     | 'language.python.Command'
@@ -37,7 +40,7 @@ export type Language = {
     skipCompile: boolean;
 };
 
-export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java' | 'go';
+export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java' | 'js' | 'go';
 
 export type TestCase = {
     input: string;
