@@ -210,15 +210,21 @@
                     "default": "javac",
                     "description": "Command used to compile java files."
                 },
-                "cph.language.javascript.SubmissionCompiler": {
+                "cph.language.js.Args": {
+                    "title": "Compilation flags for JavaScript",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to node (for JavaScript) while compiling your file. Example '--abort-on-uncaught-exception'"
+                },
+                "cph.language.js.SubmissionCompiler": {
                     "type": "string",
                     "default": "Node.js 15.8.0 (64bit)",
                     "enum": [
                         "Node.js 15.8.0 (64bit)"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for Node.js"
+                    "description": "The compiler chosen in the drop down during Codeforces submission for js"
                 },
-                "cph.language.javascript.Command": {
+                "cph.language.js.Command": {
                     "type": "string",
                     "default": "node",
                     "description": "Command used to compile .js files."
