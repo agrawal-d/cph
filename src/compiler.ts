@@ -8,7 +8,6 @@ import {
 } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
-import telmetry from './telmetry';
 export let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {

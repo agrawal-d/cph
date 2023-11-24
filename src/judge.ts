@@ -1,5 +1,4 @@
 import { TestCase, Problem, Case } from './types';
-import { EOL } from 'os';
 /**
  * Judge whether the testcase stdout is correct
  *
