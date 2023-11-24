@@ -46,11 +46,11 @@ const config = {
                 },
                 { from: 'src/webview/frontend/index.html', to: 'index.html' },
                 {
-                    from: 'node_modules/vscode-codicons/dist/codicon.css',
+                    from: 'node_modules/@vscode/codicons/dist/codicon.css',
                     to: 'codicon.css',
                 },
                 {
-                    from: 'node_modules/vscode-codicons/dist/codicon.ttf',
+                    from: 'node_modules/@vscode/codicons/dist/codicon.ttf',
                     to: 'codicon.ttf',
                 },
             ],

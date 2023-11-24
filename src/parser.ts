@@ -54,6 +54,6 @@ export const saveProblem = (srcPath: string, problem: Problem) => {
     try {
         fs.writeFileSync(probPath, JSON.stringify(problem));
     } catch (err) {
-        throw new Error(err);
+        throw new Error(err as string);
     }
 };

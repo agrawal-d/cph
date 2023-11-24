@@ -12,14 +12,6 @@ import { getRetainWebviewContextPref } from './preferences';
 
 let judgeViewProvider: JudgeViewProvider;
 
-declare global {
-    module NodeJS {
-        interface Global {
-            context: vscode.ExtensionContext;
-        }
-    }
-}
-
 export const getJudgeViewProvider = () => {
     return judgeViewProvider;
 };
@@ -76,7 +68,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
 export function activate(context: vscode.ExtensionContext) {
     console.log('cph: activate() execution started');
 
-    global.context = context;
+    (globalThis as any).context = context;
 
     const statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left,

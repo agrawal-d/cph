@@ -1,6 +1,6 @@
 import { Case, VSToWebViewMessage } from '../../types';
 import { useState, createRef, useEffect } from 'react';
-import TextareaAutosize from 'react-autosize-textarea/lib';
+import TextareaAutosize from 'react-textarea-autosize';
 import React from 'react';
 
 export default function CaseView(props: {
