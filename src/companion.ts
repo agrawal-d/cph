@@ -18,6 +18,7 @@ import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
 import { words_in_text } from './utilsPure';
 import telmetry from './telmetry';
+import os from 'os';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -26,7 +27,7 @@ const COMPANION_LOGGING = false;
 export const submitKattisProblem = (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
     const srcPath = problem.srcPath;
-    const homedir = require('os').homedir();
+    const homedir = os.homedir();
     let submitPath = `${homedir}/.kattis/submit.py`;
     if (process.platform == 'win32') {
         if (

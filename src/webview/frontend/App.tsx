@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {
     Problem,
     WebviewToVSEvent,
@@ -678,4 +678,5 @@ function App() {
     }
 }
 
-ReactDOM.render(<App />, document.getElementById('app'));
+const root = createRoot(document.getElementById('app')!);
+root.render(<App />);
