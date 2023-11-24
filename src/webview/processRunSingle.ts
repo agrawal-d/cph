@@ -7,12 +7,14 @@ import { isResultCorrect } from '../judge';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
 import { getIgnoreSTDERRORPref } from '../preferences';
+import telmetry from '../telmetry';
 
 export const runSingleAndSave = async (
     problem: Problem,
     id: number,
     skipCompile = false,
 ) => {
+    globalThis.reporter.sendTelemetryEvent(telmetry.RUN_TESTCASE);
     console.log('Run and save started', problem, id);
     const srcPath = problem.srcPath;
     const language = getLanguage(srcPath);

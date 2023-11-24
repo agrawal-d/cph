@@ -9,6 +9,9 @@ import {
 import { submitToCodeForces, submitToKattis } from './submit';
 import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import config from './config';
+import telmetry from './telmetry';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -62,13 +65,16 @@ const registerCommands = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
+    globalThis.reporter = new TelemetryReporter(config.telemetryKey);
+    context.subscriptions.push(globalThis.reporter);
+
+    globalThis.reporter.sendTelemetryEvent(telmetry.EXTENSION_ACTIVATED);
 };
 
 // This method is called when the extension is activated
 export function activate(context: vscode.ExtensionContext) {
     console.log('cph: activate() execution started');
-
-    (globalThis as any).context = context;
+    globalThis.context = context;
 
     const statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left,

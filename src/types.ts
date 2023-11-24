@@ -1,3 +1,6 @@
+import TelemetryReporter from '@vscode/extension-telemetry';
+import * as vscode from 'vscode';
+
 /** Valid name for a VS Code preference section for the extension */
 export type prefSection =
     | 'general.saveLocation'
@@ -203,3 +206,8 @@ export type CphSubmitResponse = {
 export type WebViewpersistenceState = {
     ignoreSpaceWarning: boolean;
 };
+
+declare global {
+    var reporter: TelemetryReporter;
+    var context: vscode.ExtensionContext;
+}

@@ -4,11 +4,11 @@
 [![Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
 
 Quickly compile, run and judge competitive programming problems in VS Code.
-Automatically download testcases , or write & test your own problems.
-Once you are done, easily your solutions directly with the click of a button!
+Automatically download testcases , or write & test your own problems. Once you
+are done, easily your solutions directly with the click of a button!
 
-Cph supports a large number of popular platforms like Codeforces, Codechef, TopCoder etc.
-with the help of competitive companion browser extension
+Cph supports a large number of popular platforms like Codeforces, Codechef,
+TopCoder etc. with the help of competitive companion browser extension
 
 ![Screenshot](screenshots/screenshot-main.png)
 
@@ -65,6 +65,12 @@ You can contribute to this extension in many ways:
 
 **Before creating a Pull Request, please create an issue to discuss the
 approach. It makes reviewing and accepting the PR much easier.**
+
+## Telemetry
+
+The extension collects basic events defined in `src/telmetry.ts`. To disable,
+modify the setting `telemetry.telemetryLevel` (applies to all VSCode
+extensions).
 
 ## License
 

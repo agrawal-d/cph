@@ -8,10 +8,12 @@ import {
 } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
+import telmetry from './telmetry';
 export let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {
     onlineJudgeEnv = value;
+    globalThis.reporter.sendTelemetryEvent(telmetry.ONLINE_JUDGE_ENV);
     console.log('online judge env:', onlineJudgeEnv);
 };
 

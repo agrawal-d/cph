@@ -17,12 +17,14 @@ import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
 import { words_in_text } from './utilsPure';
+import telmetry from './telmetry';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 const COMPANION_LOGGING = false;
 
 export const submitKattisProblem = (problem: Problem) => {
+    globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
     const srcPath = problem.srcPath;
     const homedir = require('os').homedir();
     let submitPath = `${homedir}/.kattis/submit.py`;
@@ -85,7 +87,7 @@ export const storeSubmitProblem = (problem: Problem) => {
         sourceCode,
         languageId,
     };
-
+    globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_CODEFORCES);
     console.log('Stored savedResponse', savedResponse);
 };
 
@@ -103,10 +105,14 @@ export const setupCompanionServer = () => {
                 }
             });
             req.on('close', function () {
-                const problem: Problem = JSON.parse(rawProblem);
-                handleNewProblem(problem);
-                COMPANION_LOGGING &&
-                    console.log('Companion server closed connection.');
+                try {
+                    const problem: Problem = JSON.parse(rawProblem);
+                    handleNewProblem(problem);
+                    COMPANION_LOGGING &&
+                        console.log('Companion server closed connection.');
+                } catch (e) {
+                    // Ignore
+                }
             });
             res.write(JSON.stringify(savedResponse));
             if (headers['cph-submit'] == 'true') {
@@ -158,6 +164,7 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
 
 /** Handle the `problem` sent by Competitive Companion, such as showing the webview, opening an editor, managing layout etc. */
 const handleNewProblem = async (problem: Problem) => {
+    globalThis.reporter.sendTelemetryEvent(telmetry.GET_PROBLEM_FROM_COMPANION);
     // If webview may be focused, close it, to prevent layout bug.
     if (vscode.window.activeTextEditor == undefined) {
         getJudgeViewProvider().extensionToJudgeViewMessage({
@@ -225,9 +232,8 @@ const handleNewProblem = async (problem: Problem) => {
                     `Template file does not exist: ${templateLocation}`,
                 );
             } else {
-                const templateContents = readFileSync(
-                    templateLocation,
-                ).toString();
+                const templateContents =
+                    readFileSync(templateLocation).toString();
                 writeFileSync(srcPath, templateContents);
             }
         }

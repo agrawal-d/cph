@@ -1,4 +1,7 @@
 {
+    "files":[
+        "src/types.ts",
+    ],
     "compilerOptions": {
         "module": "commonjs",
         "target": "es2017",

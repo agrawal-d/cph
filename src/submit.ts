@@ -2,8 +2,10 @@ import { getProblem } from './parser';
 import * as vscode from 'vscode';
 import { storeSubmitProblem, submitKattisProblem } from './companion';
 import { getJudgeViewProvider } from './extension';
+import telmetry from './telmetry';
 
 export const submitToKattis = async () => {
+    globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
     if (!srcPath) {
         vscode.window.showErrorMessage(

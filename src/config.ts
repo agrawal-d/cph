@@ -4,6 +4,7 @@
  */
 
 export default {
+    telemetryKey: 'e57deb32-2bd3-4c02-89a5-d1f1ed0bc0d6',
     port: 27121, // companion listener server
     timeout: 10000, // for a testcase run
     extensions: {
