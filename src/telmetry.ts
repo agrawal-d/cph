@@ -8,6 +8,5 @@ export default {
     NEW_LOCAL_PROBLEM: 'new-local-problem',
     KILL_RUNNING: 'kill-running',
     DELETE_ALL_TESTCASES: 'delete-all-testcases',
-    ONLINE_JUDGE_ENV: 'online-judge-env',
     USE_EXTENSION: 'use-extension',
 };
