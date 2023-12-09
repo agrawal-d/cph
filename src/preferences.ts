@@ -53,6 +53,9 @@ export const getCArgsPref = (): string[] =>
 export const getPythonArgsPref = (): string[] =>
     getPreference('language.python.Args').split(' ') || [];
 
+export const getHaskellArgsPref = (): string[] =>
+    getPreference('language.haskell.Args').split(' ') || [];
+
 export const getRustArgsPref = (): string[] =>
     getPreference('language.rust.Args').split(' ') || [];
 
@@ -101,6 +104,8 @@ export const getJsCommand = (): string =>
     getPreference('language.js.Command') || 'node';
 export const getGoCommand = (): string =>
     getPreference('language.go.Command') || 'go';
+export const getHaskellCommand = (): string =>
+    getPreference('language.haskell.Command') || 'ghc';
 
 export const getMenuChoices = (): string[] =>
     getPreference('general.menuChoices').split(' ');
@@ -142,6 +147,11 @@ export const getLanguageId = (srcPath: string): number => {
 
         case '.go': {
             compiler = getPreference('language.go.SubmissionCompiler');
+            break;
+        }
+
+        case '.hs': {
+            compiler = getPreference('language.haskell.SubmissionCompiler');
             break;
         }
     }

@@ -99,6 +99,17 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             ret = [srcPath, '-d', binDir, ...args];
             break;
         }
+        case 'hs': {
+            ret = [
+                srcPath,
+                '-o',
+                getBinSaveLocation(srcPath),
+                '-outputdir',
+                '/tmp/ghc/',
+                ...args,
+            ];
+            break;
+        }
         default: {
             ret = [];
             break;

@@ -14,6 +14,7 @@ import {
     getJavaArgsPref,
     getJsArgsPref,
     getGoArgsPref,
+    getHaskellArgsPref,
     getCCommand,
     getCppCommand,
     getPythonCommand,
@@ -21,6 +22,7 @@ import {
     getJavaCommand,
     getJsCommand,
     getGoCommand,
+    getHaskellCommand,
 } from './preferences';
 import { Language, Problem } from './types';
 import telmetry from './telmetry';
@@ -97,6 +99,14 @@ export const getLanguage = (srcPath: string): Language => {
                 name: langName,
                 args: [...getGoArgsPref()],
                 compiler: getGoCommand(),
+                skipCompile: false,
+            };
+        }
+        case 'hs': {
+            return {
+                name: langName,
+                args: [...getHaskellArgsPref()],
+                compiler: getHaskellCommand(),
                 skipCompile: false,
             };
         }

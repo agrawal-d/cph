@@ -191,6 +191,25 @@
                     "default": "go",
                     "description": "Command used to compile .go files."
                 },
+                "cph.language.haskell.Args": {
+                    "title": "Compilation flags for .hs files",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to go while compiling your file."
+                },
+                "cph.language.haskell.SubmissionCompiler": {
+                    "type": "string",
+                    "default": "Haskell GHC 8.10.1",
+                    "enum": [
+                        "Haskell GHC 8.10.1"
+                    ],
+                    "description": "The compiler chosen in the drop down during Codeforces submission for haskell"
+                },
+                "cph.language.haskell.Command": {
+                    "type": "string",
+                    "default": "ghc",
+                    "description": "Command used to compile .hs files."
+                },
                 "cph.language.java.Args": {
                     "title": "Compilation flags for Java",
                     "type": "string",

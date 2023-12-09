@@ -51,6 +51,7 @@ enter testcases.
 -   C
 -   Rust
 -   Go
+-   Haskell
 -   Python
 -   Java
 -   JavaScript (Node.js)
