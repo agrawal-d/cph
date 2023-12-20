@@ -104,8 +104,8 @@ const getFlags = (language: Language, srcPath: string): string[] => {
                 srcPath,
                 '-o',
                 getBinSaveLocation(srcPath),
-                '-outputdir',
-                '/tmp/ghc/',
+                '-no-keep-hi-files',
+                '-no-keep-o-files',
                 ...args,
             ];
             break;
