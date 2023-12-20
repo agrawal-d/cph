@@ -15,6 +15,7 @@ export default {
         java: 'java',
         js: 'js',
         go: 'go',
+        hs: 'hs',
     },
     compilers: {
         c: 'gcc',
@@ -24,6 +25,7 @@ export default {
         java: 'javac',
         js: 'node',
         go: 'go',
+        hs: 'hs',
     },
     compilerToId: {
         'GNU G++17 7.3.0': 54,
@@ -45,7 +47,8 @@ export default {
         'GNU GCC C11 5.1.0': 43,
         'Go 1.19.5': 32,
         'Rust 1.66.0 (2021)': 75,
+        'Haskell GHC 8.10.1': 12,
     },
-    supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java', 'js', 'go'],
+    supportedExtensions: ['py', 'cpp', 'rs', 'c', 'java', 'js', 'go', 'hs'],
     skipCompile: ['py', 'js'],
 };

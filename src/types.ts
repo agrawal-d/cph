@@ -33,6 +33,9 @@ export type prefSection =
     | 'language.python.Args'
     | 'language.python.SubmissionCompiler'
     | 'language.python.Command'
+    | 'language.haskell.Args'
+    | 'language.haskell.SubmissionCompiler'
+    | 'language.haskell.Command'
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation';
@@ -44,7 +47,15 @@ export type Language = {
     skipCompile: boolean;
 };
 
-export type LangNames = 'python' | 'c' | 'cpp' | 'rust' | 'java' | 'js' | 'go';
+export type LangNames =
+    | 'python'
+    | 'c'
+    | 'cpp'
+    | 'rust'
+    | 'java'
+    | 'js'
+    | 'go'
+    | 'hs';
 
 export type TestCase = {
     input: string;
