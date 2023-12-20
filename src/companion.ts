@@ -98,12 +98,9 @@ export const setupCompanionServer = () => {
             const { headers } = req;
             let rawProblem = '';
 
-            req.on('readable', function () {
+            req.on('data', (chunk) => {
                 COMPANION_LOGGING && console.log('Companion server got data');
-                const tmp = req.read();
-                if (tmp && tmp != null && tmp.length > 0) {
-                    rawProblem += tmp;
-                }
+                rawProblem += chunk;
             });
             req.on('close', function () {
                 try {
@@ -112,7 +109,9 @@ export const setupCompanionServer = () => {
                     COMPANION_LOGGING &&
                         console.log('Companion server closed connection.');
                 } catch (e) {
-                    // Ignore
+                    vscode.window.showErrorMessage(
+                        `Error parsing problem from companion "${e}"`,
+                    );
                 }
             });
             res.write(JSON.stringify(savedResponse));
