@@ -33,6 +33,9 @@ export type prefSection =
     | 'language.python.Args'
     | 'language.python.SubmissionCompiler'
     | 'language.python.Command'
+    | 'language.ruby.Args'
+    | 'language.ruby.SubmissionCompiler'
+    | 'language.ruby.Command'
     | 'language.haskell.Args'
     | 'language.haskell.SubmissionCompiler'
     | 'language.haskell.Command'
@@ -49,6 +52,7 @@ export type Language = {
 
 export type LangNames =
     | 'python'
+    | 'ruby'
     | 'c'
     | 'cpp'
     | 'rust'

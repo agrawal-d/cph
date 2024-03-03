@@ -153,6 +153,25 @@
                     "default": "python3",
                     "description": "Command used to run python files. Example 'py', 'python3', 'pypy3', etc."
                 },
+                "cph.language.ruby.Args": {
+                    "title": "Compilation flags for ruby",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to ruby while compiling your file."
+                },
+                "cph.language.ruby.SubmissionCompiler": {
+                    "type": "string",
+                    "default": "Ruby 3.2.2",
+                    "enum": [
+                        "Ruby 3.2.2"
+                    ],
+                    "description": "The compiler chosen in the drop down during Codeforces submission for python"
+                },
+                "cph.language.ruby.Command": {
+                    "type": "string",
+                    "default": "ruby",
+                    "description": "Command used to run ruby files."
+                },
                 "cph.language.rust.Args": {
                     "title": "Compilation flags for Rust",
                     "type": "string",
@@ -266,13 +285,14 @@
                         "python",
                         "rust",
                         "js",
-                        "java"
+                        "java",
+                        "ruby"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java js python c rust",
+                    "default": "cpp java js python c rust ruby",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
                 "cph.general.useShortCodeForcesName": {

@@ -53,6 +53,9 @@ export const getCArgsPref = (): string[] =>
 export const getPythonArgsPref = (): string[] =>
     getPreference('language.python.Args').split(' ') || [];
 
+export const getRubyArgsPref = (): string[] =>
+    getPreference('language.ruby.Args').split(' ').filter(Boolean) || [];
+
 export const getHaskellArgsPref = (): string[] =>
     getPreference('language.haskell.Args').split(' ') || [];
 
@@ -96,6 +99,8 @@ export const getCppCommand = (): string =>
     getPreference('language.cpp.Command') || 'g++';
 export const getPythonCommand = (): string =>
     getPreference('language.python.Command') || 'python3';
+export const getRubyCommand = (): string =>
+    getPreference('language.ruby.Command') || 'ruby';
 export const getRustCommand = (): string =>
     getPreference('language.rust.Command') || 'rustc';
 export const getJavaCommand = (): string =>
@@ -142,6 +147,11 @@ export const getLanguageId = (srcPath: string): number => {
 
         case '.py': {
             compiler = getPreference('language.python.SubmissionCompiler');
+            break;
+        }
+
+        case '.rb': {
+            compiler = getPreference('language.ruby.SubmissionCompiler');
             break;
         }
 
