@@ -121,7 +121,7 @@ export const isValidLanguage = (srcPath: string): boolean => {
 };
 
 export const isCodeforcesUrl = (url: URL): boolean => {
-    return url.hostname === 'codeforces.com';
+    return url.hostname.includes('codeforces.com');
 };
 
 export const ocAppend = (string: string) => {
