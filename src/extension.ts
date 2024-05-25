@@ -9,6 +9,7 @@ import {
 import { submitToCodeForces, submitToKattis } from './submit';
 import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
+import { registerCppSTLCompletionProviders } from './cppStlCompletions';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import config from './config';
 import telmetry from './telmetry';
@@ -87,6 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
     statusBarItem.command = 'cph.runTestCases';
 
     registerCommands(context);
+    registerCppSTLCompletionProviders(context);
     setupCompanionServer();
     checkLaunchWebview();
 
