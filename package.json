@@ -321,7 +321,6 @@
         "@typescript-eslint/parser": "^6.12.0",
         "@vscode/codicons": "^0.0.35",
         "copy-webpack-plugin": "^11.0.0",
-        "eslint": "^8.54.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-prettier": "^5.0.1",
         "eslint-plugin-react": "^7.33.2",
@@ -334,11 +333,11 @@
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
+        "@vscode/extension-telemetry": "^0.9.0",
         "python-shell": "^5.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-textarea-autosize": "^8.5.3",
-        "@vscode/extension-telemetry": "^0.9.0"
+        "react-textarea-autosize": "^8.5.3"
     },
     "repository": {
         "type": "git",

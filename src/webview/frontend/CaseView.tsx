@@ -16,10 +16,10 @@ export default function CaseView(props: {
     const { id, result } = props.case;
 
     const [input, setInput] = useState<string>(
-        props.case.testcase.input.trim(),
+        props.case.testcase.input,
     );
     const [output, setOutput] = useState<string>(
-        props.case.testcase.output.trim(),
+        props.case.testcase.output,
     );
     const [running, setRunning] = useState<boolean>(false);
     const [minimized, setMinimized] = useState<boolean>(
@@ -106,8 +106,9 @@ export default function CaseView(props: {
     if (result?.signal) {
         resultText = result?.signal;
     } else if (result?.stdout) {
-        resultText = result.stdout.trim() || ' ';
+        resultText = result.stdout || ' ';
     }
+    console.log(resultText)
     if (!result) {
         resultText = 'Run to show output';
     }

@@ -24,11 +24,11 @@ export const isResultCorrect = (
     const len = expectedLines.length;
 
     for (let i = 0; i < len; i++) {
-        if (expectedLines[i].trim() !== resultLines[i].trim()) {
+        if (expectedLines[i] !== resultLines[i]) {
             console.log(
                 'Judge Failed here: ',
-                expectedLines[i].trim(),
-                resultLines[i].trim(),
+                expectedLines[i],
+                resultLines[i],
             );
             return false;
         }
