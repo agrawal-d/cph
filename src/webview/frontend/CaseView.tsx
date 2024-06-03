@@ -104,7 +104,7 @@ export default function CaseView(props: {
     } else if (result?.stdout) {
         resultText = result.stdout || ' ';
     }
-    console.log(resultText);
+    
     if (!result) {
         resultText = 'Run to show output';
     }
