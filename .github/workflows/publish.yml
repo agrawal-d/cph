@@ -1,4 +1,4 @@
-name: Webpack
+name: Publish Extension
 
 on:
     push:
@@ -23,5 +23,5 @@ jobs:
             - name: Publish Extension
               run: ./.github/publish.sh
               env:
-                VSCE_PAT: ${{ secrets.ADO_PAT }}
+                VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
