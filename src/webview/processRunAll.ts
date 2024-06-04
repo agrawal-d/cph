@@ -21,7 +21,7 @@ export default async (problem: Problem) => {
             id: testCase.id,
             problem: problem,
         });
-        await runSingleAndSave(problem, testCase.id, true);
+        await runSingleAndSave(problem, testCase.id, true, true);
     }
     console.log('Run all finished');
     deleteBinary(

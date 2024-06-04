@@ -14,8 +14,6 @@ import {
 import { setOnlineJudgeEnv } from '../compiler';
 import telmetry from '../telmetry';
 
-let initializedOnce = false;
-
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
 
@@ -109,11 +107,6 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
     }
 
     private getInitialProblem() {
-        if (!initializedOnce) {
-            globalThis.reporter.sendTelemetryEvent(telmetry.USE_EXTENSION);
-        }
-
-        initializedOnce = true;
         const doc = vscode.window.activeTextEditor?.document;
         this.extensionToJudgeViewMessage({
             command: 'new-problem',

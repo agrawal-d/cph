@@ -104,13 +104,16 @@ export const setupCompanionServer = () => {
             });
             req.on('close', function () {
                 try {
+                    if (rawProblem == '') {
+                        return;
+                    }
                     const problem: Problem = JSON.parse(rawProblem);
                     handleNewProblem(problem);
                     COMPANION_LOGGING &&
                         console.log('Companion server closed connection.');
                 } catch (e) {
                     vscode.window.showErrorMessage(
-                        `Error parsing problem from companion "${e}"`,
+                        `Error parsing problem from companion "${e}. Raw problem: '${rawProblem}'"`,
                     );
                 }
             });

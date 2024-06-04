@@ -1,5 +1,4 @@
 export default {
-    EXTENSION_ACTIVATED: 'extension-activated',
     RUN_TESTCASE: 'run-testcase',
     RUN_ALL_TESTCASES: 'run-all-testcases',
     SUBMIT_TO_CODEFORCES: 'submit-to-codeforces',
@@ -8,5 +7,4 @@ export default {
     NEW_LOCAL_PROBLEM: 'new-local-problem',
     KILL_RUNNING: 'kill-running',
     DELETE_ALL_TESTCASES: 'delete-all-testcases',
-    USE_EXTENSION: 'use-extension',
 };
