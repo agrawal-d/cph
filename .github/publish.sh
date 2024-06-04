@@ -7,9 +7,6 @@ if [ -z "$VSCE_PAT" ]; then
   exit 1
 fi
 
-# Print first 3 and last 3 chars of PAT
-echo "VSCE_PAT: $(echo $VSCE_PAT | cut -c1-3)***$(echo $VSCE_PAT | rev | cut -c1-3 | rev)"
-
 set -e
 set -x
 
@@ -18,6 +15,6 @@ month=$(date +%-m)
 epoch=$(date +%s)
 version="$year.$month.$epoch"
 
-vsce publish $version
+vsce publish --allow-star-activation --no-git-tag-version $version 
 
 echo "Published version $version"
