@@ -1,5 +1,10 @@
 # Changelog
 
+## New versions
+
+Since mid-2024, versions are of the format YEAR.MONTH.EPOCH and are created for every commit on the `main` branch.
+For details about the changes, refer to the Git repository.
+
 ## 5.9.2
 
 -   Minor UI improvments for small sidebar widths.
