@@ -15,12 +15,8 @@ export default function CaseView(props: {
 }) {
     const { id, result } = props.case;
 
-    const [input, setInput] = useState<string>(
-        props.case.testcase.input,
-    );
-    const [output, setOutput] = useState<string>(
-        props.case.testcase.output
-    );
+    const [input, setInput] = useState<string>(props.case.testcase.input);
+    const [output, setOutput] = useState<string>(props.case.testcase.output);
     const [running, setRunning] = useState<boolean>(false);
     const [minimized, setMinimized] = useState<boolean>(
         props.case.result?.pass === true,

@@ -11,7 +11,6 @@ import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import config from './config';
-import telmetry from './telmetry';
 
 let judgeViewProvider: JudgeViewProvider;
 
