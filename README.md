@@ -5,7 +5,7 @@
 
 Quickly compile, run and judge competitive programming problems in VS Code.
 Automatically download testcases , or write & test your own problems. Once you
-are done, easily your solutions directly with the click of a button!
+are done, easily submit your solutions directly with the click of a button!
 
 Cph supports a large number of popular platforms like Codeforces, Codechef,
 TopCoder etc. with the help of competitive companion browser extension
