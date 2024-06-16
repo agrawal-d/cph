@@ -141,6 +141,11 @@ export type CreateLocalProblem = {
     command: 'create-local-problem';
 };
 
+export type OpenUrl = {
+    command: 'url';
+    url: string;
+};
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | GetInitialProblem
@@ -151,7 +156,8 @@ export type WebviewToVSEvent =
     | DeleteTcsCommand
     | SubmitCf
     | OnlineJudgeEnv
-    | SubmitKattis;
+    | SubmitKattis
+    | OpenUrl;
 
 export type RunningCommand = {
     command: 'running';
@@ -216,7 +222,7 @@ export type CphSubmitResponse = {
 };
 
 export type WebViewpersistenceState = {
-    ignoreSpaceWarning: boolean;
+    dialogCloseDate: number;
 };
 
 declare global {

@@ -162,7 +162,7 @@ export default function CaseView(props: {
                         disabled={running}
                     >
                         <span className="icon">
-                            <i className="codicon codicon-debug-restart"></i>
+                            <i className="codicon codicon-play"></i>
                         </span>{' '}
                     </button>
                     <button

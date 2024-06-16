@@ -23,5 +23,4 @@ jobs:
             - name: Publish Extension
               run: ./.github/publish.sh
               env:
-                VSCE_PAT: ${{ secrets.VSCE_PAT }}
-
+                  VSCE_PAT: ${{ secrets.VSCE_PAT }}

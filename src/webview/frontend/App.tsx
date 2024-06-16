@@ -17,6 +17,8 @@ declare const vscodeApi: {
     setState: (state: WebViewpersistenceState) => void;
 };
 
+const payPalUrl = 'https://www.paypal.com/ncp/payment/CMLKCFEJEMX5L';
+
 function Judge(props: {
     problem: Problem;
     updateProblem: (problem: Problem) => void;
@@ -35,6 +37,17 @@ function Judge(props: {
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
     const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
     const [remoteMessage, setRemoteMessage] = useState<string>('');
+    const [webviewState, setWebviewState] = useState<WebViewpersistenceState>(
+        () => {
+            const vscodeState = vscodeApi.getState();
+            console.log('Restored state:', vscodeState);
+            return {
+                dialogCloseDate: vscodeState?.dialogCloseDate || Date.now(),
+            };
+        },
+    );
+
+    console.log(webviewState);
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -45,6 +58,19 @@ function Judge(props: {
             tests: testCases,
         });
     }, [cases]);
+
+    const closeDonateBox = () => {
+        const newState = {
+            ...webviewState,
+            dialogCloseDate: Date.now(),
+        };
+        setWebviewState(newState);
+        vscodeApi.setState(newState);
+    };
+
+    const sendMessageToVSCode = (message: WebviewToVSEvent) => {
+        vscodeApi.postMessage(message);
+    };
 
     useEffect(() => {
         console.log('Fetching remote text message');
@@ -110,7 +136,7 @@ function Judge(props: {
     };
 
     const refreshOnlineJudge = () => {
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'online-judge-env',
             value: onlineJudgeEnv,
         });
@@ -128,7 +154,7 @@ function Judge(props: {
         problem.tests[idx].input = input;
         problem.tests[idx].output = output;
 
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'run-single-and-save',
             problem,
             id,
@@ -162,7 +188,7 @@ function Judge(props: {
 
     // Stop running executions.
     const stop = () => {
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'kill-running',
             problem,
         });
@@ -170,7 +196,7 @@ function Judge(props: {
 
     // Deletes the .prob file and closes webview
     const deleteTcs = () => {
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'delete-tcs',
             problem,
         });
@@ -178,14 +204,14 @@ function Judge(props: {
 
     const runAll = () => {
         refreshOnlineJudge();
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'run-all-and-save',
             problem,
         });
     };
 
     const submitKattis = () => {
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'submitKattis',
             problem,
         });
@@ -194,7 +220,7 @@ function Judge(props: {
     };
 
     const submitCf = () => {
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'submitCf',
             problem,
         });
@@ -225,7 +251,7 @@ function Judge(props: {
     const toggleOnlineJudgeEnv = () => {
         const newEnv = !onlineJudgeEnv;
         setOnlineJudgeEnv(newEnv);
-        vscodeApi.postMessage({
+        sendMessageToVSCode({
             command: 'online-judge-env',
             value: newEnv,
         });
@@ -291,11 +317,15 @@ function Judge(props: {
     });
 
     const renderSubmitButton = () => {
+        if (!problem.url.startsWith('http')) {
+            return null;
+        }
+
         let url: URL;
         try {
             url = new URL(problem.url);
         } catch (err) {
-            console.error(err);
+            console.error(err, problem);
             return null;
         }
         if (
@@ -358,9 +388,45 @@ function Judge(props: {
         }
     };
 
+    const renderDonateButton = () => {
+        const diff = new Date().getTime() - webviewState.dialogCloseDate;
+        const diffInDays = diff / (1000 * 60 * 60 * 24);
+        console.log('Diff in days:', diffInDays);
+        if (diffInDays < 14) {
+            return null;
+        }
+
+        return (
+            <div className="donate-box">
+                <a
+                    href="javascript:void(0)"
+                    className="right"
+                    title="Close dialog"
+                    onClick={() => closeDonateBox()}
+                >
+                    <i className="codicon codicon-close"></i>
+                </a>
+                <h1>🌸</h1>
+                <h3>If you find CPH useful, please consider supporting.</h3>
+                <p>
+                    Your contribution helps support continued development of
+                    CPH. CPH is free and open source, thanks to your support.
+                </p>
+                <a
+                    href={payPalUrl}
+                    className="btn btn-pink"
+                    title="Open donation page"
+                >
+                    <i className="codicon codicon-heart-filled"></i> Donate
+                </a>
+            </div>
+        );
+    };
+
     return (
         <div className="ui">
             {notification && <div className="notification">{notification}</div>}
+            {renderDonateButton()}
             <div className="meta">
                 <h1 className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
@@ -402,6 +468,16 @@ function Judge(props: {
                 <br />
                 <div>
                     <small>
+                        <a
+                            href={payPalUrl}
+                            className="btn btn-pink"
+                            title="Donate"
+                        >
+                            <i className="codicon codicon-heart-filled"></i>{' '}
+                            Support
+                        </a>
+                    </small>
+                    <small>
                         <a href="https://rb.gy/vw82u5" className="btn">
                             <i className="codicon codicon-feedback"></i>{' '}
                             Feedback
@@ -412,7 +488,6 @@ function Judge(props: {
                     <p>{remoteMessage}</p>
                 </div>
             </div>
-
             <div className="actions">
                 <div className="row">
                     <button
@@ -421,7 +496,7 @@ function Judge(props: {
                         title="Run all testcases again"
                     >
                         <span className="icon">
-                            <i className="codicon codicon-debug-restart"></i>
+                            <i className="codicon codicon-run-above"></i>
                         </span>{' '}
                         <span className="action-text">Run All</span>
                     </button>
@@ -447,16 +522,21 @@ function Judge(props: {
                         </span>{' '}
                         <span className="action-text">Stop</span>
                     </button>
-                    <a
+                    <button
                         className="btn"
                         title="Help"
-                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
+                        onClick={() =>
+                            sendMessageToVSCode({
+                                command: 'url',
+                                url: 'https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md',
+                            })
+                        }
                     >
                         <span className="icon">
                             <i className="codicon codicon-question"></i>
                         </span>{' '}
                         <span className="action-text">Help</span>
-                    </a>
+                    </button>
                     <button
                         className="btn btn-red right"
                         onClick={deleteTcs}
@@ -531,11 +611,6 @@ function App() {
         }, 500);
     };
 
-    const ignoreSpaceWarning = () => {
-        vscodeApi.setState({ ignoreSpaceWarning: true });
-        forceUpdate();
-    };
-
     const handleRunSingleResult = (data: ResultCommand) => {
         const idx = cases.findIndex(
             (testCase) => testCase.id === data.result.id,
@@ -592,11 +667,6 @@ function App() {
         });
     };
 
-    const getSpaceClassName = () =>
-        vscodeApi.getState()?.ignoreSpaceWarning === true
-            ? 'noSpaceWarning'
-            : 'spaceWarning';
-
     if (problem === undefined && showFallback) {
         return (
             <>
@@ -628,46 +698,12 @@ function App() {
         );
     } else if (problem !== undefined) {
         return (
-            <div className={getSpaceClassName()}>
-                <div className="size-warning">
-                    <h4 className="icon">
-                        <i
-                            className="codicon codicon-warning"
-                            style={{ fontSize: '20px' }}
-                        ></i>{' '}
-                        Competitive Programming Helper
-                    </h4>
-                    <p>
-                        The sidebar width is too small to display the UI. Please
-                        click and drag from the edge of the sidebar to increase
-                        the width.
-                    </p>
-                    <small>
-                        This warning will go away once the width is large
-                        enough.
-                    </small>
-                    <br />
-                    <br />
-                    <div
-                        className="btn btn-primary"
-                        onClick={ignoreSpaceWarning}
-                    >
-                        <span className="icon">
-                            <i
-                                className="codicon codicon-eye-closed"
-                                style={{ fontSize: '20px' }}
-                            ></i>{' '}
-                            Ignore warning forever
-                        </span>
-                    </div>
-                </div>
-                <Judge
-                    problem={problem}
-                    updateProblem={setProblem}
-                    cases={cases}
-                    updateCases={setCases}
-                />
-            </div>
+            <Judge
+                problem={problem}
+                updateProblem={setProblem}
+                cases={cases}
+                updateCases={setCases}
+            />
         );
     } else {
         return (

@@ -1,24 +1,38 @@
 * {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                     supported by Chrome and Opera */
     cursor: default !important;
     box-sizing: border-box;
 }
+
 .selectable {
-    -webkit-touch-callout: text; /* iOS Safari */
-    -webkit-user-select: text; /* Safari */
-    -khtml-user-select: text; /* Konqueror HTML */
-    -moz-user-select: text; /* Firefox */
-    -ms-user-select: text; /* Internet Explorer/Edge */
-    user-select: text; /* Non-prefixed version, currently
+    -webkit-touch-callout: text;
+    /* iOS Safari */
+    -webkit-user-select: text;
+    /* Safari */
+    -khtml-user-select: text;
+    /* Konqueror HTML */
+    -moz-user-select: text;
+    /* Firefox */
+    -ms-user-select: text;
+    /* Internet Explorer/Edge */
+    user-select: text;
+    /* Non-prefixed version, currently
                                     supported by Chrome and Opera */
     cursor: text !important;
 }
+
 body {
     margin: 0 auto;
     padding: 0px;
@@ -36,9 +50,11 @@ body {
 #app {
     margin-bottom: 100px;
 }
+
 .btn:hover {
     filter: brightness(125%);
 }
+
 .actions {
     position: fixed;
     bottom: 0px;
@@ -48,6 +64,16 @@ body {
     background: var(--vscode-menu-background);
     box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.3);
 }
+
+.donate-box {
+    margin: 10px;
+    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid rgba(70, 70, 70, 0.11);
+    /*gradient from light pink ( transparentish ) to full transparent */
+    background: linear-gradient(0deg, #f382e067, transparent);
+}
+
 .case {
     background: rgba(0, 0, 0, 0.1);
     padding: 8px;
@@ -81,9 +107,11 @@ a[href]:hover {
     padding: 10px;
     background: rgba(0, 0, 0, 0.1);
 }
+
 .first-time-message ul li {
     margin-bottom: 10px;
 }
+
 .pre,
 pre,
 textarea {
@@ -118,6 +146,7 @@ code {
 ::-webkit-resizer {
     display: none;
 }
+
 textarea:focus,
 textarea:active {
     background: black;
@@ -202,12 +231,20 @@ textarea:active {
 .btn-green {
     background: #8ae33291;
 }
+
 .btn-red {
     background: #eb244c91;
 }
+
+.btn-pink {
+    background: #ffaefbe3;
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+}
+
 .btn:focus {
     border-color: var(--vscode-focusBorder);
 }
+
 .btn-orange {
     background: rgba(244, 164, 15, 0.781);
 }
@@ -232,15 +269,19 @@ textarea:active {
 h4 {
     padding: 5px;
 }
+
 #filepath {
     display: none;
 }
+
 #running-next-box {
     padding: 10px;
 }
+
 body.vscode-light * {
     color: black;
 }
+
 body.vscode-light textarea,
 pre {
     background: rgba(255, 255, 255, 0.5);
@@ -279,10 +320,12 @@ button:disabled {
     color: greenyellow;
     padding-right: 5px;
 }
+
 .result-fail {
     color: red;
     padding-right: 5px;
 }
+
 .running-text {
     color: yellow;
     padding-right: 5px;
@@ -317,8 +360,10 @@ button:disabled {
 }
 
 .loader {
-    border: 2px solid #f3f3f3; /* Light grey */
-    border-top: 2px solid #3498db; /* Blue */
+    border: 2px solid #f3f3f3;
+    /* Light grey */
+    border-top: 2px solid #3498db;
+    /* Blue */
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -332,6 +377,7 @@ button:disabled {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -370,6 +416,7 @@ body.vscode-light .notification {
     color: white !important;
     border: 1px solid rgb(92, 95, 97);
 }
+
 /* @keyframes runs {
     50% {
         border-color: orange;
@@ -383,6 +430,7 @@ body.vscode-light .notification {
     font-weight: bolder;
     color: rgb(25, 152, 211) !important;
 }
+
 body.vscode-light .case-number {
     color: rgb(11, 93, 131) !important;
 }
@@ -393,18 +441,11 @@ body.vscode-light .case-number {
     font-size: 80%;
 }
 
-.size-warning {
-    padding: 10px;
-    margin: 10px;
-    border: 2px solid rgb(11, 93, 131);
-    display: none;
-}
-
 .row {
     display: inline;
 }
 
-@media only screen and (max-width: 370px) {
+@media only screen and (max-width: 400px) {
     .actions {
         border-top: 1px solid rgba(0, 0, 0, 0.5);
     }
@@ -418,23 +459,8 @@ body.vscode-light .case-number {
     .size-warning {
         display: block;
     }
-    .ui {
-        display: none;
-    }
 
     .fallback {
         display: block !important;
-    }
-
-    .noSpaceWarning .size-warning {
-        display: none !important;
-    }
-
-    .noSpaceWarning .ui {
-        display: block !important;
-    }
-
-    .action-text {
-        display: none;
     }
 }

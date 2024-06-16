@@ -97,6 +97,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         break;
                     }
 
+                    case 'url': {
+                        vscode.env.openExternal(vscode.Uri.parse(message.url));
+                        break;
+                    }
+
                     default: {
                         console.error('Unknown event received from webview');
                     }
