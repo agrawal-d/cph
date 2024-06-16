@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
     Problem,
@@ -40,10 +40,12 @@ function Judge(props: {
     const [webviewState, setWebviewState] = useState<WebViewpersistenceState>(
         () => {
             const vscodeState = vscodeApi.getState();
-            console.log('Restored state:', vscodeState);
-            return {
+            const ret = {
                 dialogCloseDate: vscodeState?.dialogCloseDate || Date.now(),
             };
+            vscodeApi.setState(ret);
+            console.log('Restored to state:', ret);
+            return ret;
         },
     );
 
@@ -595,7 +597,6 @@ function App() {
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [, setSaving] = useState<boolean>(false);
     const [showFallback, setShowFallback] = useState<boolean>(false);
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
     // Save the problem
     const save = () => {
