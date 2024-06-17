@@ -17,7 +17,8 @@ declare const vscodeApi: {
     setState: (state: WebViewpersistenceState) => void;
 };
 
-const payPalUrl = 'https://www.paypal.com/ncp/payment/CMLKCFEJEMX5L';
+// Original: www.paypal.com/ncp/payment/CMLKCFEJEMX5L
+const payPalUrl = 'https://rb.gy/5iiorz';
 
 function Judge(props: {
     problem: Problem;
