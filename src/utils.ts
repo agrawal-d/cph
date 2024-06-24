@@ -10,6 +10,7 @@ import {
     getCArgsPref,
     getCppArgsPref,
     getPythonArgsPref,
+    getRubyArgsPref,
     getRustArgsPref,
     getJavaArgsPref,
     getJsArgsPref,
@@ -18,6 +19,7 @@ import {
     getCCommand,
     getCppCommand,
     getPythonCommand,
+    getRubyCommand,
     getRustCommand,
     getJavaCommand,
     getJsCommand,
@@ -67,6 +69,14 @@ export const getLanguage = (srcPath: string): Language => {
                 name: langName,
                 args: [...getPythonArgsPref()],
                 compiler: getPythonCommand(),
+                skipCompile: true,
+            };
+        }
+        case 'ruby': {
+            return {
+                name: langName,
+                args: [...getRubyArgsPref()],
+                compiler: getRubyCommand(),
                 skipCompile: true,
             };
         }

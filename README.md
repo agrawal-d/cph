@@ -53,6 +53,7 @@ enter testcases.
 -   Go
 -   Haskell
 -   Python
+-   Ruby
 -   Java
 -   JavaScript (Node.js)
 

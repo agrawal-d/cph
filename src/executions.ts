@@ -61,6 +61,14 @@ export const runTestCase = (
             );
             break;
         }
+        case 'ruby': {
+            process = spawn(
+                language.compiler,
+                [binPath, ...language.args],
+                spawnOpts,
+            );
+            break;
+        }
         case 'js': {
             process = spawn(
                 language.compiler,
