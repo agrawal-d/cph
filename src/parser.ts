@@ -56,6 +56,27 @@ export const getProblem = (srcPath: string): Problem | null => {
     }
 };
 
+/** Get the problem from the problem path instead of the source path */
+export const getProblemFromProbPath = (probPath: string): Problem | null => {
+    let problem: string;
+    try {
+        problem = fs.readFileSync(probPath).toString();
+    } catch (e) {
+        return null;
+    }
+    const parsedProblem = JSON.parse(problem);
+    const workspaceRoot = getWorkspaceRoot();
+
+    if (parsedProblem == null) return null;
+    if (workspaceRoot) {
+        parsedProblem.srcPath = path.resolve(
+            workspaceRoot,
+            parsedProblem.srcPath,
+        );
+    }
+    return parsedProblem;
+};
+
 /** Save the problem (metadata) */
 export const saveProblem = (srcPath: string, problem: Problem) => {
     const srcFolder = path.dirname(srcPath);
