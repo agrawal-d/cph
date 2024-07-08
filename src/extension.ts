@@ -11,6 +11,7 @@ import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import config from './config';
+import { editorRename } from './refactor';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -93,6 +94,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.onDidChangeActiveTextEditor((e) => {
         editorChanged(e);
+    });
+
+    vscode.workspace.onDidRenameFiles((e) => {
+        editorRename(e);
     });
 
     vscode.window.onDidChangeVisibleTextEditors((editors) => {

@@ -25,9 +25,11 @@ import {
     getJsCommand,
     getGoCommand,
     getHaskellCommand,
+    getWorkspaceModePref,
 } from './preferences';
 import { Language, Problem } from './types';
 import telmetry from './telmetry';
+import { workspace } from 'vscode';
 
 const oc = vscode.window.createOutputChannel('cph');
 
@@ -198,3 +200,8 @@ export const getProblemForDocument = (
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
     return problem;
 };
+
+export const getWorkspaceRoot = () =>
+    getWorkspaceModePref()
+        ? workspace.workspaceFolders?.[0].uri.fsPath
+        : undefined;

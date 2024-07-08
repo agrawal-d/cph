@@ -1,14 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import { Problem } from './types';
-import { getSaveLocationPref, getWorkspaceModePref } from './preferences';
+import { getSaveLocationPref } from './preferences';
 import crypto from 'crypto';
-import { workspace } from 'vscode';
-
-const getWorkspaceRoot = () =>
-    getWorkspaceModePref()
-        ? workspace.workspaceFolders?.[0].uri.fsPath
-        : undefined;
+import { getWorkspaceRoot } from './utils';
 
 /**
  *  Get the location (file path) to save the generated problem file in. If save
