@@ -34,6 +34,9 @@ export const getSaveLocationPref = (): string => {
     return pref;
 };
 
+export const getAutoRefactorPref = (): boolean =>
+    getPreference('general.autoRefactor');
+
 export const getWorkspaceModePref = (): boolean =>
     getPreference('general.workspaceMode');
 

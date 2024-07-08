@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 export type prefSection =
     | 'general.saveLocation'
     | 'general.workspaceMode'
+    | 'general.autoRefactor'
     | 'general.defaultLanguage'
     | 'general.timeOut'
     | 'general.hideStderrorWhenCompiledOK'

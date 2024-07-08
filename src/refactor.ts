@@ -6,10 +6,10 @@ import {
     saveProblem,
 } from './parser';
 import fs from 'fs';
+import { getAutoRefactorPref } from './preferences';
 
 export const editorRename = (e: vscode.FileRenameEvent) => {
-    const workspaceRoot = getWorkspaceRoot();
-    if (!workspaceRoot) return;
+    if (!getAutoRefactorPref() || !getWorkspaceRoot()) return;
     e.files.forEach((file) => {
         const oldProblemPath = getProbSaveLocation(file.oldUri.fsPath);
         const problem = getProblemFromProbPath(oldProblemPath);
