@@ -82,16 +82,14 @@ export const saveProblem = (srcPath: string, problem: Problem) => {
     const srcFolder = path.dirname(srcPath);
     const cphFolder = path.join(srcFolder, '.cph');
     const workspaceRoot = getWorkspaceRoot();
-    let probFolder: string;
 
     if (workspaceRoot) {
-        probFolder = path.join(workspaceRoot, '.cph');
-        if (!fs.existsSync(probFolder)) {
+        const workspaceCphFolder = path.join(workspaceRoot, '.cph');
+        if (!fs.existsSync(workspaceCphFolder)) {
             console.log('Making workspaceRoot/.cph folder');
-            fs.mkdirSync(probFolder);
+            fs.mkdirSync(workspaceCphFolder);
         }
     } else if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
-        probFolder = cphFolder;
         console.log('Making .cph folder');
         fs.mkdirSync(cphFolder);
     }
