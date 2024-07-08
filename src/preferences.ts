@@ -20,7 +20,9 @@ export const getAutoShowJudgePref = (): boolean =>
     getPreference('general.autoShowJudge');
 
 export const getSaveLocationPref = (): string => {
-    const pref = getPreference('general.saveLocation');
+    const pref = getPreference('general.workspaceMode')
+        ? '' // If workspace mode is enabled, save location is ignored
+        : getPreference('general.saveLocation');
     const validSaveLocation = pref == '' || fs.existsSync(pref);
     if (!validSaveLocation) {
         vscode.window.showErrorMessage(
@@ -31,6 +33,9 @@ export const getSaveLocationPref = (): string => {
     }
     return pref;
 };
+
+export const getWorkspaceModePref = (): boolean =>
+    getPreference('general.workspaceMode');
 
 export const getHideStderrorWhenCompiledOK = (): boolean =>
     getPreference('general.hideStderrorWhenCompiledOK');

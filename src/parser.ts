@@ -1,8 +1,14 @@
 import path from 'path';
 import fs from 'fs';
 import { Problem } from './types';
-import { getSaveLocationPref } from './preferences';
+import { getSaveLocationPref, getWorkspaceModePref } from './preferences';
 import crypto from 'crypto';
+import { workspace } from 'vscode';
+
+const getWorkspaceRoot = () =>
+    getWorkspaceModePref()
+        ? workspace.workspaceFolders?.[0].uri.fsPath
+        : undefined;
 
 /**
  *  Get the location (file path) to save the generated problem file in. If save
@@ -15,6 +21,8 @@ export const getProbSaveLocation = (srcPath: string): string => {
     const savePreference = getSaveLocationPref();
     const srcFileName = path.basename(srcPath);
     const srcFolder = path.dirname(srcPath);
+    const workspaceFolder = getWorkspaceRoot();
+    if (workspaceFolder) srcPath = path.relative(workspaceFolder, srcPath);
     const hash = crypto
         .createHash('md5')
         .update(srcPath)
@@ -22,7 +30,9 @@ export const getProbSaveLocation = (srcPath: string): string => {
         .substr(0);
     const baseProbName = `.${srcFileName}_${hash}.prob`;
     const cphFolder = path.join(srcFolder, '.cph');
-    if (savePreference && savePreference !== '') {
+    if (workspaceFolder) {
+        return path.join(workspaceFolder, '.cph', baseProbName);
+    } else if (savePreference && savePreference !== '') {
         return path.join(savePreference, baseProbName);
     }
     return path.join(cphFolder, baseProbName);
@@ -34,7 +44,18 @@ export const getProblem = (srcPath: string): Problem | null => {
     let problem: string;
     try {
         problem = fs.readFileSync(probPath).toString();
-        return JSON.parse(problem);
+
+        const parsedProblem = JSON.parse(problem);
+        if (parsedProblem == null) return null;
+
+        const workspaceRoot = getWorkspaceRoot();
+        if (workspaceRoot) {
+            parsedProblem.srcPath = path.resolve(
+                workspaceRoot,
+                parsedProblem.srcPath,
+            );
+        }
+        return parsedProblem;
     } catch (err) {
         return null;
     }
@@ -44,15 +65,34 @@ export const getProblem = (srcPath: string): Problem | null => {
 export const saveProblem = (srcPath: string, problem: Problem) => {
     const srcFolder = path.dirname(srcPath);
     const cphFolder = path.join(srcFolder, '.cph');
+    const workspaceRoot = getWorkspaceRoot();
+    let probFolder: string;
 
-    if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
+    if (workspaceRoot) {
+        probFolder = path.join(workspaceRoot, '.cph');
+        if (!fs.existsSync(probFolder)) {
+            console.log('Making workspaceRoot/.cph folder');
+            fs.mkdirSync(probFolder);
+        }
+    } else if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
+        probFolder = cphFolder;
         console.log('Making .cph folder');
         fs.mkdirSync(cphFolder);
     }
 
     const probPath = getProbSaveLocation(srcPath);
     try {
+        let tmpPath: string = '';
+        if (workspaceRoot) {
+            tmpPath = problem.srcPath;
+            problem.srcPath = path.relative(workspaceRoot, srcPath);
+        }
+
         fs.writeFileSync(probPath, JSON.stringify(problem));
+
+        if (tmpPath) {
+            problem.srcPath = tmpPath;
+        }
     } catch (err) {
         throw new Error(err as string);
     }

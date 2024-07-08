@@ -69,6 +69,11 @@
                     "default": "",
                     "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
                 },
+                "cph.general.workspaceMode": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled, the generated file location will be `workspaceRoot/.cph` . If disabled (default), the save location will follow `cph.general.saveLocation`"
+                },
                 "cph.general.timeOut": {
                     "type": "number",
                     "default": 3000,

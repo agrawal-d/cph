@@ -5,6 +5,7 @@ import path from 'path';
 import {
     getSaveLocationPref,
     getHideStderrorWhenCompiledOK,
+    getWorkspaceModePref,
 } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
@@ -31,10 +32,13 @@ export const getBinSaveLocation = (srcPath: string): string => {
     }
     const ext = language.name == 'java' ? '*.class' : '.bin';
     const savePreference = getSaveLocationPref();
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     const srcFileName = path.parse(srcPath).name;
     const binFileName = srcFileName + ext;
     const binDir = path.dirname(srcPath);
-    if (savePreference && savePreference !== '') {
+    if (getWorkspaceModePref() && workspaceFolder) {
+        return path.join(workspaceFolder, '.cph', binFileName);
+    } else if (savePreference && savePreference !== '') {
         return path.join(savePreference, binFileName);
     }
     return path.join(binDir, binFileName);
