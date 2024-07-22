@@ -1,1 +1,1 @@
-© Divyanshu Agrawal GPL-3 software, source code at github.com/agrawal-d/cph
+Now also for Google Chrome: Submit directly to Codeforces using <a href="https://github.com/agrawal-d/cph-submit">CPH-Submit</a>!
