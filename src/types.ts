@@ -202,6 +202,11 @@ export type NewProblemCommand = {
     problem: Problem | undefined;
 };
 
+export type RemoteMessageCommand = {
+    command: 'remote-message';
+    message: string;
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
@@ -211,6 +216,7 @@ export type VSToWebViewMessage =
     | WaitingForSubmitCommand
     | SubmitFinishedCommand
     | NotRunningCommand
+    | RemoteMessageCommand
     | NewProblemCommand;
 
 export type CphEmptyResponse = {
@@ -232,4 +238,5 @@ export type WebViewpersistenceState = {
 declare global {
     var reporter: TelemetryReporter;
     var context: vscode.ExtensionContext;
+    var remoteMessage: string | undefined;
 }

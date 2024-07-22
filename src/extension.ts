@@ -73,6 +73,8 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('cph: activate() execution started');
     globalThis.context = context;
 
+    downloadRemoteMessage();
+
     const statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left,
         1000,
@@ -105,4 +107,20 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     return;
+}
+
+async function downloadRemoteMessage() {
+    try {
+        console.log('Fetching remote message');
+        globalThis.remoteMessage = await (
+            await fetch(config.remoteMessageUrl)
+        ).text();
+        getJudgeViewProvider().extensionToJudgeViewMessage({
+            command: 'remote-message',
+            message: globalThis.remoteMessage,
+        });
+        console.log('Remote message fetched', globalThis.remoteMessage);
+    } catch (e) {
+        console.error('Error fetching remote message', e);
+    }
 }

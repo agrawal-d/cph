@@ -37,7 +37,6 @@ function Judge(props: {
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
     const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
-    const [remoteMessage, setRemoteMessage] = useState<string>('');
     const [webviewState, setWebviewState] = useState<WebViewpersistenceState>(
         () => {
             const vscodeState = vscodeApi.getState();
@@ -76,26 +75,16 @@ function Judge(props: {
     };
 
     useEffect(() => {
-        console.log('Fetching remote text message');
-        const url =
-            'https://github.com/agrawal-d/cph/raw/main/static/remote-message.txt';
-        try {
-            fetch(url, { mode: 'no-cors' }).then((response) => {
-                response.text().then((text) => {
-                    setRemoteMessage(text);
-                });
-            });
-        } catch (err) {
-            console.error('Error fetching remote-message.txt: ', err);
-        }
-    }, []);
-
-    useEffect(() => {
         const fn = (event: any) => {
             const data: VSToWebViewMessage = event.data;
             switch (data.command) {
                 case 'new-problem': {
                     setOnlineJudgeEnv(false);
+                    break;
+                }
+
+                case 'remote-message': {
+                    window.remoteMessage = data.message;
                     break;
                 }
 
@@ -488,7 +477,11 @@ function Judge(props: {
                     </small>
                 </div>
                 <div className="remote-message">
-                    <p>{remoteMessage}</p>
+                    <p
+                        dangerouslySetInnerHTML={{
+                            __html: window.remoteMessage || '',
+                        }}
+                    />
                 </div>
             </div>
             <div className="actions">
