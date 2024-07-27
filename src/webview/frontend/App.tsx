@@ -39,7 +39,7 @@ function Judge(props: {
     const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
     const [webviewState, setWebviewState] = useState<WebViewpersistenceState>(
         () => {
-            const vscodeState = vscodeApi.getState();
+            const vscodeState = vscodeApi?.getState();
             const ret = {
                 dialogCloseDate: vscodeState?.dialogCloseDate || Date.now(),
             };
