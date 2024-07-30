@@ -228,7 +228,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         // Since the react script takes time to load, the problem is sent to the webview before it has even loaded.
                         // So, for the initial request, ask for it again.
                         window.vscodeApi = acquireVsCodeApi();
-                        window.remoteMessage = '${globalThis.remoteMessage ? globalThis.remoteMessage : " "}';
+                        window.remoteMessage = '${
+                            globalThis.remoteMessage
+                                ? globalThis.remoteMessage
+                                : ' '
+                        }';
                         document.addEventListener(
                             'DOMContentLoaded',
                             (event) => {
