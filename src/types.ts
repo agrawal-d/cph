@@ -5,6 +5,8 @@ import * as vscode from 'vscode';
 /** Valid name for a VS Code preference section for the extension */
 export type prefSection =
     | 'general.saveLocation'
+    | 'general.workspaceMode'
+    | 'general.autoRefactor'
     | 'general.defaultLanguage'
     | 'general.timeOut'
     | 'general.hideStderrorWhenCompiledOK'

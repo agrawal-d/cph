@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
-import { getProbSaveLocation } from '../parser';
-import { existsSync, readFileSync } from 'fs';
-import { Problem } from '../types';
+import { getProblemFromProbPath, getProbSaveLocation } from '../parser';
 import { getJudgeViewProvider } from '../extension';
 import { getProblemForDocument } from '../utils';
 import { getAutoShowJudgePref } from '../preferences';
@@ -61,12 +59,8 @@ export const editorClosed = (e: vscode.TextDocument) => {
     console.log('Closed editor:', e.uri.fsPath);
     const srcPath = e.uri.fsPath;
     const probPath = getProbSaveLocation(srcPath);
-
-    if (!existsSync(probPath)) {
-        return;
-    }
-
-    const problem: Problem = JSON.parse(readFileSync(probPath).toString());
+    const problem = getProblemFromProbPath(probPath);
+    if (!problem) return;
 
     if (getJudgeViewProvider().problemPath === problem.srcPath) {
         getJudgeViewProvider().extensionToJudgeViewMessage({

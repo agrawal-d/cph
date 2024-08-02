@@ -1,4 +1,10 @@
-import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
+import {
+    getLanguage,
+    getWorkspaceRoot,
+    ocHide,
+    ocShow,
+    ocWrite,
+} from './utils';
 import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
@@ -31,10 +37,13 @@ export const getBinSaveLocation = (srcPath: string): string => {
     }
     const ext = language.name == 'java' ? '*.class' : '.bin';
     const savePreference = getSaveLocationPref();
+    const workspaceRoot = getWorkspaceRoot();
     const srcFileName = path.parse(srcPath).name;
     const binFileName = srcFileName + ext;
     const binDir = path.dirname(srcPath);
-    if (savePreference && savePreference !== '') {
+    if (workspaceRoot) {
+        return path.join(workspaceRoot, '.cph', binFileName);
+    } else if (savePreference && savePreference !== '') {
         return path.join(savePreference, binFileName);
     }
     return path.join(binDir, binFileName);
