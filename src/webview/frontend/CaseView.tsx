@@ -228,6 +228,16 @@ export default function CaseView(props: {
                             >
                                 Copy
                             </div>
+                            <div
+                                className="expectedoutput"
+                                onClick={() => {
+                                    setOutput(trunctateStdout(resultText));
+                                    props.notify('Set As Expected Output');
+                                }}
+                                title="Set As Expected Output"
+                            >
+                                Set
+                            </div>
                             <>
                                 <TextareaAutosize
                                     className="selectable received-textarea"
