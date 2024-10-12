@@ -12,6 +12,7 @@ import {
     useShortCodeForcesName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    getUseExistingFilePref,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -211,7 +212,15 @@ const handleNewProblem = async (problem: Problem) => {
         const splitUrl = problem.url.split('/');
         problem.name = splitUrl[splitUrl.length - 1];
     }
-    const problemFileName = getProblemFileName(problem, extn);
+
+    let name: string;
+    const ExistingFile = getUseExistingFilePref();
+    if (ExistingFile != '') {
+        name = `${ExistingFile}.${extn}`;
+    } else {
+        name = getProblemFileName(problem, extn);
+    }
+    const problemFileName = name;
     const srcPath = path.join(folder, problemFileName);
 
     // Add fields absent in competitive companion.
