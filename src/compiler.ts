@@ -1,6 +1,7 @@
 import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
 import { spawn } from 'child_process';
+import { platform } from 'os';
 import path from 'path';
 import {
     getSaveLocationPref,
@@ -17,7 +18,7 @@ export const setOnlineJudgeEnv = (value: boolean) => {
 
 /**
  *  Get the location to save the generated binary in. If save location is
- *  available in preferences, returns that, otherwise returns the director of
+ *  available in preferences, returns that, otherwise returns the directory of
  *  active file.
  *
  *  If it is a interpteted language, simply returns the path to the source code.
@@ -29,7 +30,20 @@ export const getBinSaveLocation = (srcPath: string): string => {
     if (language.skipCompile) {
         return srcPath;
     }
-    const ext = language.name == 'java' ? '*.class' : '.bin';
+    let ext: string;
+    switch (language.name) {
+        case 'java': {
+            ext = '*.class';
+            break;
+        }
+        case 'csharp': {
+            ext = '_bin';
+            break;
+        }
+        default: {
+            ext = '.bin';
+        }
+    }
     const savePreference = getSaveLocationPref();
     const srcFileName = path.parse(srcPath).name;
     const binFileName = srcFileName + ext;
@@ -110,12 +124,92 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             ];
             break;
         }
+        case 'csharp': {
+            const projPath = getCSharpProjectLocation(srcPath);
+            ret = [
+                'build',
+                projPath,
+                '-c',
+                'Release',
+                '--force',
+                '-o',
+                getBinSaveLocation(srcPath),
+                ...args,
+            ];
+            if (onlineJudgeEnv) {
+                ret.push('[+DefineConstants:TRACE;ONLINE_JUDGE]');
+                // for Mono:
+                // ret.push('-define');
+                // ret.push('ONLINE_JUDGE');
+            }
+            break;
+        }
         default: {
             ret = [];
             break;
         }
     }
     return ret;
+};
+
+const getCSharpProjectLocation = (srcPath: string): string => {
+    const srcDir = path.dirname(srcPath);
+    const projDir = path.join(srcDir, '.csrun');
+    return path.join(projDir, '.csrun.csproj');
+};
+
+const createCSharpProject = async (
+    language: Language,
+    srcPath: string,
+): Promise<boolean> => {
+    const result = new Promise<boolean>((resolve) => {
+        const projDir = path.dirname(getCSharpProjectLocation(srcPath));
+        console.log('Creating new .NET project');
+        const args = ['new', 'console', '--force', '-o', projDir];
+        const newProj = spawn(language.compiler, args);
+
+        newProj.on('exit', (exitcode) => {
+            const exitCode = exitcode || 0;
+            if (exitCode !== 0) {
+                ocWrite(
+                    'Errors while creating new .NET project:\n' +
+                        `Exit code ${exitCode}`,
+                );
+                ocShow();
+                resolve(false);
+                return;
+            }
+
+            const destPath = path.join(projDir, 'Program.cs');
+            console.log(
+                'Copying source code to the project',
+                srcPath,
+                destPath,
+            );
+            try {
+                if (platform() == 'linux') {
+                    spawn('cp', ['-f', srcPath, destPath]);
+                } else {
+                    spawn('copy', ['/y', srcPath, destPath], { shell: true });
+                }
+                resolve(true);
+            } catch (err) {
+                console.error('Error while copying source code', err);
+                ocWrite('Errors while creating new .NET project:\n' + err);
+                ocShow();
+                resolve(false);
+            }
+        });
+
+        newProj.on('error', (err) => {
+            console.log(err);
+            ocWrite('Errors while creating new .NET project:\n' + err);
+            ocShow();
+            resolve(false);
+        });
+    });
+
+    return result;
 };
 
 /**
@@ -135,6 +229,11 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     const language: Language = getLanguage(srcPath);
     if (language.skipCompile) {
         return Promise.resolve(true);
+    }
+    if (language.name === 'csharp') {
+        if ((await createCSharpProject(language, srcPath)) === false) {
+            return Promise.resolve(false);
+        }
     }
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'compiling-start',

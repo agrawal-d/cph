@@ -86,11 +86,15 @@ export const runTestCase = (
             const binDir = path.dirname(binPath);
             args.push('-cp');
             args.push(binDir);
-
             const binFileName = path.parse(binPath).name.slice(0, -1);
             args.push(binFileName);
-
             process = spawn('java', args);
+            break;
+        }
+        case 'csharp': {
+            process = spawn(path.join(binPath, '.csrun.exe'), [
+                '/stack:67108864',
+            ]);
             break;
         }
         default: {
@@ -158,9 +162,9 @@ export const deleteBinary = (language: Language, binPath: string) => {
     console.log('Deleting binary', binPath);
     try {
         if (platform() == 'linux') {
-            spawn('rm', [binPath]);
+            spawn('rm', ['-r', binPath]);
         } else {
-            spawn('del', [binPath], { shell: true });
+            spawn('del', ['/y', binPath], { shell: true });
         }
     } catch (err) {
         console.error('Error while deleting binary', err);

@@ -130,6 +130,27 @@
                     "default": "g++",
                     "description": "Command used to compile .cpp files. Example 'g++', 'g++-10', 'clang++', etc."
                 },
+                "cph.language.csharp.Args": {
+                    "title": "Compilation flags for .cs files",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to dotnet while compiling your file."
+                },
+                "cph.language.csharp.SubmissionCompiler": {
+                    "type": "string",
+                    "default": "C# 8, .NET Core 3.1",
+                    "enum": [
+                        "C# 8, .NET Core 3.1",
+                        "C# 10, .NET SDK 6.0",
+                        "C# Mono 6.8"
+                    ],
+                    "description": "The compiler chosen in the drop down during Codeforces submission for C#"
+                },
+                "cph.language.csharp.Command": {
+                    "type": "string",
+                    "default": "dotnet",
+                    "description": "Command used to compile .cs files. 'dotnet' for C# .NET, 'mcs' for C# Mono"
+                },
                 "cph.language.python.Args": {
                     "title": "Compilation flags for Python",
                     "type": "string",
@@ -286,13 +307,14 @@
                         "rust",
                         "js",
                         "java",
-                        "ruby"
+                        "ruby",
+                        "csharp"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java js python c rust ruby",
+                    "default": "cpp java js python c rust ruby csharp",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
                 "cph.general.useShortCodeForcesName": {
@@ -354,11 +376,11 @@
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
+        "@vscode/extension-telemetry": "^0.9.0",
         "python-shell": "^5.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-textarea-autosize": "^8.5.3",
-        "@vscode/extension-telemetry": "^0.9.0"
+        "react-textarea-autosize": "^8.5.3"
     },
     "repository": {
         "type": "git",
