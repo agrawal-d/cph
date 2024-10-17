@@ -230,11 +230,19 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     if (language.skipCompile) {
         return Promise.resolve(true);
     }
+
     if (language.name === 'csharp') {
         if ((await createCSharpProject(language, srcPath)) === false) {
+            getJudgeViewProvider().extensionToJudgeViewMessage({
+                command: 'compiling-stop',
+            });
+            getJudgeViewProvider().extensionToJudgeViewMessage({
+                command: 'not-running',
+            });
             return Promise.resolve(false);
         }
     }
+
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'compiling-start',
     });
