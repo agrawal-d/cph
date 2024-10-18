@@ -164,6 +164,18 @@ export const ocHide = () => {
 
 export const randomId = () => Math.floor(Date.now() + Math.random() * 100);
 
+export const wrapPathWhitespace = (strPath: string) => {
+    let nrmPath = path
+        .normalize(strPath)
+        .replace(/(?:\\|\/)([^\\/]*\s[^\\/]*)(?=(?:\\|\/|$))/g, '/"$1"');
+
+    if (platform() == 'win32') {
+        nrmPath = nrmPath.replace(/\//g, '\\');
+    }
+
+    return nrmPath;
+};
+
 /**
  * Check if file is supported. If not, shows an error dialog. Returns true if
  * unsupported.

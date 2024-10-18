@@ -1,3 +1,4 @@
+import { wrapPathWhitespace } from './utils';
 import { Language, Run } from './types';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { platform } from 'os';
@@ -86,15 +87,26 @@ export const runTestCase = (
             const binDir = path.dirname(binPath);
             args.push('-cp');
             args.push(binDir);
+
             const binFileName = path.parse(binPath).name.slice(0, -1);
             args.push(binFileName);
-            process = spawn('java', args);
+
+            process = spawn('java', args, spawnOpts);
             break;
         }
         case 'csharp': {
-            process = spawn(path.join(binPath, '.csrun.exe'), [
-                '/stack:67108864',
-            ]);
+            const projName = '.cphcsrun';
+            const isLinux = platform() == 'linux';
+
+            let binFileName: string;
+            if (isLinux) {
+                binFileName = projName;
+            } else {
+                binFileName = projName + '.exe';
+            }
+
+            const binFilePath = path.join(binPath, binFileName);
+            process = spawn(binFilePath, ['/stack:67108864'], spawnOpts);
             break;
         }
         default: {
@@ -161,10 +173,26 @@ export const deleteBinary = (language: Language, binPath: string) => {
     }
     console.log('Deleting binary', binPath);
     try {
-        if (platform() == 'linux') {
-            spawn('rm', ['-r', binPath]);
+        const isLinux = platform() == 'linux';
+        const isFile = path.extname(binPath);
+
+        if (isLinux) {
+            if (isFile) {
+                spawn('rm', [binPath]);
+            } else {
+                spawn('rm', ['-r', binPath]);
+            }
         } else {
-            spawn('del', ['/y', binPath], { shell: true });
+            const nrmBinPath = wrapPathWhitespace(binPath);
+            if (isFile) {
+                spawn('cmd.exe', ['/c', 'del', nrmBinPath], {
+                    windowsVerbatimArguments: true,
+                });
+            } else {
+                spawn('cmd.exe', ['/c', 'rd', '/s', '/q', nrmBinPath], {
+                    windowsVerbatimArguments: true,
+                });
+            }
         }
     } catch (err) {
         console.error('Error while deleting binary', err);

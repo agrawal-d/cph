@@ -1,4 +1,10 @@
-import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
+import {
+    getLanguage,
+    ocHide,
+    ocShow,
+    ocWrite,
+    wrapPathWhitespace,
+} from './utils';
 import { Language } from './types';
 import { spawn } from 'child_process';
 import { platform } from 'os';
@@ -63,21 +69,13 @@ export const getBinSaveLocation = (srcPath: string): string => {
  */
 const getFlags = (language: Language, srcPath: string): string[] => {
     // The language.args are fetched from user saved preferences, if any.
+    const binPath = getBinSaveLocation(srcPath);
     let args = language.args;
     if (args[0] === '') args = [];
     let ret: string[];
     switch (language.name) {
         case 'cpp': {
-            ret = [
-                srcPath,
-                '-o',
-                getBinSaveLocation(srcPath),
-                ...args,
-                '-D',
-                'DEBUG',
-                '-D',
-                'CPH',
-            ];
+            ret = [srcPath, '-o', binPath, ...args, '-D', 'DEBUG', '-D', 'CPH'];
             if (onlineJudgeEnv) {
                 ret.push('-D');
                 ret.push('ONLINE_JUDGE');
@@ -86,7 +84,7 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         }
         case 'c': {
             {
-                ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+                ret = [srcPath, '-o', binPath, ...args];
                 if (onlineJudgeEnv) {
                     ret.push('-D');
                     ret.push('ONLINE_JUDGE');
@@ -95,17 +93,11 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             }
         }
         case 'rust': {
-            ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+            ret = [srcPath, '-o', binPath, ...args];
             break;
         }
         case 'go': {
-            ret = [
-                'build',
-                '-o',
-                getBinSaveLocation(srcPath),
-                srcPath,
-                ...args,
-            ];
+            ret = ['build', '-o', binPath, srcPath, ...args];
             break;
         }
         case 'java': {
@@ -117,7 +109,7 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             ret = [
                 srcPath,
                 '-o',
-                getBinSaveLocation(srcPath),
+                binPath,
                 '-no-keep-hi-files',
                 '-no-keep-o-files',
                 ...args,
@@ -125,15 +117,15 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             break;
         }
         case 'csharp': {
-            const projPath = getCSharpProjectLocation(srcPath);
+            const projDir = getCSharpProjectLocation(srcPath);
             ret = [
                 'build',
-                projPath,
+                projDir,
                 '-c',
                 'Release',
-                '--force',
                 '-o',
-                getBinSaveLocation(srcPath),
+                binPath,
+                '--force',
                 ...args,
             ];
             if (onlineJudgeEnv) {
@@ -152,12 +144,26 @@ const getFlags = (language: Language, srcPath: string): string[] => {
     return ret;
 };
 
+/**
+ * Get the path of the project file (*.csproj) from the location of the source code.
+ *
+ * @param srcPath location of the source code
+ * @returns location of the project file (*.csproj)
+ */
 const getCSharpProjectLocation = (srcPath: string): string => {
+    const projName = '.cphcsrun';
     const srcDir = path.dirname(srcPath);
-    const projDir = path.join(srcDir, '.csrun');
-    return path.join(projDir, '.csrun.csproj');
+    const projDir = path.join(srcDir, projName);
+    return path.join(projDir, projName + '.csproj');
 };
 
+/**
+ * Create a new C# project to compile the source code.
+ * It would be created under the same directory as the code.
+ *
+ * @param language The Language object for the source code
+ * @param srcPath location of the source code
+ */
 const createCSharpProject = async (
     language: Language,
     srcPath: string,
@@ -168,16 +174,32 @@ const createCSharpProject = async (
         const args = ['new', 'console', '--force', '-o', projDir];
         const newProj = spawn(language.compiler, args);
 
+        let error = '';
+
+        newProj.stderr.on('data', (data) => {
+            error += data;
+        });
+
         newProj.on('exit', (exitcode) => {
             const exitCode = exitcode || 0;
+            const hideWarningsWhenCompiledOK = getHideStderrorWhenCompiledOK();
+
             if (exitCode !== 0) {
                 ocWrite(
-                    'Errors while creating new .NET project:\n' +
-                        `Exit code ${exitCode}`,
+                    `Exit code: ${exitCode} Errors while creating new .NET project:\n` +
+                        error,
                 );
                 ocShow();
                 resolve(false);
                 return;
+            }
+
+            if (!hideWarningsWhenCompiledOK && error.trim() !== '') {
+                ocWrite(
+                    `Exit code: ${exitCode} Warnings while creating new .NET project:\n ` +
+                        error,
+                );
+                ocShow();
             }
 
             const destPath = path.join(projDir, 'Program.cs');
@@ -187,10 +209,18 @@ const createCSharpProject = async (
                 destPath,
             );
             try {
-                if (platform() == 'linux') {
+                const isLinux = platform() == 'linux';
+
+                if (isLinux) {
                     spawn('cp', ['-f', srcPath, destPath]);
                 } else {
-                    spawn('copy', ['/y', srcPath, destPath], { shell: true });
+                    const wrpSrcPath = wrapPathWhitespace(srcPath);
+                    const wrpDestPath = wrapPathWhitespace(destPath);
+                    spawn(
+                        'cmd.exe',
+                        ['/c', 'copy', '/y', wrpSrcPath, wrpDestPath],
+                        { windowsVerbatimArguments: true },
+                    );
                 }
                 resolve(true);
             } catch (err) {
