@@ -125,7 +125,7 @@ const getFlags = (language: Language, srcPath: string): string[] => {
                     ...args,
                 ];
                 if (onlineJudgeEnv) {
-                    ret.push('[+DefineConstants:TRACE;ONLINE_JUDGE]');
+                    ret.push('/p:DefineConstants="TRACE;ONLINE_JUDGE"');
                 }
             } else {
                 // mcs will run on shell, need to wrap paths with quotes.
