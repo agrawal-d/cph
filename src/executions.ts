@@ -1,4 +1,3 @@
-import { wrapPathWhitespace } from './utils';
 import { Language, Run } from './types';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { platform } from 'os';
@@ -95,18 +94,24 @@ export const runTestCase = (
             break;
         }
         case 'csharp': {
-            const projName = '.cphcsrun';
-            const isLinux = platform() == 'linux';
-
             let binFileName: string;
-            if (isLinux) {
-                binFileName = projName;
+
+            if (language.compiler.includes('dotnet')) {
+                const projName = '.cphcsrun';
+                const isLinux = platform() == 'linux';
+                if (isLinux) {
+                    binFileName = projName;
+                } else {
+                    binFileName = projName + '.exe';
+                }
+
+                const binFilePath = path.join(binPath, binFileName);
+                process = spawn(binFilePath, ['/stack:67108864'], spawnOpts);
             } else {
-                binFileName = projName + '.exe';
+                // Run with mono
+                process = spawn('mono', [binPath], spawnOpts);
             }
 
-            const binFilePath = path.join(binPath, binFileName);
-            process = spawn(binFilePath, ['/stack:67108864'], spawnOpts);
             break;
         }
         default: {
@@ -183,7 +188,7 @@ export const deleteBinary = (language: Language, binPath: string) => {
                 spawn('rm', ['-r', binPath]);
             }
         } else {
-            const nrmBinPath = wrapPathWhitespace(binPath);
+            const nrmBinPath = '"' + binPath + '"';
             if (isFile) {
                 spawn('cmd.exe', ['/c', 'del', nrmBinPath], {
                     windowsVerbatimArguments: true,

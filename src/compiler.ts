@@ -1,12 +1,6 @@
-import {
-    getLanguage,
-    ocHide,
-    ocShow,
-    ocWrite,
-    wrapPathWhitespace,
-} from './utils';
+import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
-import { spawn } from 'child_process';
+import { spawn, SpawnOptionsWithoutStdio } from 'child_process';
 import { platform } from 'os';
 import path from 'path';
 import {
@@ -43,7 +37,7 @@ export const getBinSaveLocation = (srcPath: string): string => {
             break;
         }
         case 'csharp': {
-            ext = '_bin';
+            ext = language.compiler.includes('dotnet') ? '_bin' : '.bin';
             break;
         }
         default: {
@@ -117,22 +111,36 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             break;
         }
         case 'csharp': {
-            const projDir = getCSharpProjectLocation(srcPath);
-            ret = [
-                'build',
-                projDir,
-                '-c',
-                'Release',
-                '-o',
-                binPath,
-                '--force',
-                ...args,
-            ];
-            if (onlineJudgeEnv) {
-                ret.push('[+DefineConstants:TRACE;ONLINE_JUDGE]');
-                // for Mono:
-                // ret.push('-define');
-                // ret.push('ONLINE_JUDGE');
+            const projDir = getDotnetProjectLocation(language, srcPath);
+
+            if (language.compiler.includes('dotnet')) {
+                ret = [
+                    'build',
+                    projDir,
+                    '-c',
+                    'Release',
+                    '-o',
+                    binPath,
+                    '--force',
+                    ...args,
+                ];
+                if (onlineJudgeEnv) {
+                    ret.push('[+DefineConstants:TRACE;ONLINE_JUDGE]');
+                }
+            } else {
+                // mcs will run on shell, need to wrap paths with quotes.
+                // otherwise it will raise error when the paths contain whitespace.
+                let wrpSrcPath = srcPath;
+                let wrpBinPath = binPath;
+                if (platform() === 'win32') {
+                    wrpSrcPath = '"' + srcPath + '"';
+                    wrpBinPath = '"' + binPath + '"';
+                }
+
+                ret = [wrpSrcPath, '-out:' + wrpBinPath, ...args];
+                if (onlineJudgeEnv) {
+                    ret.push('-define:ONLINE_JUDGE');
+                }
             }
             break;
         }
@@ -145,12 +153,20 @@ const getFlags = (language: Language, srcPath: string): string[] => {
 };
 
 /**
- * Get the path of the project file (*.csproj) from the location of the source code.
+ * Get the path of the .NET project file (*.csproj) from the location of the source code.
+ * If the compiler is not dotnet, simply returns the path to the source code.
  *
- * @param srcPath location of the source code
- * @returns location of the project file (*.csproj)
+ * @param language The Language object for the source code
+ * @returns location of the .NET project file (*.csproj)
  */
-const getCSharpProjectLocation = (srcPath: string): string => {
+const getDotnetProjectLocation = (
+    language: Language,
+    srcPath: string,
+): string => {
+    if (!language.compiler.includes('dotnet')) {
+        return srcPath;
+    }
+
     const projName = '.cphcsrun';
     const srcDir = path.dirname(srcPath);
     const projDir = path.join(srcDir, projName);
@@ -158,18 +174,21 @@ const getCSharpProjectLocation = (srcPath: string): string => {
 };
 
 /**
- * Create a new C# project to compile the source code.
+ * Create a new .NET project to compile the source code.
  * It would be created under the same directory as the code.
  *
  * @param language The Language object for the source code
  * @param srcPath location of the source code
  */
-const createCSharpProject = async (
+const createDotnetProject = async (
     language: Language,
     srcPath: string,
 ): Promise<boolean> => {
     const result = new Promise<boolean>((resolve) => {
-        const projDir = path.dirname(getCSharpProjectLocation(srcPath));
+        const projDir = path.dirname(
+            getDotnetProjectLocation(language, srcPath),
+        );
+
         console.log('Creating new .NET project');
         const args = ['new', 'console', '--force', '-o', projDir];
         const newProj = spawn(language.compiler, args);
@@ -214,8 +233,8 @@ const createCSharpProject = async (
                 if (isLinux) {
                     spawn('cp', ['-f', srcPath, destPath]);
                 } else {
-                    const wrpSrcPath = wrapPathWhitespace(srcPath);
-                    const wrpDestPath = wrapPathWhitespace(destPath);
+                    const wrpSrcPath = '"' + srcPath + '"';
+                    const wrpDestPath = '"' + destPath + '"';
                     spawn(
                         'cmd.exe',
                         ['/c', 'copy', '/y', wrpSrcPath, wrpDestPath],
@@ -261,15 +280,29 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         return Promise.resolve(true);
     }
 
+    const spawnOpt: SpawnOptionsWithoutStdio = {
+        cwd: undefined,
+        env: process.env,
+    };
+
     if (language.name === 'csharp') {
-        if ((await createCSharpProject(language, srcPath)) === false) {
-            getJudgeViewProvider().extensionToJudgeViewMessage({
-                command: 'compiling-stop',
-            });
-            getJudgeViewProvider().extensionToJudgeViewMessage({
-                command: 'not-running',
-            });
-            return Promise.resolve(false);
+        if (language.compiler.includes('dotnet')) {
+            const projResult = await createDotnetProject(language, srcPath);
+            if (!projResult) {
+                getJudgeViewProvider().extensionToJudgeViewMessage({
+                    command: 'compiling-stop',
+                });
+                getJudgeViewProvider().extensionToJudgeViewMessage({
+                    command: 'not-running',
+                });
+                return Promise.resolve(false);
+            }
+        } else {
+            // HACK: Mono only provides mcs.bat for Windows?
+            // spawn cannot run mcs.bat :(
+            if (platform() === 'win32') {
+                spawnOpt.shell = true;
+            }
         }
     }
 
@@ -281,7 +314,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     const result = new Promise<boolean>((resolve) => {
         let compiler;
         try {
-            compiler = spawn(language.compiler, flags);
+            compiler = spawn(language.compiler, flags, spawnOpt);
         } catch (err) {
             vscode.window.showErrorMessage(
                 `Could not launch the compiler ${language.compiler}. Is it installed?`,
