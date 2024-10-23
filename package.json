@@ -119,6 +119,7 @@
                         "GNU G++11 5.1.0",
                         "GNU G++17 9.2.0 (64 bit, msys 2)",
                         "GNU G++20 13.2 (64 bit, winlibs)",
+                        "GNU G++23 14.2 (64 bit, msys2)",
                         "Microsoft Visual C++ 2017",
                         "Microsoft Visual C++ 2010",
                         "Clang++17 Diagnostics"

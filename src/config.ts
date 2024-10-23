@@ -38,6 +38,7 @@ export default {
         'GNU G++11 5.1.0': 42,
         'GNU G++17 9.2.0 (64 bit, msys 2)': 61,
         'GNU G++20 13.2 (64 bit, winlibs)': 89,
+        'GNU G++23 14.2 (64 bit, msys2)': 91,
         'Microsoft Visual C++ 2017': 59,
         'Microsoft Visual C++ 2010': 2,
         'Clang++17 Diagnostics': 52,
