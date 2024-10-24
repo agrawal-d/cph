@@ -141,10 +141,10 @@
                     "type": "string",
                     "default": "PyPy 3.10 (7.3.15, 64bit)",
                     "enum": [
+                        "PyPy 2.7 (7.2.0)",
                         "PyPy 3.6 (7.2.0)",
                         "PyPy 3.10 (7.3.15, 64bit)",
                         "Python 3.7.2",
-                        "PyPy 2.7 (7.2.0)",
                         "Python 2.7.15"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for python"
