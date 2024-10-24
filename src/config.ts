@@ -13,6 +13,7 @@ export default {
     extensions: {
         c: 'c',
         cpp: 'cpp',
+        csharp: 'cs',
         python: 'py',
         ruby: 'rb',
         rust: 'rs',
@@ -24,6 +25,7 @@ export default {
     compilers: {
         c: 'gcc',
         cpp: 'g++',
+        csharp: 'dotnet',
         python: 'python',
         ruby: 'ruby',
         rust: 'rustc',
@@ -42,6 +44,9 @@ export default {
         'Microsoft Visual C++ 2017': 59,
         'Microsoft Visual C++ 2010': 2,
         'Clang++17 Diagnostics': 52,
+        'C# 8, .NET Core 3.1': 65,
+        'C# 10, .NET SDK 6.0': 79,
+        'C# Mono 6.8': 9,
         'Java 11.0.6': 60,
         'Java 1.8.0_241': 36,
         'Node.js 15.8.0 (64bit)': 55,
@@ -66,6 +71,7 @@ export default {
         'go',
         'hs',
         'rb',
+        'cs',
     ],
     skipCompile: ['py', 'js', 'rb'],
 };
