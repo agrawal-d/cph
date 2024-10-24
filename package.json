@@ -112,7 +112,7 @@
                 "cph.language.cpp.SubmissionCompiler": {
                     "type": "string",
                     "title": "check12344566",
-                    "default": "GNU G++17 7.3.0",
+                    "default": "GNU G++23 14.2 (64 bit, msys2)",
                     "enum": [
                         "GNU G++17 7.3.0",
                         "GNU G++14 6.4.0",
@@ -139,12 +139,12 @@
                 },
                 "cph.language.python.SubmissionCompiler": {
                     "type": "string",
-                    "default": "PyPy 3.9.10 (7.3.9, 64bit)",
+                    "default": "PyPy 3.10 (7.3.15, 64bit)",
                     "enum": [
-                        "PyPy 3.6 (7.2.0)",
-                        "PyPy 3.9.10 (7.3.9, 64bit)",
-                        "Python 3.7.2",
                         "PyPy 2.7 (7.2.0)",
+                        "PyPy 3.6 (7.2.0)",
+                        "PyPy 3.10 (7.3.15, 64bit)",
+                        "Python 3.7.2",
                         "Python 2.7.15"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for python"
