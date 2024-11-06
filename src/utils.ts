@@ -1,11 +1,10 @@
 import { spawn } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
 import { platform } from 'os';
 import path from 'path';
 import * as vscode from 'vscode';
 
 import config from './config';
-import { getProbSaveLocation } from './parser';
+import { getProblemFromProbPath, getProbSaveLocation } from './parser';
 import {
     getCArgsPref,
     getCppArgsPref,
@@ -25,9 +24,11 @@ import {
     getJsCommand,
     getGoCommand,
     getHaskellCommand,
+    getWorkspaceModePref,
 } from './preferences';
 import { Language, Problem } from './types';
 import telmetry from './telmetry';
+import { workspace } from 'vscode';
 
 const oc = vscode.window.createOutputChannel('cph');
 
@@ -192,9 +193,11 @@ export const getProblemForDocument = (
 
     const srcPath = document.fileName;
     const probPath = getProbSaveLocation(srcPath);
-    if (!existsSync(probPath)) {
-        return undefined;
-    }
-    const problem: Problem = JSON.parse(readFileSync(probPath).toString());
-    return problem;
+    const problem = getProblemFromProbPath(probPath);
+    return problem || undefined;
 };
+
+export const getWorkspaceRoot = () =>
+    getWorkspaceModePref()
+        ? workspace.workspaceFolders?.[0].uri.fsPath
+        : undefined;
