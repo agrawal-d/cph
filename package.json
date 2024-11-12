@@ -101,7 +101,16 @@
                 "cph.language.c.Command": {
                     "type": "string",
                     "default": "gcc",
-                    "description": "Command used to compile .c files. Example 'gcc', 'gcc-10', 'clang', etc."
+                    "description": "Command used to compile .c files. Example 'gcc', 'gcc-10', 'clang', 'msvc', etc."
+                },
+                "cph.language.c.OutputArg": {
+                    "type": "string",
+                    "default": "-o",
+                    "enum": [
+                        "-o",
+                        "/Fe:"
+                    ],
+                    "description": "C compiler's argument that specifies the output files."
                 },
                 "cph.language.cpp.Args": {
                     "title": "Compilation flags for .cpp files",
@@ -130,6 +139,15 @@
                     "type": "string",
                     "default": "g++",
                     "description": "Command used to compile .cpp files. Example 'g++', 'g++-10', 'clang++', etc."
+                },
+                "cph.language.cpp.OutputArg": {
+                    "type": "string",
+                    "default": "-o",
+                    "enum": [
+                        "-o",
+                        "/Fe:"
+                    ],
+                    "description": "C++ compiler's argument that specifies the output files."
                 },
                 "cph.language.python.Args": {
                     "title": "Compilation flags for Python",
