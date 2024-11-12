@@ -153,6 +153,10 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         }
         let error = '';
 
+        compiler.stdout.on('data', (data) => {
+            error += data;
+        });
+
         compiler.stderr.on('data', (data) => {
             error += data;
         });
