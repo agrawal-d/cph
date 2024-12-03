@@ -3,6 +3,8 @@ import { Language } from './types';
 import { spawn } from 'child_process';
 import path from 'path';
 import {
+    getCOutputArgPref,
+    getCppOutputArgPref,
     getSaveLocationPref,
     getHideStderrorWhenCompiledOK,
 } from './preferences';
@@ -56,7 +58,7 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         case 'cpp': {
             ret = [
                 srcPath,
-                '-o',
+                getCppOutputArgPref(),
                 getBinSaveLocation(srcPath),
                 ...args,
                 '-D',
@@ -72,7 +74,12 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         }
         case 'c': {
             {
-                ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+                ret = [
+                    srcPath,
+                    getCOutputArgPref(),
+                    getBinSaveLocation(srcPath),
+                    ...args,
+                ];
                 if (onlineJudgeEnv) {
                     ret.push('-D');
                     ret.push('ONLINE_JUDGE');
