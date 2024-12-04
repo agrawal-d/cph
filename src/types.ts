@@ -20,6 +20,9 @@ export type prefSection =
     | 'language.cpp.SubmissionCompiler'
     | 'language.cpp.Command'
     | 'language.cpp.OutputArg'
+    | 'language.csharp.Args'
+    | 'language.csharp.SubmissionCompiler'
+    | 'language.csharp.Command'
     | 'language.go.Args'
     | 'language.go.SubmissionCompiler'
     | 'language.go.Command'
@@ -61,7 +64,8 @@ export type LangNames =
     | 'java'
     | 'js'
     | 'go'
-    | 'hs';
+    | 'hs'
+    | 'csharp';
 
 export type TestCase = {
     input: string;

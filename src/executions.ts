@@ -93,6 +93,27 @@ export const runTestCase = (
             process = spawn('java', args);
             break;
         }
+        case 'csharp': {
+            let binFileName: string;
+
+            if (language.compiler.includes('dotnet')) {
+                const projName = '.cphcsrun';
+                const isLinux = platform() == 'linux';
+                if (isLinux) {
+                    binFileName = projName;
+                } else {
+                    binFileName = projName + '.exe';
+                }
+
+                const binFilePath = path.join(binPath, binFileName);
+                process = spawn(binFilePath, ['/stack:67108864'], spawnOpts);
+            } else {
+                // Run with mono
+                process = spawn('mono', [binPath], spawnOpts);
+            }
+
+            break;
+        }
         default: {
             process = spawn(binPath, spawnOpts);
         }
@@ -157,10 +178,26 @@ export const deleteBinary = (language: Language, binPath: string) => {
     }
     console.log('Deleting binary', binPath);
     try {
-        if (platform() == 'linux') {
-            spawn('rm', [binPath]);
+        const isLinux = platform() == 'linux';
+        const isFile = path.extname(binPath);
+
+        if (isLinux) {
+            if (isFile) {
+                spawn('rm', [binPath]);
+            } else {
+                spawn('rm', ['-r', binPath]);
+            }
         } else {
-            spawn('del', [binPath], { shell: true });
+            const nrmBinPath = '"' + binPath + '"';
+            if (isFile) {
+                spawn('cmd.exe', ['/c', 'del', nrmBinPath], {
+                    windowsVerbatimArguments: true,
+                });
+            } else {
+                spawn('cmd.exe', ['/c', 'rd', '/s', '/q', nrmBinPath], {
+                    windowsVerbatimArguments: true,
+                });
+            }
         }
     } catch (err) {
         console.error('Error while deleting binary', err);

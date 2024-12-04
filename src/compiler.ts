@@ -1,6 +1,7 @@
 import { getLanguage, ocHide, ocShow, ocWrite } from './utils';
 import { Language } from './types';
-import { spawn } from 'child_process';
+import { spawn, SpawnOptionsWithoutStdio } from 'child_process';
+import { platform } from 'os';
 import path from 'path';
 import {
     getCOutputArgPref,
@@ -19,7 +20,7 @@ export const setOnlineJudgeEnv = (value: boolean) => {
 
 /**
  *  Get the location to save the generated binary in. If save location is
- *  available in preferences, returns that, otherwise returns the director of
+ *  available in preferences, returns that, otherwise returns the directory of
  *  active file.
  *
  *  If it is a interpteted language, simply returns the path to the source code.
@@ -31,7 +32,20 @@ export const getBinSaveLocation = (srcPath: string): string => {
     if (language.skipCompile) {
         return srcPath;
     }
-    const ext = language.name == 'java' ? '*.class' : '.bin';
+    let ext: string;
+    switch (language.name) {
+        case 'java': {
+            ext = '*.class';
+            break;
+        }
+        case 'csharp': {
+            ext = language.compiler.includes('dotnet') ? '_bin' : '.bin';
+            break;
+        }
+        default: {
+            ext = '.bin';
+        }
+    }
     const savePreference = getSaveLocationPref();
     const srcFileName = path.parse(srcPath).name;
     const binFileName = srcFileName + ext;
@@ -117,12 +131,156 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             ];
             break;
         }
+        case 'csharp': {
+            const projDir = getDotnetProjectLocation(language, srcPath);
+            const binPath = getBinSaveLocation(srcPath);
+
+            if (language.compiler.includes('dotnet')) {
+                ret = [
+                    'build',
+                    projDir,
+                    '-c',
+                    'Release',
+                    '-o',
+                    binPath,
+                    '--force',
+                    ...args,
+                ];
+                if (onlineJudgeEnv) {
+                    ret.push('/p:DefineConstants="TRACE;ONLINE_JUDGE"');
+                }
+            } else {
+                // mcs will run on shell, need to wrap paths with quotes.
+                // otherwise it will raise error when the paths contain whitespace.
+                let wrpSrcPath = srcPath;
+                let wrpBinPath = binPath;
+                if (platform() === 'win32') {
+                    wrpSrcPath = '"' + srcPath + '"';
+                    wrpBinPath = '"' + binPath + '"';
+                }
+
+                ret = [wrpSrcPath, '-out:' + wrpBinPath, ...args];
+                if (onlineJudgeEnv) {
+                    ret.push('-define:ONLINE_JUDGE');
+                }
+            }
+            break;
+        }
         default: {
             ret = [];
             break;
         }
     }
     return ret;
+};
+
+/**
+ * Get the path of the .NET project file (*.csproj) from the location of the source code.
+ * If the compiler is not dotnet, simply returns the path to the source code.
+ *
+ * @param language The Language object for the source code
+ * @returns location of the .NET project file (*.csproj)
+ */
+const getDotnetProjectLocation = (
+    language: Language,
+    srcPath: string,
+): string => {
+    if (!language.compiler.includes('dotnet')) {
+        return srcPath;
+    }
+
+    const projName = '.cphcsrun';
+    const srcDir = path.dirname(srcPath);
+    const projDir = path.join(srcDir, projName);
+    return path.join(projDir, projName + '.csproj');
+};
+
+/**
+ * Create a new .NET project to compile the source code.
+ * It would be created under the same directory as the code.
+ *
+ * @param language The Language object for the source code
+ * @param srcPath location of the source code
+ */
+const createDotnetProject = async (
+    language: Language,
+    srcPath: string,
+): Promise<boolean> => {
+    const result = new Promise<boolean>((resolve) => {
+        const projDir = path.dirname(
+            getDotnetProjectLocation(language, srcPath),
+        );
+
+        console.log('Creating new .NET project');
+        const args = ['new', 'console', '--force', '-o', projDir];
+        const newProj = spawn(language.compiler, args);
+
+        let error = '';
+
+        newProj.stderr.on('data', (data) => {
+            error += data;
+        });
+
+        newProj.on('exit', (exitcode) => {
+            const exitCode = exitcode || 0;
+            const hideWarningsWhenCompiledOK = getHideStderrorWhenCompiledOK();
+
+            if (exitCode !== 0) {
+                ocWrite(
+                    `Exit code: ${exitCode} Errors while creating new .NET project:\n` +
+                        error,
+                );
+                ocShow();
+                resolve(false);
+                return;
+            }
+
+            if (!hideWarningsWhenCompiledOK && error.trim() !== '') {
+                ocWrite(
+                    `Exit code: ${exitCode} Warnings while creating new .NET project:\n ` +
+                        error,
+                );
+                ocShow();
+            }
+
+            const destPath = path.join(projDir, 'Program.cs');
+            console.log(
+                'Copying source code to the project',
+                srcPath,
+                destPath,
+            );
+            try {
+                const isLinux = platform() == 'linux';
+
+                if (isLinux) {
+                    spawn('cp', ['-f', srcPath, destPath]);
+                } else {
+                    const wrpSrcPath = '"' + srcPath + '"';
+                    const wrpDestPath = '"' + destPath + '"';
+                    spawn(
+                        'cmd.exe',
+                        ['/c', 'copy', '/y', wrpSrcPath, wrpDestPath],
+                        { windowsVerbatimArguments: true },
+                    );
+                }
+                resolve(true);
+            } catch (err) {
+                console.error('Error while copying source code', err);
+                ocWrite('Errors while creating new .NET project:\n' + err);
+                ocShow();
+                resolve(false);
+            }
+        });
+
+        newProj.on('error', (err) => {
+            console.log(err);
+            ocWrite('Errors while creating new .NET project:\n' + err);
+            ocShow();
+            resolve(false);
+        });
+    });
+
+    return result;
 };
 
 /**
@@ -143,6 +301,33 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     if (language.skipCompile) {
         return Promise.resolve(true);
     }
+
+    const spawnOpts: SpawnOptionsWithoutStdio = {
+        cwd: undefined,
+        env: process.env,
+    };
+
+    if (language.name === 'csharp') {
+        if (language.compiler.includes('dotnet')) {
+            const projResult = await createDotnetProject(language, srcPath);
+            if (!projResult) {
+                getJudgeViewProvider().extensionToJudgeViewMessage({
+                    command: 'compiling-stop',
+                });
+                getJudgeViewProvider().extensionToJudgeViewMessage({
+                    command: 'not-running',
+                });
+                return Promise.resolve(false);
+            }
+        } else {
+            // HACK: Mono only provides mcs.bat for Windows?
+            // spawn cannot run mcs.bat :(
+            if (platform() === 'win32') {
+                spawnOpts.shell = true;
+            }
+        }
+    }
+
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'compiling-start',
     });
@@ -151,7 +336,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     const result = new Promise<boolean>((resolve) => {
         let compiler;
         try {
-            compiler = spawn(language.compiler, flags);
+            compiler = spawn(language.compiler, flags, spawnOpts);
         } catch (err) {
             vscode.window.showErrorMessage(
                 `Could not launch the compiler ${language.compiler}. Is it installed?`,
