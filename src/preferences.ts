@@ -44,11 +44,17 @@ export const getTimeOutPref = (): number =>
 export const getRetainWebviewContextPref = (): boolean =>
     getPreference('general.retainWebviewContext');
 
+export const getCArgsPref = (): string[] =>
+    getPreference('language.c.Args').split(' ') || [];
+
+export const getCOutputArgPref = (): string =>
+    getPreference('language.c.OutputArg');
+
 export const getCppArgsPref = (): string[] =>
     getPreference('language.cpp.Args').split(' ') || [];
 
-export const getCArgsPref = (): string[] =>
-    getPreference('language.c.Args').split(' ') || [];
+export const getCppOutputArgPref = (): string =>
+    getPreference('language.cpp.OutputArg');
 
 export const getPythonArgsPref = (): string[] =>
     getPreference('language.python.Args').split(' ') || [];

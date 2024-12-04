@@ -90,7 +90,7 @@ export const runTestCase = (
             const binFileName = path.parse(binPath).name.slice(0, -1);
             args.push(binFileName);
 
-            process = spawn('java', args, spawnOpts);
+            process = spawn('java', args);
             break;
         }
         case 'csharp': {

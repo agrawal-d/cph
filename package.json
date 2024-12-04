@@ -101,7 +101,16 @@
                 "cph.language.c.Command": {
                     "type": "string",
                     "default": "gcc",
-                    "description": "Command used to compile .c files. Example 'gcc', 'gcc-10', 'clang', etc."
+                    "description": "Command used to compile .c files. Example 'gcc', 'gcc-10', 'clang', 'msvc', etc."
+                },
+                "cph.language.c.OutputArg": {
+                    "type": "string",
+                    "default": "-o",
+                    "enum": [
+                        "-o",
+                        "/Fe:"
+                    ],
+                    "description": "C compiler's argument that specifies the output files."
                 },
                 "cph.language.cpp.Args": {
                     "title": "Compilation flags for .cpp files",
@@ -112,13 +121,14 @@
                 "cph.language.cpp.SubmissionCompiler": {
                     "type": "string",
                     "title": "check12344566",
-                    "default": "GNU G++17 7.3.0",
+                    "default": "GNU G++23 14.2 (64 bit, msys2)",
                     "enum": [
                         "GNU G++17 7.3.0",
                         "GNU G++14 6.4.0",
                         "GNU G++11 5.1.0",
                         "GNU G++17 9.2.0 (64 bit, msys 2)",
                         "GNU G++20 13.2 (64 bit, winlibs)",
+                        "GNU G++23 14.2 (64 bit, msys2)",
                         "Microsoft Visual C++ 2017",
                         "Microsoft Visual C++ 2010",
                         "Clang++17 Diagnostics"
@@ -129,6 +139,15 @@
                     "type": "string",
                     "default": "g++",
                     "description": "Command used to compile .cpp files. Example 'g++', 'g++-10', 'clang++', etc."
+                },
+                "cph.language.cpp.OutputArg": {
+                    "type": "string",
+                    "default": "-o",
+                    "enum": [
+                        "-o",
+                        "/Fe:"
+                    ],
+                    "description": "C++ compiler's argument that specifies the output files."
                 },
                 "cph.language.csharp.Args": {
                     "title": "Compilation flags for .cs files",
@@ -159,12 +178,12 @@
                 },
                 "cph.language.python.SubmissionCompiler": {
                     "type": "string",
-                    "default": "PyPy 3.9.10 (7.3.9, 64bit)",
+                    "default": "PyPy 3.10 (7.3.15, 64bit)",
                     "enum": [
-                        "PyPy 3.6 (7.2.0)",
-                        "PyPy 3.9.10 (7.3.9, 64bit)",
-                        "Python 3.7.2",
                         "PyPy 2.7 (7.2.0)",
+                        "PyPy 3.6 (7.2.0)",
+                        "PyPy 3.10 (7.3.15, 64bit)",
+                        "Python 3.7.2",
                         "Python 2.7.15"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for python"
@@ -376,11 +395,11 @@
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
-        "@vscode/extension-telemetry": "^0.9.0",
         "python-shell": "^5.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-textarea-autosize": "^8.5.3"
+        "react-textarea-autosize": "^8.5.3",
+        "@vscode/extension-telemetry": "^0.9.0"
     },
     "repository": {
         "type": "git",

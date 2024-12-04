@@ -4,6 +4,8 @@ import { spawn, SpawnOptionsWithoutStdio } from 'child_process';
 import { platform } from 'os';
 import path from 'path';
 import {
+    getCOutputArgPref,
+    getCppOutputArgPref,
     getSaveLocationPref,
     getHideStderrorWhenCompiledOK,
 } from './preferences';
@@ -63,13 +65,21 @@ export const getBinSaveLocation = (srcPath: string): string => {
  */
 const getFlags = (language: Language, srcPath: string): string[] => {
     // The language.args are fetched from user saved preferences, if any.
-    const binPath = getBinSaveLocation(srcPath);
     let args = language.args;
     if (args[0] === '') args = [];
     let ret: string[];
     switch (language.name) {
         case 'cpp': {
-            ret = [srcPath, '-o', binPath, ...args, '-D', 'DEBUG', '-D', 'CPH'];
+            ret = [
+                srcPath,
+                getCppOutputArgPref(),
+                getBinSaveLocation(srcPath),
+                ...args,
+                '-D',
+                'DEBUG',
+                '-D',
+                'CPH',
+            ];
             if (onlineJudgeEnv) {
                 ret.push('-D');
                 ret.push('ONLINE_JUDGE');
@@ -78,7 +88,12 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         }
         case 'c': {
             {
-                ret = [srcPath, '-o', binPath, ...args];
+                ret = [
+                    srcPath,
+                    getCOutputArgPref(),
+                    getBinSaveLocation(srcPath),
+                    ...args,
+                ];
                 if (onlineJudgeEnv) {
                     ret.push('-D');
                     ret.push('ONLINE_JUDGE');
@@ -87,11 +102,17 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             }
         }
         case 'rust': {
-            ret = [srcPath, '-o', binPath, ...args];
+            ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
             break;
         }
         case 'go': {
-            ret = ['build', '-o', binPath, srcPath, ...args];
+            ret = [
+                'build',
+                '-o',
+                getBinSaveLocation(srcPath),
+                srcPath,
+                ...args,
+            ];
             break;
         }
         case 'java': {
@@ -103,7 +124,7 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             ret = [
                 srcPath,
                 '-o',
-                binPath,
+                getBinSaveLocation(srcPath),
                 '-no-keep-hi-files',
                 '-no-keep-o-files',
                 ...args,
@@ -112,6 +133,7 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         }
         case 'csharp': {
             const projDir = getDotnetProjectLocation(language, srcPath);
+            const binPath = getBinSaveLocation(srcPath);
 
             if (language.compiler.includes('dotnet')) {
                 ret = [
@@ -280,7 +302,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         return Promise.resolve(true);
     }
 
-    const spawnOpt: SpawnOptionsWithoutStdio = {
+    const spawnOpts: SpawnOptionsWithoutStdio = {
         cwd: undefined,
         env: process.env,
     };
@@ -301,7 +323,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
             // HACK: Mono only provides mcs.bat for Windows?
             // spawn cannot run mcs.bat :(
             if (platform() === 'win32') {
-                spawnOpt.shell = true;
+                spawnOpts.shell = true;
             }
         }
     }
@@ -314,7 +336,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
     const result = new Promise<boolean>((resolve) => {
         let compiler;
         try {
-            compiler = spawn(language.compiler, flags, spawnOpt);
+            compiler = spawn(language.compiler, flags, spawnOpts);
         } catch (err) {
             vscode.window.showErrorMessage(
                 `Could not launch the compiler ${language.compiler}. Is it installed?`,
