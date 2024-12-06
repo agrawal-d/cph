@@ -402,6 +402,20 @@ button:disabled {
     opacity: 0.5;
     font-size: 80%;
 }
+.expectedoutput {
+    filter: grayscale(100%);
+    position: absolute;
+    top: 0px;
+    right: 35px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 80%;
+}
+
+.expectedoutput:hover {
+    opacity: 1;
+}
 
 .textarea-container {
     position: relative;
