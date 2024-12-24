@@ -402,6 +402,7 @@ button:disabled {
     opacity: 0.5;
     font-size: 80%;
 }
+
 .expectedoutput {
     filter: grayscale(100%);
     position: absolute;
@@ -466,6 +467,32 @@ body.vscode-light .case-number {
 
 .row {
     display: inline;
+}
+
+.page {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+    background-color: var(--vscode-panel-background);
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+
+.page pre {
+    color: var(--vscode-menu-foreground);
+    background-color: var(--vscode-menu-background);
+    padding: 2px;
+    border: 0px;
+    margin: 5px 0px;
+    overflow: auto;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--vscode-menu-border);
+    margin: 10px -10px;
 }
 
 @media only screen and (max-width: 400px) {

@@ -1,3 +1,7 @@
 {
-    "eslint.enable": true
+    "eslint.enable": true,
+    "files.associations": {
+        "iostream": "cpp"
+    },
+    "editor.formatOnSave": true
 }

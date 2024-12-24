@@ -11,11 +11,19 @@ import {
     WebViewpersistenceState,
 } from '../../types';
 import CaseView from './CaseView';
+import Page from './Page';
+
 declare const vscodeApi: {
     postMessage: (message: WebviewToVSEvent) => void;
     getState: () => WebViewpersistenceState | undefined;
     setState: (state: WebViewpersistenceState) => void;
 };
+
+interface CustomWindow extends Window {
+    generatedJsonUri: string;
+    remoteMessage: string | null;
+}
+declare const window: CustomWindow;
 
 // Original: www.paypal.com/ncp/payment/CMLKCFEJEMX5L
 const payPalUrl = 'https://rb.gy/5iiorz';
@@ -37,6 +45,18 @@ function Judge(props: {
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
     const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
+    const [showInfoPage, setShowInfoPage] = useState<boolean>(false);
+    const [generatedJson, setGeneratedJson] = useState<any | null>(null);
+
+    useEffect(() => {
+        fetch(window.generatedJsonUri)
+            .then((res) => res.json())
+            .then((data) => setGeneratedJson(data))
+            .catch((err) =>
+                console.error('Failed to fetch generated JSON', err),
+            );
+    }, []);
+
     const [webviewState, setWebviewState] = useState<WebViewpersistenceState>(
         () => {
             const vscodeState = vscodeApi.getState();
@@ -415,10 +435,73 @@ function Judge(props: {
         );
     };
 
+    const renderInfoPage = () => {
+        if (showInfoPage === false) {
+            return null;
+        }
+
+        if (generatedJson === null) {
+            return (
+                <Page
+                    content="Loading..."
+                    title="About CPH"
+                    closePage={() => setShowInfoPage(false)}
+                />
+            );
+        }
+        const contents = (
+            <div>
+                <h3>🤖 Enable AI compilation</h3>
+                Get 100x faster compilation using AI, please opt-in below. Your
+                data will be used to train cats to write JavaScript.
+                <br />
+                <br />
+                <button
+                    className="btn btn-green"
+                    onClick={(e) => {
+                        const target = e.target as HTMLButtonElement;
+                        target.innerText = '🪄 AI training ...';
+                    }}
+                >
+                    Enable
+                </button>
+                <hr />
+                <h3>Get Help</h3>
+                <a
+                    className="btn"
+                    href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
+                >
+                    User guide
+                </a>
+                <hr />
+                <h3>Commit</h3>
+                <pre className="selectable">{generatedJson.gitCommitHash}</pre>
+                <hr />
+                <h3>Build Time</h3>
+                {generatedJson.dateTime}
+                <hr />
+                <h3>License</h3>
+                <pre className="selectable">{generatedJson.licenseString}</pre>
+                <hr />
+                Created by Divyanshu Agrawal
+                <hr />
+            </div>
+        );
+
+        return (
+            <Page
+                content={contents}
+                title="About CPH"
+                closePage={() => setShowInfoPage(false)}
+            />
+        );
+    };
+
     return (
         <div className="ui">
             {notification && <div className="notification">{notification}</div>}
             {renderDonateButton()}
+            {renderInfoPage()}
             <div className="meta">
                 <h1 className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
@@ -520,18 +603,13 @@ function Judge(props: {
                     </button>
                     <button
                         className="btn"
-                        title="Help"
-                        onClick={() =>
-                            sendMessageToVSCode({
-                                command: 'url',
-                                url: 'https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md',
-                            })
-                        }
+                        title="Info"
+                        onClick={() => setShowInfoPage(true)}
                     >
                         <span className="icon">
-                            <i className="codicon codicon-question"></i>
+                            <i className="codicon codicon-info"></i>
                         </span>{' '}
-                        <span className="action-text">Help</span>
+                        <span className="action-text"></span>
                     </button>
                     <button
                         className="btn btn-red right"

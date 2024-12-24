@@ -182,9 +182,10 @@ export const checkUnsupported = (srcPath: string): boolean => {
 export const deleteProblemFile = (srcPath: string) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.DELETE_ALL_TESTCASES);
     const probPath = getProbSaveLocation(srcPath);
+    console.log('Deleting problem file', probPath);
     try {
         if (platform() === 'win32') {
-            spawn('del', [probPath]);
+            spawn('cmd.exe', ['/c', 'del', probPath]);
         } else {
             spawn('rm', [probPath]);
         }

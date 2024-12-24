@@ -200,6 +200,15 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             vscode.Uri.joinPath(this._extensionUri, 'dist', 'codicon.css'),
         );
 
+        const generatedJsonUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(
+                this._extensionUri,
+                'dist',
+                'static',
+                'generated.json',
+            ),
+        );
+
         const scriptUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 this._extensionUri,
@@ -233,6 +242,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         // So, for the initial request, ask for it again.
                         window.vscodeApi = acquireVsCodeApi();
                         window.remoteMessage = '${remoteMessage}';
+                        window.generatedJsonUri = '${generatedJsonUri}';
+
                         document.addEventListener(
                             'DOMContentLoaded',
                             (event) => {
