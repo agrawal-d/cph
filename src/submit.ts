@@ -29,7 +29,7 @@ export const submitToKattis = async () => {
     try {
         url = new URL(problem.url);
     } catch (err) {
-        console.error(err);
+        globalThis.logger.error(err);
         vscode.window.showErrorMessage('Not a kattis problem.');
         return;
     }
@@ -70,7 +70,7 @@ export const submitToCodeForces = async () => {
     try {
         url = new URL(problem.url);
     } catch (err) {
-        console.error(err);
+        globalThis.logger.error(err);
         vscode.window.showErrorMessage('Not a codeforces problem.');
         return;
     }

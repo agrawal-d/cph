@@ -1,3 +1,4 @@
+globalThis.logger = { ...console };
 import { words_in_text } from '../utilsPure';
 
 describe('problem name parser', () => {

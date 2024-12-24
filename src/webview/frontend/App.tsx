@@ -13,6 +13,21 @@ import {
 import CaseView from './CaseView';
 import Page from './Page';
 
+let storedLogs = '';
+const originalConsole = { ...window.console };
+function customLogger(
+    originalMethod: (...args: any[]) => void,
+    ...args: any[]
+) {
+    originalMethod(...args);
+
+    storedLogs += new Date().toISOString() + ' ';
+    storedLogs +=
+        args
+            .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : arg))
+            .join(' ') + '\n';
+}
+
 declare const vscodeApi: {
     postMessage: (message: WebviewToVSEvent) => void;
     getState: () => WebViewpersistenceState | undefined;
@@ -22,8 +37,16 @@ declare const vscodeApi: {
 interface CustomWindow extends Window {
     generatedJsonUri: string;
     remoteMessage: string | null;
+    remoteServerAddress: string;
+    console: Console;
 }
 declare const window: CustomWindow;
+
+window.console.log = customLogger.bind(window.console, originalConsole.log);
+window.console.error = customLogger.bind(window.console, originalConsole.error);
+window.console.warn = customLogger.bind(window.console, originalConsole.warn);
+window.console.info = customLogger.bind(window.console, originalConsole.info);
+window.console.debug = customLogger.bind(window.console, originalConsole.debug);
 
 // Original: www.paypal.com/ncp/payment/CMLKCFEJEMX5L
 const payPalUrl = 'https://rb.gy/5iiorz';
@@ -45,8 +68,32 @@ function Judge(props: {
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
     const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
-    const [showInfoPage, setShowInfoPage] = useState<boolean>(false);
+    const [infoPageVisible, setInfoPageVisible] = useState<boolean>(false);
     const [generatedJson, setGeneratedJson] = useState<any | null>(null);
+    const [liveUserCount, setLiveUserCount] = useState<number>(0);
+    const [extLogs, setExtLogs] = useState<string>('');
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log('Fetching live users');
+            fetch(window.remoteServerAddress)
+                .then((res) => res.text())
+                .then((text) => {
+                    const userCount = Number(text);
+                    if (isNaN(userCount)) {
+                        console.error('Invalid live user count', text);
+                        setLiveUserCount(0);
+                    } else {
+                        setLiveUserCount(userCount);
+                    }
+                    console.log('Live users:', text);
+                })
+                .catch((err) =>
+                    console.error('Failed to fetch live users', err),
+                );
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         fetch(window.generatedJsonUri)
@@ -130,6 +177,10 @@ function Judge(props: {
                 }
                 case 'waiting-for-submit': {
                     setWaitingForSubmit(true);
+                    break;
+                }
+                case 'ext-logs': {
+                    setExtLogs(data.logs);
                     break;
                 }
                 default: {
@@ -400,6 +451,13 @@ function Judge(props: {
         }
     };
 
+    const showInfoPage = () => {
+        sendMessageToVSCode({
+            command: 'get-ext-logs',
+        });
+        setInfoPageVisible(true);
+    };
+
     const renderDonateButton = () => {
         const diff = new Date().getTime() - webviewState.dialogCloseDate;
         const diffInDays = diff / (1000 * 60 * 60 * 24);
@@ -436,7 +494,7 @@ function Judge(props: {
     };
 
     const renderInfoPage = () => {
-        if (showInfoPage === false) {
+        if (infoPageVisible === false) {
             return null;
         }
 
@@ -445,12 +503,16 @@ function Judge(props: {
                 <Page
                     content="Loading..."
                     title="About CPH"
-                    closePage={() => setShowInfoPage(false)}
+                    closePage={() => setInfoPageVisible(false)}
                 />
             );
         }
+        const logs = storedLogs;
         const contents = (
             <div>
+                A VS Code extension to make competitive programming easier,
+                created by Divyanshu Agrawal
+                <hr />
                 <h3>🤖 Enable AI compilation</h3>
                 Get 100x faster compilation using AI, please opt-in below. Your
                 data will be used to train cats to write JavaScript.
@@ -483,8 +545,14 @@ function Judge(props: {
                 <h3>License</h3>
                 <pre className="selectable">{generatedJson.licenseString}</pre>
                 <hr />
-                Created by Divyanshu Agrawal
+                <h3>Live user count</h3>
+                {liveUserCount} user(s) online.
                 <hr />
+                <h3>UI Logs</h3>
+                <pre className="selectable">{logs}</pre>
+                <hr />
+                <h3>Extension Logs</h3>
+                <pre className="selectable">{extLogs}</pre>
             </div>
         );
 
@@ -492,7 +560,7 @@ function Judge(props: {
             <Page
                 content={contents}
                 title="About CPH"
-                closePage={() => setShowInfoPage(false)}
+                closePage={() => setInfoPageVisible(false)}
             />
         );
     };
@@ -566,6 +634,10 @@ function Judge(props: {
                         }}
                     />
                 </div>
+                <div className="liveUserCount">
+                    <i className="codicon codicon-circle-filled color-green"></i>{' '}
+                    {liveUserCount} users online
+                </div>
             </div>
             <div className="actions">
                 <div className="row">
@@ -604,7 +676,7 @@ function Judge(props: {
                     <button
                         className="btn"
                         title="Info"
-                        onClick={() => setShowInfoPage(true)}
+                        onClick={() => showInfoPage()}
                     >
                         <span className="icon">
                             <i className="codicon codicon-info"></i>

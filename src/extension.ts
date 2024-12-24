@@ -1,3 +1,30 @@
+/************************************************************************************/
+globalThis.storedLogs = '';
+function customLogger(
+    originalMethod: (...args: any[]) => void,
+    ...args: any[]
+) {
+    originalMethod(...args);
+
+    globalThis.storedLogs += new Date().toISOString() + ' ';
+    globalThis.storedLogs +=
+        args
+            .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : arg))
+            .join(' ') + '\n';
+}
+
+globalThis.logger = {};
+globalThis.logger.log = (...args: any[]) => customLogger(console.log, ...args);
+globalThis.logger.error = (...args: any[]) =>
+    customLogger(console.error, ...args);
+globalThis.logger.warn = (...args: any[]) =>
+    customLogger(console.warn, ...args);
+globalThis.logger.info = (...args: any[]) =>
+    customLogger(console.info, ...args);
+globalThis.logger.debug = (...args: any[]) =>
+    customLogger(console.debug, ...args);
+/************************************************************************************/
+
 import * as vscode from 'vscode';
 import { setupCompanionServer } from './companion';
 import runTestCases from './runTestCases';
@@ -19,7 +46,7 @@ export const getJudgeViewProvider = () => {
 };
 
 const registerCommands = (context: vscode.ExtensionContext) => {
-    console.log('Registering commands');
+    globalThis.logger.log('Registering commands');
     const disposable = vscode.commands.registerCommand(
         'cph.runTestCases',
         () => {
@@ -70,7 +97,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
 
 // This method is called when the extension is activated
 export function activate(context: vscode.ExtensionContext) {
-    console.log('cph: activate() execution started');
+    globalThis.logger.log('cph: activate() execution started');
     globalThis.context = context;
 
     downloadRemoteMessage();
@@ -111,7 +138,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function downloadRemoteMessage() {
     try {
-        console.log('Fetching remote message');
+        globalThis.logger.log('Fetching remote message');
         globalThis.remoteMessage = await (
             await fetch(config.remoteMessageUrl)
         ).text();
@@ -119,8 +146,11 @@ async function downloadRemoteMessage() {
             command: 'remote-message',
             message: globalThis.remoteMessage,
         });
-        console.log('Remote message fetched', globalThis.remoteMessage);
+        globalThis.logger.log(
+            'Remote message fetched',
+            globalThis.remoteMessage,
+        );
     } catch (e) {
-        console.error('Error fetching remote message', e);
+        globalThis.logger.error('Error fetching remote message', e);
     }
 }

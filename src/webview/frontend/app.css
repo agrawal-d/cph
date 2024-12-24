@@ -478,6 +478,7 @@ body.vscode-light .case-number {
     width: 100%;
     height: 100%;
     padding: 10px;
+    overflow-y: auto;
 }
 
 .page pre {
@@ -493,6 +494,15 @@ hr {
     border: none;
     border-top: 1px solid var(--vscode-menu-border);
     margin: 10px -10px;
+}
+
+.liveUserCount {
+    text-align: center;
+    opacity: 0.5;
+}
+
+.color-green {
+    color: rgb(64, 175, 64);
 }
 
 @media only screen and (max-width: 400px) {

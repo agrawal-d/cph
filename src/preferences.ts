@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 const getPreference = (section: prefSection): any => {
     const ret = workspace.getConfiguration('cph').get(section);
 
-    console.log('Read preference for ', section, ret);
+    globalThis.logger.log('Read preference for ', section, ret);
     return ret;
 };
 
@@ -82,6 +82,9 @@ export const getCSharpArgsPref = (): string[] =>
 
 export const getFirstTimePref = (): boolean =>
     getPreference('general.firstTime') || 'true';
+
+export const getRemoteServerAddressPref = (): string =>
+    getPreference('general.remoteServerAddress') || '';
 
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
@@ -187,6 +190,6 @@ export const getLanguageId = (srcPath: string): number => {
             return id;
         }
     }
-    console.error("Couldn't find id for compiler " + compiler);
+    globalThis.logger.error("Couldn't find id for compiler " + compiler);
     return -1;
 };

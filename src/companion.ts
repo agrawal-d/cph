@@ -62,7 +62,7 @@ export const submitKattisProblem = (problem: Problem) => {
     pyshell.stdin.end();
 
     pyshell.stdout.on('data', function (data) {
-        console.log(data.toString());
+        globalThis.logger.log(data.toString());
         getJudgeViewProvider().extensionToJudgeViewMessage({
             command: 'new-problem',
             problem,
@@ -70,7 +70,7 @@ export const submitKattisProblem = (problem: Problem) => {
         ({ command: 'submit-finished' });
     });
     pyshell.stderr.on('data', function (data) {
-        console.log(data.tostring());
+        globalThis.logger.log(data.tostring());
         vscode.window.showErrorMessage(data);
     });
 };
@@ -89,7 +89,7 @@ export const storeSubmitProblem = (problem: Problem) => {
         languageId,
     };
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_CODEFORCES);
-    console.log('Stored savedResponse', savedResponse);
+    globalThis.logger.log('Stored savedResponse', savedResponse);
 };
 
 export const setupCompanionServer = () => {
@@ -99,7 +99,8 @@ export const setupCompanionServer = () => {
             let rawProblem = '';
 
             req.on('data', (chunk) => {
-                COMPANION_LOGGING && console.log('Companion server got data');
+                COMPANION_LOGGING &&
+                    globalThis.logger.log('Companion server got data');
                 rawProblem += chunk;
             });
             req.on('close', function () {
@@ -110,7 +111,9 @@ export const setupCompanionServer = () => {
                     const problem: Problem = JSON.parse(rawProblem);
                     handleNewProblem(problem);
                     COMPANION_LOGGING &&
-                        console.log('Companion server closed connection.');
+                        globalThis.logger.log(
+                            'Companion server closed connection.',
+                        );
                 } catch (e) {
                     vscode.window.showErrorMessage(
                         `Error parsing problem from companion "${e}. Raw problem: '${rawProblem}'"`,
@@ -120,7 +123,7 @@ export const setupCompanionServer = () => {
             res.write(JSON.stringify(savedResponse));
             if (headers['cph-submit'] == 'true') {
                 COMPANION_LOGGING &&
-                    console.log(
+                    globalThis.logger.log(
                         'Request was from the cph-submit extension; sending savedResponse and clearing it',
                         savedResponse,
                     );
@@ -140,10 +143,13 @@ export const setupCompanionServer = () => {
                 `Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: "${err.message}" , companion may not work.`,
             );
         });
-        console.log('Companion server listening on port', config.port);
+        globalThis.logger.log(
+            'Companion server listening on port',
+            config.port,
+        );
         return server;
     } catch (e) {
-        console.error('Companion server error :', e);
+        globalThis.logger.error('Companion server error :', e);
     }
 };
 
@@ -151,7 +157,7 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
     if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
         return `${getProblemName(problem.url)}.${ext}`;
     } else {
-        console.log(
+        globalThis.logger.log(
             isCodeforcesUrl(new URL(problem.url)),
             useShortCodeForcesName(),
         );
@@ -204,7 +210,7 @@ const handleNewProblem = async (problem: Problem) => {
     try {
         url = new URL(problem.url);
     } catch (err) {
-        console.error(err);
+        globalThis.logger.error(err);
         return null;
     }
     if (url.hostname == 'open.kattis.com') {

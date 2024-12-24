@@ -16,7 +16,7 @@ import { setOnlineJudgeEnv } from '../compiler';
  * @param context The activation context
  */
 export const editorChanged = async (e: vscode.TextEditor | undefined) => {
-    console.log('Changed editor to', e?.document.fileName);
+    globalThis.logger.log('Changed editor to', e?.document.fileName);
 
     if (e === undefined) {
         getJudgeViewProvider().extensionToJudgeViewMessage({
@@ -50,7 +50,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
         vscode.commands.executeCommand('cph.judgeView.focus');
     }
 
-    console.log('Sent problem @', Date.now());
+    globalThis.logger.log('Sent problem @', Date.now());
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem,
@@ -58,7 +58,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
 };
 
 export const editorClosed = (e: vscode.TextDocument) => {
-    console.log('Closed editor:', e.uri.fsPath);
+    globalThis.logger.log('Closed editor:', e.uri.fsPath);
     const srcPath = e.uri.fsPath;
     const probPath = getProbSaveLocation(srcPath);
 

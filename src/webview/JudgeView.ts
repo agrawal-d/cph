@@ -9,6 +9,7 @@ import runAllAndSave from './processRunAll';
 import runTestCases from '../runTestCases';
 import {
     getAutoShowJudgePref,
+    getRemoteServerAddressPref,
     getRetainWebviewContextPref,
 } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
@@ -39,7 +40,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
         webviewView.webview.onDidReceiveMessage(
             async (message: WebviewToVSEvent) => {
-                console.log('Got from webview', message);
+                globalThis.logger.log('Got from webview', message);
                 switch (message.command) {
                     case 'run-single-and-save': {
                         const problem = message.problem;
@@ -61,6 +62,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
                     case 'kill-running': {
                         killRunning();
+                        break;
+                    }
+
+                    case 'get-ext-logs': {
+                        this.sendExtLogs();
                         break;
                     }
 
@@ -103,11 +109,20 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
 
                     default: {
-                        console.error('Unknown event received from webview');
+                        globalThis.logger.error(
+                            'Unknown event received from webview',
+                        );
                     }
                 }
             },
         );
+    }
+
+    private sendExtLogs() {
+        this.extensionToJudgeViewMessage({
+            command: 'ext-logs',
+            logs: globalThis.storedLogs,
+        });
     }
 
     private getInitialProblem() {
@@ -119,7 +134,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
         // also load any messages from before that were lost.
         this.messageBuffer.forEach((message) => {
-            console.log('Restored buffer command', message.command);
+            globalThis.logger.log('Restored buffer command', message.command);
             this._view?.webview.postMessage(message);
         });
 
@@ -131,7 +146,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
     public problemPath: string | undefined;
 
     public async focus() {
-        console.log('focusing');
+        globalThis.logger.log('focusing');
         if (!this._view) {
             await vscode.commands.executeCommand('cph.judgeView.focus');
         } else {
@@ -140,7 +155,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
     }
 
     private focusIfNeeded = (message: VSToWebViewMessage) => {
-        console.log(message.command);
+        globalThis.logger.log(message.command);
 
         switch (message.command) {
             case 'waiting-for-submit':
@@ -172,7 +187,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             // this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
             this._view.webview.postMessage(message);
             if (message.command !== 'submit-finished') {
-                console.log('View got message', message);
+                globalThis.logger.log('View got message', message);
             }
             if (message.command === 'new-problem') {
                 if (message.problem === undefined) {
@@ -183,7 +198,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             }
         } else {
             if (message.command !== 'new-problem') {
-                console.log('Pushing to buffer', message.command);
+                globalThis.logger.log('Pushing to buffer', message.command);
                 this.messageBuffer.push(message);
             } else {
                 this.messageBuffer = [];
@@ -195,6 +210,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         const styleUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'dist', 'app.css'),
         );
+
+        const remoteServerAddress = getRemoteServerAddressPref();
 
         const codiconsUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'dist', 'codicon.css'),
@@ -243,6 +260,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         window.vscodeApi = acquireVsCodeApi();
                         window.remoteMessage = '${remoteMessage}';
                         window.generatedJsonUri = '${generatedJsonUri}';
+                        window.remoteServerAddress = '${remoteServerAddress}';
 
                         document.addEventListener(
                             'DOMContentLoaded',
@@ -254,7 +272,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                                     command: 'online-judge-env',
                                     value:false,
                                 });
-                                console.log("Requested initial problem");
+                                globalThis.logger.log("Requested initial problem");
                             },
                         );
                     </script>

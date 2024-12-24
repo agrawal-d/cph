@@ -1,0 +1,15 @@
+[Unit]
+Description=Node.js heartbeat server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/env node /opt/server.js
+Restart=always
+RestartSec=5
+Environment=PORT=4546
+User=server
+Group=server
+WorkingDirectory=/opt
+
+[Install]
+WantedBy=multi-user.target

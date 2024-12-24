@@ -1,3 +1,4 @@
+globalThis.logger = { ...console };
 import { isResultCorrect } from '../judge';
 
 describe('saved problem parser', () => {

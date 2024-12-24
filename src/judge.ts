@@ -15,9 +15,9 @@ export const isResultCorrect = (
 
     const expectedLines = expected.trim().split('\n');
     const resultLines = result.trim().split('\n');
-    console.log('res', resultLines);
+    globalThis.logger.log('res', resultLines);
     if (expectedLines.length !== resultLines.length) {
-        console.log('Failed precheck', expectedLines, resultLines);
+        globalThis.logger.log('Failed precheck', expectedLines, resultLines);
         return false;
     }
 
@@ -25,7 +25,7 @@ export const isResultCorrect = (
 
     for (let i = 0; i < len; i++) {
         if (expectedLines[i].trim() !== resultLines[i].trim()) {
-            console.log(
+            globalThis.logger.log(
                 'Judge Failed here: ',
                 expectedLines[i].trim(),
                 resultLines[i].trim(),

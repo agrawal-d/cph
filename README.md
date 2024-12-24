@@ -71,9 +71,8 @@ approach. It makes reviewing and accepting the PR much easier.**
 
 ## Telemetry
 
-The extension collects basic events defined in `src/telmetry.ts`. To disable,
-modify the setting `telemetry.telemetryLevel` (applies to all VSCode
-extensions).
+To show live user count, the extension sends a request to the server every few
+seconds. No information is sent with the request.
 
 ## License
 

@@ -16,7 +16,7 @@ import telmetry from './telmetry';
  */
 export default async () => {
     globalThis.reporter.sendTelemetryEvent(telmetry.RUN_ALL_TESTCASES);
-    console.log('Running command "runTestCases"');
+    globalThis.logger.log('Running command "runTestCases"');
     const editor = vscode.window.activeTextEditor;
     if (editor === undefined) {
         checkUnsupported('');
@@ -30,7 +30,7 @@ export default async () => {
     const problem = getProblem(srcPath);
 
     if (!problem) {
-        console.log('No problem saved.');
+        globalThis.logger.log('No problem saved.');
         createLocalProblem(editor);
         return;
     }
@@ -38,7 +38,7 @@ export default async () => {
     const didCompile = await compileFile(srcPath);
 
     if (!didCompile) {
-        console.error('Could not compile', srcPath);
+        globalThis.logger.error('Could not compile', srcPath);
         return;
     }
     await editor.document.save();
@@ -53,7 +53,7 @@ export default async () => {
 
 const createLocalProblem = async (editor: vscode.TextEditor) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.NEW_LOCAL_PROBLEM);
-    console.log('Creating local problem');
+    globalThis.logger.log('Creating local problem');
     const srcPath = editor.document.fileName;
     if (checkUnsupported(srcPath)) {
         return;
@@ -76,7 +76,7 @@ const createLocalProblem = async (editor: vscode.TextEditor) => {
         group: 'local',
         local: true,
     };
-    console.log(newProblem);
+    globalThis.logger.log(newProblem);
     saveProblem(srcPath, newProblem);
     getJudgeViewProvider().focus();
     getJudgeViewProvider().extensionToJudgeViewMessage({

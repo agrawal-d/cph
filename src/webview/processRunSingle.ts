@@ -18,7 +18,7 @@ export const runSingleAndSave = async (
     if (!skipTelemetry) {
         globalThis.reporter.sendTelemetryEvent(telmetry.RUN_TESTCASE);
     }
-    console.log('Run and save started', problem, id);
+    globalThis.logger.log('Run and save started', problem, id);
     const srcPath = problem.srcPath;
     const language = getLanguage(srcPath);
     const binPath = getBinSaveLocation(srcPath);
@@ -30,7 +30,7 @@ export const runSingleAndSave = async (
     await textEditor.save();
 
     if (!testCase) {
-        console.error('Invalid id', id, problem);
+        globalThis.logger.error('Invalid id', id, problem);
         return;
     }
 
@@ -38,7 +38,7 @@ export const runSingleAndSave = async (
 
     if (!skipCompile) {
         if (!(await compileFile(srcPath))) {
-            console.error('Failed to compile', problem, id);
+            globalThis.logger.error('Failed to compile', problem, id);
             return;
         }
     }
@@ -61,7 +61,7 @@ export const runSingleAndSave = async (
         id,
     };
 
-    console.log('Testcase judging complete. Result:', result);
+    globalThis.logger.log('Testcase judging complete. Result:', result);
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'run-single-result',
         result,

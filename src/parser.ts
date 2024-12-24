@@ -46,7 +46,7 @@ export const saveProblem = (srcPath: string, problem: Problem) => {
     const cphFolder = path.join(srcFolder, '.cph');
 
     if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
-        console.log('Making .cph folder');
+        globalThis.logger.log('Making .cph folder');
         fs.mkdirSync(cphFolder);
     }
 

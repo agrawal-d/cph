@@ -182,7 +182,7 @@ export const checkUnsupported = (srcPath: string): boolean => {
 export const deleteProblemFile = (srcPath: string) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.DELETE_ALL_TESTCASES);
     const probPath = getProbSaveLocation(srcPath);
-    console.log('Deleting problem file', probPath);
+    globalThis.logger.log('Deleting problem file', probPath);
     try {
         if (platform() === 'win32') {
             spawn('cmd.exe', ['/c', 'del', probPath]);
@@ -190,7 +190,7 @@ export const deleteProblemFile = (srcPath: string) => {
             spawn('rm', [probPath]);
         }
     } catch (error) {
-        console.error('Error while deleting problem file ', error);
+        globalThis.logger.error('Error while deleting problem file ', error);
     }
 };
 

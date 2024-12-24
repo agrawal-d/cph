@@ -355,6 +355,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Automatically show the judge view when opening a file that has a problem associated with it"
+                },
+                "cph.general.remoteServerAddress": {
+                    "type": "string",
+                    "default": "http://20.244.105.138:4546",
+                    "description": "The address of the remote server to which the extension will send requests. (Currently used for live user count)"
                 }
             }
         }

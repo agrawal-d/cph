@@ -15,7 +15,7 @@ export let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {
     onlineJudgeEnv = value;
-    console.log('online judge env:', onlineJudgeEnv);
+    globalThis.logger.log('online judge env:', onlineJudgeEnv);
 };
 
 /**
@@ -211,7 +211,7 @@ const createDotnetProject = async (
             getDotnetProjectLocation(language, srcPath),
         );
 
-        console.log('Creating new .NET project');
+        globalThis.logger.log('Creating new .NET project');
         const args = ['new', 'console', '--force', '-o', projDir];
         const newProj = spawn(language.compiler, args);
 
@@ -244,7 +244,7 @@ const createDotnetProject = async (
             }
 
             const destPath = path.join(projDir, 'Program.cs');
-            console.log(
+            globalThis.logger.log(
                 'Copying source code to the project',
                 srcPath,
                 destPath,
@@ -265,7 +265,7 @@ const createDotnetProject = async (
                 }
                 resolve(true);
             } catch (err) {
-                console.error('Error while copying source code', err);
+                globalThis.logger.error('Error while copying source code', err);
                 ocWrite('Errors while creating new .NET project:\n' + err);
                 ocShow();
                 resolve(false);
@@ -273,7 +273,7 @@ const createDotnetProject = async (
         });
 
         newProj.on('error', (err) => {
-            console.log(err);
+            globalThis.logger.log(err);
             ocWrite('Errors while creating new .NET project:\n' + err);
             ocShow();
             resolve(false);
@@ -294,7 +294,7 @@ const createDotnetProject = async (
  * @param srcPath location of the source code
  */
 export const compileFile = async (srcPath: string): Promise<boolean> => {
-    console.log('Compilation Started');
+    globalThis.logger.log('Compilation Started');
     await vscode.workspace.openTextDocument(srcPath).then((doc) => doc.save());
     ocHide();
     const language: Language = getLanguage(srcPath);
@@ -332,7 +332,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         command: 'compiling-start',
     });
     const flags: string[] = getFlags(language, srcPath);
-    console.log('Compiling with flags', flags);
+    globalThis.logger.log('Compiling with flags', flags);
     const result = new Promise<boolean>((resolve) => {
         let compiler;
         try {
@@ -350,7 +350,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         });
 
         compiler.on('error', (err) => {
-            console.error(err);
+            globalThis.logger.error(err);
             ocWrite(
                 'Errors while compiling:\n' +
                     err.message +
@@ -375,7 +375,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                     `Exit code: ${exitCode} Errors while compiling:\n` + error,
                 );
                 ocShow();
-                console.error('Compilation failed');
+                globalThis.logger.error('Compilation failed');
                 getJudgeViewProvider().extensionToJudgeViewMessage({
                     command: 'compiling-stop',
                 });
@@ -394,7 +394,7 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
                 ocShow();
             }
 
-            console.log('Compilation passed');
+            globalThis.logger.log('Compilation passed');
             getJudgeViewProvider().extensionToJudgeViewMessage({
                 command: 'compiling-stop',
             });

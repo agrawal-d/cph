@@ -44,8 +44,8 @@ const config = {
         {
             apply: (compiler) => {
                 compiler.hooks.compile.tap("CompileTimeData", () => {
-                    const gitCommitHash = child_process.execSync('git rev-parse HEAD').toString().trim() || "unknown git commit hash";
-                    const licenseString = fs.readFileSync(path.join(__dirname, 'LICENSE'), 'utf8').toString().trim() || "unknown license";
+                    const gitCommitHash = child_process.execSync('git rev-parse HEAD').toString() || "unknown git commit hash";
+                    const licenseString = fs.readFileSync(path.join(__dirname, 'LICENSE'), 'utf8').toString() || "unknown license";
                     const dateTime = new Date().toISOString();
                     const generatedDict = {
                         gitCommitHash,
