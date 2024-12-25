@@ -14,6 +14,8 @@ import CaseView from './CaseView';
 import Page from './Page';
 
 let storedLogs = '';
+let notificationTimeout: NodeJS.Timeout | undefined = undefined;
+
 const originalConsole = { ...window.console };
 function customLogger(
     originalMethod: (...args: any[]) => void,
@@ -51,6 +53,25 @@ window.console.debug = customLogger.bind(window.console, originalConsole.debug);
 // Original: www.paypal.com/ncp/payment/CMLKCFEJEMX5L
 const payPalUrl = 'https://rb.gy/5iiorz';
 
+function getLiveUserCount(): Promise<number> {
+    console.log('Fetching live user count');
+    return fetch(window.remoteServerAddress)
+        .then((res) => res.text())
+        .then((text) => {
+            const userCount = Number(text);
+            if (isNaN(userCount)) {
+                console.error('Invalid live user count', text);
+                return 0;
+            } else {
+                return userCount;
+            }
+        })
+        .catch((err) => {
+            console.error('Failed to fetch live users', err);
+            return 0;
+        });
+}
+
 function Judge(props: {
     problem: Problem;
     updateProblem: (problem: Problem) => void;
@@ -74,24 +95,10 @@ function Judge(props: {
     const [extLogs, setExtLogs] = useState<string>('');
 
     useEffect(() => {
+        getLiveUserCount().then((count) => setLiveUserCount(count));
         const interval = setInterval(() => {
-            console.log('Fetching live users');
-            fetch(window.remoteServerAddress)
-                .then((res) => res.text())
-                .then((text) => {
-                    const userCount = Number(text);
-                    if (isNaN(userCount)) {
-                        console.error('Invalid live user count', text);
-                        setLiveUserCount(0);
-                    } else {
-                        setLiveUserCount(userCount);
-                    }
-                    console.log('Live users:', text);
-                })
-                .catch((err) =>
-                    console.error('Failed to fetch live users', err),
-                );
-        }, 5000);
+            getLiveUserCount().then((count) => setLiveUserCount(count));
+        }, 30000);
         return () => clearInterval(interval);
     }, []);
 
@@ -251,6 +258,7 @@ function Judge(props: {
 
     // Stop running executions.
     const stop = () => {
+        notify('Stopped any running processes');
         sendMessageToVSCode({
             command: 'kill-running',
             problem,
@@ -340,9 +348,11 @@ function Judge(props: {
     };
 
     const notify = (text: string) => {
+        clearTimeout(notificationTimeout!);
         setNotification(text);
-        setTimeout(() => {
+        notificationTimeout = setTimeout(() => {
             setNotification(null);
+            notificationTimeout = undefined;
         }, 1000);
     };
 
@@ -461,7 +471,6 @@ function Judge(props: {
     const renderDonateButton = () => {
         const diff = new Date().getTime() - webviewState.dialogCloseDate;
         const diffInDays = diff / (1000 * 60 * 60 * 24);
-        console.log('Diff in days:', diffInDays);
         if (diffInDays < 14) {
             return null;
         }
@@ -634,10 +643,12 @@ function Judge(props: {
                         }}
                     />
                 </div>
-                <div className="liveUserCount">
-                    <i className="codicon codicon-circle-filled color-green"></i>{' '}
-                    {liveUserCount} users online
-                </div>
+                {liveUserCount > 0 && (
+                    <div className="liveUserCount">
+                        <i className="codicon codicon-circle-filled color-green"></i>{' '}
+                        {liveUserCount} users online
+                    </div>
+                )}
             </div>
             <div className="actions">
                 <div className="row">
