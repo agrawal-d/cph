@@ -561,7 +561,8 @@ function Judge(props: {
                 {window.showLiveUserCount && (
                     <>
                         <h3>Live user count</h3>
-                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'} online.
+                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
+                        online.
                         <hr />
                     </>
                 )}
@@ -654,7 +655,8 @@ function Judge(props: {
                 {window.showLiveUserCount && liveUserCount > 0 && (
                     <div className="liveUserCount">
                         <i className="codicon codicon-circle-filled color-green"></i>{' '}
-                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '} online.
+                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
+                        online.
                     </div>
                 )}
             </div>
