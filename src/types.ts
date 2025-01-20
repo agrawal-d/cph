@@ -47,7 +47,8 @@ export type prefSection =
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation'
-    | 'general.remoteServerAddress';
+    | 'general.remoteServerAddress'
+    | 'general.showLiveUserCount';
 
 export type Language = {
     name: LangNames;

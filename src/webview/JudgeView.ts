@@ -10,6 +10,7 @@ import runTestCases from '../runTestCases';
 import {
     getAutoShowJudgePref,
     getRemoteServerAddressPref,
+    getLiveUserCountPref,
     getRetainWebviewContextPref,
 } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
@@ -213,6 +214,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
         const remoteServerAddress = getRemoteServerAddressPref();
 
+        const showLiveUserCount = getLiveUserCountPref();
+
         const codiconsUri = webview.asWebviewUri(
             vscode.Uri.joinPath(this._extensionUri, 'dist', 'codicon.css'),
         );
@@ -261,6 +264,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         window.remoteMessage = '${remoteMessage}';
                         window.generatedJsonUri = '${generatedJsonUri}';
                         window.remoteServerAddress = '${remoteServerAddress}';
+                        window.showLiveUserCount = ${showLiveUserCount};
 
                         document.addEventListener(
                             'DOMContentLoaded',

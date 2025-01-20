@@ -86,6 +86,9 @@ export const getFirstTimePref = (): boolean =>
 export const getRemoteServerAddressPref = (): string =>
     getPreference('general.remoteServerAddress') || '';
 
+export const getLiveUserCountPref = (): boolean =>
+    getPreference('general.showLiveUserCount') || 'true';
+
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
     if (pref === 'none' || pref == ' ' || !pref) {
