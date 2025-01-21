@@ -110,6 +110,7 @@ Several options are available to customize the extension. Open VS Code settings
 - For Java Users, the template shall be in the format where class name is `CLASS_NAME` as the file name so that CLASS_NAME in the code gets auto replaced.
 \
 ![Templates](img/templateSettings.png)
+![Templates](img/javaTemplate.png)
 
 
 ## Getting help
