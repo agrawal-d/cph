@@ -241,8 +241,16 @@ const handleNewProblem = async (problem: Problem) => {
                     `Template file does not exist: ${templateLocation}`,
                 );
             } else {
-                const templateContents =
+                let templateContents =
                     readFileSync(templateLocation).toString();
+
+                if (extn == 'java') {
+                    const className = path.basename(problemFileName, '.java');
+                    templateContents = templateContents.replace(
+                        'CLASS_NAME',
+                        className,
+                    );
+                }
                 writeFileSync(srcPath, templateContents);
             }
         }

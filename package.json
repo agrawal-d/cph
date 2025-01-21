@@ -349,7 +349,7 @@
                 "cph.general.defaultLanguageTemplateFileLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "The path of the template that will be loaded when a new file of the default language is created by Competitive Companion"
+                    "description": "The path to the template file that will be used when creating a new file for the default language via Competitive Companion. For Java templates, use 'CLASS_NAME' as a placeholder for the class name like 'class CLASS_NAME{...}'"
                 },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",
