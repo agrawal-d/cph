@@ -5,7 +5,7 @@
 
 export default {
     remoteMessageUrl: new URL(
-        'https://raw.githubusercontent.com/agrawal-d/cph/main/static/remote-message.txt',
+        'https://raw.githubusercontent.com/agrawal-d/cph-remote-message/refs/heads/main/remote-message.txt',
     ),
     telemetryKey: '',
     port: 27121, // companion listener server

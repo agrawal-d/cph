@@ -80,14 +80,11 @@ export const getGoArgsPref = (): string[] =>
 export const getCSharpArgsPref = (): string[] =>
     getPreference('language.csharp.Args').split(' ') || [];
 
-export const getFirstTimePref = (): boolean =>
-    getPreference('general.firstTime') || 'true';
-
 export const getRemoteServerAddressPref = (): string =>
     getPreference('general.remoteServerAddress') || '';
 
 export const getLiveUserCountPref = (): boolean =>
-    getPreference('general.showLiveUserCount') || 'true';
+    getPreference('general.showLiveUserCount') || false;
 
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
