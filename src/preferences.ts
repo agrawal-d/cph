@@ -12,8 +12,12 @@ const getPreference = (section: prefSection): any => {
     return ret;
 };
 
-export const updatePreference = (section: prefSection, value: any) => {
-    return workspace.getConfiguration('cph').update(section, value);
+export const updatePreference = (
+    section: prefSection,
+    value: any,
+    target: vscode.ConfigurationTarget,
+) => {
+    return workspace.getConfiguration('cph').update(section, value, target);
 };
 
 export const getAutoShowJudgePref = (): boolean =>
@@ -26,7 +30,11 @@ export const getSaveLocationPref = (): string => {
         vscode.window.showErrorMessage(
             `Invalid save location, reverting to default. path not exists: ${pref}`,
         );
-        updatePreference('general.saveLocation', '');
+        updatePreference(
+            'general.saveLocation',
+            '',
+            vscode.ConfigurationTarget.Global,
+        );
         return '';
     }
     return pref;
