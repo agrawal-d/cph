@@ -15,6 +15,9 @@
     "activationEvents": [
         "*"
     ],
+    "sponsor": {
+        "url": "https://rb.gy/5iiorz"
+    },
     "main": "dist/extension.js",
     "contributes": {
         "viewsContainers": {

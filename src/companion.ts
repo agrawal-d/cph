@@ -28,32 +28,23 @@ export const submitKattisProblem = (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
     const srcPath = problem.srcPath;
     const homedir = os.homedir();
-    let submitPath = `${homedir}/.kattis/submit.py`;
-    if (process.platform == 'win32') {
-        if (
-            !existsSync(`${homedir}\\.kattis\\.kattisrc`) ||
-            !existsSync(`${homedir}\\.kattis\\submit.py`)
-        ) {
-            vscode.window.showErrorMessage(
-                `Please ensure .kattisrc and submit.py are present in ${homedir}\\.kattis\\submit.py`,
-            );
-            return;
-        } else {
-            submitPath = `${homedir}\\.kattis\\submit.py`;
-        }
-    } else {
-        if (
-            !existsSync(`${homedir}/.kattis/.kattisrc`) ||
-            !existsSync(`${homedir}/.kattis/submit.py`)
-        ) {
-            vscode.window.showErrorMessage(
-                `Please ensure .kattisrc and submit.py are present in ${homedir}/.kattis/submit.py`,
-            );
-            return;
-        } else {
-            submitPath = `${homedir}/.kattis/submit.py`;
-        }
+    const directoryChar = process.platform == 'win32' ? '\\' : '/';
+    const submitPath = `${homedir}${directoryChar}.kattis${directoryChar}submit.py`;
+
+    if (
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}.kattisrc`,
+        ) ||
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}submit.py`,
+        )
+    ) {
+        vscode.window.showErrorMessage(
+            `Please ensure .kattisrc and submit.py are present in ${homedir}${directoryChar}.kattis${directoryChar}`,
+        );
+        return;
     }
+
     const pyshell = spawn('python', [submitPath, '-f', srcPath]);
 
     //tells the python script to open submission window in new tab
