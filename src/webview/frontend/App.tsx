@@ -558,14 +558,10 @@ function Judge(props: {
                 <h3>License</h3>
                 <pre className="selectable">{generatedJson.licenseString}</pre>
                 <hr />
-                {window.showLiveUserCount && (
-                    <>
-                        <h3>Live user count</h3>
-                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
-                        online.
-                        <hr />
-                    </>
-                )}
+                <h3>Live user count</h3>
+                {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
+                online.
+                <hr />
                 <h3>UI Logs</h3>
                 <pre className="selectable">{logs}</pre>
                 <hr />
