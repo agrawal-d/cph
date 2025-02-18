@@ -29,19 +29,22 @@ export const submitKattisProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
     const homedir = os.homedir();
     const directoryChar = process.platform == 'win32' ? '\\' : '/';
-    let submitPath = `${homedir}${directoryChar}.kattis${directoryChar}submit.py`;
-    
+    const submitPath = `${homedir}${directoryChar}.kattis${directoryChar}submit.py`;
+
     if (
-        !existsSync(`${homedir}${directoryChar}.kattis${directoryChar}.kattisrc`) ||
-        !existsSync(`${homedir}${directoryChar}.kattis${directoryChar}submit.py`)
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}.kattisrc`,
+        ) ||
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}submit.py`,
+        )
     ) {
         vscode.window.showErrorMessage(
             `Please ensure .kattisrc and submit.py are present in ${homedir}${directoryChar}.kattis${directoryChar}`,
         );
         return;
     }
-        
-    
+
     const pyshell = spawn('python', [submitPath, '-f', srcPath]);
 
     //tells the python script to open submission window in new tab

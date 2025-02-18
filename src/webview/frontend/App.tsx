@@ -40,6 +40,7 @@ interface CustomWindow extends Window {
     generatedJsonUri: string;
     remoteMessage: string | null;
     remoteServerAddress: string;
+    showLiveUserCount: boolean;
     console: Console;
 }
 declare const window: CustomWindow;
@@ -95,10 +96,13 @@ function Judge(props: {
     const [extLogs, setExtLogs] = useState<string>('');
 
     useEffect(() => {
-        getLiveUserCount().then((count) => setLiveUserCount(count));
-        const interval = setInterval(() => {
-            getLiveUserCount().then((count) => setLiveUserCount(count));
-        }, 30000);
+        const updateLiveUserCount = (): void => {
+            if (window.showLiveUserCount) {
+                getLiveUserCount().then((count) => setLiveUserCount(count));
+            }
+        };
+        updateLiveUserCount();
+        const interval = setInterval(updateLiveUserCount, 30000);
         return () => clearInterval(interval);
     }, []);
 
@@ -555,7 +559,8 @@ function Judge(props: {
                 <pre className="selectable">{generatedJson.licenseString}</pre>
                 <hr />
                 <h3>Live user count</h3>
-                {liveUserCount} user(s) online.
+                {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
+                online.
                 <hr />
                 <h3>UI Logs</h3>
                 <pre className="selectable">{logs}</pre>
@@ -643,10 +648,11 @@ function Judge(props: {
                         }}
                     />
                 </div>
-                {liveUserCount > 0 && (
+                {window.showLiveUserCount && liveUserCount > 0 && (
                     <div className="liveUserCount">
                         <i className="codicon codicon-circle-filled color-green"></i>{' '}
-                        {liveUserCount} users online
+                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
+                        online.
                     </div>
                 )}
             </div>
