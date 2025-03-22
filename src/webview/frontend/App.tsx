@@ -97,9 +97,7 @@ function Judge(props: {
 
     useEffect(() => {
         const updateLiveUserCount = (): void => {
-            if (window.showLiveUserCount) {
-                getLiveUserCount().then((count) => setLiveUserCount(count));
-            }
+            getLiveUserCount().then((count) => setLiveUserCount(count));
         };
         updateLiveUserCount();
         const interval = setInterval(updateLiveUserCount, 30000);

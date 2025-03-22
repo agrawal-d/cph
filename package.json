@@ -367,7 +367,7 @@
                 "cph.general.showLiveUserCount": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Whether to display the live user count. Turning it on may slightly reduce performance."
+                    "description": "Whether to display the live user count."
                 }
             }
         }
