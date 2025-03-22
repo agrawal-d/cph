@@ -125,8 +125,6 @@ function Judge(props: {
         },
     );
 
-    console.log(webviewState);
-
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
     useEffect(() => {
