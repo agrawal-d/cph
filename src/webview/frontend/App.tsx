@@ -574,6 +574,26 @@ function Judge(props: {
         );
     };
 
+    const renderTimeoutAVSuggestion = () => {
+        if (cases.some((testCase) => testCase.result?.timeOut)) {
+            return (
+                <div className="timeout-av-suggestion">
+                    <h5>
+                        <i className="codicon codicon-bug"></i>
+                        SIGTERM due to antivirus?
+                    </h5>
+                    <p>
+                        If you are getting SIGTERM or Timed Out, your antivirus
+                        may be the problem. Try disabling it or adding the
+                        current folder to your antivirus whitelist.
+                    </p>
+                </div>
+            );
+        } else {
+            return <></>;
+        }
+    };
+
     return (
         <div className="ui">
             {notification && <div className="notification">{notification}</div>}
@@ -616,6 +636,7 @@ function Judge(props: {
                         Set <code>ONLINE_JUDGE</code>
                     </span>
                 </span>
+                {renderTimeoutAVSuggestion()}
                 <br />
                 <br />
                 <div>

@@ -438,6 +438,13 @@ button:disabled {
     color: orange;
 }
 
+.timeout-av-suggestion {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid rgb(206, 40, 95);
+    margin: 5px 0px;
+}
+
 .notification,
 body.vscode-light .notification {
     padding: 5px;
