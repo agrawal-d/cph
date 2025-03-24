@@ -190,9 +190,6 @@ function Judge(props: {
                     setExtLogs(data.logs);
                     break;
                 }
-                default: {
-                    console.log('Invalid event', event.data);
-                }
             }
         };
         window.addEventListener('message', fn);
@@ -575,17 +572,24 @@ function Judge(props: {
     };
 
     const renderTimeoutAVSuggestion = () => {
-        if (cases.some((testCase) => testCase.result?.timeOut)) {
+        if (
+            cases.some((testCase) => {
+                return (
+                    testCase.result?.timeOut ||
+                    testCase.result?.signal == 'SIGTERM'
+                );
+            })
+        ) {
             return (
                 <div className="timeout-av-suggestion">
                     <h5>
-                        <i className="codicon codicon-bug"></i>
-                        SIGTERM due to antivirus?
+                        <i className="codicon codicon-bug"></i> Getting SIGTERM
+                        due to antivirus?
                     </h5>
                     <p>
                         If you are getting SIGTERM or Timed Out, your antivirus
                         may be the problem. Try disabling it or adding the
-                        current folder to your antivirus whitelist.
+                        current folder to whitelist.
                     </p>
                 </div>
             );
@@ -632,9 +636,7 @@ function Judge(props: {
                         className="oj"
                         checked={onlineJudgeEnv}
                     />
-                    <span>
-                        Set <code>ONLINE_JUDGE</code>
-                    </span>
+                    <span className="oj-code">Set ONLINE_JUDGE</span>
                 </span>
                 {renderTimeoutAVSuggestion()}
                 <br />
