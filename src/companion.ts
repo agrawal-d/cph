@@ -213,9 +213,10 @@ const handleNewProblem = async (problem: Problem) => {
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
-    problem.tests = problem.tests.map((testcase) => ({
+    problem.tests = problem.tests.map((testcase, index) => ({
         ...testcase,
-        id: randomId(),
+        // Pass in index to avoid generating duplicate id
+        id: randomId(index),
     }));
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
