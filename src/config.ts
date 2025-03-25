@@ -13,6 +13,8 @@ export default {
     extensions: {
         c: 'c',
         cpp: 'cpp',
+        cc: 'cpp',
+        cxx: 'cpp',
         csharp: 'cs',
         python: 'py',
         ruby: 'rb',
@@ -64,6 +66,8 @@ export default {
     supportedExtensions: [
         'py',
         'cpp',
+        'cc',
+        'cxx',
         'rs',
         'c',
         'java',

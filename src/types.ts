@@ -62,6 +62,8 @@ export type LangNames =
     | 'ruby'
     | 'c'
     | 'cpp'
+    | 'cc'
+    | 'cxx'
     | 'rust'
     | 'java'
     | 'js'

@@ -50,7 +50,9 @@ export const getLanguage = (srcPath: string): Language => {
     }
 
     switch (langName) {
-        case 'cpp': {
+        case 'cpp':
+        case 'cc':
+        case 'cxx': {
             return {
                 name: langName,
                 args: [...getCppArgsPref()],

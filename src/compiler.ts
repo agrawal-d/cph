@@ -69,7 +69,9 @@ const getFlags = (language: Language, srcPath: string): string[] => {
     if (args[0] === '') args = [];
     let ret: string[];
     switch (language.name) {
-        case 'cpp': {
+        case 'cpp':
+        case 'cc':
+        case 'cxx': {
             ret = [
                 srcPath,
                 getCppOutputArgPref(),
