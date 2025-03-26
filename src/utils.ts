@@ -163,7 +163,7 @@ export const ocHide = () => {
 };
 
 export const randomId = (index: number | null) => {
-    if (index) {
+    if (index !== null) {
         return Math.floor(Date.now() + index);
     } else {
         return Math.floor(Date.now() + Math.random() * 100);
