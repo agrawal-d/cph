@@ -231,7 +231,7 @@ export default function CaseView(props: {
                             <div
                                 className="expectedoutput"
                                 onClick={() => {
-                                    setOutput(trunctateStdout(resultText));
+                                    setOutput(resultText);
                                     props.notify('Set As Expected Output');
                                 }}
                                 title="Set As Expected Output"
