@@ -280,8 +280,9 @@
                 },
                 "cph.language.java.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Java 11.0.6",
+                    "default": "Java 21 64bit",
                     "enum": [
+                        "Java 21 64bit",
                         "Java 11.0.6",
                         "Java 8 32bit"
                     ],
@@ -302,7 +303,8 @@
                     "type": "string",
                     "default": "Node.js 15.8.0 (64bit)",
                     "enum": [
-                        "Node.js 15.8.0 (64bit)"
+                        "Node.js 15.8.0 (64bit)",
+                        "JavaScript V8 4.8.0"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for js"
                 },

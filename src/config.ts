@@ -61,6 +61,7 @@ export default {
         'PascalABC.NET 3.8.3': 51,
         'Perl 5.20.1': 13,
         'PHP 8.1.7': 6,
+        'JavaScript V8 4.8.0': 34,
         'Node.js 15.8.0 (64bit)': 55,
         'PyPy 2.7.13 (7.3.0)': 40,
         'PyPy 3.6.9 (7.3.0)': 41,
@@ -72,7 +73,6 @@ export default {
         'Go 1.22.2': 32,
         'Rust 1.75.0 (2021)': 75,
         'Scala 2.12.8': 20,
-        'JavaScript V8 4.8.0': 34,
         'Haskell GHC 8.10.1': 12,
     },
     supportedExtensions: [
