@@ -76,7 +76,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                             command: 'new-problem',
                             problem: undefined,
                         });
-                        deleteProblemFile(message.problem.srcPath);
+                        await deleteProblemFile(message.problem.srcPath);
                         break;
                     }
 

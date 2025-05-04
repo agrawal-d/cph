@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readdirSync, readFileSync } from 'fs';
 import { platform } from 'os';
 import path from 'path';
 import * as vscode from 'vscode';
@@ -187,9 +187,10 @@ export const checkUnsupported = (srcPath: string): boolean => {
 };
 
 /** Deletes the .prob problem file for a given source code path. */
-export const deleteProblemFile = (srcPath: string) => {
+export const deleteProblemFile = async (srcPath: string) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.DELETE_ALL_TESTCASES);
     const probPath = getProbSaveLocation(srcPath);
+
     globalThis.logger.log('Deleting problem file', probPath);
     try {
         if (platform() === 'win32') {
@@ -199,6 +200,32 @@ export const deleteProblemFile = (srcPath: string) => {
         }
     } catch (error) {
         globalThis.logger.error('Error while deleting problem file ', error);
+    }
+
+    // Sleep for half second
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // If the folder is now empty, remove the folder too
+    const probFolder = path.dirname(probPath);
+    const files = readdirSync(probFolder);
+    if (files.length === 0) {
+        globalThis.logger.log(
+            'Deleting problem folder',
+            probFolder,
+            'as it is empty',
+        );
+        try {
+            if (platform() === 'win32') {
+                spawn('cmd.exe', ['/c', 'rmdir', probFolder]);
+            } else {
+                spawn('rmdir', [probFolder]);
+            }
+        } catch (error) {
+            globalThis.logger.error(
+                'Error while deleting problem folder ',
+                error,
+            );
+        }
     }
 };
 
