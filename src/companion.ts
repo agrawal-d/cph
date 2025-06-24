@@ -5,11 +5,13 @@ import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { isCodeforcesUrl, randomId } from './utils';
+import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
     getLanguageId,
     useShortCodeForcesName,
+    useShortLuoguName,
+    useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
 } from './preferences';
@@ -147,6 +149,16 @@ export const setupCompanionServer = () => {
 export const getProblemFileName = (problem: Problem, ext: string) => {
     if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
         return `${getProblemName(problem.url)}.${ext}`;
+    } else if (isLuoguUrl(new URL(problem.url)) && useShortLuoguName()) {
+        // Url is like https://www.luogu.com.cn/problem/P1000
+        const pattern = /problem\/(\w+)/;
+        const match = problem.url.match(pattern);
+        return `${match?.[1] ?? ''}.${ext}`;
+    } else if (isAtCoderUrl(new URL(problem.url)) && useShortAtCoderName()) {
+        // Url is like https://atcoder.jp/contests/abc311/tasks/abc311_a
+        const pattern = /tasks\/(\w+)_(\w+)/;
+        const match = problem.url.match(pattern);
+        return `${match?.[1] ?? ''}${match?.[2] ?? ''}.${ext}`;
     } else {
         globalThis.logger.log(
             isCodeforcesUrl(new URL(problem.url)),

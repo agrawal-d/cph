@@ -346,6 +346,16 @@
                     "default": false,
                     "description": "Use a short ID for problem file generated ( like 144C ) instead of the complete problem name for codeforces problems"
                 },
+                "cph.general.useShortLuoguName": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use a short ID for problem file generated ( like P1145 / U123456 ) instead of the complete problem name for luogu problems"
+                },
+                "cph.general.useShortAtCoderName": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use a short ID for problem file generated ( like abc123a ) instead of the complete problem name for atcoder problems"
+                },
                 "cph.general.retainWebviewContext": {
                     "type": "boolean",
                     "default": false,

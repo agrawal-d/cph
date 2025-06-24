@@ -105,6 +105,12 @@ export const getDefaultLangPref = (): string | null => {
 export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeForcesName');
 };
+export const useShortLuoguName = (): boolean => {
+    return getPreference('general.useShortLuoguName');
+};
+export const useShortAtCoderName = (): boolean => {
+    return getPreference('general.useShortAtCoderName');
+};
 export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     const pref = getPreference('general.defaultLanguageTemplateFileLocation');
     if (pref === '') {
