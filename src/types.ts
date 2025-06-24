@@ -11,6 +11,8 @@ export type prefSection =
     | 'general.ignoreSTDERROR'
     | 'general.firstTime'
     | 'general.useShortCodeForcesName'
+    | 'general.useShortLuoguName'
+    | 'general.useShortAtCoderName'
     | 'general.menuChoices'
     | 'language.c.Args'
     | 'language.c.SubmissionCompiler'
