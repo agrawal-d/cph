@@ -644,16 +644,18 @@ function Judge(props: {
                     </button>
                     {renderSubmitButton()}
                 </div>
-
-                <br />
-                <span
-                    onClick={toggleOnlineJudgeEnv}
-                    className={`oj-box ${onlineJudgeEnv ? 'oj-enabled' : ''}`}
-                >
-                    {onlineJudgeEnv ? '✔' : '◯'}{' '}
-                    <span className="oj-code">Set ONLINE_JUDGE</span>
-                </span>
-                {renderTimeoutAVSuggestion()}
+                <div>
+                    <span
+                        onClick={toggleOnlineJudgeEnv}
+                        className={`oj-box ${
+                            onlineJudgeEnv ? 'oj-enabled' : ''
+                        }`}
+                    >
+                        {onlineJudgeEnv ? '✔' : '◯'}{' '}
+                        <span className="oj-code">Set ONLINE_JUDGE</span>
+                    </span>
+                    {renderTimeoutAVSuggestion()}
+                </div>
                 <br />
                 <br />
                 <div>

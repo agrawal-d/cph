@@ -40,12 +40,18 @@ body {
 }
 
 .oj {
-    vertical-align: middle;
+    margin-top:5px;
+    display: inline-block;
+    width: fit-content;
+    clear: both;
 }
 
 .oj-box {
+    display: inline-block;
+    margin-top:5px;
     padding:5px 10px;
     font-size: 0.9em;
+    width: fit-content;
     border-radius: 25px;
     background-color: rgba(255, 255, 255, 0.1);
 }
