@@ -95,6 +95,11 @@ function Judge(props: {
     const [liveUserCount, setLiveUserCount] = useState<number>(0);
     const [extLogs, setExtLogs] = useState<string>('');
 
+    const numPassed = cases.filter(
+        (testCase) => testCase.result?.pass === true,
+    ).length;
+    const total = cases.length;
+
     useEffect(() => {
         const updateLiveUserCount = (): void => {
             getLiveUserCount().then((count) => setLiveUserCount(count));
@@ -604,14 +609,25 @@ function Judge(props: {
             {renderDonateButton()}
             {renderInfoPage()}
             <div className="meta">
-                <h1 className="problem-name">
+                <span className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
                     {compiling && (
                         <b className="compiling" title="Compiling">
                             <span className="loader"></span>
                         </b>
                     )}
-                </h1>
+                </span>
+                <span
+                    className={`pass-rate ${
+                        numPassed === total
+                            ? 'pass-all'
+                            : numPassed === 0
+                              ? 'fail-all'
+                              : ''
+                    }`}
+                >
+                    {numPassed} / {total} passed{' '}
+                </span>
             </div>
             <div className="results">{views}</div>
             <div className="margin-10">
