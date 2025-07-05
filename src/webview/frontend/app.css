@@ -43,8 +43,20 @@ body {
     vertical-align: middle;
 }
 
-.oj-code {
-    font-family: Consolas, 'Courier New', Courier, monospace;
+.oj-box {
+    padding:5px 10px;
+    font-size: 0.9em;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.oj-box:hover {
+    filter: brightness(120%);
+}
+
+.oj-enabled {
+    background-color: rgba(129, 204, 31, 0.671);
+    color:black;
 }
 
 * {
@@ -244,6 +256,10 @@ textarea:active {
 
 .btn-red {
     background: #b0203d;
+}
+
+.btn-black {
+    background: #383838;
 }
 
 .btn-pink {

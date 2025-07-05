@@ -646,12 +646,11 @@ function Judge(props: {
                 </div>
 
                 <br />
-                <span onClick={toggleOnlineJudgeEnv}>
-                    <input
-                        type="checkbox"
-                        className="oj"
-                        checked={onlineJudgeEnv}
-                    />
+                <span
+                    onClick={toggleOnlineJudgeEnv}
+                    className={`oj-box ${onlineJudgeEnv ? 'oj-enabled' : ''}`}
+                >
+                    {onlineJudgeEnv ? '✔' : '◯'}{' '}
                     <span className="oj-code">Set ONLINE_JUDGE</span>
                 </span>
                 {renderTimeoutAVSuggestion()}
@@ -672,6 +671,14 @@ function Judge(props: {
                         <a href="https://rb.gy/vw82u5" className="btn">
                             <i className="codicon codicon-feedback"></i>{' '}
                             Feedback
+                        </a>
+                    </small>
+                    <small>
+                        <a
+                            href="https://github.com/agrawal-d/cph/issues"
+                            className="btn btn-black"
+                        >
+                            <i className="codicon codicon-github"></i> Bugs
                         </a>
                     </small>
                 </div>
