@@ -553,9 +553,6 @@ function Judge(props: {
                 <h3>Build Time</h3>
                 {generatedJson.dateTime}
                 <hr />
-                <h3>License</h3>
-                <pre className="selectable">{generatedJson.licenseString}</pre>
-                <hr />
                 <h3>Live user count</h3>
                 {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'} online.
                 <hr />
@@ -564,6 +561,15 @@ function Judge(props: {
                 <hr />
                 <h3>Extension Logs</h3>
                 <pre className="selectable">{extLogs}</pre>
+                <hr />
+                <details>
+                    <summary>
+                        <b>License</b>
+                    </summary>
+                    <pre className="selectable">
+                        {generatedJson.licenseString}
+                    </pre>
+                </details>
             </div>
         );
 
@@ -651,7 +657,7 @@ function Judge(props: {
                             onlineJudgeEnv ? 'oj-enabled' : ''
                         }`}
                     >
-                        {onlineJudgeEnv ? '✔' : '◯'}{' '}
+                        {onlineJudgeEnv ? '☑' : '☐'}{' '}
                         <span className="oj-code">Set ONLINE_JUDGE</span>
                     </span>
                     {renderTimeoutAVSuggestion()}

@@ -41,21 +41,21 @@ body {
 }
 
 .oj {
-    margin-top:5px;
+    margin-top: 5px;
     display: inline-block;
     width: fit-content;
     clear: both;
-    border:1px solid transparent;
+    border: 1px solid transparent;
 }
 
 .oj-box {
     display: inline-block;
-    margin-top:5px;
-    padding:5px 10px;
-    font-size: 0.9em;
+    margin-top: 5px;
+    padding: 2px 6px;
     width: fit-content;
     border-radius: 25px;
     background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid transparent;
 }
 
 .oj-box:hover {
@@ -100,7 +100,11 @@ body {
 }
 
 .case {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(87, 87, 87, 0.2));
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.1),
+        rgba(87, 87, 87, 0.2)
+    );
     border-bottom: 1px solid rgba(78, 78, 78, 0.3);
     border-top: 1px solid rgba(22, 22, 22, 0.3);
     padding: 8px;
@@ -158,8 +162,13 @@ textarea {
     max-height: 250px !important;
     overflow-y: auto;
     resize: none;
-    border: 1px solid transparent;
+    border: 1px solid rgba(100, 100, 100, 0.2);
     margin-bottom: 4px;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
 }
 
 pre,
@@ -339,7 +348,11 @@ pre {
 }
 
 body.vscode-light .case {
-    background: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(220, 220, 220, 0.9));
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.9),
+        rgba(220, 220, 220, 0.9)
+    );
     box-shadow: none;
     border-left: 5px solid rgba(0, 0, 0, 0.3);
     margin-bottom: 4px;
@@ -388,6 +401,9 @@ button:disabled {
     font-weight: bold;
     margin: 5px;
     padding: 2px;
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .pass-rate {
@@ -399,6 +415,7 @@ button:disabled {
     float: right;
     margin-right: 10px;
     border: 1px solid transparent;
+    white-space: nowrap;
 }
 
 .pass-all {
