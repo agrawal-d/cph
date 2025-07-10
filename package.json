@@ -332,13 +332,15 @@
                         "js",
                         "java",
                         "ruby",
-                        "csharp"
+                        "csharp",
+                        "go",
+                        "haskell"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java js python c rust ruby csharp",
+                    "default": "cpp java js python c rust ruby csharp go haskell",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
                 "cph.general.useShortCodeForcesName": {
