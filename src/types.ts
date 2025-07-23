@@ -13,6 +13,7 @@ export type prefSection =
     | 'general.useShortCodeForcesName'
     | 'general.useShortLuoguName'
     | 'general.useShortAtCoderName'
+    | 'general.templatePaths'
     | 'general.menuChoices'
     | 'language.c.Args'
     | 'language.c.SubmissionCompiler'
@@ -72,6 +73,13 @@ export type LangNames =
     | 'go'
     | 'hs'
     | 'csharp';
+
+export type TemplatePaths = {
+    [language: string]: Array<{
+        label: string;
+        path: string;
+    }>;
+};
 
 export type TestCase = {
     input: string;

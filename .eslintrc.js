@@ -8,6 +8,7 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:prettier/recommended',
         'plugin:react/recommended',
+        "prettier",
     ],
     globals: {
         Atomics: 'readonly',
@@ -20,7 +21,7 @@ module.exports = {
     },
     plugins: ['@typescript-eslint', 'prettier'],
     rules: {
-        'prettier/prettier': 'error',
+        'prettier/prettier': ['error', { "endOfLine": "auto" }, { usePrettierrc: true }],  
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/prefer-namespace-keyword': 'off',

@@ -1,6 +1,11 @@
 import http from 'http';
 import config from './config';
-import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
+import {
+    TemplatePaths,
+    Problem,
+    CphSubmitResponse,
+    CphEmptyResponse,
+} from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
@@ -13,7 +18,7 @@ import {
     useShortLuoguName,
     useShortAtCoderName,
     getMenuChoices,
-    getDefaultLanguageTemplateFileLocation,
+    getTemplatePaths,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -189,10 +194,9 @@ const handleNewProblem = async (problem: Problem) => {
         vscode.window.showInformationMessage('Please open a folder first.');
         return;
     }
-    const defaultLanguage = getDefaultLangPref();
-    let extn: string;
 
-    if (defaultLanguage == null) {
+    let lang = getDefaultLangPref();
+    if (lang == null) {
         const allChoices = new Set(Object.keys(config.extensions));
         const userChoices = getMenuChoices();
         const choices = userChoices.filter((x) => allChoices.has(x));
@@ -203,12 +207,9 @@ const handleNewProblem = async (problem: Problem) => {
             );
             return;
         }
-        // @ts-ignore
-        extn = config.extensions[selected];
-    } else {
-        //@ts-ignore
-        extn = config.extensions[defaultLanguage];
+        lang = selected;
     }
+    const extn = config.extensions[lang as keyof typeof config.extensions];
     let url: URL;
     try {
         url = new URL(problem.url);
@@ -236,9 +237,23 @@ const handleNewProblem = async (problem: Problem) => {
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
 
-    if (defaultLanguage) {
-        const templateLocation = getDefaultLanguageTemplateFileLocation();
-        if (templateLocation !== null) {
+    // Display template select quick menu
+    const templates: TemplatePaths | null = getTemplatePaths();
+    if (templates) {
+        const langTemplates = templates[lang];
+        let templateLocation: string | null;
+        if (langTemplates.length === 1) {
+            templateLocation = langTemplates[0].path;
+        } else if (langTemplates.length > 1) {
+            const pick = await vscode.window.showQuickPick(
+                langTemplates.map((t) => t.label),
+            );
+
+            templateLocation =
+                langTemplates.find((t) => t.label === pick)?.path ?? null;
+        } else templateLocation = null;
+
+        if (templateLocation) {
             const templateExists = existsSync(templateLocation);
             if (!templateExists) {
                 vscode.window.showErrorMessage(
