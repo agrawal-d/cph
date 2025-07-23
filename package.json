@@ -91,7 +91,7 @@
                     "title": "Compilation flags for .c files",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to gcc ( for C ) while compiling your file. Example '-O2 -Wall'"
+                    "description": "Space separated additional flags passed to gcc ( for C ) while compiling your file. Example '-O2 -Wall'"
                 },
                 "cph.language.c.SubmissionCompiler": {
                     "type": "string",
@@ -99,7 +99,7 @@
                     "enum": [
                         "GNU GCC C11 5.1.0"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for c"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for c"
                 },
                 "cph.language.c.Command": {
                     "type": "string",
@@ -119,7 +119,7 @@
                     "title": "Compilation flags for .cpp files",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
+                    "description": "Space separated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
                 },
                 "cph.language.cpp.SubmissionCompiler": {
                     "type": "string",
@@ -136,7 +136,7 @@
                         "Microsoft Visual C++ 2010",
                         "Clang++17 Diagnostics"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for cpp"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for cpp"
                 },
                 "cph.language.cpp.Command": {
                     "type": "string",
@@ -156,7 +156,7 @@
                     "title": "Compilation flags for .cs files",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to dotnet while compiling your file."
+                    "description": "Space separated additional flags passed to dotnet while compiling your file."
                 },
                 "cph.language.csharp.SubmissionCompiler": {
                     "type": "string",
@@ -166,7 +166,7 @@
                         "C# 10, .NET SDK 6.0",
                         "C# Mono 6.8"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for C#"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for C#"
                 },
                 "cph.language.csharp.Command": {
                     "type": "string",
@@ -177,7 +177,7 @@
                     "title": "Compilation flags for Python",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to python while compiling your file. Example '-Wignore -u'"
+                    "description": "Space separated additional flags passed to python while compiling your file. Example '-Wignore -u'"
                 },
                 "cph.language.python.SubmissionCompiler": {
                     "type": "string",
@@ -189,7 +189,7 @@
                         "Python 3.7.2",
                         "Python 2.7.15"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for python"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for python"
                 },
                 "cph.language.python.Command": {
                     "type": "string",
@@ -200,7 +200,7 @@
                     "title": "Compilation flags for ruby",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to ruby while compiling your file."
+                    "description": "Space separated additional flags passed to ruby while compiling your file."
                 },
                 "cph.language.ruby.SubmissionCompiler": {
                     "type": "string",
@@ -208,7 +208,7 @@
                     "enum": [
                         "Ruby 3.2.2"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for python"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for python"
                 },
                 "cph.language.ruby.Command": {
                     "type": "string",
@@ -219,7 +219,7 @@
                     "title": "Compilation flags for Rust",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
+                    "description": "Space separated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
                 },
                 "cph.language.rust.SubmissionCompiler": {
                     "type": "string",
@@ -227,7 +227,7 @@
                     "enum": [
                         "Rust 1.75.0 (2021)"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for rust"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for rust"
                 },
                 "cph.language.rust.Command": {
                     "type": "string",
@@ -238,7 +238,7 @@
                     "title": "Compilation flags for .go files",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to go while compiling your file. Example '-gcflags=-S'"
+                    "description": "Space separated additional flags passed to go while compiling your file. Example '-gcflags=-S'"
                 },
                 "cph.language.go.SubmissionCompiler": {
                     "type": "string",
@@ -246,7 +246,7 @@
                     "enum": [
                         "Go 1.22.2"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for go"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for go"
                 },
                 "cph.language.go.Command": {
                     "type": "string",
@@ -257,7 +257,7 @@
                     "title": "Compilation flags for .hs files",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to go while compiling your file."
+                    "description": "Space separated additional flags passed to go while compiling your file."
                 },
                 "cph.language.haskell.SubmissionCompiler": {
                     "type": "string",
@@ -265,7 +265,7 @@
                     "enum": [
                         "Haskell GHC 8.10.1"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for haskell"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for haskell"
                 },
                 "cph.language.haskell.Command": {
                     "type": "string",
@@ -276,7 +276,7 @@
                     "title": "Compilation flags for Java",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to javac while compiling your file. Example '-verbose'"
+                    "description": "Space separated additional flags passed to javac while compiling your file. Example '-verbose'"
                 },
                 "cph.language.java.SubmissionCompiler": {
                     "type": "string",
@@ -286,7 +286,7 @@
                         "Java 11.0.6",
                         "Java 8 32bit"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for java"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for java"
                 },
                 "cph.language.java.Command": {
                     "type": "string",
@@ -297,7 +297,7 @@
                     "title": "Compilation flags for JavaScript",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to node (for JavaScript) while compiling your file. Example '--abort-on-uncaught-exception'"
+                    "description": "Space separated additional flags passed to node (for JavaScript) while compiling your file. Example '--abort-on-uncaught-exception'"
                 },
                 "cph.language.js.SubmissionCompiler": {
                     "type": "string",
@@ -306,7 +306,7 @@
                         "Node.js 15.8.0 (64bit)",
                         "JavaScript V8 4.8.0"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for js"
+                    "description": "The compiler chosen in the dropdown during Codeforces submission for js"
                 },
                 "cph.language.js.Command": {
                     "type": "string",
@@ -363,10 +363,35 @@
                     "default": false,
                     "description": "Keep the webview active even when it's hidden. May improve performance but may cause some rendering issues."
                 },
-                "cph.general.defaultLanguageTemplateFileLocation": {
-                    "type": "string",
-                    "default": "",
-                    "description": "The path to the template file that will be used when creating a new file for the default language via Competitive Companion. For Java templates, use 'CLASS_NAME' as a placeholder for the class name like 'class CLASS_NAME{...}'"
+                "cph.general.templatePaths": {
+                    "type": "object",
+                    "description": "Template file paths. Support for multiple templates in each language that will be available in quick menu when initially starting a problem. Put a single template if you want a default to load instantly.",
+                    "default": {},
+                    "propertyNames": {
+                        "enum": [
+                            "none",
+                            "c",
+                            "cpp",
+                            "python",
+                            "rust",
+                            "js",
+                            "java",
+                            "ruby",
+                            "csharp",
+                            "go",
+                            "haskell"
+                        ]
+                    },
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "label": { "type": "string" },
+                                "path": { "type": "string" }
+                            }
+                        }
+                    }
                 },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",
@@ -396,6 +421,7 @@
         "webpack-frontend-dev": "webpack --mode development --watch --config ./webpack.frontend.config.js",
         "test-compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
+        "lint:fix": "eslint . --ext .ts,.tsx --fix",
         "pretest": "tsc -p ./",
         "test": "jest out/ --silent=false"
     },

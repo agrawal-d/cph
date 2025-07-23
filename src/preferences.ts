@@ -1,5 +1,5 @@
 import { workspace } from 'vscode';
-import type { prefSection } from './types';
+import type { prefSection, TemplatePaths } from './types';
 import config from './config';
 import path from 'path';
 import fs from 'fs';
@@ -111,12 +111,12 @@ export const useShortLuoguName = (): boolean => {
 export const useShortAtCoderName = (): boolean => {
     return getPreference('general.useShortAtCoderName');
 };
-export const getDefaultLanguageTemplateFileLocation = (): string | null => {
-    const pref = getPreference('general.defaultLanguageTemplateFileLocation');
-    if (pref === '') {
+export const getTemplatePaths = (): TemplatePaths | null => {
+    const pref: TemplatePaths = getPreference('general.templatePaths');
+    if (!pref || Object.keys(pref).length === 0) {
         return null;
     }
-    return pref;
+    return pref as TemplatePaths;
 };
 
 export const getCCommand = (): string =>
