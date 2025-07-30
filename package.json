@@ -15,6 +15,9 @@
     "activationEvents": [
         "*"
     ],
+    "sponsor": {
+        "url": "https://rb.gy/5iiorz"
+    },
     "main": "dist/extension.js",
     "contributes": {
         "viewsContainers": {
@@ -220,9 +223,9 @@
                 },
                 "cph.language.rust.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Rust 1.66.0 (2021)",
+                    "default": "Rust 1.75.0 (2021)",
                     "enum": [
-                        "Rust 1.66.0 (2021)"
+                        "Rust 1.75.0 (2021)"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for rust"
                 },
@@ -239,9 +242,9 @@
                 },
                 "cph.language.go.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Go 1.19.5",
+                    "default": "Go 1.22.2",
                     "enum": [
-                        "Go 1.19.5"
+                        "Go 1.22.2"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for go"
                 },
@@ -277,10 +280,11 @@
                 },
                 "cph.language.java.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Java 11.0.6",
+                    "default": "Java 21 64bit",
                     "enum": [
+                        "Java 21 64bit",
                         "Java 11.0.6",
-                        "Java 1.8.0_241"
+                        "Java 8 32bit"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for java"
                 },
@@ -299,7 +303,8 @@
                     "type": "string",
                     "default": "Node.js 15.8.0 (64bit)",
                     "enum": [
-                        "Node.js 15.8.0 (64bit)"
+                        "Node.js 15.8.0 (64bit)",
+                        "JavaScript V8 4.8.0"
                     ],
                     "description": "The compiler chosen in the drop down during Codeforces submission for js"
                 },
@@ -327,19 +332,31 @@
                         "js",
                         "java",
                         "ruby",
-                        "csharp"
+                        "csharp",
+                        "go",
+                        "haskell"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java js python c rust ruby csharp",
+                    "default": "cpp java js python c rust ruby csharp go haskell",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
                 "cph.general.useShortCodeForcesName": {
                     "type": "boolean",
                     "default": false,
                     "description": "Use a short ID for problem file generated ( like 144C ) instead of the complete problem name for codeforces problems"
+                },
+                "cph.general.useShortLuoguName": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use a short ID for problem file generated ( like P1145 / U123456 ) instead of the complete problem name for luogu problems"
+                },
+                "cph.general.useShortAtCoderName": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use a short ID for problem file generated ( like abc123a ) instead of the complete problem name for atcoder problems"
                 },
                 "cph.general.retainWebviewContext": {
                     "type": "boolean",
@@ -364,7 +381,7 @@
                 "cph.general.showLiveUserCount": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Whether to display the live user count. Turning it on may slightly reduce performance."
+                    "description": "Whether to display the live user count."
                 }
             }
         }

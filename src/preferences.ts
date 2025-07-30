@@ -12,8 +12,12 @@ const getPreference = (section: prefSection): any => {
     return ret;
 };
 
-export const updatePreference = (section: prefSection, value: any) => {
-    return workspace.getConfiguration('cph').update(section, value);
+export const updatePreference = (
+    section: prefSection,
+    value: any,
+    target: vscode.ConfigurationTarget,
+) => {
+    return workspace.getConfiguration('cph').update(section, value, target);
 };
 
 export const getAutoShowJudgePref = (): boolean =>
@@ -26,7 +30,11 @@ export const getSaveLocationPref = (): string => {
         vscode.window.showErrorMessage(
             `Invalid save location, reverting to default. path not exists: ${pref}`,
         );
-        updatePreference('general.saveLocation', '');
+        updatePreference(
+            'general.saveLocation',
+            '',
+            vscode.ConfigurationTarget.Global,
+        );
         return '';
     }
     return pref;
@@ -80,14 +88,11 @@ export const getGoArgsPref = (): string[] =>
 export const getCSharpArgsPref = (): string[] =>
     getPreference('language.csharp.Args').split(' ') || [];
 
-export const getFirstTimePref = (): boolean =>
-    getPreference('general.firstTime') || 'true';
-
 export const getRemoteServerAddressPref = (): string =>
     getPreference('general.remoteServerAddress') || '';
 
 export const getLiveUserCountPref = (): boolean =>
-    getPreference('general.showLiveUserCount') || 'true';
+    getPreference('general.showLiveUserCount') || false;
 
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
@@ -99,6 +104,12 @@ export const getDefaultLangPref = (): string | null => {
 
 export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeForcesName');
+};
+export const useShortLuoguName = (): boolean => {
+    return getPreference('general.useShortLuoguName');
+};
+export const useShortAtCoderName = (): boolean => {
+    return getPreference('general.useShortAtCoderName');
 };
 export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     const pref = getPreference('general.defaultLanguageTemplateFileLocation');
@@ -137,7 +148,9 @@ export const getLanguageId = (srcPath: string): number => {
     const extension = path.extname(srcPath);
     let compiler = null;
     switch (extension) {
-        case '.cpp': {
+        case '.cpp':
+        case '.cc':
+        case '.cxx': {
             compiler = getPreference('language.cpp.SubmissionCompiler');
             break;
         }

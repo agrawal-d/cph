@@ -11,6 +11,7 @@ import {
 } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
+import { toAsciiFilename } from './utilsPure';
 export let onlineJudgeEnv = false;
 
 export const setOnlineJudgeEnv = (value: boolean) => {
@@ -48,7 +49,7 @@ export const getBinSaveLocation = (srcPath: string): string => {
     }
     const savePreference = getSaveLocationPref();
     const srcFileName = path.parse(srcPath).name;
-    const binFileName = srcFileName + ext;
+    const binFileName = toAsciiFilename(srcFileName) + ext;
     const binDir = path.dirname(srcPath);
     if (savePreference && savePreference !== '') {
         return path.join(savePreference, binFileName);
@@ -69,7 +70,9 @@ const getFlags = (language: Language, srcPath: string): string[] => {
     if (args[0] === '') args = [];
     let ret: string[];
     switch (language.name) {
-        case 'cpp': {
+        case 'cpp':
+        case 'cc':
+        case 'cxx': {
             ret = [
                 srcPath,
                 getCppOutputArgPref(),

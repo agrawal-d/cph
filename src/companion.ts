@@ -5,11 +5,13 @@ import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { isCodeforcesUrl, randomId } from './utils';
+import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
     getLanguageId,
     useShortCodeForcesName,
+    useShortLuoguName,
+    useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
 } from './preferences';
@@ -28,32 +30,23 @@ export const submitKattisProblem = (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
     const srcPath = problem.srcPath;
     const homedir = os.homedir();
-    let submitPath = `${homedir}/.kattis/submit.py`;
-    if (process.platform == 'win32') {
-        if (
-            !existsSync(`${homedir}\\.kattis\\.kattisrc`) ||
-            !existsSync(`${homedir}\\.kattis\\submit.py`)
-        ) {
-            vscode.window.showErrorMessage(
-                `Please ensure .kattisrc and submit.py are present in ${homedir}\\.kattis\\submit.py`,
-            );
-            return;
-        } else {
-            submitPath = `${homedir}\\.kattis\\submit.py`;
-        }
-    } else {
-        if (
-            !existsSync(`${homedir}/.kattis/.kattisrc`) ||
-            !existsSync(`${homedir}/.kattis/submit.py`)
-        ) {
-            vscode.window.showErrorMessage(
-                `Please ensure .kattisrc and submit.py are present in ${homedir}/.kattis/submit.py`,
-            );
-            return;
-        } else {
-            submitPath = `${homedir}/.kattis/submit.py`;
-        }
+    const directoryChar = process.platform == 'win32' ? '\\' : '/';
+    const submitPath = `${homedir}${directoryChar}.kattis${directoryChar}submit.py`;
+
+    if (
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}.kattisrc`,
+        ) ||
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}submit.py`,
+        )
+    ) {
+        vscode.window.showErrorMessage(
+            `Please ensure .kattisrc and submit.py are present in ${homedir}${directoryChar}.kattis${directoryChar}`,
+        );
+        return;
     }
+
     const pyshell = spawn('python', [submitPath, '-f', srcPath]);
 
     //tells the python script to open submission window in new tab
@@ -156,6 +149,16 @@ export const setupCompanionServer = () => {
 export const getProblemFileName = (problem: Problem, ext: string) => {
     if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
         return `${getProblemName(problem.url)}.${ext}`;
+    } else if (isLuoguUrl(new URL(problem.url)) && useShortLuoguName()) {
+        // Url is like https://www.luogu.com.cn/problem/P1000
+        const pattern = /problem\/(\w+)/;
+        const match = problem.url.match(pattern);
+        return `${match?.[1] ?? ''}.${ext}`;
+    } else if (isAtCoderUrl(new URL(problem.url)) && useShortAtCoderName()) {
+        // Url is like https://atcoder.jp/contests/abc311/tasks/abc311_a
+        const pattern = /tasks\/(\w+)_(\w+)/;
+        const match = problem.url.match(pattern);
+        return `${match?.[1] ?? ''}${match?.[2] ?? ''}.${ext}`;
     } else {
         globalThis.logger.log(
             isCodeforcesUrl(new URL(problem.url)),
@@ -222,9 +225,10 @@ const handleNewProblem = async (problem: Problem) => {
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
-    problem.tests = problem.tests.map((testcase) => ({
+    problem.tests = problem.tests.map((testcase, index) => ({
         ...testcase,
-        id: randomId(),
+        // Pass in index to avoid generating duplicate id
+        id: randomId(index),
     }));
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');

@@ -95,11 +95,14 @@ function Judge(props: {
     const [liveUserCount, setLiveUserCount] = useState<number>(0);
     const [extLogs, setExtLogs] = useState<string>('');
 
+    const numPassed = cases.filter(
+        (testCase) => testCase.result?.pass === true,
+    ).length;
+    const total = cases.length;
+
     useEffect(() => {
         const updateLiveUserCount = (): void => {
-            if (window.showLiveUserCount) {
-                getLiveUserCount().then((count) => setLiveUserCount(count));
-            }
+            getLiveUserCount().then((count) => setLiveUserCount(count));
         };
         updateLiveUserCount();
         const interval = setInterval(updateLiveUserCount, 30000);
@@ -126,8 +129,6 @@ function Judge(props: {
             return ret;
         },
     );
-
-    console.log(webviewState);
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -193,9 +194,6 @@ function Judge(props: {
                 case 'ext-logs': {
                     setExtLogs(data.logs);
                     break;
-                }
-                default: {
-                    console.log('Invalid event', event.data);
                 }
             }
         };
@@ -555,22 +553,23 @@ function Judge(props: {
                 <h3>Build Time</h3>
                 {generatedJson.dateTime}
                 <hr />
-                <h3>License</h3>
-                <pre className="selectable">{generatedJson.licenseString}</pre>
+                <h3>Live user count</h3>
+                {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'} online.
                 <hr />
-                {window.showLiveUserCount && (
-                    <>
-                        <h3>Live user count</h3>
-                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
-                        online.
-                        <hr />
-                    </>
-                )}
                 <h3>UI Logs</h3>
                 <pre className="selectable">{logs}</pre>
                 <hr />
                 <h3>Extension Logs</h3>
                 <pre className="selectable">{extLogs}</pre>
+                <hr />
+                <details>
+                    <summary>
+                        <b>License</b>
+                    </summary>
+                    <pre className="selectable">
+                        {generatedJson.licenseString}
+                    </pre>
+                </details>
             </div>
         );
 
@@ -583,20 +582,58 @@ function Judge(props: {
         );
     };
 
+    const renderTimeoutAVSuggestion = () => {
+        if (
+            cases.some((testCase) => {
+                return (
+                    testCase.result?.timeOut ||
+                    testCase.result?.signal == 'SIGTERM'
+                );
+            })
+        ) {
+            return (
+                <div className="timeout-av-suggestion">
+                    <h5>
+                        <i className="codicon codicon-bug"></i> Getting SIGTERM
+                        due to antivirus?
+                    </h5>
+                    <p>
+                        If you are getting SIGTERM or Timed Out, your antivirus
+                        may be the problem. Try disabling it or adding the
+                        current folder to whitelist.
+                    </p>
+                </div>
+            );
+        } else {
+            return <></>;
+        }
+    };
+
     return (
         <div className="ui">
             {notification && <div className="notification">{notification}</div>}
             {renderDonateButton()}
             {renderInfoPage()}
             <div className="meta">
-                <h1 className="problem-name">
+                <span className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
                     {compiling && (
                         <b className="compiling" title="Compiling">
                             <span className="loader"></span>
                         </b>
                     )}
-                </h1>
+                </span>
+                <span
+                    className={`pass-rate ${
+                        numPassed === total
+                            ? 'pass-all'
+                            : numPassed === 0
+                              ? 'fail-all'
+                              : ''
+                    }`}
+                >
+                    {numPassed} / {total} passed{' '}
+                </span>
             </div>
             <div className="results">{views}</div>
             <div className="margin-10">
@@ -613,18 +650,18 @@ function Judge(props: {
                     </button>
                     {renderSubmitButton()}
                 </div>
-
-                <br />
-                <span onClick={toggleOnlineJudgeEnv}>
-                    <input
-                        type="checkbox"
-                        className="oj"
-                        checked={onlineJudgeEnv}
-                    />
-                    <span>
-                        Set <code>ONLINE_JUDGE</code>
+                <div>
+                    <span
+                        onClick={toggleOnlineJudgeEnv}
+                        className={`oj-box ${
+                            onlineJudgeEnv ? 'oj-enabled' : ''
+                        }`}
+                    >
+                        {onlineJudgeEnv ? '☑' : '☐'}{' '}
+                        <span className="oj-code">Set ONLINE_JUDGE</span>
                     </span>
-                </span>
+                    {renderTimeoutAVSuggestion()}
+                </div>
                 <br />
                 <br />
                 <div>
@@ -642,6 +679,14 @@ function Judge(props: {
                         <a href="https://rb.gy/vw82u5" className="btn">
                             <i className="codicon codicon-feedback"></i>{' '}
                             Feedback
+                        </a>
+                    </small>
+                    <small>
+                        <a
+                            href="https://github.com/agrawal-d/cph/issues"
+                            className="btn btn-black"
+                        >
+                            <i className="codicon codicon-github"></i> Bugs
                         </a>
                     </small>
                 </div>
