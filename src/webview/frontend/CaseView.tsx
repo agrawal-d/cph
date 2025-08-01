@@ -1,6 +1,7 @@
 import { Case, VSToWebViewMessage } from '../../types';
 import { useState, createRef, useEffect } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
+import TestCasePanel from './TestCasePanel';
 import React from 'react';
 
 export default function CaseView(props: {
@@ -22,6 +23,7 @@ export default function CaseView(props: {
         props.case.result?.pass === true,
     );
     const inputBox = createRef<HTMLTextAreaElement>();
+    const [editMode, setEditMode] = useState<boolean>(false);
 
     useEffect(() => {
         if (props.doFocus) {
@@ -183,6 +185,13 @@ export default function CaseView(props: {
                     <div className="textarea-container">
                         Input:
                         <div
+                            className="edit-btn"
+                            onClick={() => setEditMode(true)}
+                            title="Edit"
+                        >
+                            Edit
+                        </div>
+                        <div
                             className="clipboard"
                             onClick={() => {
                                 copyToClipboard(input);
@@ -191,16 +200,35 @@ export default function CaseView(props: {
                         >
                             Copy
                         </div>
-                        <TextareaAutosize
-                            className="selectable input-textarea"
-                            onChange={handleInputChange}
-                            value={input}
-                            ref={inputBox}
-                            autoFocus={props.doFocus}
-                        />
+                        {editMode ? (
+                            <TextareaAutosize
+                                className="selectable input-textarea"
+                                onChange={handleInputChange}
+                                value={input}
+                                ref={inputBox}
+                                autoFocus={props.doFocus}
+                                onBlur={() => setEditMode(false)}
+                            />
+                        ) : (
+                            <TestCasePanel
+                                onChange={handleInputChange}
+                                value={input}
+                                ref={inputBox}
+                                autoFocus={props.doFocus}
+                                onRequestEdit={() => setEditMode(true)}
+                                onBlur={() => setEditMode(false)}
+                            />
+                        )}
                     </div>
                     <div className="textarea-container">
                         Expected Output:
+                        <div
+                            className="edit-btn"
+                            onClick={() => setEditMode(true)}
+                            title="Edit"
+                        >
+                            Edit
+                        </div>
                         <div
                             className="clipboard"
                             onClick={() => {
@@ -210,11 +238,23 @@ export default function CaseView(props: {
                         >
                             Copy
                         </div>
-                        <TextareaAutosize
-                            className="selectable expected-textarea"
-                            onChange={handleOutputChange}
-                            value={output}
-                        />
+                        {editMode ? (
+                            <TextareaAutosize
+                                className="selectable expected-textarea"
+                                onChange={handleOutputChange}
+                                value={output}
+                                onBlur={() => setEditMode(false)}
+                            />
+                        ) : (
+                            <TestCasePanel
+                                onChange={handleOutputChange}
+                                value={output}
+                                autoFocus={props.doFocus}
+                                onRequestEdit={() => setEditMode(true)}
+                                onBlur={() => setEditMode(false)}
+                                ref={undefined}
+                            />
+                        )}
                     </div>
                     {props.case.result != null && (
                         <div className="textarea-container">
@@ -239,10 +279,10 @@ export default function CaseView(props: {
                                 Set
                             </div>
                             <>
-                                <TextareaAutosize
-                                    className="selectable received-textarea"
+                                <TestCasePanel
+                                    onChange={() => {}}
                                     value={trunctateStdout(resultText)}
-                                    readOnly
+                                    autoFocus={false}
                                 />
                             </>
                         </div>

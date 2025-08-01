@@ -1,3 +1,61 @@
+.edit-btn {
+    filter: grayscale(100%);
+    position: absolute;
+    top: 0px;
+    right: 48px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 80%;
+    background: none;
+    border: none;
+    color: inherit;
+    transition: opacity 0.2s;
+}
+.edit-btn:hover {
+    opacity: 1;
+}
+.lines-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+    font-family: Consolas, 'Ubuntu Mono', monospace;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    border: 1px solid rgba(100, 100, 100, 0.15);
+    padding: 2px 4px;
+    position: relative;
+}
+.line-row {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    transition: background 0.2s;
+    position: relative;
+}
+.line-row .line-number {
+    position: relative;
+    display: inline-block;
+    min-width: 32px;
+    text-align: right;
+    color: #888;
+    margin-right: 8px;
+    margin-left: 0;
+    padding-right: 8px;
+    padding-left: 0;
+    font-size: 0.95em;
+    user-select: none;
+    background: transparent;
+}
+.line-row .line-content {
+    flex: 1;
+    white-space: pre;
+    font-size: 1em;
+    margin-left: 0;
+}
+.line-row.highlight {
+    background: rgba(255, 234, 167, 0.35);
+}
 * {
     -webkit-touch-callout: none;
     /* iOS Safari */
