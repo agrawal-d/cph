@@ -30,8 +30,17 @@ export default async () => {
     const problem = getProblem(srcPath);
 
     if (!problem) {
-        globalThis.logger.log('No problem saved.');
-        createLocalProblem(editor);
+        const judge = getJudgeViewProvider();
+        if (judge.isOpen()) {
+            await createLocalProblem();
+        } else {
+            globalThis.logger.log('No problem saved. Showing create UI.');
+            judge.focus();
+            judge.extensionToJudgeViewMessage({
+                command: 'new-problem',
+                problem: undefined,
+            });
+        }
         return;
     }
 
@@ -51,9 +60,14 @@ export default async () => {
     vscode.window.showTextDocument(editor.document, vscode.ViewColumn.One);
 };
 
-const createLocalProblem = async (editor: vscode.TextEditor) => {
+export const createLocalProblem = async () => {
     globalThis.reporter.sendTelemetryEvent(telmetry.NEW_LOCAL_PROBLEM);
     globalThis.logger.log('Creating local problem');
+    const editor = vscode.window.activeTextEditor;
+    if (editor === undefined) {
+        checkUnsupported('');
+        return;
+    }
     const srcPath = editor.document.fileName;
     if (checkUnsupported(srcPath)) {
         return;

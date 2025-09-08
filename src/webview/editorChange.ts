@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getProbSaveLocation } from '../parser';
+import { findProbPath } from '../parser';
 import { existsSync, readFileSync } from 'fs';
 import { Problem } from '../types';
 import { getJudgeViewProvider } from '../extension';
@@ -33,7 +33,13 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
 
     setOnlineJudgeEnv(false); // reset the non-debug mode set in webview.
 
+    const openedPath = e.document.fileName;
     const problem = getProblemForDocument(e.document);
+
+    // Abort if user switched editors during loading
+    if (vscode.window.activeTextEditor?.document.fileName !== openedPath) {
+        return;
+    }
 
     if (problem === undefined) {
         getJudgeViewProvider().extensionToJudgeViewMessage({
@@ -41,13 +47,6 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
             problem: undefined,
         });
         return;
-    }
-
-    if (
-        getAutoShowJudgePref() &&
-        getJudgeViewProvider().isViewUninitialized()
-    ) {
-        vscode.commands.executeCommand('cph.judgeView.focus');
     }
 
     globalThis.logger.log('Sent problem @', Date.now());
@@ -60,9 +59,9 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
 export const editorClosed = (e: vscode.TextDocument) => {
     globalThis.logger.log('Closed editor:', e.uri.fsPath);
     const srcPath = e.uri.fsPath;
-    const probPath = getProbSaveLocation(srcPath);
+    const probPath = findProbPath(srcPath);
 
-    if (!existsSync(probPath)) {
+    if (!probPath || !existsSync(probPath)) {
         return;
     }
 

@@ -248,7 +248,17 @@ const handleNewProblem = async (problem: Problem) => {
         writeFileSync(srcPath, '');
     }
     saveProblem(srcPath, problem);
-    const doc = await vscode.workspace.openTextDocument(srcPath);
+    // Avoid redundant openTextDocument if already open
+    const visibleEditor = vscode.window.visibleTextEditors.find(
+        (e) => e.document.fileName === srcPath,
+    );
+    const existingDoc =
+        visibleEditor?.document ||
+        vscode.workspace.textDocuments.find((d) => d.fileName === srcPath);
+    const doc =
+        existingDoc !== undefined
+            ? existingDoc
+            : await vscode.workspace.openTextDocument(srcPath);
 
     if (defaultLanguage) {
         const templateLocation = getDefaultLanguageTemplateFileLocation();

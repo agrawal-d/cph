@@ -6,7 +6,7 @@ import { VSToWebViewMessage, WebviewToVSEvent } from '../types';
 import { deleteProblemFile, getProblemForDocument } from '../utils';
 import { runSingleAndSave } from './processRunSingle';
 import runAllAndSave from './processRunAll';
-import runTestCases from '../runTestCases';
+import { createLocalProblem } from '../runTestCases';
 import {
     getAutoShowJudgePref,
     getRemoteServerAddressPref,
@@ -24,6 +24,10 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
     public isViewUninitialized() {
         return this._view === undefined;
+    }
+
+    public isOpen() {
+        return !!this._view && this._view.visible === true;
     }
 
     constructor(private readonly _extensionUri: vscode.Uri) {}
@@ -100,7 +104,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
 
                     case 'create-local-problem': {
-                        runTestCases();
+                        createLocalProblem();
                         break;
                     }
 
@@ -169,7 +173,9 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         if (
             message.command === 'new-problem' &&
             message.problem !== undefined &&
-            getAutoShowJudgePref()
+            getAutoShowJudgePref() &&
+            vscode.window.activeTextEditor?.document.fileName ===
+                message.problem.srcPath
         ) {
             this.focus();
         }

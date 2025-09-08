@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
+import * as vscode from 'vscode';
 import { Problem } from './types';
 import { getSaveLocationPref } from './preferences';
-import crypto from 'crypto';
 
 /**
  *  Get the location (file path) to save the generated problem file in. If save
@@ -14,45 +14,94 @@ import crypto from 'crypto';
 export const getProbSaveLocation = (srcPath: string): string => {
     const srcFileName = path.basename(srcPath);
     const srcFolder = path.dirname(srcPath);
-    const hash = crypto
-        .createHash('md5')
-        .update(srcPath)
-        .digest('hex')
-        .substr(0);
-    const baseProbName = `${srcFileName}_${hash}.prob`;
+    const baseProbName = `${srcFileName}.prob`;
     const cphFolder = path.join(srcFolder, '.cph');
     return path.join(cphFolder, baseProbName);
 };
 
+/** Find the .prob path for the given source by scanning ancestor .cph folders. */
+export const findProbPath = (srcPath: string): string | null => {
+    const srcFolder = path.dirname(srcPath);
+    const srcFileName = path.basename(srcPath);
+
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(
+        vscode.Uri.file(srcPath),
+    );
+    const workspaceRoot = workspaceFolder?.uri.fsPath ?? path.parse(srcFolder).root;
+
+    const ancestors: string[] = [];
+    let currentDir = srcFolder;
+    // Collect ancestor directories up to workspace root (inclusive)
+    while (true) {
+        ancestors.push(currentDir);
+        if (
+            path.resolve(currentDir) === path.resolve(workspaceRoot) ||
+            path.dirname(currentDir) === currentDir
+        ) {
+            break;
+        }
+        currentDir = path.dirname(currentDir);
+    }
+
+    for (const dir of ancestors) {
+        const cphFolder = path.join(dir, '.cph');
+        if (!fs.existsSync(cphFolder)) {
+            continue;
+        }
+        const files = fs
+            .readdirSync(cphFolder)
+            .filter((f) => f.endsWith('.prob'));
+        if (files.length === 0) {
+            continue;
+        }
+        // Prioritize files that start with the source filename
+        const prioritized = [
+            ...files.filter((f) => f.startsWith(srcFileName)),
+            ...files.filter((f) => !f.startsWith(srcFileName)),
+        ];
+
+        for (const file of prioritized) {
+            const fullProbPath = path.join(cphFolder, file);
+            try {
+                const content = fs.readFileSync(fullProbPath).toString();
+                const parsed: Problem = JSON.parse(content);
+                const recorded = (parsed as any).srcPath as string | undefined;
+                if (!recorded) {
+                    continue;
+                }
+                const parentOfCph = dir; // parent of the .cph folder
+                let resolvedRecorded: string;
+                if (path.isAbsolute(recorded)) {
+                    resolvedRecorded = path.normalize(recorded);
+                } else {
+                    resolvedRecorded = path.resolve(parentOfCph, recorded);
+                }
+                if (path.normalize(resolvedRecorded) === path.normalize(srcPath)) {
+                    return fullProbPath;
+                }
+            } catch (_e) {
+                // Ignore invalid/partial files
+                continue;
+            }
+        }
+    }
+
+    return null;
+};
+
 /** Get the problem for a source, `null` if does not exist on the filesystem. */
 export const getProblem = (srcPath: string): Problem | null => {
-    const probPath = getProbSaveLocation(srcPath);
-    let problem: string;
+    const probPath = findProbPath(srcPath);
+    if (!probPath) {
+        return null;
+    }
     try {
-        problem = fs.readFileSync(probPath).toString();
-        const parsed: Problem = JSON.parse(problem);
+        const content = fs.readFileSync(probPath).toString();
+        const parsed: Problem = JSON.parse(content);
         parsed.srcPath = srcPath;
         return parsed;
-    } catch (err) {
-        // Fallback to legacy .prob path (leading dot in filename)
-        try {
-            const srcFileName = path.basename(srcPath);
-            const srcFolder = path.dirname(srcPath);
-            const hash = crypto
-                .createHash('md5')
-                .update(srcPath)
-                .digest('hex')
-                .substr(0);
-            const baseProbNameLegacy = `.${srcFileName}_${hash}.prob`;
-            const cphFolder = path.join(srcFolder, '.cph');
-            const legacyProbPath = path.join(cphFolder, baseProbNameLegacy);
-            problem = fs.readFileSync(legacyProbPath).toString();
-            const parsed: Problem = JSON.parse(problem);
-            parsed.srcPath = srcPath;
-            return parsed;
-        } catch (err2) {
-            return null;
-        }
+    } catch (_e) {
+        return null;
     }
 };
 
@@ -75,7 +124,8 @@ export const saveProblem = (srcPath: string, problem: Problem) => {
     try {
         const problemToSave: Problem = {
             ...problem,
-            srcPath: path.basename(srcPath),
+            // Store path relative to parent of .cph folder when possible
+            srcPath: path.relative(path.dirname(probDir), srcPath),
         };
         fs.writeFileSync(probPath, JSON.stringify(problemToSave));
     } catch (err) {
