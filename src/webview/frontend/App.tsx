@@ -101,6 +101,7 @@ function Judge(props: {
     const total = cases.length;
 
     useEffect(() => {
+        if (!window.showLiveUserCount) return;
         const updateLiveUserCount = (): void => {
             getLiveUserCount().then((count) => setLiveUserCount(count));
         };
