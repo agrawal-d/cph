@@ -70,7 +70,7 @@
                 "cph.general.saveLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
+                    "description": "Directory where new problem source files and their .prob metadata will be saved. Leave empty to save in the workspace root for sources and alongside sources in .cph for metadata."
                 },
                 "cph.general.timeOut": {
                     "type": "number",

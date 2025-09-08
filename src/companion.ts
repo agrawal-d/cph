@@ -4,10 +4,11 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
+    getSaveLocationPref,
     getLanguageId,
     useShortCodeForcesName,
     useShortLuoguName,
@@ -221,7 +222,12 @@ const handleNewProblem = async (problem: Problem) => {
         problem.name = splitUrl[splitUrl.length - 1];
     }
     const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+    const configuredSaveDir = getSaveLocationPref();
+    const targetDir =
+        configuredSaveDir && configuredSaveDir !== ''
+            ? configuredSaveDir
+            : folder;
+    const srcPath = path.join(targetDir, problemFileName);
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
@@ -230,6 +236,14 @@ const handleNewProblem = async (problem: Problem) => {
         // Pass in index to avoid generating duplicate id
         id: randomId(index),
     }));
+    if (!existsSync(path.dirname(srcPath))) {
+        try {
+            // ensure nested paths if user configured nested folder
+            mkdirSync(path.dirname(srcPath), { recursive: true });
+        } catch (e) {
+            globalThis.logger.error('Failed to create target directory', e);
+        }
+    }
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
     }

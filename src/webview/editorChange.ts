@@ -67,6 +67,7 @@ export const editorClosed = (e: vscode.TextDocument) => {
     }
 
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
+    problem.srcPath = srcPath;
 
     if (getJudgeViewProvider().problemPath === problem.srcPath) {
         getJudgeViewProvider().extensionToJudgeViewMessage({

@@ -12,7 +12,6 @@ import crypto from 'crypto';
  *  @param srcPath location of the source code
  */
 export const getProbSaveLocation = (srcPath: string): string => {
-    const savePreference = getSaveLocationPref();
     const srcFileName = path.basename(srcPath);
     const srcFolder = path.dirname(srcPath);
     const hash = crypto
@@ -20,11 +19,8 @@ export const getProbSaveLocation = (srcPath: string): string => {
         .update(srcPath)
         .digest('hex')
         .substr(0);
-    const baseProbName = `.${srcFileName}_${hash}.prob`;
+    const baseProbName = `${srcFileName}_${hash}.prob`;
     const cphFolder = path.join(srcFolder, '.cph');
-    if (savePreference && savePreference !== '') {
-        return path.join(savePreference, baseProbName);
-    }
     return path.join(cphFolder, baseProbName);
 };
 
@@ -34,9 +30,29 @@ export const getProblem = (srcPath: string): Problem | null => {
     let problem: string;
     try {
         problem = fs.readFileSync(probPath).toString();
-        return JSON.parse(problem);
+        const parsed: Problem = JSON.parse(problem);
+        parsed.srcPath = srcPath;
+        return parsed;
     } catch (err) {
-        return null;
+        // Fallback to legacy .prob path (leading dot in filename)
+        try {
+            const srcFileName = path.basename(srcPath);
+            const srcFolder = path.dirname(srcPath);
+            const hash = crypto
+                .createHash('md5')
+                .update(srcPath)
+                .digest('hex')
+                .substr(0);
+            const baseProbNameLegacy = `.${srcFileName}_${hash}.prob`;
+            const cphFolder = path.join(srcFolder, '.cph');
+            const legacyProbPath = path.join(cphFolder, baseProbNameLegacy);
+            problem = fs.readFileSync(legacyProbPath).toString();
+            const parsed: Problem = JSON.parse(problem);
+            parsed.srcPath = srcPath;
+            return parsed;
+        } catch (err2) {
+            return null;
+        }
     }
 };
 
@@ -45,14 +61,23 @@ export const saveProblem = (srcPath: string, problem: Problem) => {
     const srcFolder = path.dirname(srcPath);
     const cphFolder = path.join(srcFolder, '.cph');
 
-    if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
+    const pref = getSaveLocationPref();
+    if (pref === '' && !fs.existsSync(cphFolder)) {
         globalThis.logger.log('Making .cph folder');
         fs.mkdirSync(cphFolder);
     }
 
     const probPath = getProbSaveLocation(srcPath);
+    const probDir = path.dirname(probPath);
+    if (!fs.existsSync(probDir)) {
+        fs.mkdirSync(probDir, { recursive: true });
+    }
     try {
-        fs.writeFileSync(probPath, JSON.stringify(problem));
+        const problemToSave: Problem = {
+            ...problem,
+            srcPath: path.basename(srcPath),
+        };
+        fs.writeFileSync(probPath, JSON.stringify(problemToSave));
     } catch (err) {
         throw new Error(err as string);
     }

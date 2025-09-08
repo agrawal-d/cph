@@ -248,5 +248,6 @@ export const getProblemForDocument = (
         return undefined;
     }
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
+    problem.srcPath = srcPath;
     return problem;
 };
