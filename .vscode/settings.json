@@ -3,5 +3,15 @@
     "files.associations": {
         "iostream": "cpp"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "[typescript]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "never"
+        }
+    },
+    "[typescriptreact]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "never"
+        }
+    }
 }

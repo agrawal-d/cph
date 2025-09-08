@@ -40,8 +40,11 @@ export const getSaveLocationPref = (): string => {
     }
 
     try {
-        if (!fs.existsSync(resolved)) {
-            fs.mkdirSync(resolved, { recursive: true });
+        // Do not create directories if path contains template placeholders like ${group}
+        if (!resolved.includes('${')) {
+            if (!fs.existsSync(resolved)) {
+                fs.mkdirSync(resolved, { recursive: true });
+            }
         }
         return resolved;
     } catch (e) {

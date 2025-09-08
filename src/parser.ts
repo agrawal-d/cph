@@ -127,7 +127,7 @@ export const saveProblem = (srcPath: string, problem: Problem) => {
             // Store path relative to parent of .cph folder when possible
             srcPath: path.relative(path.dirname(probDir), srcPath),
         };
-        fs.writeFileSync(probPath, JSON.stringify(problemToSave));
+        fs.writeFileSync(probPath, JSON.stringify(problemToSave, null, 2));
     } catch (err) {
         throw new Error(err as string);
     }

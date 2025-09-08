@@ -222,7 +222,12 @@ const handleNewProblem = async (problem: Problem) => {
         problem.name = splitUrl[splitUrl.length - 1];
     }
     const problemFileName = getProblemFileName(problem, extn);
-    const configuredSaveDir = getSaveLocationPref();
+    let configuredSaveDir = getSaveLocationPref();
+    if (configuredSaveDir && configuredSaveDir.includes('${group}')) {
+        const groupKey = (problem.group || '').trim();
+        const replacement = groupKey === '' ? '' : groupKey;
+        configuredSaveDir = configuredSaveDir.replace(/\$\{group\}/g, replacement);
+    }
     const targetDir =
         configuredSaveDir && configuredSaveDir !== ''
             ? configuredSaveDir

@@ -70,7 +70,7 @@
                 "cph.general.saveLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "Directory where new problem source files and their .prob metadata will be saved. Leave empty to save in the workspace root for sources and alongside sources in .cph for metadata."
+                    "description": "Directory where new problem source files and their .prob metadata will be saved. Supports the ${group} placeholder (e.g. '${group}/'), which is replaced with the problem's group. Leave empty to save in the workspace root for sources and alongside sources in .cph for metadata."
                 },
                 "cph.general.timeOut": {
                     "type": "number",
