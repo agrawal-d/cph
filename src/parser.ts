@@ -55,12 +55,20 @@ export const findProbPath = (srcPath: string): string | null => {
             continue;
         }
         // Prioritize files that start with the source filename
-        const prioritized = [
-            ...files.filter((f) => f.startsWith(srcFileName)),
-            ...files.filter((f) => !f.startsWith(srcFileName)),
-        ];
+        const prioritized = [];
+        const nonPrioritized = [];
+        for (const file of files) {
+            const name = file.startsWith('.') ? file.slice(1) : file;
+            if (name.startsWith(srcFileName)) {
+                prioritized.push(file);
+            } else {
+                nonPrioritized.push(file);
+            }
+        }
 
-        for (const file of prioritized) {
+        const all = [...prioritized, ...nonPrioritized];
+
+        for (const file of all) {
             const fullProbPath = path.join(cphFolder, file);
             try {
                 const content = fs.readFileSync(fullProbPath).toString();
