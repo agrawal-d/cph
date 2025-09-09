@@ -15,6 +15,16 @@ import {
 } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
 
+function getNonce() {
+    let text = '';
+    const possible =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
+
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
 
@@ -247,10 +257,20 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             ? globalThis.remoteMessage.trim()
             : ' ';
 
+        const nonce = getNonce();
+
         const html = `
             <!DOCTYPE html lang="EN">
             <html>
                 <head>
+                    <meta http-equiv="Content-Security-Policy"
+                        content="
+                            default-src 'none';
+                            img-src ${webview.cspSource} data:;
+                            font-src ${webview.cspSource};
+                            style-src ${webview.cspSource} 'nonce-${nonce}';
+                            script-src 'nonce-${nonce}';
+                    ">
                     <link rel="stylesheet" href="${styleUri}" />
                     <link rel="stylesheet" href="${codiconsUri}" />
                     <meta charset="UTF-8" />
@@ -263,7 +283,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                             >report the bug on GitHub</a
                         >.
                     </div>
-                    <script>
+                    <script nonce="${nonce}">
                         // Since the react script takes time to load, the problem is sent to the webview before it has even loaded.
                         // So, for the initial request, ask for it again.
                         window.vscodeApi = acquireVsCodeApi();
@@ -286,7 +306,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                             },
                         );
                     </script>
-                    <script src="${scriptUri}"></script>
+                    <script nonce="${nonce}" src="${scriptUri}"></script>
                 </body>
             </html>
         `;
