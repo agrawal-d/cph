@@ -226,7 +226,10 @@ const handleNewProblem = async (problem: Problem) => {
     if (configuredSaveDir && configuredSaveDir.includes('${group}')) {
         const groupKey = (problem.group || '').trim();
         const replacement = groupKey === '' ? '' : groupKey;
-        configuredSaveDir = configuredSaveDir.replace(/\$\{group\}/g, replacement);
+        configuredSaveDir = configuredSaveDir.replace(
+            /\$\{group\}/g,
+            replacement,
+        );
     }
     const targetDir =
         configuredSaveDir && configuredSaveDir !== ''

@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from 'fs';
 import { Problem } from '../types';
 import { getJudgeViewProvider } from '../extension';
 import { getProblemForDocument } from '../utils';
-import { getAutoShowJudgePref } from '../preferences';
+// import { getAutoShowJudgePref } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
 
 /**

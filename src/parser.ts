@@ -27,20 +27,21 @@ export const findProbPath = (srcPath: string): string | null => {
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(
         vscode.Uri.file(srcPath),
     );
-    const workspaceRoot = workspaceFolder?.uri.fsPath ?? path.parse(srcFolder).root;
+    const workspaceRoot =
+        workspaceFolder?.uri.fsPath ?? path.parse(srcFolder).root;
 
     const ancestors: string[] = [];
     let currentDir = srcFolder;
     // Collect ancestor directories up to workspace root (inclusive)
-    while (true) {
+    let reachedRoot = false;
+    while (!reachedRoot) {
         ancestors.push(currentDir);
-        if (
+        reachedRoot =
             path.resolve(currentDir) === path.resolve(workspaceRoot) ||
-            path.dirname(currentDir) === currentDir
-        ) {
-            break;
+            path.dirname(currentDir) === currentDir;
+        if (!reachedRoot) {
+            currentDir = path.dirname(currentDir);
         }
-        currentDir = path.dirname(currentDir);
     }
 
     for (const dir of ancestors) {
@@ -84,7 +85,10 @@ export const findProbPath = (srcPath: string): string | null => {
                 } else {
                     resolvedRecorded = path.resolve(parentOfCph, recorded);
                 }
-                if (path.normalize(resolvedRecorded) === path.normalize(srcPath)) {
+                const samePath =
+                    path.normalize(resolvedRecorded) ===
+                    path.normalize(srcPath);
+                if (samePath) {
                     return fullProbPath;
                 }
             } catch (_e) {
