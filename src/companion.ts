@@ -4,10 +4,11 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
+    getSaveLocationPref,
     getLanguageId,
     useShortCodeForcesName,
     useShortLuoguName,
@@ -221,7 +222,20 @@ const handleNewProblem = async (problem: Problem) => {
         problem.name = splitUrl[splitUrl.length - 1];
     }
     const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+    let configuredSaveDir = getSaveLocationPref();
+    if (configuredSaveDir && configuredSaveDir.includes('${group}')) {
+        const groupKey = (problem.group || '').trim();
+        const replacement = groupKey === '' ? '' : groupKey;
+        configuredSaveDir = configuredSaveDir.replace(
+            /\$\{group\}/g,
+            replacement,
+        );
+    }
+    const targetDir =
+        configuredSaveDir && configuredSaveDir !== ''
+            ? configuredSaveDir
+            : folder;
+    const srcPath = path.join(targetDir, problemFileName);
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
@@ -230,11 +244,29 @@ const handleNewProblem = async (problem: Problem) => {
         // Pass in index to avoid generating duplicate id
         id: randomId(index),
     }));
+    if (!existsSync(path.dirname(srcPath))) {
+        try {
+            // ensure nested paths if user configured nested folder
+            mkdirSync(path.dirname(srcPath), { recursive: true });
+        } catch (e) {
+            globalThis.logger.error('Failed to create target directory', e);
+        }
+    }
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
     }
     saveProblem(srcPath, problem);
-    const doc = await vscode.workspace.openTextDocument(srcPath);
+    // Avoid redundant openTextDocument if already open
+    const visibleEditor = vscode.window.visibleTextEditors.find(
+        (e) => e.document.fileName === srcPath,
+    );
+    const existingDoc =
+        visibleEditor?.document ||
+        vscode.workspace.textDocuments.find((d) => d.fileName === srcPath);
+    const doc =
+        existingDoc !== undefined
+            ? existingDoc
+            : await vscode.workspace.openTextDocument(srcPath);
 
     if (defaultLanguage) {
         const templateLocation = getDefaultLanguageTemplateFileLocation();

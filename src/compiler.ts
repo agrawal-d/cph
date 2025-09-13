@@ -51,7 +51,11 @@ export const getBinSaveLocation = (srcPath: string): string => {
     const srcFileName = path.parse(srcPath).name;
     const binFileName = toAsciiFilename(srcFileName) + ext;
     const binDir = path.dirname(srcPath);
-    if (savePreference && savePreference !== '') {
+    if (
+        savePreference &&
+        savePreference !== '' &&
+        !savePreference.includes('${')
+    ) {
         return path.join(savePreference, binFileName);
     }
     return path.join(binDir, binFileName);

@@ -17,7 +17,7 @@
     scrollbar-width: thin;
 }
 
-.selectable {
+.selectable * {
     -webkit-touch-callout: text;
     /* iOS Safari */
     -webkit-user-select: text;
@@ -100,11 +100,9 @@ body {
 }
 
 .case {
-    background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.1),
-        rgba(87, 87, 87, 0.2)
-    );
+    background: linear-gradient(to right,
+            rgba(0, 0, 0, 0.1),
+            rgba(87, 87, 87, 0.2));
     border-bottom: 1px solid rgba(78, 78, 78, 0.3);
     border-top: 1px solid rgba(22, 22, 22, 0.3);
     padding: 8px;
@@ -192,6 +190,17 @@ textarea:active {
     background: black;
     outline: none !important;
     border: 1px solid #3393cc;
+}
+
+.pre-block {
+    white-space: pre-wrap;
+    background: var(--input-background);
+    color: bisque;
+    width: 100%;
+    max-height: 250px !important;
+    overflow-y: auto;
+    border: 1px solid rgba(100, 100, 100, 0.2);
+    padding: 4px;
 }
 
 .case-metadata {
@@ -348,11 +357,9 @@ pre {
 }
 
 body.vscode-light .case {
-    background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.9),
-        rgba(220, 220, 220, 0.9)
-    );
+    background: linear-gradient(to right,
+            rgba(255, 255, 255, 0.9),
+            rgba(220, 220, 220, 0.9));
     box-shadow: none;
     border-left: 5px solid rgba(0, 0, 0, 0.3);
     margin-bottom: 4px;
@@ -524,6 +531,14 @@ body.vscode-light .notification {
     border: 1px solid rgb(92, 95, 97);
 }
 
+.token-ok {
+    color: rgb(64, 175, 64);
+}
+
+.token-bad {
+    color: rgb(206, 40, 95);
+}
+
 /* @keyframes runs {
     50% {
         border-color: orange;
@@ -602,4 +617,82 @@ hr {
     .fallback {
         display: block !important;
     }
+}
+
+/* Lined editor */
+.lined-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+}
+
+.lined-gutter {
+    background: rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(100, 100, 100, 0.12);
+    border-right: none;
+    overflow-y: hidden;
+    max-height: 250px !important;
+}
+
+.lined-number {
+    padding: 0px 6px;
+    text-align: right;
+    font-family: Consolas, 'Ubuntu Mono', monospace;
+    color: rgba(255, 255, 255, 0.45);
+    box-sizing: content-box;
+}
+
+.lined-content>.pre-block,
+.lined-content>textarea {
+    border-left: none;
+}
+
+/* Remove any inner padding inside lined textareas */
+.lined-content>textarea {
+    padding: 0 !important;
+}
+
+.lined-container .lined-gutter+.lined-content>.pre-block,
+.lined-container .lined-gutter+.lined-content>textarea {
+    border-left: none;
+}
+
+.lined-number.is-hovered {
+    background: rgba(200, 200, 200, 0.08);
+}
+
+body.vscode-light .lined-gutter {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.vscode-light .lined-number {
+    color: rgba(0, 0, 0, 0.45);
+}
+
+body.vscode-light .lined-number.is-hovered {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+/* Overlay for diff rendering inside lined textareas */
+.lined-content {
+    position: relative;
+}
+
+.lined-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.lined-overlay-inner {
+    white-space: pre-wrap;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+    max-height: none;
+    /* overlay should not clip vertically; base textarea limits height */
+    overflow: visible;
 }

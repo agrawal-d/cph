@@ -5,7 +5,7 @@
     "license": "GPL-3.0-or-later",
     "icon": "icon.png",
     "publisher": "DivyanshuAgrawal",
-    "version": "2077.0.0",
+    "version": "2081.0.0",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -70,7 +70,7 @@
                 "cph.general.saveLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
+                    "description": "Directory where new problem source files and their .prob metadata will be saved. Supports the ${group} placeholder (e.g. '${group}/'), which is replaced with the problem's group. Leave empty to save in the workspace root for sources and alongside sources in .cph for metadata."
                 },
                 "cph.general.timeOut": {
                     "type": "number",
@@ -360,7 +360,7 @@
                 },
                 "cph.general.retainWebviewContext": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Keep the webview active even when it's hidden. May improve performance but may cause some rendering issues."
                 },
                 "cph.general.defaultLanguageTemplateFileLocation": {

@@ -24,20 +24,35 @@ export const getAutoShowJudgePref = (): boolean =>
     getPreference('general.autoShowJudge');
 
 export const getSaveLocationPref = (): string => {
-    const pref = getPreference('general.saveLocation');
-    const validSaveLocation = pref == '' || fs.existsSync(pref);
-    if (!validSaveLocation) {
+    const raw = getPreference('general.saveLocation') as string;
+    if (raw === '') return '';
+
+    let resolved = raw;
+    if (!path.isAbsolute(raw)) {
+        const folder = workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (!folder) {
+            vscode.window.showErrorMessage(
+                `Save location '${raw}' is relative but no workspace is open.`,
+            );
+            return '';
+        }
+        resolved = path.join(folder, raw);
+    }
+
+    try {
+        // Do not create directories if path contains template placeholders like ${group}
+        if (!resolved.includes('${')) {
+            if (!fs.existsSync(resolved)) {
+                fs.mkdirSync(resolved, { recursive: true });
+            }
+        }
+        return resolved;
+    } catch (e) {
         vscode.window.showErrorMessage(
-            `Invalid save location, reverting to default. path not exists: ${pref}`,
-        );
-        updatePreference(
-            'general.saveLocation',
-            '',
-            vscode.ConfigurationTarget.Global,
+            `Could not create save location: ${resolved}. Falling back to default. ${e}`,
         );
         return '';
     }
-    return pref;
 };
 
 export const getHideStderrorWhenCompiledOK = (): boolean =>

@@ -5,7 +5,7 @@ import path from 'path';
 import * as vscode from 'vscode';
 
 import config from './config';
-import { getProbSaveLocation } from './parser';
+import { findProbPath, getProbSaveLocation } from './parser';
 import {
     getCArgsPref,
     getCppArgsPref,
@@ -195,7 +195,7 @@ export const checkUnsupported = (srcPath: string): boolean => {
 /** Deletes the .prob problem file for a given source code path. */
 export const deleteProblemFile = async (srcPath: string) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.DELETE_ALL_TESTCASES);
-    const probPath = getProbSaveLocation(srcPath);
+    const probPath = findProbPath(srcPath) ?? getProbSaveLocation(srcPath);
 
     globalThis.logger.log('Deleting problem file', probPath);
     try {
@@ -243,10 +243,11 @@ export const getProblemForDocument = (
     }
 
     const srcPath = document.fileName;
-    const probPath = getProbSaveLocation(srcPath);
-    if (!existsSync(probPath)) {
+    const probPath = findProbPath(srcPath);
+    if (!probPath || !existsSync(probPath)) {
         return undefined;
     }
     const problem: Problem = JSON.parse(readFileSync(probPath).toString());
+    problem.srcPath = srcPath;
     return problem;
 };
