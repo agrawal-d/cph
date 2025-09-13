@@ -618,3 +618,81 @@ hr {
         display: block !important;
     }
 }
+
+/* Lined editor */
+.lined-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+}
+
+.lined-gutter {
+    background: rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(100, 100, 100, 0.12);
+    border-right: none;
+    overflow-y: hidden;
+    max-height: 250px !important;
+}
+
+.lined-number {
+    padding: 0px 6px;
+    text-align: right;
+    font-family: Consolas, 'Ubuntu Mono', monospace;
+    color: rgba(255, 255, 255, 0.45);
+    box-sizing: content-box;
+}
+
+.lined-content>.pre-block,
+.lined-content>textarea {
+    border-left: none;
+}
+
+/* Remove any inner padding inside lined textareas */
+.lined-content>textarea {
+    padding: 0 !important;
+}
+
+.lined-container .lined-gutter+.lined-content>.pre-block,
+.lined-container .lined-gutter+.lined-content>textarea {
+    border-left: none;
+}
+
+.lined-number.is-hovered {
+    background: rgba(200, 200, 200, 0.08);
+}
+
+body.vscode-light .lined-gutter {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.vscode-light .lined-number {
+    color: rgba(0, 0, 0, 0.45);
+}
+
+body.vscode-light .lined-number.is-hovered {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+/* Overlay for diff rendering inside lined textareas */
+.lined-content {
+    position: relative;
+}
+
+.lined-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.lined-overlay-inner {
+    white-space: pre-wrap;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+    max-height: none;
+    /* overlay should not clip vertically; base textarea limits height */
+    overflow: visible;
+}

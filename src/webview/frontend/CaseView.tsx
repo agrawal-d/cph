@@ -2,6 +2,7 @@ import { Case, VSToWebViewMessage } from '../../types';
 import { useState, createRef, useEffect } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import React from 'react';
+import { LinedTextarea } from './Lined';
 
 export default function CaseView(props: {
     num: number;
@@ -22,6 +23,32 @@ export default function CaseView(props: {
         props.case.result?.pass === true,
     );
     const inputBox = createRef<HTMLTextAreaElement>();
+    const [externalHoverLine, setExternalHoverLine] = useState<number | null>(null);
+
+    const inputGutterLabel = (lineIdx: number, allLines: string[]): string => {
+        const first = (allLines[0] ?? '').trim();
+        const t = parseInt(first, 10);
+        if (!Number.isFinite(t) || t <= 0) return String(lineIdx + 1);
+        const nonEmpty = allLines.filter((l, idx) => idx === 0 ? true : l.trim().length > 0);
+        const totalNonEmpty = nonEmpty.length;
+        // Try k = 1..10 to find a plausible grouping
+        for (let k = 1; k <= 3; k++) {
+            if (totalNonEmpty === t * k + 1) {
+                if (lineIdx === 0) return 'T';
+                return String(lineIdx);
+            }
+        }
+        return String(lineIdx + 1);
+    };
+
+    const hasTHeader = (allLines: string[]): boolean => {
+        const first = (allLines[0] ?? '').trim();
+        const t = parseInt(first, 10);
+        if (!Number.isFinite(t) || t <= 0) return false;
+        const totalNonEmpty = allLines.filter((l, idx) => idx === 0 ? true : l.trim().length > 0).length;
+        for (let k = 1; k <= 3; k++) if (totalNonEmpty === t * k + 1) return true;
+        return false;
+    };
 
     useEffect(() => {
         if (props.doFocus) {
@@ -234,12 +261,30 @@ export default function CaseView(props: {
                         >
                             Copy
                         </div>
-                        <TextareaAutosize
+                        <LinedTextarea
                             className="selectable input-textarea"
                             onChange={handleInputChange}
                             value={input}
-                            ref={inputBox}
+                            inputRef={inputBox}
                             autoFocus={props.doFocus}
+                            externalHoverLine={((): number | null => {
+                                const idx = externalHoverLine;
+                                if (idx == null) return null;
+                                const lines = input.split('\n');
+                                const withHeader = hasTHeader(lines);
+                                const contentCount = withHeader ? Math.max(0, lines.length - 1) : lines.length;
+                                if (idx >= contentCount) return null;
+                                return withHeader ? idx + 1 : idx;
+                            })()}
+                            onHoverLineChange={(idx: number | null) => {
+                                if (!hasTHeader(input.split('\n'))) {
+                                    setExternalHoverLine(idx);
+                                } else {
+                                    if (idx == null || idx === 0) setExternalHoverLine(null);
+                                    else setExternalHoverLine((idx ?? 1) - 1);
+                                }
+                            }}
+                            gutterLabelForLine={inputGutterLabel}
                         />
                     </div>
                     <div className="textarea-container">
@@ -253,10 +298,12 @@ export default function CaseView(props: {
                         >
                             Copy
                         </div>
-                        <TextareaAutosize
+                        <LinedTextarea
                             className="selectable expected-textarea"
                             onChange={handleOutputChange}
                             value={output}
+                            externalHoverLine={externalHoverLine}
+                            onHoverLineChange={setExternalHoverLine}
                         />
                     </div>
                     {props.case.result != null && (
@@ -282,19 +329,21 @@ export default function CaseView(props: {
                                 Set
                             </div>
                             <>
-                                <div className="selectable received-textarea pre-block">
-                                    {renderHighlighted(
-                                        trunctateStdout(resultText),
-                                        output,
-                                    )}
-                                </div>
+                                <LinedTextarea
+                                    className="selectable expected-textarea"
+                                    value={trunctateStdout(resultText)}
+                                    diffAgainst={output}
+                                    readOnly
+                                    externalHoverLine={externalHoverLine}
+                                    onHoverLineChange={setExternalHoverLine}
+                                />
                             </>
                         </div>
                     )}
                     {stderror && stderror.length > 0 && (
                         <>
                             Standard Error:
-                            <TextareaAutosize
+                            <LinedTextarea
                                 className="selectable stderror-textarea"
                                 value={trunctateStdout(stderror)}
                                 readOnly
