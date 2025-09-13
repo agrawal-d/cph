@@ -19,21 +19,42 @@ type LinedTextareaProps = {
 };
 
 export function LinedTextarea(props: LinedTextareaProps) {
-    const { value, onChange, className, autoFocus, inputRef, readOnly, externalHoverLine, onHoverLineChange, diffAgainst, gutterLabelForLine, hoverHighlightForLine } = props;
+    const {
+        value,
+        onChange,
+        className,
+        autoFocus,
+        inputRef,
+        readOnly,
+        externalHoverLine,
+        onHoverLineChange,
+        diffAgainst,
+        gutterLabelForLine,
+        hoverHighlightForLine,
+    } = props;
     const internalRef = useRef<HTMLTextAreaElement | null>(null);
     const gutterRef = useRef<HTMLDivElement | null>(null);
     const overlayInnerRef = useRef<HTMLDivElement | null>(null);
-    const gutterWheelHandlerRef = useRef<(e: WheelEvent) => void>();
+    //
     const [hoveredLine, setHoveredLine] = useState<number | null>(null);
     const [lineHeightPx, setLineHeightPx] = useState<number>(18);
-    const [overlayFontFamily, setOverlayFontFamily] = useState<string | undefined>(undefined);
-    const [overlayFontSize, setOverlayFontSize] = useState<string | undefined>(undefined);
-    const [overlayPadding, setOverlayPadding] = useState<{ top?: string; right?: string; bottom?: string; left?: string }>({});
+    const [overlayFontFamily, setOverlayFontFamily] = useState<
+        string | undefined
+    >(undefined);
+    const [overlayFontSize, setOverlayFontSize] = useState<string | undefined>(
+        undefined,
+    );
+    const [overlayPadding, setOverlayPadding] = useState<{
+        top?: string;
+        right?: string;
+        bottom?: string;
+        left?: string;
+    }>({});
 
     const lines = useMemo(() => Math.max(1, value.split('\n').length), [value]);
 
     useEffect(() => {
-        const ta = (inputRef?.current ?? internalRef.current);
+        const ta = inputRef?.current ?? internalRef.current;
         const gutter = gutterRef.current;
         if (!ta || !gutter) return;
         const onScroll = () => {
@@ -55,7 +76,7 @@ export function LinedTextarea(props: LinedTextareaProps) {
     }, [inputRef]);
 
     useEffect(() => {
-        const ta = (inputRef?.current ?? internalRef.current);
+        const ta = inputRef?.current ?? internalRef.current;
         if (!ta) return;
         const computed = window.getComputedStyle(ta);
         const lh = parseFloat(computed.lineHeight);
@@ -71,11 +92,14 @@ export function LinedTextarea(props: LinedTextareaProps) {
     }, [inputRef]);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLTextAreaElement>) => {
-        const ta = (inputRef?.current ?? internalRef.current);
+        const ta = inputRef?.current ?? internalRef.current;
         if (!ta) return;
         const rect = ta.getBoundingClientRect();
         const localY = e.clientY - rect.top + ta.scrollTop;
-        const idx = Math.max(0, Math.min(lines - 1, Math.floor(localY / lineHeightPx)));
+        const idx = Math.max(
+            0,
+            Math.min(lines - 1, Math.floor(localY / lineHeightPx)),
+        );
         setHoveredLine(idx);
         onHoverLineChange?.(idx);
     };
@@ -92,9 +116,11 @@ export function LinedTextarea(props: LinedTextareaProps) {
         if (displayHoverLine == null) return null;
         const custom = hoverHighlightForLine?.(displayHoverLine, allLines);
         if (custom) return custom;
-        return { startLine: displayHoverLine, endLineExclusive: displayHoverLine + 1 };
+        return {
+            startLine: displayHoverLine,
+            endLineExclusive: displayHoverLine + 1,
+        };
     }, [displayHoverLine, hoverHighlightForLine, allLines]);
-    const minHeightPx = useMemo(() => lines * lineHeightPx, [lines, lineHeightPx]);
 
     const highlightedNodes = useMemo(() => {
         if (diffAgainst == null) return null;
@@ -113,12 +139,19 @@ export function LinedTextarea(props: LinedTextareaProps) {
             for (const match of aLine.matchAll(tokenRegex)) {
                 const start = match.index ?? 0;
                 const end = start + match[0].length;
-                if (start > lastIndex) nodes.push(aLine.slice(lastIndex, start));
+                if (start > lastIndex)
+                    nodes.push(aLine.slice(lastIndex, start));
                 const token = match[0];
                 const expectedToken = expectedTokens[tokenIndex];
-                const ok = !countMismatch && expectedToken !== undefined && expectedToken === token;
+                const ok =
+                    !countMismatch &&
+                    expectedToken !== undefined &&
+                    expectedToken === token;
                 nodes.push(
-                    <span className={ok ? 'token-ok' : 'token-bad'} key={`ol${lineIdx}t${start}`}>
+                    <span
+                        className={ok ? 'token-ok' : 'token-bad'}
+                        key={`ol${lineIdx}t${start}`}
+                    >
                         {token}
                     </span>,
                 );
@@ -152,14 +185,24 @@ export function LinedTextarea(props: LinedTextareaProps) {
                 style={{ paddingTop: 0, paddingBottom: overlayPadding.bottom }}
             >
                 {Array.from({ length: lines }, (_, i) => {
-                    const inRange = hoverRange && i >= hoverRange.startLine && i < hoverRange.endLineExclusive;
+                    const inRange =
+                        hoverRange &&
+                        i >= hoverRange.startLine &&
+                        i < hoverRange.endLineExclusive;
                     return (
                         <div
                             key={i}
-                            className={`lined-number${inRange ? ' is-hovered' : ''}`}
-                            style={{ height: `${lineHeightPx}px`, lineHeight: `${lineHeightPx}px` }}
+                            className={`lined-number${
+                                inRange ? ' is-hovered' : ''
+                            }`}
+                            style={{
+                                height: `${lineHeightPx}px`,
+                                lineHeight: `${lineHeightPx}px`,
+                            }}
                         >
-                            {gutterLabelForLine ? gutterLabelForLine(i, allLines) : (i + 1)}
+                            {gutterLabelForLine
+                                ? gutterLabelForLine(i, allLines)
+                                : i + 1}
                         </div>
                     );
                 })}
@@ -196,9 +239,11 @@ export function LinedTextarea(props: LinedTextareaProps) {
                     onMouseLeave={handleMouseLeave}
                     style={{
                         ...(bgStyle as TAStyle),
-                        backgroundColor: diffAgainst != null ? 'transparent' : undefined,
+                        backgroundColor:
+                            diffAgainst != null ? 'transparent' : undefined,
                         color: diffAgainst != null ? 'transparent' : undefined,
-                        caretColor: diffAgainst != null ? 'transparent' : undefined,
+                        caretColor:
+                            diffAgainst != null ? 'transparent' : undefined,
                         overflowY: 'auto',
                     }}
                 />
