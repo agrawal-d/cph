@@ -17,7 +17,7 @@
     scrollbar-width: thin;
 }
 
-.selectable {
+.selectable * {
     -webkit-touch-callout: text;
     /* iOS Safari */
     -webkit-user-select: text;
@@ -100,11 +100,9 @@ body {
 }
 
 .case {
-    background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.1),
-        rgba(87, 87, 87, 0.2)
-    );
+    background: linear-gradient(to right,
+            rgba(0, 0, 0, 0.1),
+            rgba(87, 87, 87, 0.2));
     border-bottom: 1px solid rgba(78, 78, 78, 0.3);
     border-top: 1px solid rgba(22, 22, 22, 0.3);
     padding: 8px;
@@ -192,6 +190,17 @@ textarea:active {
     background: black;
     outline: none !important;
     border: 1px solid #3393cc;
+}
+
+.pre-block {
+    white-space: pre-wrap;
+    background: var(--input-background);
+    color: bisque;
+    width: 100%;
+    max-height: 250px !important;
+    overflow-y: auto;
+    border: 1px solid rgba(100, 100, 100, 0.2);
+    padding: 4px;
 }
 
 .case-metadata {
@@ -348,11 +357,9 @@ pre {
 }
 
 body.vscode-light .case {
-    background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.9),
-        rgba(220, 220, 220, 0.9)
-    );
+    background: linear-gradient(to right,
+            rgba(255, 255, 255, 0.9),
+            rgba(220, 220, 220, 0.9));
     box-shadow: none;
     border-left: 5px solid rgba(0, 0, 0, 0.3);
     margin-bottom: 4px;
@@ -522,6 +529,14 @@ body.vscode-light .notification {
     background: rgb(58, 57, 57);
     color: white !important;
     border: 1px solid rgb(92, 95, 97);
+}
+
+.token-ok {
+    color: rgb(64, 175, 64);
+}
+
+.token-bad {
+    color: rgb(206, 40, 95);
 }
 
 /* @keyframes runs {

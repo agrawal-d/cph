@@ -114,6 +114,49 @@ export default function CaseView(props: {
     const caseClassName = 'case ' + (running ? 'running' : passFailText);
     const timeText = result?.timeOut ? 'Timed Out' : result?.time + 'ms';
 
+    const renderHighlighted = (
+        actual: string,
+        expected: string,
+    ): React.ReactNode[] => {
+        const nodes: React.ReactNode[] = [];
+        const tokenRegex = /\S+/gu;
+        const actualLines = actual.split('\n');
+        const expectedLines = expected.split('\n');
+        for (let lineIdx = 0; lineIdx < actualLines.length; lineIdx++) {
+            const aLine = actualLines[lineIdx];
+            const eLine = expectedLines[lineIdx] ?? '';
+            const expectedTokens = eLine.match(tokenRegex) || [];
+            const actualTokens = aLine.match(tokenRegex) || [];
+            const countMismatch = actualTokens.length !== expectedTokens.length;
+            let lastIndex = 0;
+            let tokenIndex = 0;
+            for (const match of aLine.matchAll(tokenRegex)) {
+                const start = match.index ?? 0;
+                const end = start + match[0].length;
+                if (start > lastIndex) nodes.push(aLine.slice(lastIndex, start));
+                const token = match[0];
+                const expectedToken = expectedTokens[tokenIndex];
+                const ok =
+                    !countMismatch &&
+                    expectedToken !== undefined &&
+                    expectedToken === token;
+                nodes.push(
+                    <span
+                        className={ok ? 'token-ok' : 'token-bad'}
+                        key={`l${lineIdx}t${start}`}
+                    >
+                        {token}
+                    </span>,
+                );
+                lastIndex = end;
+                tokenIndex++;
+            }
+            if (lastIndex < aLine.length) nodes.push(aLine.slice(lastIndex));
+            if (lineIdx < actualLines.length - 1) nodes.push('\n');
+        }
+        return nodes;
+    };
+
     return (
         <div className={caseClassName}>
             <div className="case-metadata">
@@ -239,11 +282,12 @@ export default function CaseView(props: {
                                 Set
                             </div>
                             <>
-                                <TextareaAutosize
-                                    className="selectable received-textarea"
-                                    value={trunctateStdout(resultText)}
-                                    readOnly
-                                />
+                                <div className="selectable received-textarea pre-block">
+                                    {renderHighlighted(
+                                        trunctateStdout(resultText),
+                                        output,
+                                    )}
+                                </div>
                             </>
                         </div>
                     )}
