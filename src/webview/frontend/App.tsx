@@ -292,6 +292,15 @@ function Judge(props: {
         setWaitingForSubmit(true);
     };
 
+    const submitKattisCli = () => {
+        sendMessageToVSCode({
+            command: 'submitKattisCli',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
+
     const submitCf = () => {
         sendMessageToVSCode({
             command: 'submitCf',
@@ -427,6 +436,12 @@ function Judge(props: {
                             <i className="codicon codicon-cloud-upload"></i>
                         </span>{' '}
                         Submit on Kattis
+                    </button>
+                    <button className="btn" onClick={submitKattisCli}>
+                        <span className="icon">
+                            <i className="codicon codicon-cloud-upload"></i>
+                        </span>{' '}
+                        Submit on Kattis Cli
                     </button>
                     {waitingForSubmit && (
                         <>

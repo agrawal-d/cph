@@ -68,6 +68,33 @@ export const submitKattisProblem = (problem: Problem) => {
     });
 };
 
+export const submitKattisCliProblem = (problem: Problem) => {
+    globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
+    const srcPath = problem.srcPath;
+    const homedir = os.homedir();
+    const directoryChar = process.platform == 'win32' ? '\\' : '/';
+    const submitPath = `${homedir}${directoryChar}.kattis${directoryChar}submit.py`;
+
+    if (
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}.kattisrc`,
+        ) ||
+        !existsSync(
+            `${homedir}${directoryChar}.kattis${directoryChar}submit.py`,
+        )
+    ) {
+        vscode.window.showErrorMessage(
+            `Please ensure .kattisrc and submit.py are present in ${homedir}${directoryChar}.kattis${directoryChar}`,
+        );
+        return;
+    }
+
+    // create new terminal
+    const terminal = vscode.window.createTerminal('Katiis Submit CLI');
+    terminal.show();
+    terminal.sendText(`source ./.venv/bin/activate && python ./kattis/kattis-cli/submit.py ${srcPath} -f`)
+};
+
 /** Stores a response to be submitted to CF page soon. */
 export const storeSubmitProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
