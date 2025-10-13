@@ -230,35 +230,40 @@ const handleNewProblem = async (problem: Problem) => {
         // Pass in index to avoid generating duplicate id
         id: randomId(index),
     }));
+
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
-    }
-    saveProblem(srcPath, problem);
-    const doc = await vscode.workspace.openTextDocument(srcPath);
 
-    if (defaultLanguage) {
-        const templateLocation = getDefaultLanguageTemplateFileLocation();
-        if (templateLocation !== null) {
-            const templateExists = existsSync(templateLocation);
-            if (!templateExists) {
-                vscode.window.showErrorMessage(
-                    `Template file does not exist: ${templateLocation}`,
-                );
-            } else {
-                let templateContents =
-                    readFileSync(templateLocation).toString();
-
-                if (extn == 'java') {
-                    const className = path.basename(problemFileName, '.java');
-                    templateContents = templateContents.replace(
-                        'CLASS_NAME',
-                        className,
+        if (defaultLanguage) {
+            const templateLocation = getDefaultLanguageTemplateFileLocation();
+            if (templateLocation !== null) {
+                const templateExists = existsSync(templateLocation);
+                if (!templateExists) {
+                    vscode.window.showErrorMessage(
+                        `Template file does not exist: ${templateLocation}`,
                     );
+                } else {
+                    let templateContents =
+                        readFileSync(templateLocation).toString();
+
+                    if (extn == 'java') {
+                        const className = path.basename(
+                            problemFileName,
+                            '.java',
+                        );
+                        templateContents = templateContents.replace(
+                            'CLASS_NAME',
+                            className,
+                        );
+                    }
+                    writeFileSync(srcPath, templateContents);
                 }
-                writeFileSync(srcPath, templateContents);
             }
         }
     }
+
+    saveProblem(srcPath, problem);
+    const doc = await vscode.workspace.openTextDocument(srcPath);
 
     await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
     getJudgeViewProvider().extensionToJudgeViewMessage({
