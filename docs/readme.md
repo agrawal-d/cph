@@ -16,5 +16,5 @@ the competitive programming helper extension (cph).
 cph is an extension for VS Code made to streamline your competitive programming
 experience across several popular sites. It saves your time by auto-compiling,
 running and judging your solutions. Using the 3rd party browser extension
-'Competitive Companion', you can extend it's functionality by auto-downloaing
+'Competitive Companion', you can extend it's functionality by auto-downloading
 and parsing testcases from problem statements online.
