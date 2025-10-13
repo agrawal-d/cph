@@ -4,7 +4,7 @@ This document contains a basic developer guide to get started with the extension
 development. In case of any confusions/ need for additional information, please
 create an issue in the [repo](https://github.com/agrawal-d/cph). You should also
 take a look at the [user guide](user-guide.md) to understand the
-user-facingterms.
+user-facing terms.
 
 ## Architecture
 
@@ -65,10 +65,10 @@ in `dist/`.
 We recommend installing `Prettier` and `ESLint` VS Code extensions. Before
 commiting, make sure you are passing the following tests:
 
--   ESLint lint: `npm run lint`.
--   Jest unit tests: `npm run test`.
--   Typescript compilation: `npm run test-compile`.
--   Pre-publish bundling: `npm run vscode:prepublish`.
+- ESLint lint: `npm run lint`.
+- Jest unit tests: `npm run test`.
+- Typescript compilation: `npm run test-compile`.
+- Pre-publish bundling: `npm run vscode:prepublish`.
 
 ## Bundling as `.vsix`
 
