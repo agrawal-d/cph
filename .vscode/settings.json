@@ -1,4 +1,9 @@
 {
+    "files.exclude": {
+        "**/*.bin": true,
+        "**/*.out": true,
+        "**/a.out": true
+    },
     "eslint.enable": true,
     "files.associations": {
         "iostream": "cpp"
