@@ -19,7 +19,18 @@ export const runSingleAndSave = async (
         globalThis.reporter.sendTelemetryEvent(telmetry.RUN_TESTCASE);
     }
     globalThis.logger.log('Run and save started', problem, id);
-    const srcPath = problem.srcPath;
+    let srcPath = problem.srcPath;
+    if (!srcPath) {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            srcPath = editor.document.fileName;
+        } else {
+            globalThis.logger.error(
+                `No srcPath available to run single testcase`,
+            );
+            return;
+        }
+    }
     const language = getLanguage(srcPath);
     const binPath = getBinSaveLocation(srcPath);
     const idx = problem.tests.findIndex((value) => value.id === id);
