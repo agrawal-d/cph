@@ -29,6 +29,12 @@ const COMPANION_LOGGING = false;
 export const submitKattisProblem = (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
     const srcPath = problem.srcPath;
+    if (!srcPath) {
+        vscode.window.showErrorMessage(
+            'No source path available for this problem (cannot submit to Kattis)',
+        );
+        return;
+    }
     const homedir = os.homedir();
     const directoryChar = process.platform == 'win32' ? '\\' : '/';
     const submitPath = `${homedir}${directoryChar}.kattis${directoryChar}submit.py`;
@@ -71,9 +77,13 @@ export const submitKattisProblem = (problem: Problem) => {
 /** Stores a response to be submitted to CF page soon. */
 export const storeSubmitProblem = (problem: Problem) => {
     const srcPath = problem.srcPath;
+    if (!srcPath) {
+        globalThis.logger.error('No srcPath available to store submission');
+        return;
+    }
     const problemName = getProblemName(problem.url);
     const sourceCode = readFileSync(srcPath).toString();
-    const languageId = getLanguageId(problem.srcPath);
+    const languageId = getLanguageId(srcPath);
     savedResponse = {
         empty: false,
         url: problem.url,
