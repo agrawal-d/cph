@@ -14,6 +14,7 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    getPythonVirtualEnvPath,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -69,22 +70,21 @@ export const submitKattisProblem = (problem: Problem) => {
 };
 
 export const submitKattisCliProblem = (problem: Problem) => {
-    globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
+    globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS_CLI);
     const srcPath = problem.srcPath;
     const homedir = os.homedir();
-    const directoryChar = process.platform == 'win32' ? '\\' : '/';
-    const submitPath = `${homedir}${directoryChar}.kattis${directoryChar}submit.py`;
+    const kattisDir = path.join(homedir, '.kattis');
 
     if (
         !existsSync(
-            `${homedir}${directoryChar}.kattis${directoryChar}.kattisrc`,
-        ) ||
+            path.join(kattisDir, '.kattisrc')
+        ) || 
         !existsSync(
-            `${homedir}${directoryChar}.kattis${directoryChar}submit.py`,
+            path.join(kattisDir, 'submit.py')
         )
     ) {
         vscode.window.showErrorMessage(
-            `Please ensure .kattisrc and submit.py are present in ${homedir}${directoryChar}.kattis${directoryChar}`,
+            `Please ensure .kattisrc and submit.py are present in ${kattisDir}`,
         );
         return;
     }
@@ -92,7 +92,23 @@ export const submitKattisCliProblem = (problem: Problem) => {
     // create new terminal
     const terminal = vscode.window.createTerminal('Katiis Submit CLI');
     terminal.show();
-    terminal.sendText(`source ./.venv/bin/activate && python ./kattis/kattis-cli/submit.py ${srcPath} -f`)
+
+    // build final command that activate virtual env and runs kattis cli to submit
+    const finalCmdArr = [];
+    const virtualEnvDir = getPythonVirtualEnvPath();
+    if (virtualEnvDir) {
+        const envActivateCmd = process.platform == 'win32'
+            ? path.join(virtualEnvDir, 'Scripts', 'activate.bat')  // activate on windows
+            : path.join(virtualEnvDir, 'bin', 'activate');         // activate on linux/macOS
+
+        finalCmdArr.push(envActivateCmd);
+    }
+    const submitPyFilePath = path.join(kattisDir, 'submit.py');
+    finalCmdArr.push(`python ${submitPyFilePath} ${srcPath} -f`);
+    const finalCmd = finalCmdArr.join(' && ');
+
+    // call 
+    terminal.sendText(finalCmd);
 };
 
 /** Stores a response to be submitted to CF page soon. */
