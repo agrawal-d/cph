@@ -119,6 +119,10 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     return pref;
 };
 
+export const getPythonVirtualEnvPath = (): string | null => {
+    return getPreference('general.pythonVirtualEnvPath');
+};
+
 export const getCCommand = (): string =>
     getPreference('language.c.Command') || 'gcc';
 export const getCppCommand = (): string =>

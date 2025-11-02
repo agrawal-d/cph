@@ -382,6 +382,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Whether to display the live user count."
+                },
+                "cph.general.pythonVirtualEnvPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The path to your python virtual environment to run submit.py file. If unset system python will be used."
                 }
             }
         }
