@@ -10,6 +10,8 @@ export type prefSection =
     | 'general.hideStderrorWhenCompiledOK'
     | 'general.ignoreSTDERROR'
     | 'general.firstTime'
+    | 'general.includeProblemIndex'
+    | 'general.wordRegex'
     | 'general.useShortCodeForcesName'
     | 'general.useShortLuoguName'
     | 'general.useShortAtCoderName'

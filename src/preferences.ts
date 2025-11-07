@@ -102,6 +102,12 @@ export const getDefaultLangPref = (): string | null => {
     return pref;
 };
 
+export const includeProblemIndex = (): boolean => {
+    return getPreference('general.includeProblemIndex');
+};
+export const wordRegex = (): string => {
+    return getPreference('general.wordRegex');
+};
 export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeForcesName');
 };
