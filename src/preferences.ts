@@ -124,6 +124,9 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     }
     return pref;
 };
+export const doTemplateFileVariableReplacement = (): boolean => {
+    return getPreference('general.doTemplateFileVariableReplacement');
+};
 
 export const getCCommand = (): string =>
     getPreference('language.c.Command') || 'gcc';

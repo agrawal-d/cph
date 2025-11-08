@@ -51,6 +51,7 @@ export type prefSection =
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation'
+    | 'general.doTemplateFileVariableReplacement'
     | 'general.remoteServerAddress'
     | 'general.showLiveUserCount';
 

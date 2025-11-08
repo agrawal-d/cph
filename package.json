@@ -378,6 +378,11 @@
                     "default": "",
                     "description": "The path to the template file that will be used when creating a new file for the default language via Competitive Companion. For Java templates, use 'CLASS_NAME' as a placeholder for the class name like 'class CLASS_NAME{...}'"
                 },
+                "cph.general.doTemplateFileVariableReplacement": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Replace $var$ in the template file with its value. For example, replace $url$ with the problem's url. For a full list, see what is outputted in the console with debug mode on for Competitive Companion"
+                },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",
                     "default": true,

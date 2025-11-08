@@ -16,6 +16,7 @@ import {
     getDefaultLanguageTemplateFileLocation,
     includeProblemIndex,
     wordRegex,
+    doTemplateFileVariableReplacement,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -263,6 +264,19 @@ const handleNewProblem = async (problem: Problem) => {
                             'CLASS_NAME',
                             className,
                         );
+                    }
+                    if (doTemplateFileVariableReplacement()) {
+                        for (const [key, value] of Object.entries(problem)) {
+                            let replaceWith = JSON.stringify(value);
+                            replaceWith = replaceWith.substring(
+                                1,
+                                replaceWith.length - 1,
+                            );
+                            templateContents = templateContents.replace(
+                                `$${key}$`,
+                                replaceWith,
+                            );
+                        }
                     }
                     writeFileSync(srcPath, templateContents);
                 }
