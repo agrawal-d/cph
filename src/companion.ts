@@ -14,13 +14,15 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    includeProblemIndex,
+    wordRegex,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
-import { words_in_text } from './utilsPure';
 import telmetry from './telmetry';
 import os from 'os';
+import { words_in_text } from './utilsPure';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -171,7 +173,7 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
             useShortCodeForcesName(),
         );
 
-        const words = words_in_text(problem.name);
+        const words = words_in_text(problem.name, wordRegex());
         if (words === null) {
             return `${problem.name.replace(/\W+/g, '_')}.${ext}`;
         } else {
