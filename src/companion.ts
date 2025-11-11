@@ -4,7 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, statSync } from 'fs';
 import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
@@ -14,6 +14,7 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    getLanguageTemplateFileLocation,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -190,6 +191,7 @@ const handleNewProblem = async (problem: Problem) => {
         return;
     }
     const defaultLanguage = getDefaultLangPref();
+    let chosenLang: string | null = null;
     let extn: string;
 
     if (defaultLanguage == null) {
@@ -198,17 +200,21 @@ const handleNewProblem = async (problem: Problem) => {
         const choices = userChoices.filter((x) => allChoices.has(x));
         const selected = await vscode.window.showQuickPick(choices);
         if (!selected) {
-            vscode.window.showInformationMessage(
-                'Aborted creation of new file',
-            );
+            vscode.window.showInformationMessage('Aborted creation of new file');
             return;
         }
-        // @ts-ignore
-        extn = config.extensions[selected];
+        chosenLang = selected;
     } else {
-        //@ts-ignore
-        extn = config.extensions[defaultLanguage];
+        chosenLang = defaultLanguage;
     }
+
+    if (!chosenLang) {
+        vscode.window.showErrorMessage('No language selected');
+        return;
+    }
+
+    // @ts-ignore
+    extn = config.extensions[chosenLang];
     let url: URL;
     try {
         url = new URL(problem.url);
@@ -234,29 +240,67 @@ const handleNewProblem = async (problem: Problem) => {
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
 
-        if (defaultLanguage) {
-            const templateLocation = getDefaultLanguageTemplateFileLocation();
-            if (templateLocation !== null) {
-                const templateExists = existsSync(templateLocation);
-                if (!templateExists) {
+        // Apply template if user configured a template location. Preference order:
+        // 1) per-language template file/location (cph.language.<lang>.templateFileLocation)
+        // 2) global default template location (cph.general.defaultLanguageTemplateFileLocation)
+        const perLangTemplate = getLanguageTemplateFileLocation(chosenLang);
+        const templateLocation = perLangTemplate ?? getDefaultLanguageTemplateFileLocation();
+        if (templateLocation !== null) {
+            if (!existsSync(templateLocation)) {
+                vscode.window.showErrorMessage(
+                    `Template path does not exist: ${templateLocation}`,
+                );
+            } else {
+                let candidateFile: string | null = null;
+
+                try {
+                    const stat = statSync(templateLocation);
+                    if (stat.isDirectory()) {
+                        // Try a few candidate names inside the directory.
+                        const candidates = [
+                            // language key, e.g. "cpp"
+                            `${chosenLang}`,
+                            // file extension, e.g. "cpp", "py"
+                            `${extn}`,
+                            // with common template extensions
+                            `${chosenLang}.tpl`,
+                            `${extn}.tpl`,
+                            `${chosenLang}.template`,
+                            `${extn}.template`,
+                        ];
+
+                        for (const name of candidates) {
+                            if (!name) continue;
+                            const p = path.join(templateLocation, name);
+                            if (existsSync(p)) {
+                                candidateFile = p;
+                                break;
+                            }
+                        }
+                    } else {
+                        // Single file specified
+                        candidateFile = templateLocation;
+                    }
+                } catch (err) {
+                    globalThis.logger.error('Error while checking template path', err);
+                }
+
+                if (candidateFile === null) {
                     vscode.window.showErrorMessage(
-                        `Template file does not exist: ${templateLocation}`,
+                        `No template found for language '${chosenLang}' in ${templateLocation}`,
                     );
                 } else {
-                    let templateContents =
-                        readFileSync(templateLocation).toString();
-
-                    if (extn == 'java') {
-                        const className = path.basename(
-                            problemFileName,
-                            '.java',
-                        );
-                        templateContents = templateContents.replace(
-                            'CLASS_NAME',
-                            className,
-                        );
+                    try {
+                        let templateContents = readFileSync(candidateFile).toString();
+                        if (extn == 'java') {
+                            const className = path.basename(problemFileName, '.java');
+                            templateContents = templateContents.replace('CLASS_NAME', className);
+                        }
+                        writeFileSync(srcPath, templateContents);
+                    } catch (err) {
+                        globalThis.logger.error('Failed to read/write template file', err);
+                        vscode.window.showErrorMessage(`Failed to apply template: ${err}`);
                     }
-                    writeFileSync(srcPath, templateContents);
                 }
             }
         }

@@ -368,6 +368,56 @@
                     "default": "",
                     "description": "The path to the template file that will be used when creating a new file for the default language via Competitive Companion. For Java templates, use 'CLASS_NAME' as a placeholder for the class name like 'class CLASS_NAME{...}'"
                 },
+                "cph.language.c.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for C files. If a directory is provided, files named 'c', 'c.tpl' or 'c.template' will be considered."
+                },
+                "cph.language.cpp.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for C++ files. If a directory is provided, files named 'cpp', 'cpp.tpl' or 'cpp.template' will be considered."
+                },
+                "cph.language.python.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for Python files. If a directory is provided, files named 'python', 'py.tpl' or 'py.template' will be considered."
+                },
+                "cph.language.rust.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for Rust files."
+                },
+                "cph.language.js.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for JavaScript files."
+                },
+                "cph.language.java.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for Java files. Use 'CLASS_NAME' placeholder in templates for class name substitution."
+                },
+                "cph.language.ruby.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for Ruby files."
+                },
+                "cph.language.csharp.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for C# files."
+                },
+                "cph.language.go.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for Go files."
+                },
+                "cph.language.haskell.templateFileLocation": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Template file or directory for Haskell files."
+                },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",
                     "default": true,
