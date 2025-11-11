@@ -192,7 +192,6 @@ const handleNewProblem = async (problem: Problem) => {
     }
     const defaultLanguage = getDefaultLangPref();
     let chosenLang: string | null = null;
-    let extn: string;
 
     if (defaultLanguage == null) {
         const allChoices = new Set(Object.keys(config.extensions));
@@ -216,7 +215,7 @@ const handleNewProblem = async (problem: Problem) => {
     }
 
     // @ts-ignore
-    extn = config.extensions[chosenLang];
+    const extn = config.extensions[chosenLang];
     let url: URL;
     try {
         url = new URL(problem.url);
