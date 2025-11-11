@@ -119,6 +119,20 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     return pref;
 };
 
+/**
+ * Per-language template file/location preference.
+ * Preference key pattern: `language.<lang>.templateFileLocation`.
+ */
+export const getLanguageTemplateFileLocation = (
+    lang: string,
+): string | null => {
+    if (!lang) return null;
+    const key = `language.${lang}.templateFileLocation`;
+    const pref = workspace.getConfiguration('cph').get(key);
+    if (!pref || pref === '') return null;
+    return pref as string;
+};
+
 export const getCCommand = (): string =>
     getPreference('language.c.Command') || 'gcc';
 export const getCppCommand = (): string =>

@@ -200,7 +200,9 @@ const handleNewProblem = async (problem: Problem) => {
         const choices = userChoices.filter((x) => allChoices.has(x));
         const selected = await vscode.window.showQuickPick(choices);
         if (!selected) {
-            vscode.window.showInformationMessage('Aborted creation of new file');
+            vscode.window.showInformationMessage(
+                'Aborted creation of new file',
+            );
             return;
         }
         chosenLang = selected;
@@ -244,7 +246,8 @@ const handleNewProblem = async (problem: Problem) => {
         // 1) per-language template file/location (cph.language.<lang>.templateFileLocation)
         // 2) global default template location (cph.general.defaultLanguageTemplateFileLocation)
         const perLangTemplate = getLanguageTemplateFileLocation(chosenLang);
-        const templateLocation = perLangTemplate ?? getDefaultLanguageTemplateFileLocation();
+        const templateLocation =
+            perLangTemplate ?? getDefaultLanguageTemplateFileLocation();
         if (templateLocation !== null) {
             if (!existsSync(templateLocation)) {
                 vscode.window.showErrorMessage(
@@ -282,7 +285,10 @@ const handleNewProblem = async (problem: Problem) => {
                         candidateFile = templateLocation;
                     }
                 } catch (err) {
-                    globalThis.logger.error('Error while checking template path', err);
+                    globalThis.logger.error(
+                        'Error while checking template path',
+                        err,
+                    );
                 }
 
                 if (candidateFile === null) {
@@ -291,15 +297,27 @@ const handleNewProblem = async (problem: Problem) => {
                     );
                 } else {
                     try {
-                        let templateContents = readFileSync(candidateFile).toString();
+                        let templateContents =
+                            readFileSync(candidateFile).toString();
                         if (extn == 'java') {
-                            const className = path.basename(problemFileName, '.java');
-                            templateContents = templateContents.replace('CLASS_NAME', className);
+                            const className = path.basename(
+                                problemFileName,
+                                '.java',
+                            );
+                            templateContents = templateContents.replace(
+                                'CLASS_NAME',
+                                className,
+                            );
                         }
                         writeFileSync(srcPath, templateContents);
                     } catch (err) {
-                        globalThis.logger.error('Failed to read/write template file', err);
-                        vscode.window.showErrorMessage(`Failed to apply template: ${err}`);
+                        globalThis.logger.error(
+                            'Failed to read/write template file',
+                            err,
+                        );
+                        vscode.window.showErrorMessage(
+                            `Failed to apply template: ${err}`,
+                        );
                     }
                 }
             }
