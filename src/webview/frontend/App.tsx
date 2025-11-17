@@ -472,8 +472,7 @@ function Judge(props: {
                     )}
                 </div>
             );
-        }
-        else if (url.hostname === 'atcoder.jp') {
+        } else if (url.hostname === 'atcoder.jp') {
             return (
                 <div className="pad-10 submit-area">
                     <button className="btn" onClick={submitAtCoder}>
