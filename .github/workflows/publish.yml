@@ -1,8 +1,42 @@
 name: Publish Extension
 
+# Only publish when a release is published or when manually triggered.
 on:
-    push:
-        branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm install -g webpack-cli @vscode/vsce
+      - name: Publish Extension
+        if: ${{ secrets.VSCE_PAT != '' }}
+        run: ./.github/publish.sh
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      - name: Skip publish (no VSCE_PAT)
+        if: ${{ secrets.VSCE_PAT == '' }}
+        run: echo "VSCE_PAT not set; skipping publish step."
+name: Publish Extension
+
+# Only publish when a release is published or when manually triggered.
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
 
 jobs:
     build:
@@ -12,15 +46,19 @@ jobs:
             matrix:
                 node-version: [20.x]
 
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: npm install
-            - run: npm install -g webpack-cli @vscode/vsce
-            - name: Publish Extension
-              run: ./.github/publish.sh
-              env:
-                  VSCE_PAT: ${{ secrets.VSCE_PAT }}
+                steps:
+                        - uses: actions/checkout@v2
+                                    - name: Setup Node.js
+                                        uses: actions/setup-node@v1
+                            with:
+                                    node-version: ${{ matrix.node-version }}
+                        - run: npm install
+                        - run: npm install -g webpack-cli @vscode/vsce
+                        - name: Publish Extension
+                            if: ${{ secrets.VSCE_PAT != '' }}
+                            run: ./.github/publish.sh
+                            env:
+                                VSCE_PAT: ${{ secrets.VSCE_PAT }}
+                        - name: Skip publish (no VSCE_PAT)
+                            if: ${{ secrets.VSCE_PAT == '' }}
+                            run: echo "VSCE_PAT not set; skipping publish step."
