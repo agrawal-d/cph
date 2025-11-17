@@ -145,6 +145,14 @@ export type SubmitCf = {
     command: 'submitCf';
 } & WebviewMessageCommon;
 
+export type SubmitAtCoder = {
+    command: 'submitAtCoder';
+} & WebviewMessageCommon;
+
+export type SubmitNiuke = {
+    command: 'submitNiuke';
+} & WebviewMessageCommon;
+
 export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
@@ -175,6 +183,8 @@ export type WebviewToVSEvent =
     | SaveCommand
     | DeleteTcsCommand
     | SubmitCf
+    | SubmitAtCoder
+    | SubmitNiuke
     | OnlineJudgeEnv
     | SubmitKattis
     | OpenUrl

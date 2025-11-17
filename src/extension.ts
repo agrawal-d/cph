@@ -33,7 +33,12 @@ import {
     editorClosed,
     checkLaunchWebview,
 } from './webview/editorChange';
-import { submitToCodeForces, submitToKattis } from './submit';
+import {
+    submitToCodeForces,
+    submitToKattis,
+    submitToAtCoder,
+    submitToNiuke,
+} from './submit';
 import JudgeViewProvider from './webview/JudgeView';
 import { getRetainWebviewContextPref } from './preferences';
 import TelemetryReporter from '@vscode/extension-telemetry';
@@ -73,6 +78,18 @@ const registerCommands = (context: vscode.ExtensionContext) => {
             submitToKattis();
         },
     );
+    const disposable5 = vscode.commands.registerCommand(
+        'cph.submitToAtCoder',
+        () => {
+            submitToAtCoder();
+        },
+    );
+    const disposable6 = vscode.commands.registerCommand(
+        'cph.submitToNiuke',
+        () => {
+            submitToNiuke();
+        },
+    );
 
     judgeViewProvider = new JudgeViewProvider(context.extensionUri);
 
@@ -91,6 +108,8 @@ const registerCommands = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
+    context.subscriptions.push(disposable5);
+    context.subscriptions.push(disposable6);
     globalThis.reporter = new TelemetryReporter(config.telemetryKey);
     context.subscriptions.push(globalThis.reporter);
 };

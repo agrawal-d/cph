@@ -301,6 +301,24 @@ function Judge(props: {
         setWaitingForSubmit(true);
     };
 
+    const submitAtCoder = () => {
+        sendMessageToVSCode({
+            command: 'submitAtCoder',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
+
+    const submitNiuke = () => {
+        sendMessageToVSCode({
+            command: 'submitNiuke',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
+
     const debounceFocusLast = () => {
         setTimeout(() => {
             setFocusLast(false);
@@ -405,7 +423,9 @@ function Judge(props: {
         }
         if (
             url.hostname !== 'codeforces.com' &&
-            url.hostname !== 'open.kattis.com'
+            url.hostname !== 'open.kattis.com' &&
+            url.hostname !== 'atcoder.jp' &&
+            !url.hostname.includes('nowcoder.com')
         ) {
             return null;
         }
@@ -445,6 +465,61 @@ function Judge(props: {
                                 home directory.
                                 <br />
                                 Submission result will open in your browser.
+                                <br />
+                                <br />
+                            </small>
+                        </>
+                    )}
+                </div>
+            );
+        }
+        else if (url.hostname === 'atcoder.jp') {
+            return (
+                <div className="pad-10 submit-area">
+                    <button className="btn" onClick={submitAtCoder}>
+                        <span className="icon">
+                            <i className="codicon codicon-cloud-upload"></i>
+                        </span>{' '}
+                        Submit on AtCoder
+                    </button>
+                    {waitingForSubmit && (
+                        <>
+                            <span className="loader"></span> Submitting...
+                            <br />
+                            <small>
+                                To submit to AtCoder, you need the
+                                <a href="https://github.com/agrawal-d/cph-submit">
+                                    cph-submit browser extension
+                                </a>
+                                installed and a browser window open. Submission
+                                result will open in your browser.
+                                <br />
+                                <br />
+                            </small>
+                        </>
+                    )}
+                </div>
+            );
+        } else if (url.hostname.includes('nowcoder.com')) {
+            return (
+                <div className="pad-10 submit-area">
+                    <button className="btn" onClick={submitNiuke}>
+                        <span className="icon">
+                            <i className="codicon codicon-cloud-upload"></i>
+                        </span>{' '}
+                        Submit on Nowcoder
+                    </button>
+                    {waitingForSubmit && (
+                        <>
+                            <span className="loader"></span> Submitting...
+                            <br />
+                            <small>
+                                To submit to Nowcoder, you need the
+                                <a href="https://github.com/agrawal-d/cph-submit">
+                                    cph-submit browser extension
+                                </a>
+                                installed and a browser window open. Submission
+                                result will open in your browser.
                                 <br />
                                 <br />
                             </small>

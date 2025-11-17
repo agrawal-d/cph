@@ -101,5 +101,103 @@ export const getProblemName = (problemUrl: string): string => {
         }
     }
 
-    return '';
+    // Try AtCoder style problem id (last segment), e.g. tasks/abc311_a
+    try {
+        const u = new URL(problemUrl);
+        if (u.hostname === 'atcoder.jp') {
+            const parts = u.pathname.split('/');
+            const last = parts[parts.length - 1];
+            if (last) return last;
+        }
+        // fallback: return last path segment
+        const parts = problemUrl.split('/');
+        const last = parts[parts.length - 1] || parts[parts.length - 2] || '';
+        return last;
+    } catch (e) {
+        return '';
+    }
+};
+
+export const submitToAtCoder = async () => {
+    const srcPath = vscode.window.activeTextEditor?.document.fileName;
+
+    if (!srcPath) {
+        vscode.window.showErrorMessage(
+            'Active editor is not supported for submission',
+        );
+        return;
+    }
+
+    const textEditor = await vscode.workspace.openTextDocument(srcPath);
+    await vscode.window.showTextDocument(textEditor, vscode.ViewColumn.One);
+    await textEditor.save();
+
+    const problem = getProblem(srcPath);
+
+    if (!problem) {
+        vscode.window.showErrorMessage('Failed to parse current code.');
+        return;
+    }
+
+    let url: URL;
+    try {
+        url = new URL(problem.url);
+    } catch (err) {
+        globalThis.logger.error(err);
+        vscode.window.showErrorMessage('Not an AtCoder problem.');
+        return;
+    }
+
+    if (url.hostname !== 'atcoder.jp') {
+        vscode.window.showErrorMessage('Not an AtCoder problem.');
+        return;
+    }
+
+    // Use the same store mechanism as Codeforces: browser extension will pick this up
+    storeSubmitProblem(problem);
+    getJudgeViewProvider().extensionToJudgeViewMessage({
+        command: 'waiting-for-submit',
+    });
+};
+
+export const submitToNiuke = async () => {
+    const srcPath = vscode.window.activeTextEditor?.document.fileName;
+
+    if (!srcPath) {
+        vscode.window.showErrorMessage(
+            'Active editor is not supported for submission',
+        );
+        return;
+    }
+
+    const textEditor = await vscode.workspace.openTextDocument(srcPath);
+    await vscode.window.showTextDocument(textEditor, vscode.ViewColumn.One);
+    await textEditor.save();
+
+    const problem = getProblem(srcPath);
+
+    if (!problem) {
+        vscode.window.showErrorMessage('Failed to parse current code.');
+        return;
+    }
+
+    let url: URL;
+    try {
+        url = new URL(problem.url);
+    } catch (err) {
+        globalThis.logger.error(err);
+        vscode.window.showErrorMessage('Not a Nowcoder problem.');
+        return;
+    }
+
+    if (!url.hostname.includes('nowcoder.com')) {
+        vscode.window.showErrorMessage('Not a Nowcoder problem.');
+        return;
+    }
+
+    // Store and notify the webview; browser extension should pick this up
+    storeSubmitProblem(problem);
+    getJudgeViewProvider().extensionToJudgeViewMessage({
+        command: 'waiting-for-submit',
+    });
 };
