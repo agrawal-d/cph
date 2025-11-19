@@ -125,7 +125,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
                             const problemName = (message as any).name
                                 ? (message as any).name
-                                : 'Imported: ' + path.basename(srcPath).split('.')[0];
+                                : 'Imported: ' +
+                                  path.basename(srcPath).split('.')[0];
 
                             const problem = {
                                 name: problemName,
@@ -145,9 +146,13 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                                 problem,
                             });
                         } catch (err) {
-                            globalThis.logger.error('Error importing json', err);
+                            globalThis.logger.error(
+                                'Error importing json',
+                                err,
+                            );
                             vscode.window.showErrorMessage(
-                                'Failed to import JSON: ' + (err as Error).message,
+                                'Failed to import JSON: ' +
+                                    (err as Error).message,
                             );
                         }
 
