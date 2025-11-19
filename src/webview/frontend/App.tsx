@@ -200,7 +200,8 @@ function Judge(props: {
                     });
                 } else if (parsed && typeof parsed === 'object') {
                     // object with tests property
-                    const arr = parsed.tests ?? parsed.testcases ?? parsed.cases;
+                    const arr =
+                        parsed.tests ?? parsed.testcases ?? parsed.cases;
                     if (Array.isArray(arr)) {
                         arr.forEach((item: any) => {
                             let input = '';
@@ -749,7 +750,11 @@ function Judge(props: {
                         ref={fileInputRef}
                         onChange={handleFileChange}
                     />
-                    <button className="btn" onClick={onImportClick} title="Import testcases from JSON file">
+                    <button
+                        className="btn"
+                        onClick={onImportClick}
+                        title="Import testcases from JSON file"
+                    >
                         <span className="icon">
                             <i className="codicon codicon-file"></i>
                         </span>{' '}
