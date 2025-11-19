@@ -153,6 +153,100 @@ function Judge(props: {
         vscodeApi.postMessage(message);
     };
 
+    const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+    const onImportClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const text = ev.target?.result as string;
+                const parsed = JSON.parse(text);
+                const tests: Array<{ input: string; output: string }> = [];
+
+                if (Array.isArray(parsed)) {
+                    parsed.forEach((item: any) => {
+                        let input = '';
+                        let output = '';
+                        if (typeof item === 'string') {
+                            input = item;
+                        } else if (typeof item === 'object' && item !== null) {
+                            if (item.input) {
+                                input = Array.isArray(item.input)
+                                    ? item.input.join('\n')
+                                    : String(item.input);
+                            } else if (item.in) {
+                                input = Array.isArray(item.in)
+                                    ? item.in.join('\n')
+                                    : String(item.in);
+                            }
+
+                            if (item.output) {
+                                output = Array.isArray(item.output)
+                                    ? item.output.join('\n')
+                                    : String(item.output);
+                            } else if (item.out) {
+                                output = Array.isArray(item.out)
+                                    ? item.out.join('\n')
+                                    : String(item.out);
+                            }
+                        }
+                        tests.push({ input, output });
+                    });
+                } else if (parsed && typeof parsed === 'object') {
+                    // object with tests property
+                    const arr = parsed.tests ?? parsed.testcases ?? parsed.cases;
+                    if (Array.isArray(arr)) {
+                        arr.forEach((item: any) => {
+                            let input = '';
+                            let output = '';
+                            if (item.input) {
+                                input = Array.isArray(item.input)
+                                    ? item.input.join('\n')
+                                    : String(item.input);
+                            } else if (item.in) {
+                                input = Array.isArray(item.in)
+                                    ? item.in.join('\n')
+                                    : String(item.in);
+                            }
+                            if (item.output) {
+                                output = Array.isArray(item.output)
+                                    ? item.output.join('\n')
+                                    : String(item.output);
+                            } else if (item.out) {
+                                output = Array.isArray(item.out)
+                                    ? item.out.join('\n')
+                                    : String(item.out);
+                            }
+                            tests.push({ input, output });
+                        });
+                    }
+                }
+
+                if (tests.length === 0) {
+                    window.console.error('No tests found in JSON');
+                    return;
+                }
+
+                sendMessageToVSCode({
+                    command: 'import-json',
+                    tests,
+                    name: file.name,
+                } as any);
+            } catch (err) {
+                window.console.error('Failed to parse JSON', err);
+            }
+        };
+        reader.readAsText(file);
+        // reset file input
+        e.currentTarget.value = '';
+    };
+
     useEffect(() => {
         const fn = (event: any) => {
             const data: VSToWebViewMessage = event.data;
@@ -647,6 +741,19 @@ function Judge(props: {
                             <i className="codicon codicon-add"></i>
                         </span>{' '}
                         New Testcase
+                    </button>
+                    <input
+                        type="file"
+                        accept="application/json"
+                        style={{ display: 'none' }}
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                    />
+                    <button className="btn" onClick={onImportClick} title="Import testcases from JSON file">
+                        <span className="icon">
+                            <i className="codicon codicon-file"></i>
+                        </span>{' '}
+                        Import JSON
                     </button>
                     {renderSubmitButton()}
                 </div>

@@ -3,7 +3,8 @@ import { storeSubmitProblem, submitKattisProblem } from '../companion';
 import { killRunning } from '../executions';
 import { saveProblem } from '../parser';
 import { VSToWebViewMessage, WebviewToVSEvent } from '../types';
-import { deleteProblemFile, getProblemForDocument } from '../utils';
+import { deleteProblemFile, getProblemForDocument, randomId } from '../utils';
+import path from 'path';
 import { runSingleAndSave } from './processRunSingle';
 import runAllAndSave from './processRunAll';
 import runTestCases from '../runTestCases';
@@ -96,6 +97,60 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
                     case 'get-initial-problem': {
                         this.getInitialProblem();
+                        break;
+                    }
+
+                    case 'import-json': {
+                        // Import testcases sent from the webview (parsed JSON)
+                        try {
+                            const testsRaw = (message as any).tests as Array<{
+                                input: string;
+                                output: string;
+                            }>;
+
+                            const editor = vscode.window.activeTextEditor;
+                            if (!editor) {
+                                vscode.window.showErrorMessage(
+                                    'Open the source file you want to attach testcases to and then import JSON',
+                                );
+                                break;
+                            }
+                            const srcPath = editor.document.fileName;
+
+                            const testcases = testsRaw.map((t, idx) => ({
+                                id: randomId(idx),
+                                input: t.input,
+                                output: t.output,
+                            }));
+
+                            const problemName = (message as any).name
+                                ? (message as any).name
+                                : 'Imported: ' + path.basename(srcPath).split('.')[0];
+
+                            const problem = {
+                                name: problemName,
+                                url: srcPath,
+                                tests: testcases,
+                                interactive: false,
+                                memoryLimit: 1024,
+                                timeLimit: 3000,
+                                srcPath: srcPath,
+                                group: 'local',
+                                local: true,
+                            } as any;
+
+                            saveProblem(srcPath, problem);
+                            this.extensionToJudgeViewMessage({
+                                command: 'new-problem',
+                                problem,
+                            });
+                        } catch (err) {
+                            globalThis.logger.error('Error importing json', err);
+                            vscode.window.showErrorMessage(
+                                'Failed to import JSON: ' + (err as Error).message,
+                            );
+                        }
+
                         break;
                     }
 
