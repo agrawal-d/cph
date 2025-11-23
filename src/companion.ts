@@ -15,6 +15,9 @@ import {
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
     getLanguageTemplateFileLocation,
+    getPrependProblemMetadataPref,
+    getMetadataAuthorPref,
+    getMetadataTimezonePref,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -321,6 +324,106 @@ const handleNewProblem = async (problem: Problem) => {
                 }
             }
         }
+    }
+
+    // If user enabled pref, prepend a machine-readable JSON metadata block to the file
+    try {
+        if (getPrependProblemMetadataPref()) {
+            const metaAuthorPref = getMetadataAuthorPref();
+            const author =
+                metaAuthorPref && metaAuthorPref.trim() !== ''
+                    ? metaAuthorPref
+                    : os.userInfo?.().username ?? '';
+            const tzPref = getMetadataTimezonePref();
+
+            const formatWithTimezone = (date: Date, tz: string) => {
+                // Return format: YYYY-MM-DD  HH:MM:SS (two spaces between date and time)
+                const pad = (n: number) => n.toString().padStart(2, '0');
+
+                if (/^UTC[+-]\d{1,2}(?::\d{2})?$/.test(tz)) {
+                    // tz like UTC+8 or UTC-5:00
+                    const m = tz.match(/^UTC([+-]\d{1,2})(?::(\d{2}))?$/);
+                    const hours = parseInt(m?.[1] || '0', 10);
+                    const minutes = parseInt(m?.[2] || '0', 10);
+                    // compute UTC ms and then apply offset hours/minutes
+                    const utc =
+                        date.getTime() + date.getTimezoneOffset() * 60000;
+                    const target = new Date(
+                        utc + (hours * 60 + minutes) * 60000,
+                    );
+                    return `${target.getFullYear()}-${pad(
+                        target.getMonth() + 1,
+                    )}-${pad(target.getDate())}  ${pad(
+                        target.getHours(),
+                    )}:${pad(target.getMinutes())}:${pad(target.getSeconds())}`;
+                }
+
+                try {
+                    // Use Intl to get parts in the requested IANA timezone, then build string
+                    const parts = new Intl.DateTimeFormat('en-GB', {
+                        timeZone: tz,
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                    }).formatToParts(date);
+                    const map: any = {};
+                    for (const p of parts) {
+                        if (p.type && p.value) map[p.type] = p.value;
+                    }
+                    return `${map.year}-${map.month}-${map.day}  ${map.hour}:${map.minute}:${map.second}`;
+                } catch (e) {
+                    // fallback
+                    const d = date;
+                    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+                        d.getDate(),
+                    )}  ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(
+                        d.getSeconds(),
+                    )}`;
+                }
+            };
+
+            const meta = {
+                name: problem.name,
+                group: problem.group,
+                url: problem.url,
+                memoryLimit: problem.memoryLimit,
+                timeLimit: problem.timeLimit,
+                srcPath: srcPath,
+                author: author,
+                create_date: formatWithTimezone(new Date(), tzPref),
+            };
+
+            const jsonStr = JSON.stringify(meta, null, 4);
+            const ext = path.extname(srcPath).toLowerCase();
+
+            let header = '';
+            const lineCommentExts = new Set(['.py', '.sh', '.rb', '.ps1']);
+            if (lineCommentExts.has(ext)) {
+                // Prefix each line with '# '
+                header =
+                    jsonStr
+                        .split('\n')
+                        .map((l) => `# ${l}`)
+                        .join('\n') + '\n\n';
+            } else if (ext === '.hs') {
+                header = `{-\n${jsonStr}\n-}\n\n`;
+            } else {
+                // Default to C-style block comment
+                header = `/*\n${jsonStr}\n*/\n\n`;
+            }
+
+            const existing = readFileSync(srcPath).toString();
+            const lookFor = problem.url || problem.name || '';
+            if (!existing.includes(lookFor)) {
+                writeFileSync(srcPath, header + existing);
+            }
+        }
+    } catch (err) {
+        globalThis.logger.error('Failed to prepend metadata header', err);
     }
 
     saveProblem(srcPath, problem);

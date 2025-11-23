@@ -15,6 +15,7 @@ import Page from './Page';
 
 let storedLogs = '';
 let notificationTimeout: NodeJS.Timeout | undefined = undefined;
+let submitTimeout: number | undefined = undefined;
 
 const originalConsole = { ...window.console };
 function customLogger(
@@ -185,6 +186,11 @@ function Judge(props: {
                 }
                 case 'submit-finished': {
                     setWaitingForSubmit(false);
+                    // clear any pending submit timeout
+                    if (submitTimeout) {
+                        clearTimeout(submitTimeout as any);
+                        submitTimeout = undefined;
+                    }
                     break;
                 }
                 case 'waiting-for-submit': {
@@ -202,6 +208,33 @@ function Judge(props: {
             window.removeEventListener('message', fn);
         };
     }, []);
+
+    // When waitingForSubmit is true, start a 10s timeout to auto-cancel the waiting state.
+    useEffect(() => {
+        if (waitingForSubmit) {
+            // clear previous if any
+            if (submitTimeout) {
+                clearTimeout(submitTimeout as any);
+            }
+            submitTimeout = window.setTimeout(() => {
+                setWaitingForSubmit(false);
+                notify('Submit timed out after 10s');
+                submitTimeout = undefined;
+            }, 10000);
+        } else {
+            if (submitTimeout) {
+                clearTimeout(submitTimeout as any);
+                submitTimeout = undefined;
+            }
+        }
+        // clean up on unmount
+        return () => {
+            if (submitTimeout) {
+                clearTimeout(submitTimeout as any);
+                submitTimeout = undefined;
+            }
+        };
+    }, [waitingForSubmit]);
 
     const handleRunning = (data: RunningCommand) => {
         setForceRunning(data.id);
@@ -421,18 +454,11 @@ function Judge(props: {
             console.error(err, problem);
             return null;
         }
-        if (
-            url.hostname !== 'codeforces.com' &&
-            url.hostname !== 'open.kattis.com' &&
-            url.hostname !== 'atcoder.jp' &&
-            !url.hostname.includes('nowcoder.com')
-        ) {
-            return null;
-        }
+        // Show submit for any http(s) URL. Known hosts get specialized flows below.
 
         if (url.hostname == 'codeforces.com') {
             return (
-                <button className="btn" onClick={submitCf}>
+                <button className="btn btn-equal" onClick={submitCf}>
                     <span className="icon">
                         <i className="codicon codicon-cloud-upload"></i>
                     </span>{' '}
@@ -442,7 +468,7 @@ function Judge(props: {
         } else if (url.hostname == 'open.kattis.com') {
             return (
                 <div className="pad-10 submit-area">
-                    <button className="btn" onClick={submitKattis}>
+                    <button className="btn btn-equal" onClick={submitKattis}>
                         <span className="icon">
                             <i className="codicon codicon-cloud-upload"></i>
                         </span>{' '}
@@ -475,7 +501,7 @@ function Judge(props: {
         } else if (url.hostname === 'atcoder.jp') {
             return (
                 <div className="pad-10 submit-area">
-                    <button className="btn" onClick={submitAtCoder}>
+                    <button className="btn btn-equal" onClick={submitAtCoder}>
                         <span className="icon">
                             <i className="codicon codicon-cloud-upload"></i>
                         </span>{' '}
@@ -502,7 +528,7 @@ function Judge(props: {
         } else if (url.hostname.includes('nowcoder.com')) {
             return (
                 <div className="pad-10 submit-area">
-                    <button className="btn" onClick={submitNiuke}>
+                    <button className="btn btn-equal" onClick={submitNiuke}>
                         <span className="icon">
                             <i className="codicon codicon-cloud-upload"></i>
                         </span>{' '}
@@ -527,6 +553,38 @@ function Judge(props: {
                 </div>
             );
         }
+        // For all other hosts, show a generic Submit button that uses the
+        // stored-response mechanism (browser extension / companion will pick up).
+        return (
+            <div className="pad-10 submit-area">
+                <button
+                    className="btn btn-equal"
+                    onClick={() => {
+                        sendMessageToVSCode({
+                            command: 'submitGeneric',
+                            problem,
+                        });
+                        setWaitingForSubmit(true);
+                    }}
+                >
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
+                    Submit
+                </button>
+                {waitingForSubmit && (
+                    <>
+                        <span className="loader"></span> Submitting...
+                        <br />
+                        <small>
+                            To submit, please ensure you have the companion or
+                            browser extension installed and a browser window
+                            open. Submission result will open in your browser.
+                        </small>
+                    </>
+                )}
+            </div>
+        );
     };
 
     const getHref = () => {
@@ -713,7 +771,7 @@ function Judge(props: {
             <div className="margin-10">
                 <div className="row">
                     <button
-                        className="btn btn-green"
+                        className="btn btn-green btn-equal"
                         onClick={newCase}
                         title="Create a new empty testcase"
                     >

@@ -428,6 +428,21 @@
                     "default": "http://20.244.105.138:4546",
                     "description": "The address of the remote server to which the extension will send requests. (Currently used for live user count)"
                 },
+                "cph.general.prependProblemMetadata": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If enabled, when creating a new problem the extension will prepend a commented metadata block (name, group, url, timeLimit, memoryLimit, srcPath) to the top of the created file or template."
+                },
+                "cph.metadata.author": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Optional author name to include in the problem metadata header when creating new files. If empty, system username will be used."
+                },
+                "cph.metadata.timezone": {
+                    "type": "string",
+                    "default": "UTC+8",
+                    "description": "Timezone to use for the create_date in metadata. Accepts IANA zone (e.g. 'Asia/Shanghai') or UTC offset like 'UTC+8'. Default: UTC+8."
+                },
                 "cph.general.showLiveUserCount": {
                     "type": "boolean",
                     "default": false,

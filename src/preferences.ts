@@ -94,6 +94,15 @@ export const getRemoteServerAddressPref = (): string =>
 export const getLiveUserCountPref = (): boolean =>
     getPreference('general.showLiveUserCount') || false;
 
+export const getPrependProblemMetadataPref = (): boolean =>
+    getPreference('general.prependProblemMetadata') || false;
+
+export const getMetadataAuthorPref = (): string =>
+    getPreference('metadata.author') || '';
+
+export const getMetadataTimezonePref = (): string =>
+    getPreference('metadata.timezone') || 'UTC+8';
+
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
     if (pref === 'none' || pref == ' ' || !pref) {

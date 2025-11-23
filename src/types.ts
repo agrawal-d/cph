@@ -50,7 +50,10 @@ export type prefSection =
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation'
     | 'general.remoteServerAddress'
-    | 'general.showLiveUserCount';
+    | 'general.showLiveUserCount'
+    | 'general.prependProblemMetadata'
+    | 'metadata.author'
+    | 'metadata.timezone';
 
 export type Language = {
     name: LangNames;
@@ -157,6 +160,10 @@ export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
 
+export type SubmitGeneric = {
+    command: 'submitGeneric';
+} & WebviewMessageCommon;
+
 export type GetInitialProblem = {
     command: 'get-initial-problem';
 };
@@ -185,6 +192,7 @@ export type WebviewToVSEvent =
     | SubmitCf
     | SubmitAtCoder
     | SubmitNiuke
+    | SubmitGeneric
     | OnlineJudgeEnv
     | SubmitKattis
     | OpenUrl
