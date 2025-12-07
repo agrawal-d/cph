@@ -4,7 +4,10 @@ import { existsSync, readFileSync } from 'fs';
 import { Problem } from '../types';
 import { getJudgeViewProvider } from '../extension';
 import { getProblemForDocument } from '../utils';
-import { getAutoShowJudgePref } from '../preferences';
+import {
+    getAutoShowJudgePref,
+    getDefaultOnlineJudge,
+} from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
 
 /**
@@ -23,7 +26,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
             command: 'new-problem',
             problem: undefined,
         });
-        setOnlineJudgeEnv(false); // reset the non-debug mode set in webview.
+        setOnlineJudgeEnv(getDefaultOnlineJudge()); // reset the non-debug mode set in webview as configured.
         return;
     }
 
@@ -31,7 +34,7 @@ export const editorChanged = async (e: vscode.TextEditor | undefined) => {
         return;
     }
 
-    setOnlineJudgeEnv(false); // reset the non-debug mode set in webview.
+    setOnlineJudgeEnv(getDefaultOnlineJudge()); // reset the non-debug mode set in webview as configured.
 
     const problem = getProblemForDocument(e.document);
 

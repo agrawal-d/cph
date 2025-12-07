@@ -43,6 +43,9 @@ export const getSaveLocationPref = (): string => {
 export const getHideStderrorWhenCompiledOK = (): boolean =>
     getPreference('general.hideStderrorWhenCompiledOK');
 
+export const getDefaultOnlineJudge = (): boolean =>
+    getPreference('general.defaultOnlineJudge');
+
 export const getIgnoreSTDERRORPref = (): string =>
     getPreference('general.ignoreSTDERROR');
 
