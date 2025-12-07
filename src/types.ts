@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 export type prefSection =
     | 'general.saveLocation'
     | 'general.defaultLanguage'
+    | 'general.defaultOnlineJudge'
     | 'general.timeOut'
     | 'general.hideStderrorWhenCompiledOK'
     | 'general.ignoreSTDERROR'
@@ -126,7 +127,7 @@ export type RunAllCommand = {
 
 export type OnlineJudgeEnv = {
     command: 'online-judge-env';
-    value: boolean;
+    value: string;
 };
 
 export type KillRunningCommand = {

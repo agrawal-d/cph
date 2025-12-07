@@ -12,6 +12,7 @@ import {
     getRemoteServerAddressPref,
     getLiveUserCountPref,
     getRetainWebviewContextPref,
+    getDefaultOnlineJudge,
 } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
 
@@ -26,7 +27,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         return this._view === undefined;
     }
 
-    constructor(private readonly _extensionUri: vscode.Uri) {}
+    constructor(private readonly _extensionUri: vscode.Uri) { }
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
         this._view = webviewView;
@@ -90,7 +91,20 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
 
                     case 'online-judge-env': {
-                        setOnlineJudgeEnv(message.value);
+                        switch (message.value) {
+                            case 'true': {
+                                setOnlineJudgeEnv(true);
+                                break;
+                            }
+                            case 'false': {
+                                setOnlineJudgeEnv(false);
+                                break;
+                            }
+                            case 'default': {
+                                setOnlineJudgeEnv(getDefaultOnlineJudge());
+                                break;
+                            }
+                        }
                         break;
                     }
 
@@ -274,7 +288,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                                 });
                                 vscodeApi.postMessage({
                                     command: 'online-judge-env',
-                                    value:false,
+                                    value: 'default',
                                 });
                                 globalThis.logger.log("Requested initial problem");
                             },
