@@ -87,6 +87,11 @@
                     "default": false,
                     "description": "If enabled, non-empty standard error will not result in testcase failing."
                 },
+                "cph.general.defaultOnlineJudge": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable Set ONLINE_JUDGE as default."
+                },
                 "cph.language.c.Args": {
                     "title": "Compilation flags for .c files",
                     "type": "string",
