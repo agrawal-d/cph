@@ -313,6 +313,17 @@
                     "default": "node",
                     "description": "Command used to compile .js files."
                 },
+                "cph.language.cangjie.Args": {
+                    "title": "Compilation flags for Cangjie",
+                    "type": "string",
+                    "default": "",
+                    "description": "Space seperated additional flags passed to cangjie-compiler while compiling your file."
+                },
+                "cph.language.cangjie.Command": {
+                    "type": "string",
+                    "default": "cjc",
+                    "description": "Command used to compile .cj files."
+                },
                 "cph.general.firstTime": {
                     "title": "Show welcome message",
                     "type": "boolean",
@@ -334,7 +345,8 @@
                         "ruby",
                         "csharp",
                         "go",
-                        "haskell"
+                        "haskell",
+                        "cangjie"
                     ],
                     "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
                 },

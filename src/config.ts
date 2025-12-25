@@ -23,6 +23,7 @@ export default {
         js: 'js',
         go: 'go',
         hs: 'hs',
+        cangjie: 'cj',
     },
     compilers: {
         c: 'gcc',
@@ -35,6 +36,7 @@ export default {
         js: 'node',
         go: 'go',
         hs: 'hs',
+        cj: 'cjc',
     },
     compilerToId: {
         'GNU G++17 7.3.0': 54,
@@ -88,6 +90,7 @@ export default {
         'hs',
         'rb',
         'cs',
+        'cj',
     ],
     skipCompile: ['py', 'js', 'rb'],
 };

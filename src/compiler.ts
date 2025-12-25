@@ -169,6 +169,10 @@ const getFlags = (language: Language, srcPath: string): string[] => {
             }
             break;
         }
+        case 'cangjie': {
+            ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
+            break;
+        }
         default: {
             ret = [];
             break;
