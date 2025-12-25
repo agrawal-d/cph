@@ -46,6 +46,9 @@ export type prefSection =
     | 'language.haskell.Args'
     | 'language.haskell.SubmissionCompiler'
     | 'language.haskell.Command'
+    | 'language.cangjie.Args'
+    // | 'language.cangjie.SubmissionCompiler'  // Not support now
+    | 'language.cangjie.Command'
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation'
@@ -71,7 +74,8 @@ export type LangNames =
     | 'js'
     | 'go'
     | 'hs'
-    | 'csharp';
+    | 'csharp'
+    | 'cangjie';
 
 export type TestCase = {
     input: string;

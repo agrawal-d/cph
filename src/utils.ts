@@ -17,6 +17,7 @@ import {
     getGoArgsPref,
     getHaskellArgsPref,
     getCSharpArgsPref,
+    getCangejieArgsPref,
     getCCommand,
     getCppCommand,
     getPythonCommand,
@@ -27,6 +28,7 @@ import {
     getGoCommand,
     getHaskellCommand,
     getCSharpCommand,
+    getCangjieCommand,
 } from './preferences';
 import { Language, Problem } from './types';
 import telmetry from './telmetry';
@@ -129,6 +131,14 @@ export const getLanguage = (srcPath: string): Language => {
                 name: langName,
                 args: [...getCSharpArgsPref()],
                 compiler: getCSharpCommand(),
+                skipCompile: false,
+            };
+        }
+        case 'cangjie': {
+            return {
+                name: langName,
+                args: [...getCangejieArgsPref()],
+                compiler: getCangjieCommand(),
                 skipCompile: false,
             };
         }
