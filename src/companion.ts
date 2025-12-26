@@ -4,7 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, statSync } from 'fs';
 import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
@@ -14,6 +14,10 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    getLanguageTemplateFileLocation,
+    getPrependProblemMetadataPref,
+    getMetadataAuthorPref,
+    getMetadataTimezonePref,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -190,7 +194,7 @@ const handleNewProblem = async (problem: Problem) => {
         return;
     }
     const defaultLanguage = getDefaultLangPref();
-    let extn: string;
+    let chosenLang: string | null = null;
 
     if (defaultLanguage == null) {
         const allChoices = new Set(Object.keys(config.extensions));
@@ -203,12 +207,18 @@ const handleNewProblem = async (problem: Problem) => {
             );
             return;
         }
-        // @ts-ignore
-        extn = config.extensions[selected];
+        chosenLang = selected;
     } else {
-        //@ts-ignore
-        extn = config.extensions[defaultLanguage];
+        chosenLang = defaultLanguage;
     }
+
+    if (!chosenLang) {
+        vscode.window.showErrorMessage('No language selected');
+        return;
+    }
+
+    // @ts-ignore
+    const extn = config.extensions[chosenLang];
     let url: URL;
     try {
         url = new URL(problem.url);
@@ -234,32 +244,186 @@ const handleNewProblem = async (problem: Problem) => {
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
 
-        if (defaultLanguage) {
-            const templateLocation = getDefaultLanguageTemplateFileLocation();
-            if (templateLocation !== null) {
-                const templateExists = existsSync(templateLocation);
-                if (!templateExists) {
+        // Apply template if user configured a template location. Preference order:
+        // 1) per-language template file/location (cph.language.<lang>.templateFileLocation)
+        // 2) global default template location (cph.general.defaultLanguageTemplateFileLocation)
+        const perLangTemplate = getLanguageTemplateFileLocation(chosenLang);
+        const templateLocation =
+            perLangTemplate ?? getDefaultLanguageTemplateFileLocation();
+        if (templateLocation !== null) {
+            if (!existsSync(templateLocation)) {
+                vscode.window.showErrorMessage(
+                    `Template path does not exist: ${templateLocation}`,
+                );
+            } else {
+                let candidateFile: string | null = null;
+
+                try {
+                    const stat = statSync(templateLocation);
+                    if (stat.isDirectory()) {
+                        // Try a few candidate names inside the directory.
+                        const candidates = [
+                            // language key, e.g. "cpp"
+                            `${chosenLang}`,
+                            // file extension, e.g. "cpp", "py"
+                            `${extn}`,
+                            // with common template extensions
+                            `${chosenLang}.tpl`,
+                            `${extn}.tpl`,
+                            `${chosenLang}.template`,
+                            `${extn}.template`,
+                        ];
+
+                        for (const name of candidates) {
+                            if (!name) continue;
+                            const p = path.join(templateLocation, name);
+                            if (existsSync(p)) {
+                                candidateFile = p;
+                                break;
+                            }
+                        }
+                    } else {
+                        // Single file specified
+                        candidateFile = templateLocation;
+                    }
+                } catch (err) {
+                    globalThis.logger.error(
+                        'Error while checking template path',
+                        err,
+                    );
+                }
+
+                if (candidateFile === null) {
                     vscode.window.showErrorMessage(
-                        `Template file does not exist: ${templateLocation}`,
+                        `No template found for language '${chosenLang}' in ${templateLocation}`,
                     );
                 } else {
-                    let templateContents =
-                        readFileSync(templateLocation).toString();
-
-                    if (extn == 'java') {
-                        const className = path.basename(
-                            problemFileName,
-                            '.java',
+                    try {
+                        let templateContents =
+                            readFileSync(candidateFile).toString();
+                        if (extn == 'java') {
+                            const className = path.basename(
+                                problemFileName,
+                                '.java',
+                            );
+                            templateContents = templateContents.replace(
+                                'CLASS_NAME',
+                                className,
+                            );
+                        }
+                        writeFileSync(srcPath, templateContents);
+                    } catch (err) {
+                        globalThis.logger.error(
+                            'Failed to read/write template file',
+                            err,
                         );
-                        templateContents = templateContents.replace(
-                            'CLASS_NAME',
-                            className,
+                        vscode.window.showErrorMessage(
+                            `Failed to apply template: ${err}`,
                         );
                     }
-                    writeFileSync(srcPath, templateContents);
                 }
             }
         }
+    }
+
+    // If user enabled pref, prepend a machine-readable JSON metadata block to the file
+    try {
+        if (getPrependProblemMetadataPref()) {
+            const metaAuthorPref = getMetadataAuthorPref();
+            const author =
+                metaAuthorPref && metaAuthorPref.trim() !== ''
+                    ? metaAuthorPref
+                    : os.userInfo?.().username ?? '';
+            const tzPref = getMetadataTimezonePref();
+
+            const formatWithTimezone = (date: Date, tz: string) => {
+                // Return format: YYYY-MM-DD  HH:MM:SS (two spaces between date and time)
+                const pad = (n: number) => n.toString().padStart(2, '0');
+
+                if (/^UTC[+-]\d{1,2}(?::\d{2})?$/.test(tz)) {
+                    // tz like UTC+8 or UTC-5:00
+                    const m = tz.match(/^UTC([+-]\d{1,2})(?::(\d{2}))?$/);
+                    const hours = parseInt(m?.[1] || '0', 10);
+                    const minutes = parseInt(m?.[2] || '0', 10);
+                    // compute UTC ms and then apply offset hours/minutes
+                    const utc =
+                        date.getTime() + date.getTimezoneOffset() * 60000;
+                    const target = new Date(
+                        utc + (hours * 60 + minutes) * 60000,
+                    );
+                    return `${target.getFullYear()}-${pad(
+                        target.getMonth() + 1,
+                    )}-${pad(target.getDate())}  ${pad(
+                        target.getHours(),
+                    )}:${pad(target.getMinutes())}:${pad(target.getSeconds())}`;
+                }
+
+                try {
+                    // Use Intl to get parts in the requested IANA timezone, then build string
+                    const parts = new Intl.DateTimeFormat('en-GB', {
+                        timeZone: tz,
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                    }).formatToParts(date);
+                    const map: any = {};
+                    for (const p of parts) {
+                        if (p.type && p.value) map[p.type] = p.value;
+                    }
+                    return `${map.year}-${map.month}-${map.day}  ${map.hour}:${map.minute}:${map.second}`;
+                } catch (e) {
+                    // fallback
+                    const d = date;
+                    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+                        d.getDate(),
+                    )}  ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(
+                        d.getSeconds(),
+                    )}`;
+                }
+            };
+
+            const meta = {
+                name: problem.name,
+                group: problem.group,
+                url: problem.url,
+                memoryLimit: problem.memoryLimit,
+                timeLimit: problem.timeLimit,
+                srcPath: srcPath,
+                author: author,
+                create_date: formatWithTimezone(new Date(), tzPref),
+            };
+
+            const jsonStr = JSON.stringify(meta, null, 4);
+            const ext = path.extname(srcPath).toLowerCase();
+
+            let header = '';
+            const lineCommentExts = new Set(['.py', '.sh', '.rb', '.ps1']);
+            if (lineCommentExts.has(ext)) {
+                // Prefix each line with '# '
+                header =
+                    jsonStr
+                        .split('\n')
+                        .map((l) => `# ${l}`)
+                        .join('\n') + '\n\n';
+            } else if (ext === '.hs') {
+                header = `{-\n${jsonStr}\n-}\n\n`;
+            } else {
+                // Default to C-style block comment
+                header = `/*\n${jsonStr}\n*/\n\n`;
+            }
+
+            const existing = readFileSync(srcPath).toString();
+            const lookFor = problem.url || problem.name || '';
+            if (!existing.includes(lookFor)) {
+                writeFileSync(srcPath, header + existing);
+            }
+        }
+    } catch (err) {
+        globalThis.logger.error('Failed to prepend metadata header', err);
     }
 
     saveProblem(srcPath, problem);

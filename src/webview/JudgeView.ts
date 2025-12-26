@@ -85,6 +85,19 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         storeSubmitProblem(message.problem);
                         break;
                     }
+                    case 'submitAtCoder': {
+                        storeSubmitProblem(message.problem);
+                        break;
+                    }
+                    case 'submitNiuke': {
+                        storeSubmitProblem(message.problem);
+                        break;
+                    }
+                    case 'submitGeneric': {
+                        // Generic submit for sites without specialized flow.
+                        storeSubmitProblem(message.problem);
+                        break;
+                    }
                     case 'submitKattis': {
                         submitKattisProblem(message.problem);
                         break;

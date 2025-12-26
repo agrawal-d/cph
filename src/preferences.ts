@@ -100,6 +100,15 @@ export const getRemoteServerAddressPref = (): string =>
 export const getLiveUserCountPref = (): boolean =>
     getPreference('general.showLiveUserCount') || false;
 
+export const getPrependProblemMetadataPref = (): boolean =>
+    getPreference('general.prependProblemMetadata') || false;
+
+export const getMetadataAuthorPref = (): string =>
+    getPreference('metadata.author') || '';
+
+export const getMetadataTimezonePref = (): string =>
+    getPreference('metadata.timezone') || 'UTC+8';
+
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
     if (pref === 'none' || pref == ' ' || !pref) {
@@ -123,6 +132,20 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
         return null;
     }
     return pref;
+};
+
+/**
+ * Per-language template file/location preference.
+ * Preference key pattern: `language.<lang>.templateFileLocation`.
+ */
+export const getLanguageTemplateFileLocation = (
+    lang: string,
+): string | null => {
+    if (!lang) return null;
+    const key = `language.${lang}.templateFileLocation`;
+    const pref = workspace.getConfiguration('cph').get(key);
+    if (!pref || pref === '') return null;
+    return pref as string;
 };
 
 export const getCCommand = (): string =>
