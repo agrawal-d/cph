@@ -360,6 +360,16 @@
                     "default": "cpp java js python c rust ruby csharp go haskell",
                     "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
                 },
+                "cph.general.includeProblemIndex": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include the problem index for problem file generated ( like P_1_abc ) instead of omitting it"
+                },
+                "cph.general.wordRegex": {
+                    "type": "string",
+                    "default": "[\\p{L}]+|[0-9]+",
+                    "description": "The regex that defines what a word is for problem file generated. Each word is separated by an underscore"
+                },
                 "cph.general.useShortCodeForcesName": {
                     "type": "boolean",
                     "default": false,
@@ -384,6 +394,11 @@
                     "type": "string",
                     "default": "",
                     "description": "The path to the template file that will be used when creating a new file for the default language via Competitive Companion. For Java templates, use 'CLASS_NAME' as a placeholder for the class name like 'class CLASS_NAME{...}'"
+                },
+                "cph.general.doTemplateFileVariableReplacement": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Replace $var$ in the template file with its value. For example, replace $url$ with the problem's url. For a full list, see what is outputted in the console with debug mode on for Competitive Companion"
                 },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",

@@ -11,6 +11,8 @@ export type prefSection =
     | 'general.hideStderrorWhenCompiledOK'
     | 'general.ignoreSTDERROR'
     | 'general.firstTime'
+    | 'general.includeProblemIndex'
+    | 'general.wordRegex'
     | 'general.useShortCodeForcesName'
     | 'general.useShortLuoguName'
     | 'general.useShortAtCoderName'
@@ -53,6 +55,7 @@ export type prefSection =
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation'
+    | 'general.doTemplateFileVariableReplacement'
     | 'general.remoteServerAddress'
     | 'general.showLiveUserCount';
 
