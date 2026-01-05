@@ -58,7 +58,21 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
 
                     case 'save': {
-                        saveProblem(message.problem.srcPath, message.problem);
+                        // message.problem may not contain srcPath on-disk for
+                        // workspace mode. Prefer the provided srcPath, fall
+                        // back to the active editor's document path.
+                        const activeEditor = vscode.window.activeTextEditor;
+                        let srcPath = message.problem.srcPath;
+                        if (!srcPath && activeEditor) {
+                            srcPath = activeEditor.document.fileName;
+                        }
+                        if (!srcPath) {
+                            globalThis.logger.error(
+                                'No srcPath available to save problem',
+                            );
+                            break;
+                        }
+                        saveProblem(srcPath, message.problem);
                         break;
                     }
 
@@ -77,7 +91,20 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                             command: 'new-problem',
                             problem: undefined,
                         });
-                        await deleteProblemFile(message.problem.srcPath);
+                        {
+                            const activeEditor = vscode.window.activeTextEditor;
+                            let srcPath = message.problem.srcPath;
+                            if (!srcPath && activeEditor) {
+                                srcPath = activeEditor.document.fileName;
+                            }
+                            if (!srcPath) {
+                                globalThis.logger.error(
+                                    'No srcPath available to delete problem',
+                                );
+                                break;
+                            }
+                            await deleteProblemFile(srcPath);
+                        }
                         break;
                     }
 
