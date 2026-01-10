@@ -18,7 +18,7 @@ import {
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
-import { words_in_text } from './utilsPure';
+import { words_in_text, toPascalCase } from './utilsPure';
 import telmetry from './telmetry';
 import os from 'os';
 
@@ -166,11 +166,19 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
         );
 
         const words = words_in_text(problem.name);
+        let baseName: string;
         if (words === null) {
-            return `${problem.name.replace(/\W+/g, '_')}.${ext}`;
+            baseName = problem.name.replace(/\W+/g, '_');
         } else {
-            return `${words.join('_')}.${ext}`;
+            baseName = words.join('_');
         }
+
+        // For Java, use PascalCase without underscores
+        if (ext === 'java') {
+            baseName = toPascalCase(baseName);
+        }
+
+        return `${baseName}.${ext}`;
     }
 };
 
