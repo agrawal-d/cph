@@ -3,6 +3,7 @@ import fs from 'fs';
 import { Problem } from './types';
 import { getSaveLocationPref } from './preferences';
 import crypto from 'crypto';
+import { Uri, workspace } from 'vscode';
 
 /**
  *  Get the location (file path) to save the generated problem file in. If save
@@ -14,7 +15,12 @@ import crypto from 'crypto';
 export const getProbSaveLocation = (srcPath: string): string => {
     const savePreference = getSaveLocationPref();
     const srcFileName = path.basename(srcPath);
-    const srcFolder = path.dirname(srcPath);
+
+    // Use workspace root if available, otherwise use source file's directory
+    const uri = Uri.file(srcPath);
+    const workspaceFolder = workspace.getWorkspaceFolder(uri);
+    const srcFolder = workspaceFolder ? workspaceFolder.uri.fsPath : path.dirname(srcPath);
+
     const hash = crypto
         .createHash('md5')
         .update(srcPath)
@@ -40,17 +46,25 @@ export const getProblem = (srcPath: string): Problem | null => {
     }
 };
 
-/** Save the problem (metadata) */
+/**
+ * Saves the problem metadata to a file.
+ * If the `.cph` directory doesn't exist and no custom save location is set, it creates the directory.
+ *
+ * @param srcPath - The file path of the source code.
+ * @param problem - The problem object containing test cases and metadata.
+ */
 export const saveProblem = (srcPath: string, problem: Problem) => {
-    const srcFolder = path.dirname(srcPath);
-    const cphFolder = path.join(srcFolder, '.cph');
+    // Get the full path where the problem should be saved
+    const probPath = getProbSaveLocation(srcPath);
+    // Get the directory containing the problem file
+    const cphFolder = path.dirname(probPath);
 
+    // If no custom save location preference is set and the directory doesn't exist, create it
     if (getSaveLocationPref() === '' && !fs.existsSync(cphFolder)) {
         globalThis.logger.log('Making .cph folder');
-        fs.mkdirSync(cphFolder);
+        fs.mkdirSync(cphFolder, { recursive: true });
     }
 
-    const probPath = getProbSaveLocation(srcPath);
     try {
         fs.writeFileSync(probPath, JSON.stringify(problem));
     } catch (err) {
