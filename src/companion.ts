@@ -4,7 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
@@ -221,7 +221,23 @@ const handleNewProblem = async (problem: Problem) => {
         problem.name = splitUrl[splitUrl.length - 1];
     }
     const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+
+    // For Go files, create a separate folder: problemName
+    let srcPath: string;
+    if (extn === 'go') {
+        const folderName = problem.name
+            .replace(/[\\/:.*?"\-<>|]/g, '')
+            .replace(/\s+/g, '_')
+            .substring(0, 50);
+        const dir = path.join(folder, folderName);
+        if (!existsSync(dir)) {
+            globalThis.logger.log('Creating Go problem folder:', dir);
+            mkdirSync(dir, { recursive: true });
+        }
+        srcPath = path.join(dir, 'main.go');
+    } else {
+        srcPath = path.join(folder, problemFileName);
+    }
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
