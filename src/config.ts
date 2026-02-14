@@ -97,7 +97,7 @@ export default {
         // Idea from: https://code.visualstudio.com/docs/editing/userdefinedsnippets
 
         // Special variable to place the starting cursor in the file
-        0: '0',
+        CURSOR_PLACEHOLDER: 'CURSOR_PLACEHOLDER',
 
         // For inserting the class name:
         CLASS_NAME: 'CLASS_NAME', // CLASS_NAME

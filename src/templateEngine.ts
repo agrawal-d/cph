@@ -10,7 +10,6 @@ import { Problem } from './types';
 import config from './config';
 import { format } from 'date-fns';
 
-
 /**
  * Writes the template contents to the problem file
  * @param problem - The problem object
@@ -39,8 +38,12 @@ export const writeTemplateContents = (problem: Problem, extn: string) => {
         return;
     }
 
-    let templateContents = readFileSync(templateLocation).toString();
-    const newTemplateContents = getTemplateContents(templateContents, extn, problem);
+    const templateContents = readFileSync(templateLocation).toString();
+    const newTemplateContents = getTemplateContents(
+        templateContents,
+        extn,
+        problem,
+    );
 
     writeFileSync(problem.srcPath, newTemplateContents);
 };
@@ -52,15 +55,21 @@ export const writeTemplateContents = (problem: Problem, extn: string) => {
  * @param problem - The problem object
  * @returns The contents of the template file with the placeholders replaced
  */
-export const getTemplateContents = (templateContents: string, extn: string, problem: Problem) => {
-
+export const getTemplateContents = (
+    templateContents: string,
+    extn: string,
+    problem: Problem,
+) => {
     const srcPath = problem.srcPath;
     const problemFileName = path.basename(srcPath);
 
     // Replace the class name in the template if the file is a Java file
     if (extn == config.extensions.java) {
         const className = path.basename(problemFileName, '.' + extn);
-        templateContents = templateContents.replace(config.templateVariables.CLASS_NAME, className);
+        templateContents = templateContents.replace(
+            config.templateVariables.CLASS_NAME,
+            className,
+        );
     }
 
     // Replace longest placeholders first so e.g. CURRENT_SECONDS_UNIX is not partially replaced by CURRENT_SECOND
@@ -68,7 +77,7 @@ export const getTemplateContents = (templateContents: string, extn: string, prob
         (a, b) => b[1].length - a[1].length,
     );
     entriesByLength.forEach(([key, value]) => {
-        let templateKeyValue: string = "";
+        let templateKeyValue: string = '';
         let shouldReplace: boolean = true;
 
         const now = new Date();
@@ -147,9 +156,12 @@ export const getTemplateContents = (templateContents: string, extn: string, prob
         }
 
         if (shouldReplace) {
-            templateContents = templateContents.replace(value, templateKeyValue);
+            templateContents = templateContents.replace(
+                value,
+                templateKeyValue,
+            );
         }
     });
 
     return templateContents;
-}
+};
