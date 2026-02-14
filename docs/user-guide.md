@@ -107,8 +107,7 @@ Several options are available to customize the extension. Open VS Code settings
 
 ## Default Language Templates
 
--   The path of the template that will be loaded when a new file of the default
-    language is created by Competitive Companion.
+-   The path of the template that will be loaded when a new file of the default language is created by Competitive Companion.
 
 ### Available template variables
 
