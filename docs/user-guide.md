@@ -106,12 +106,41 @@ Several options are available to customize the extension. Open VS Code settings
 -   [Python] Command used to run python files. For eg. py, python3, pypy3, etc.
 
 ## Default Language Templates
-- The path of the template that will be loaded when a new file of the default language is created by Competitive Companion
-- For Java Users, the template shall be in the format where class name is `CLASS_NAME` as the file name so that CLASS_NAME in the code gets auto replaced.
-\
+
+-   The path of the template that will be loaded when a new file of the default language is created by Competitive Companion.
+
+### Available template variables
+
+Place these strings in your template file; they will be replaced (if present)
+when a new file is created.
+
+| Placeholder                | Description                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| `CURSOR_PLACEHOLDER`       | Placeholder for the initial cursor position in the new file                      |
+| `CLASS_NAME`               | Replaced with the class name (i.e, file name without extension); useful for Java |
+| `PROBLEM_NAME`             | The name of the problem                                                          |
+| `PROBLEM_FILE_NAME`        | The file name of the problem                                                     |
+| `PROBLEM_URL`              | The URL of the problem                                                           |
+| `PROBLEM_GROUP`            | The group of the problem                                                         |
+| `CURRENT_YEAR`             | The current year                                                                 |
+| `CURRENT_YEAR_SHORT`       | The current year's last two digits                                               |
+| `CURRENT_MONTH`            | The month as two digits (e.g. `02`)                                              |
+| `CURRENT_MONTH_NAME`       | The full name of the month (e.g. `July`)                                         |
+| `CURRENT_MONTH_NAME_SHORT` | The short name of the month (e.g. `Jul`)                                         |
+| `CURRENT_DATE`             | The day of the month as two digits (e.g. `08`)                                   |
+| `CURRENT_DAY_NAME`         | The name of the day (e.g. `Monday`)                                              |
+| `CURRENT_DAY_NAME_SHORT`   | The short name of the day (e.g. `Mon`)                                           |
+| `CURRENT_HOUR_24`          | The current hour in 24-hour clock format                                         |
+| `CURRENT_HOUR_12`          | The current hour in 12-hour clock format                                         |
+| `CURRENT_HOUR_AM_PM`       | AM or PM (e.g. `AM`, `PM`)                                                       |
+| `CURRENT_MINUTE`           | The current minute as two digits                                                 |
+| `CURRENT_SECOND`           | The current second as two digits                                                 |
+| `CURRENT_SECONDS_UNIX`     | The number of seconds since the Unix epoch                                       |
+| `CURRENT_TIMEZONE_OFFSET`  | The current UTC time zone offset (e.g. `-07:00`)                                 |
+
+![Templates](img/templateVariables.png)
 ![Templates](img/templateSettings.png)
 ![Templates](img/javaTemplate.png)
-
 
 ## Getting help
 

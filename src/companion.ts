@@ -13,7 +13,6 @@ import {
     useShortLuoguName,
     useShortAtCoderName,
     getMenuChoices,
-    getDefaultLanguageTemplateFileLocation,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -21,6 +20,7 @@ import { getJudgeViewProvider } from './extension';
 import { words_in_text } from './utilsPure';
 import telmetry from './telmetry';
 import os from 'os';
+import { writeTemplateContents } from './templateEngine';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -233,39 +233,34 @@ const handleNewProblem = async (problem: Problem) => {
 
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
-
-        if (defaultLanguage) {
-            const templateLocation = getDefaultLanguageTemplateFileLocation();
-            if (templateLocation !== null) {
-                const templateExists = existsSync(templateLocation);
-                if (!templateExists) {
-                    vscode.window.showErrorMessage(
-                        `Template file does not exist: ${templateLocation}`,
-                    );
-                } else {
-                    let templateContents =
-                        readFileSync(templateLocation).toString();
-
-                    if (extn == 'java') {
-                        const className = path.basename(
-                            problemFileName,
-                            '.java',
-                        );
-                        templateContents = templateContents.replace(
-                            'CLASS_NAME',
-                            className,
-                        );
-                    }
-                    writeFileSync(srcPath, templateContents);
-                }
-            }
-        }
     }
+
+    // Write the template contents to the problem file
+    writeTemplateContents(problem, extn);
 
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
 
-    await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
+    const editor = await vscode.window.showTextDocument(
+        doc,
+        vscode.ViewColumn.One,
+    );
+
+    // Move cursor to the first occurence of placeholder "CURSOR_PLACEHOLDER" and remove it
+    const cursorPlaceholder = config.templateVariables.CURSOR_PLACEHOLDER;
+    const text = doc.getText();
+    const index = text.indexOf(cursorPlaceholder);
+
+    // If the cursor placeholder is found, move the cursor to the placeholder and remove it
+    if (index !== -1) {
+        const start = doc.positionAt(index);
+        const end = doc.positionAt(index + cursorPlaceholder.length);
+        editor.selection = new vscode.Selection(start, start);
+        await editor.edit((editBuilder) => {
+            editBuilder.delete(new vscode.Range(start, end));
+        });
+    }
+
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem,
