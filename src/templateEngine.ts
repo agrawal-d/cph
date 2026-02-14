@@ -63,11 +63,13 @@ export const getTemplateContents = (templateContents: string, extn: string, prob
         templateContents = templateContents.replace(config.templateVariables.CLASS_NAME, className);
     }
 
-    Object.entries(config.templateVariables).forEach(([key, value]) => {
-
+    // Replace longest placeholders first so e.g. CURRENT_SECONDS_UNIX is not partially replaced by CURRENT_SECOND
+    const entriesByLength = Object.entries(config.templateVariables).sort(
+        (a, b) => b[1].length - a[1].length,
+    );
+    entriesByLength.forEach(([key, value]) => {
         let templateKeyValue: string = "";
         let shouldReplace: boolean = true;
-
 
         const now = new Date();
 
@@ -141,7 +143,6 @@ export const getTemplateContents = (templateContents: string, extn: string, prob
                 break;
             default:
                 shouldReplace = false;
-                globalThis.logger.error(`No template replacement logic found for template variable: ${key}`);
                 break;
         }
 
