@@ -383,7 +383,7 @@
                 "cph.general.defaultLanguageTemplateFileLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "The path to the template file that will be used when creating a new file for the default language via Competitive Companion. For Java templates, use 'CLASS_NAME' as a placeholder for the class name like 'class CLASS_NAME{...}'"
+                    "description": "The path to the template file used when creating a new file for the default language via Competitive Companion. Placeholders such as CLASS_NAME (Java), PROBLEM_NAME, PROBLEM_URL, CURRENT_YEAR, CURRENT_DATE, and others are replaced automatically. See the user guide for the full list."
                 },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",
@@ -439,11 +439,12 @@
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
+        "@vscode/extension-telemetry": "^0.9.0",
+        "date-fns": "^4.1.0",
         "python-shell": "^5.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-textarea-autosize": "^8.5.3",
-        "@vscode/extension-telemetry": "^0.9.0"
+        "react-textarea-autosize": "^8.5.3"
     },
     "repository": {
         "type": "git",

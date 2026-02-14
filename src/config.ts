@@ -93,4 +93,36 @@ export default {
         'cj',
     ],
     skipCompile: ['py', 'js', 'rb'],
+    templateVariables: {
+        // Idea from: https://code.visualstudio.com/docs/editing/userdefinedsnippets
+
+        // Special variable to place the starting cursor in the file
+        0: '0',
+
+        // For inserting the class name:
+        CLASS_NAME: 'CLASS_NAME', // CLASS_NAME
+
+        // Problem metadata:
+        PROBLEM_NAME: 'PROBLEM_NAME', // The name of the problem
+        PROBLEM_FILE_NAME: 'PROBLEM_FILE_NAME', // The file name of the problem
+        PROBLEM_URL: 'PROBLEM_URL', // The URL of the problem
+        PROBLEM_GROUP: 'PROBLEM_GROUP', // The group of the problem
+
+        // For inserting the current date and time:
+        CURRENT_YEAR: 'CURRENT_YEAR', // The current year
+        CURRENT_YEAR_SHORT: 'CURRENT_YEAR_SHORT', // The current year's last two digits
+        CURRENT_MONTH: 'CURRENT_MONTH', // The month as two digits (e.g. '02')
+        CURRENT_MONTH_NAME: 'CURRENT_MONTH_NAME', // The full name of the month (e.g. 'July')
+        CURRENT_MONTH_NAME_SHORT: 'CURRENT_MONTH_NAME_SHORT', // The short name of the month (e.g. 'Jul')
+        CURRENT_DATE: 'CURRENT_DATE', // The day of the month as two digits (e.g. '08')
+        CURRENT_DAY_NAME: 'CURRENT_DAY_NAME', // The name of day (e.g. 'Monday')
+        CURRENT_DAY_NAME_SHORT: 'CURRENT_DAY_NAME_SHORT', // The short name of the day (e.g. 'Mon')
+        CURRENT_HOUR_24: 'CURRENT_HOUR_24', // The current hour in 24-hour clock format
+        CURRENT_HOUR_12: 'CURRENT_HOUR_12', // The current hour in 12-hour clock format
+        CURRENT_HOUR_AM_PM: 'CURRENT_HOUR_AM_PM', // The current hour in 12-hour clock format either "AM" or "PM"
+        CURRENT_MINUTE: 'CURRENT_MINUTE', // The current minute as two digits
+        CURRENT_SECOND: 'CURRENT_SECOND', // The current second as two digits
+        CURRENT_SECONDS_UNIX: 'CURRENT_SECONDS_UNIX', // The number of seconds since the Unix epoch
+        CURRENT_TIMEZONE_OFFSET: 'CURRENT_TIMEZONE_OFFSET', // The current UTC time zone offset as +HH:MM or -HH:MM (e.g. -07:00)
+    },
 };

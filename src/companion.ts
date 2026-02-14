@@ -21,6 +21,7 @@ import { getJudgeViewProvider } from './extension';
 import { words_in_text } from './utilsPure';
 import telmetry from './telmetry';
 import os from 'os';
+import { writeTemplateContents } from './templateEngine';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -233,34 +234,10 @@ const handleNewProblem = async (problem: Problem) => {
 
     if (!existsSync(srcPath)) {
         writeFileSync(srcPath, '');
-
-        if (defaultLanguage) {
-            const templateLocation = getDefaultLanguageTemplateFileLocation();
-            if (templateLocation !== null) {
-                const templateExists = existsSync(templateLocation);
-                if (!templateExists) {
-                    vscode.window.showErrorMessage(
-                        `Template file does not exist: ${templateLocation}`,
-                    );
-                } else {
-                    let templateContents =
-                        readFileSync(templateLocation).toString();
-
-                    if (extn == 'java') {
-                        const className = path.basename(
-                            problemFileName,
-                            '.java',
-                        );
-                        templateContents = templateContents.replace(
-                            'CLASS_NAME',
-                            className,
-                        );
-                    }
-                    writeFileSync(srcPath, templateContents);
-                }
-            }
-        }
     }
+
+    // Write the template contents to the problem file
+    writeTemplateContents(problem, extn);
 
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
