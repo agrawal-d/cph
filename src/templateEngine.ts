@@ -1,11 +1,6 @@
 import { readFileSync } from 'fs';
 import {
     getDefaultLangPref,
-    getLanguageId,
-    useShortCodeForcesName,
-    useShortLuoguName,
-    useShortAtCoderName,
-    getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
 } from './preferences';
 import * as vscode from 'vscode';
@@ -29,9 +24,6 @@ export const writeTemplateContents = (problem: Problem, extn: string) => {
         return;
     }
 
-    const srcPath = problem.srcPath;
-    const problemFileName = path.basename(srcPath);
-
     const templateLocation = getDefaultLanguageTemplateFileLocation();
 
     // If the user has not set a default language template file location, do nothing
@@ -48,6 +40,22 @@ export const writeTemplateContents = (problem: Problem, extn: string) => {
     }
 
     let templateContents = readFileSync(templateLocation).toString();
+    const newTemplateContents = getTemplateContents(templateContents, extn, problem);
+
+    writeFileSync(problem.srcPath, newTemplateContents);
+};
+
+/**
+ * Gets the contents of the template file with the placeholders replaced
+ * @param templateContents - The contents of the template file
+ * @param extn - The extension of the file
+ * @param problem - The problem object
+ * @returns The contents of the template file with the placeholders replaced
+ */
+export const getTemplateContents = (templateContents: string, extn: string, problem: Problem) => {
+
+    const srcPath = problem.srcPath;
+    const problemFileName = path.basename(srcPath);
 
     // Replace the class name in the template if the file is a Java file
     if (extn == config.extensions.java) {
@@ -142,5 +150,5 @@ export const writeTemplateContents = (problem: Problem, extn: string) => {
         }
     });
 
-    writeFileSync(srcPath, templateContents);
-};
+    return templateContents;
+}

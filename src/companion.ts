@@ -13,7 +13,6 @@ import {
     useShortLuoguName,
     useShortAtCoderName,
     getMenuChoices,
-    getDefaultLanguageTemplateFileLocation,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
