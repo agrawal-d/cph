@@ -107,13 +107,13 @@ Several options are available to customize the extension. Open VS Code settings
 
 ## Default Language Templates
 
-- The path of the template that will be loaded when a new file of the default language is created by Competitive Companion.
-- For Java users, the template shall be in the format where the class name is `CLASS_NAME` (matching the file name) so that `CLASS_NAME` in the code gets auto-replaced.
+-   The path of the template that will be loaded when a new file of the default
+    language is created by Competitive Companion.
 
 ### Available template variables
 
-Place these strings in your template file; they will be replaced when a new file
-is created.
+Place these strings in your template file; they will be replaced (if present)
+when a new file is created.
 
 | Placeholder                | Description                                                                      |
 | -------------------------- | -------------------------------------------------------------------------------- |
@@ -139,9 +139,9 @@ is created.
 | `CURRENT_SECONDS_UNIX`     | The number of seconds since the Unix epoch                                       |
 | `CURRENT_TIMEZONE_OFFSET`  | The current UTC time zone offset (e.g. `-07:00`)                                 |
 
+![Templates](img/templateVariables.png)
 ![Templates](img/templateSettings.png)
 ![Templates](img/javaTemplate.png)
-
 
 ## Getting help
 
