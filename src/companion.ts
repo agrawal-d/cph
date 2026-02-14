@@ -246,7 +246,7 @@ const handleNewProblem = async (problem: Problem) => {
         vscode.ViewColumn.One,
     );
 
-    // Move cursor to the placeholder (e.g. "0") and remove it
+    // Move cursor to the first occurence of placeholder "CURSOR_PLACEHOLDER" and remove it
     const cursorPlaceholder = config.templateVariables.CURSOR_PLACEHOLDER;
     const text = doc.getText();
     const index = text.indexOf(cursorPlaceholder);
