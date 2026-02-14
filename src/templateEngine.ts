@@ -63,15 +63,6 @@ export const getTemplateContents = (
     const srcPath = problem.srcPath;
     const problemFileName = path.basename(srcPath);
 
-    // Replace the class name in the template if the file is a Java file
-    if (extn == config.extensions.java) {
-        const className = path.basename(problemFileName, '.' + extn);
-        templateContents = templateContents.replace(
-            config.templateVariables.CLASS_NAME,
-            className,
-        );
-    }
-
     // Replace longest placeholders first so e.g. CURRENT_SECONDS_UNIX is not partially replaced by CURRENT_SECOND
     const entriesByLength = Object.entries(config.templateVariables).sort(
         (a, b) => b[1].length - a[1].length,
@@ -83,6 +74,12 @@ export const getTemplateContents = (
         const now = new Date();
 
         switch (key) {
+            // class name
+            case config.templateVariables.CLASS_NAME:
+                templateKeyValue = path.basename(problemFileName, '.' + extn);
+                break;
+
+            // Problem metadata
             case config.templateVariables.PROBLEM_FILE_NAME:
                 templateKeyValue = problemFileName;
                 break;

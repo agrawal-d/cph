@@ -13,6 +13,11 @@ const baseProblem: Problem = {
     tests: [],
 };
 
+const cppBaseProblem: Problem = {
+    ...baseProblem,
+    srcPath: '/workspace/MySolution.cpp',
+};
+
 describe('getTemplateContents', () => {
     beforeEach(() => {
         jest.useFakeTimers();
@@ -65,10 +70,10 @@ describe('getTemplateContents', () => {
             expect(result).toBe('public class MySolution { }');
         });
 
-        test('does not replace CLASS_NAME for non-Java extension', () => {
+        test('also replace CLASS_NAME for non-Java extension', () => {
             const template = '// CLASS_NAME';
-            const result = getTemplateContents(template, 'cpp', baseProblem);
-            expect(result).toBe('// CLASS_NAME');
+            const result = getTemplateContents(template, 'cpp', cppBaseProblem);
+            expect(result).toBe('// MySolution');
         });
 
         test('Java template with CLASS_NAME and problem metadata', () => {
