@@ -4,6 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
+import * as fs from 'fs';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
@@ -14,6 +15,7 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    getSourceFileLocation,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -221,7 +223,24 @@ const handleNewProblem = async (problem: Problem) => {
         problem.name = splitUrl[splitUrl.length - 1];
     }
     const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+
+    // Determine the directory to save the source file
+    let targetDirectory = folder;
+    const customLocation = getSourceFileLocation(extn);
+    if (customLocation) {
+        targetDirectory = path.resolve(folder, customLocation);
+        if (!existsSync(targetDirectory)) {
+            try {
+                fs.mkdirSync(targetDirectory, { recursive: true });
+            } catch (err) {
+                vscode.window.showErrorMessage(
+                    `Could not create directory ${targetDirectory}: ${err}`,
+                );
+                return;
+            }
+        }
+    }
+    const srcPath = path.join(targetDirectory, problemFileName);
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;

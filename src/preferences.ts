@@ -125,6 +125,59 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     return pref;
 };
 
+export const getSourceFileLocation = (ext: string): string | null => {
+    let prefKey: prefSection | null = null;
+    switch (ext) {
+        case 'c':
+            prefKey = 'language.c.SourceFileLocation';
+            break;
+        case 'cpp':
+            prefKey = 'language.cpp.SourceFileLocation';
+            break;
+        case 'cs':
+            prefKey = 'language.csharp.SourceFileLocation';
+            break;
+        case 'py':
+            prefKey = 'language.python.SourceFileLocation';
+            break;
+        case 'rb':
+            prefKey = 'language.ruby.SourceFileLocation';
+            break;
+        case 'rs':
+            prefKey = 'language.rust.SourceFileLocation';
+            break;
+        case 'go':
+            prefKey = 'language.go.SourceFileLocation';
+            break;
+        case 'hs':
+            prefKey = 'language.haskell.SourceFileLocation';
+            break;
+        case 'java':
+            prefKey = 'language.java.SourceFileLocation';
+            break;
+        case 'js':
+            prefKey = 'language.js.SourceFileLocation';
+            break;
+        case 'cj':
+            prefKey = 'language.cangjie.SourceFileLocation';
+            break;
+    }
+
+    if (prefKey) {
+        const langPref = getPreference(prefKey);
+        if (langPref && langPref.trim() !== '') {
+            return langPref.trim();
+        }
+    }
+
+    const genPref = getPreference('general.sourceFileLocation');
+    if (genPref && genPref.trim() !== '') {
+        return genPref.trim();
+    }
+
+    return null;
+};
+
 export const getCCommand = (): string =>
     getPreference('language.c.Command') || 'gcc';
 export const getCppCommand = (): string =>
