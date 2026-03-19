@@ -1,4 +1,4 @@
-import { Case, VSToWebViewMessage } from '../../types';
+import { Case, VSToWebViewMessage, DiffResult, TokenDiff } from '../../types';
 import { useState, createRef, useEffect } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import AnsiToHtml from 'ansi-to-html';
@@ -251,6 +251,12 @@ export default function CaseView(props: {
                             </>
                         </div>
                     )}
+                    {result != null && !result.pass && result.diff != null && (
+                        <DiffView
+                            diff={result.diff}
+                            copyToClipboard={copyToClipboard}
+                        />
+                    )}
                     {stderror && stderror.length > 0 && (
                         <div style={{ userSelect: 'text' }}>
                             Standard Error:
@@ -274,6 +280,85 @@ export default function CaseView(props: {
                 </>
             )}
         </div>
+    );
+}
+
+function DiffView({
+    diff,
+    copyToClipboard,
+}: {
+    diff: DiffResult;
+    copyToClipboard: (text: string) => void;
+}) {
+    if (diff.isMatch) {
+        return null;
+    }
+
+    // Plain text version for clipboard
+    const plainText = diff.tokenDiff.map((t) => t.token).join(' ');
+
+    return (
+        <div className="textarea-container">
+            Output Difference:
+            <div
+                className="clipboard"
+                onClick={() => copyToClipboard(plainText)}
+                title="Copy to clipboard"
+            >
+                Copy
+            </div>
+            <div
+                className="selectable received-textarea"
+                style={{
+                    padding: '6px',
+                    lineHeight: '2',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                }}
+            >
+                {diff.tokenDiff.map((t, idx) => (
+                    <TokenChip key={idx} token={t} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function TokenChip({ token }: { token: TokenDiff }) {
+    if (token.status === 'match') {
+        return <span style={{ marginRight: '4px' }}>{token.token}</span>;
+    }
+
+    if (token.status === 'extra') {
+        return (
+            <span
+                style={{
+                    marginRight: '4px',
+                    backgroundColor:
+                        'var(--vscode-diffEditor-removedTextBackground)',
+                    textDecoration: 'line-through',
+                    borderRadius: '3px',
+                    padding: '1px 3px',
+                }}
+            >
+                {token.token}
+            </span>
+        );
+    }
+
+    // missing — in expected but not received
+    return (
+        <span
+            style={{
+                marginRight: '4px',
+                backgroundColor:
+                    'var(--vscode-diffEditor-insertedTextBackground)',
+                borderRadius: '3px',
+                padding: '1px 3px',
+            }}
+        >
+            {token.token}
+        </span>
     );
 }
 

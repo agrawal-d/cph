@@ -111,9 +111,29 @@ export type Run = {
     timeOut: boolean;
 };
 
+export type DiffLine = {
+    lineNumber: number;
+    expected: string | null;
+    received: string | null;
+    type: 'match' | 'changed' | 'missing' | 'extra';
+};
+
+export type TokenDiff = {
+    token: string;
+    status: 'match' | 'extra' | 'missing';
+};
+
+export type DiffResult = {
+    isMatch: boolean;
+    lines: DiffLine[];
+    summary: string;
+    tokenDiff: TokenDiff[];
+};
+
 export type RunResult = {
     pass: boolean | null;
     id: number;
+    diff?: DiffResult;
 } & Run;
 
 export type WebviewMessageCommon = {

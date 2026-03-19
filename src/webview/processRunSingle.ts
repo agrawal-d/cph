@@ -4,6 +4,7 @@ import { getBinSaveLocation, compileFile } from '../compiler';
 import { saveProblem } from '../parser';
 import { runTestCase, deleteBinary } from '../executions';
 import { isResultCorrect } from '../judge';
+import { diffOutput } from '../utils/diffOutput';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
 import { getIgnoreSTDERRORPref } from '../preferences';
@@ -58,6 +59,7 @@ export const runSingleAndSave = async (
     const result: RunResult = {
         ...run,
         pass: didError ? false : isResultCorrect(testCase, run.stdout),
+        diff: didError ? undefined : diffOutput(testCase.output, run.stdout),
         id,
     };
 
