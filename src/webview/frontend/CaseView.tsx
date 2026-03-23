@@ -1,6 +1,10 @@
 import { Case, VSToWebViewMessage } from '../../types';
 import { useState, createRef, useEffect } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
+import AnsiToHtml from 'ansi-to-html';
+
+const converter = new AnsiToHtml(); // Create a converter instance
+
 import React from 'react';
 
 export default function CaseView(props: {
@@ -248,14 +252,24 @@ export default function CaseView(props: {
                         </div>
                     )}
                     {stderror && stderror.length > 0 && (
-                        <>
+                        <div style={{ userSelect: 'text' }}>
                             Standard Error:
-                            <TextareaAutosize
+                            <div
                                 className="selectable stderror-textarea"
-                                value={trunctateStdout(stderror)}
-                                readOnly
+                                style={{
+                                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                    maxHeight: '250px',
+                                    fontSize: '1.15em',
+                                    padding: '2px',
+                                    userSelect: 'text',
+                                    whiteSpace: 'pre-wrap',
+                                    overflowY: 'auto',
+                                }}
+                                dangerouslySetInnerHTML={{
+                                    __html: trunctateStdoutColored(stderror),
+                                }}
                             />
-                        </>
+                        </div>
                     )}
                 </>
             )}
@@ -269,4 +283,12 @@ const trunctateStdout = (stdout: string): string => {
         stdout = '[Truncated]\n' + stdout.substr(0, 100000);
     }
     return stdout;
+};
+
+/** Limit string length to 100,000 and replaces ANSI colors */
+const trunctateStdoutColored = (stdout: string): string => {
+    if (stdout.length > 100000) {
+        stdout = '[Truncated]\n' + stdout.substr(0, 100000);
+    }
+    return converter.toHtml(stdout);
 };
