@@ -153,7 +153,7 @@ export const isValidLanguage = (srcPath: string): boolean => {
 };
 
 export const isCodeforcesUrl = (url: URL): boolean => {
-    return url.hostname.includes('codeforces.com');
+    return url.hostname.endsWith('codeforces.com');
 };
 export const isLuoguUrl = (url: URL): boolean => {
     return url.hostname.indexOf('luogu.com.cn') !== -1;

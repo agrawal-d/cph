@@ -2,6 +2,7 @@ import { getProblem } from './parser';
 import * as vscode from 'vscode';
 import { storeSubmitProblem, submitKattisProblem } from './companion';
 import { getJudgeViewProvider } from './extension';
+import { isCodeforcesUrl } from './utils';
 import telmetry from './telmetry';
 
 export const submitToKattis = async () => {
@@ -75,7 +76,7 @@ export const submitToCodeForces = async () => {
         return;
     }
 
-    if (url.hostname !== 'codeforces.com') {
+    if (!isCodeforcesUrl(url)) {
         vscode.window.showErrorMessage('Not a codeforces problem.');
         return;
     }
@@ -90,8 +91,10 @@ export const submitToCodeForces = async () => {
 export const getProblemName = (problemUrl: string): string => {
     const regexPatterns = [
         /\/contest\/(\d+)\/problem\/(\w+)/,
-        /\/problemset\/problem\/(\d+)\/(\w+)/,
         /\/gym\/(\d+)\/problem\/(\w+)/,
+        /\/problemset\/problem\/(\d+)\/(\w+)/,
+        /\/problemset\/gymProblem\/(\d+)\/(\w+)/,
+        /\/problemsets\/acmsguru\/problem\/(\d+)\/(\w+)/,
     ];
 
     for (const regex of regexPatterns) {
