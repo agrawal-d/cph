@@ -408,13 +408,13 @@ function Judge(props: {
             return null;
         }
         if (
-            url.hostname !== 'codeforces.com' &&
+            !url.hostname.endsWith('codeforces.com') &&
             url.hostname !== 'open.kattis.com'
         ) {
             return null;
         }
 
-        if (url.hostname == 'codeforces.com') {
+        if (url.hostname.endsWith('codeforces.com')) {
             return (
                 <button className="btn" onClick={submitCf}>
                     <span className="icon">
