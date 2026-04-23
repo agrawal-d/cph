@@ -399,6 +399,78 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Whether to display the live user count."
+                },
+                "cph.general.sourceFileLocation": {
+                    "title": "Source File Location",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated source files will be saved. Leave empty to save the file in the workspace directory. Example: src/"
+                },
+                "cph.language.c.SourceFileLocation": {
+                    "title": "Source File Location for C",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .c files will be saved. Overrides the general save location."
+                },
+                "cph.language.cpp.SourceFileLocation": {
+                    "title": "Source File Location for C++",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .cpp files will be saved. Overrides the general save location."
+                },
+                "cph.language.csharp.SourceFileLocation": {
+                    "title": "Source File Location for C#",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .cs files will be saved. Overrides the general save location."
+                },
+                "cph.language.python.SourceFileLocation": {
+                    "title": "Source File Location for Python",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .py files will be saved. Overrides the general save location."
+                },
+                "cph.language.ruby.SourceFileLocation": {
+                    "title": "Source File Location for Ruby",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .rb files will be saved. Overrides the general save location."
+                },
+                "cph.language.rust.SourceFileLocation": {
+                    "title": "Source File Location for Rust",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .rs files will be saved. Overrides the general save location."
+                },
+                "cph.language.go.SourceFileLocation": {
+                    "title": "Source File Location for Go",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .go files will be saved. Overrides the general save location."
+                },
+                "cph.language.haskell.SourceFileLocation": {
+                    "title": "Source File Location for Haskell",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .hs files will be saved. Overrides the general save location."
+                },
+                "cph.language.java.SourceFileLocation": {
+                    "title": "Source File Location for Java",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .java files will be saved. Overrides the general save location."
+                },
+                "cph.language.js.SourceFileLocation": {
+                    "title": "Source File Location for JavaScript",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .js files will be saved. Overrides the general save location."
+                },
+                "cph.language.cangjie.SourceFileLocation": {
+                    "title": "Source File Location for Cangjie",
+                    "type": "string",
+                    "default": "",
+                    "description": "Location where generated .cj files will be saved. Overrides the general save location."
                 }
             }
         }
