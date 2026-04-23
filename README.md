@@ -1,7 +1,5 @@
 # Competitive Programming Helper (cph)
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmain&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=main)
-
 Quickly compile, run and judge competitive programming problems in VS Code.
 Automatically download testcases , or write & test your own problems. Once you
 are done, easily submit your solutions directly with the click of a button!
