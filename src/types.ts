@@ -92,7 +92,9 @@ export type Problem = {
     timeLimit: number;
     group: string;
     tests: TestCase[];
-    srcPath: string;
+    // srcPath is optional on-disk for workspace mode (the path is encoded in the
+    // .prob filename). In-memory we populate it when needed.
+    srcPath?: string;
     local?: boolean;
 };
 
