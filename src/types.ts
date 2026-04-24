@@ -54,7 +54,8 @@ export type prefSection =
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation'
     | 'general.remoteServerAddress'
-    | 'general.showLiveUserCount';
+    | 'general.showLiveUserCount'
+    | 'general.pythonVirtualEnvPath';
 
 export type Language = {
     name: LangNames;
@@ -174,6 +175,10 @@ export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
 
+export type SubmitKattisCli = {
+    command: 'submitKattisCli';
+} & WebviewMessageCommon;
+
 export type GetInitialProblem = {
     command: 'get-initial-problem';
 };
@@ -202,6 +207,7 @@ export type WebviewToVSEvent =
     | SubmitCf
     | OnlineJudgeEnv
     | SubmitKattis
+    | SubmitKattisCli
     | OpenUrl
     | GetExtLogs;
 
