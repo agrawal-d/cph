@@ -74,7 +74,8 @@ export const translations: Record<string, any> = {
         online: 'online',
         compiling: 'Compiling',
         feedbackTitle: 'Enjoying CPH?',
-        feedbackDescription: 'Mind sharing quick feedback in-app? It takes less than a minute and helps me improve CPH!',
+        feedbackDescription:
+            'Mind sharing quick feedback in-app? It takes less than a minute and helps me improve CPH!',
         giveFeedback: 'Give Feedback',
         nameLabel: 'Name',
         emailLabel: 'Email (optional)',
@@ -157,7 +158,8 @@ export const translations: Record<string, any> = {
         online: '在线',
         compiling: '正在编译',
         feedbackTitle: '喜欢 CPH 吗？',
-        feedbackDescription: '不介意在应用内分享快速反馈吗？只需不到一分钟，就能帮助我改进 CPH！',
+        feedbackDescription:
+            '不介意在应用内分享快速反馈吗？只需不到一分钟，就能帮助我改进 CPH！',
         giveFeedback: '提供反馈',
         nameLabel: '姓名',
         emailLabel: '电子邮箱（可选）',
@@ -240,7 +242,8 @@ export const translations: Record<string, any> = {
         online: '접속 중',
         compiling: '컴파일 중',
         feedbackTitle: 'CPH가 마음에 드시나요?',
-        feedbackDescription: '앱 내에서 간단한 피드백을 공유해 주시겠어요? 1분도 채 걸리지 않으며 CPH를 개선하는 데 도움이 됩니다!',
+        feedbackDescription:
+            '앱 내에서 간단한 피드백을 공유해 주시겠어요? 1분도 채 걸리지 않으며 CPH를 개선하는 데 도움이 됩니다!',
         giveFeedback: '피드백 보내기',
         nameLabel: '이름',
         emailLabel: '이메일 (선택 사항)',
@@ -324,7 +327,8 @@ export const translations: Record<string, any> = {
         online: 'オンライン',
         compiling: 'コンパイル中',
         feedbackTitle: 'CPH をお楽しみいただけていますか？',
-        feedbackDescription: 'アプリ内で簡単なフィードバックを共有していただけませんか？1分もかからず、CPH の改善に役立ちます！',
+        feedbackDescription:
+            'アプリ内で簡単なフィードバックを共有していただけませんか？1分もかからず、CPH の改善に役立ちます！',
         giveFeedback: 'フィードバックを送る',
         nameLabel: '名前',
         emailLabel: 'メールアドレス (任意)',
