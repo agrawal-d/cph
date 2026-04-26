@@ -195,8 +195,7 @@ export const translations: Record<string, any> = {
         codeforcesInstructions:
             'Codeforces에 제출하려면 cph-submit 브라우저 확장 프로그램이 설치되어 있어야 하며 브라우저 창이 열려 있어야 합니다. VS Code 설정에서 언어 ID를 변경할 수 있습니다.',
         submitHint: '힌트: Ctrl+Alt+S를 눌러 제출할 수도 있습니다.',
-        noProblemAssociated:
-            '이 문서와 연결된 CPH 문제가 없습니다.',
+        noProblemAssociated: '이 문서와 연결된 CPH 문제가 없습니다.',
         createProblem: '문제 생성',
         howToUse: '이 확장 프로그램 사용법',
         supportCPH: 'CPH가 유용하다면 후원을 고려해 주세요.',
