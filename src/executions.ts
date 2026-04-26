@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import path from 'path';
 import { onlineJudgeEnv } from './compiler';
 import telmetry from './telmetry';
+import localize from './i18n';
 
 const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
@@ -122,7 +123,11 @@ export const runTestCase = (
     process.on('error', (err) => {
         globalThis.logger.error(err);
         vscode.window.showErrorMessage(
-            `Could not launch testcase process. Is '${language.compiler}' in your PATH?`,
+            localize(
+                'cph.executor.launchError',
+                "Could not launch testcase process. Is '{0}' in your PATH?",
+                language.compiler,
+            ),
         );
     });
 

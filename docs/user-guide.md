@@ -49,8 +49,8 @@ actions remain the same.
 ## Submit to Kattis
 
 1. Install Kattis [config file](https://open.kattis.com/download/kattisrc) and
-   [submission client](https://github.com/Kattis/kattis-cli). Make
-   sure you are logged in on another tab prior to accessing the files.
+   [submission client](https://github.com/Kattis/kattis-cli). Make sure you are
+   logged in on another tab prior to accessing the files.
 
 2. Move these files to a directory(folder) called .kattisrc in your home
    directory.
@@ -106,12 +106,13 @@ Several options are available to customize the extension. Open VS Code settings
 -   [Python] Command used to run python files. For eg. py, python3, pypy3, etc.
 
 ## Default Language Templates
-- The path of the template that will be loaded when a new file of the default language is created by Competitive Companion
-- For Java Users, the template shall be in the format where class name is `CLASS_NAME` as the file name so that CLASS_NAME in the code gets auto replaced.
-\
-![Templates](img/templateSettings.png)
-![Templates](img/javaTemplate.png)
 
+-   The path of the template that will be loaded when a new file of the default
+    language is created by Competitive Companion
+-   For Java Users, the template shall be in the format where class name is
+    `CLASS_NAME` as the file name so that CLASS_NAME in the code gets auto
+    replaced. \
+    ![Templates](img/templateSettings.png) ![Templates](img/javaTemplate.png)
 
 ## Getting help
 

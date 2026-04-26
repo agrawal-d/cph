@@ -1,0 +1,11 @@
+# Force LF line endings for all text files
+* text=auto eol=lf
+
+# Explicitly mark binary files to prevent them from being modified
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+*.ttf binary

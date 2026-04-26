@@ -21,6 +21,7 @@ import { getJudgeViewProvider } from './extension';
 import { words_in_text, toPascalCase } from './utilsPure';
 import telmetry from './telmetry';
 import os from 'os';
+import localize from './i18n';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -42,7 +43,11 @@ export const submitKattisProblem = (problem: Problem) => {
         )
     ) {
         vscode.window.showErrorMessage(
-            `Please ensure .kattisrc and submit.py are present in ${homedir}${directoryChar}.kattis${directoryChar}`,
+            localize(
+                'cph.companion.kattisError',
+                'Please ensure .kattisrc and submit.py are present in {0}',
+                `${homedir}${directoryChar}.kattis${directoryChar}`,
+            ),
         );
         return;
     }
@@ -109,7 +114,12 @@ export const setupCompanionServer = () => {
                         );
                 } catch (e) {
                     vscode.window.showErrorMessage(
-                        `Error parsing problem from companion "${e}. Raw problem: '${rawProblem}'"`,
+                        localize(
+                            'cph.companion.parseError',
+                            'Error parsing problem from companion {0}. Raw problem: {1}',
+                            String(e),
+                            rawProblem,
+                        ),
                     );
                 }
             });
@@ -133,7 +143,11 @@ export const setupCompanionServer = () => {
         server.listen(config.port);
         server.on('error', (err) => {
             vscode.window.showErrorMessage(
-                `Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: "${err.message}" , companion may not work.`,
+                localize(
+                    'cph.companion.serverError',
+                    'Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: {0}, companion may not work.',
+                    err.message,
+                ),
             );
         });
         globalThis.logger.log(
@@ -194,7 +208,9 @@ const handleNewProblem = async (problem: Problem) => {
     }
     const folder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     if (folder === undefined) {
-        vscode.window.showInformationMessage('Please open a folder first.');
+        vscode.window.showInformationMessage(
+            localize('cph.companion.openFolder', 'Please open a folder first.'),
+        );
         return;
     }
     const defaultLanguage = getDefaultLangPref();
@@ -207,7 +223,10 @@ const handleNewProblem = async (problem: Problem) => {
         const selected = await vscode.window.showQuickPick(choices);
         if (!selected) {
             vscode.window.showInformationMessage(
-                'Aborted creation of new file',
+                localize(
+                    'cph.companion.aborted',
+                    'Aborted creation of new file',
+                ),
             );
             return;
         }
@@ -248,7 +267,11 @@ const handleNewProblem = async (problem: Problem) => {
                 const templateExists = existsSync(templateLocation);
                 if (!templateExists) {
                     vscode.window.showErrorMessage(
-                        `Template file does not exist: ${templateLocation}`,
+                        localize(
+                            'cph.companion.templateMissing',
+                            'Template file does not exist: {0}',
+                            templateLocation,
+                        ),
                     );
                 } else {
                     let templateContents =

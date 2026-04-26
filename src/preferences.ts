@@ -4,6 +4,7 @@ import config from './config';
 import path from 'path';
 import fs from 'fs';
 import * as vscode from 'vscode';
+import localize from './i18n';
 
 const getPreference = (section: prefSection): any => {
     const ret = workspace.getConfiguration('cph').get(section);
@@ -28,7 +29,11 @@ export const getSaveLocationPref = (): string => {
     const validSaveLocation = pref == '' || fs.existsSync(pref);
     if (!validSaveLocation) {
         vscode.window.showErrorMessage(
-            `Invalid save location, reverting to default. path not exists: ${pref}`,
+            localize(
+                'cph.preferences.invalidSaveLocation',
+                'Invalid save location, reverting to default. path not exists: {0}',
+                pref,
+            ),
         );
         updatePreference(
             'general.saveLocation',

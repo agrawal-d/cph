@@ -15,6 +15,7 @@ import {
     getDefaultOnlineJudge,
 } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
+import { translations } from './translations';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -255,8 +256,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             ? globalThis.remoteMessage.trim()
             : ' ';
 
+        const locale = vscode.env.language;
+        const translation = translations[locale] || translations['en'];
+
         const html = `
-            <!DOCTYPE html lang="EN">
+            <!DOCTYPE html>
             <html>
                 <head>
                     <link rel="stylesheet" href="${styleUri}" />
@@ -279,6 +283,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         window.generatedJsonUri = '${generatedJsonUri}';
                         window.remoteServerAddress = '${remoteServerAddress}';
                         window.showLiveUserCount = ${showLiveUserCount};
+                        window.translations = ${JSON.stringify(translation)};
 
                         document.addEventListener(
                             'DOMContentLoaded',

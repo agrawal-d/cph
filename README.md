@@ -54,6 +54,18 @@ enter testcases.
 -   Ruby
 -   Java
 -   JavaScript (Node.js)
+-   Cangjie
+
+Interested in adding support for another language? Check out the
+[developer guide](docs/dev-guide.md#adding-support-for-a-new-language).
+
+## Supported Display Languages
+
+-   English
+-   Chinese (Simplified)
+
+Interested in adding a new translation? See the
+[translation guide](docs/dev-guide.md#adding-a-new-translation).
 
 ## Contributing
 
