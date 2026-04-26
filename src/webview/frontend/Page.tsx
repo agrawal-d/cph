@@ -17,6 +17,7 @@ export default function Page(props: {
     return (
         <div className="page selectable">
             <a
+                role="button"
                 className="right"
                 title={t('close')}
                 onClick={() => props.closePage()}
