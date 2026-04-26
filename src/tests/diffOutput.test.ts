@@ -67,7 +67,14 @@ describe('diffOutput — token-level LCS diff', () => {
         const r = diffOutput('0 2 3 6 1 5', '0 2 3 9 6 1 5 10 15');
         const extras = r.tokenDiff.filter((t) => t.status === 'extra');
         // Whitespaces are now tokens too. Depending on LCS path, it might be [' ', '9', ...] or ['9', ' ', ...]
-        expect(extras.map((t) => t.token)).toEqual([' ', '9', ' ', '10', ' ', '15']);
+        expect(extras.map((t) => t.token)).toEqual([
+            ' ',
+            '9',
+            ' ',
+            '10',
+            ' ',
+            '15',
+        ]);
     });
 
     it('matching tokens are marked match', () => {
@@ -98,7 +105,9 @@ describe('diffOutput — token-level LCS diff', () => {
         const r = diffOutput('1\n2\n3', '1\n2\n4');
         const tokens = r.tokenDiff.map((t) => t.token);
         expect(tokens).toContain('\n');
-        expect(r.tokenDiff.find((t) => t.status === 'missing')?.token).toBe('3');
+        expect(r.tokenDiff.find((t) => t.status === 'missing')?.token).toBe(
+            '3',
+        );
         expect(r.tokenDiff.find((t) => t.status === 'extra')?.token).toBe('4');
     });
 
