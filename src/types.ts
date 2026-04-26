@@ -281,6 +281,8 @@ export type CphSubmitResponse = {
 
 export type WebViewpersistenceState = {
     dialogCloseDate: number;
+    feedbackDialogCloseDate?: number;
+    hasSeenFeedbackTooltip?: boolean;
 };
 
 declare global {

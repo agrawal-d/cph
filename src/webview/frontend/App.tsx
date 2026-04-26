@@ -12,6 +12,7 @@ import {
 } from '../../types';
 import CaseView from './CaseView';
 import Page from './Page';
+import { Feedback } from './Feedback';
 
 let storedLogs = '';
 let notificationTimeout: NodeJS.Timeout | undefined = undefined;
@@ -128,12 +129,42 @@ function Judge(props: {
             const vscodeState = vscodeApi.getState();
             const ret = {
                 dialogCloseDate: vscodeState?.dialogCloseDate || Date.now(),
+                feedbackDialogCloseDate:
+                    vscodeState?.feedbackDialogCloseDate || Date.now(),
+                hasSeenFeedbackTooltip:
+                    vscodeState?.hasSeenFeedbackTooltip || false,
             };
             vscodeApi.setState(ret);
             console.log('Restored to state:', ret);
             return ret;
         },
     );
+
+    const [feedbackPageVisible, setFeedbackPageVisible] = useState(false);
+    const [editableStateText, setEditableStateText] = useState(
+        JSON.stringify(webviewState, null, 2),
+    );
+    const [showFeedbackTooltip, setShowFeedbackTooltip] = useState(
+        !webviewState.hasSeenFeedbackTooltip,
+    );
+
+    useEffect(() => {
+        if (showFeedbackTooltip) {
+            const timer = setTimeout(() => {
+                setShowFeedbackTooltip(false);
+                updateWebviewState({
+                    ...webviewState,
+                    hasSeenFeedbackTooltip: true,
+                });
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [showFeedbackTooltip]);
+
+    const updateWebviewState = (newState: WebViewpersistenceState) => {
+        setWebviewState(newState);
+        vscodeApi.setState(newState);
+    };
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -150,8 +181,7 @@ function Judge(props: {
             ...webviewState,
             dialogCloseDate: Date.now(),
         };
-        setWebviewState(newState);
-        vscodeApi.setState(newState);
+        updateWebviewState(newState);
     };
 
     const sendMessageToVSCode = (message: WebviewToVSEvent) => {
@@ -467,7 +497,18 @@ function Judge(props: {
         sendMessageToVSCode({
             command: 'get-ext-logs',
         });
+        setEditableStateText(JSON.stringify(webviewState, null, 2));
         setInfoPageVisible(true);
+    };
+
+    const saveDebugState = () => {
+        try {
+            const newState = JSON.parse(editableStateText);
+            updateWebviewState(newState);
+            setNotification('State saved');
+        } catch (e) {
+            setNotification('Invalid JSON');
+        }
     };
 
     const renderDonateButton = () => {
@@ -480,7 +521,7 @@ function Judge(props: {
         return (
             <div className="donate-box">
                 <a
-                    href="javascript:void(0)"
+                    role="button"
                     className="right"
                     title={t('close')}
                     onClick={() => closeDonateBox()}
@@ -559,6 +600,35 @@ function Judge(props: {
                 <h3>{t('extensionLogs')}</h3>
                 <pre className="selectable">{extLogs}</pre>
                 <hr />
+                <h3>Debug</h3>
+                <textarea
+                    className="selectable"
+                    value={editableStateText}
+                    onChange={(e) => setEditableStateText(e.target.value)}
+                    rows={10}
+                    style={{ height: '200px', fontSize: '12px' }}
+                />
+                <button className="btn btn-green" onClick={saveDebugState}>
+                    Save Changes
+                </button>
+                <button
+                    className="btn btn-red"
+                    onClick={() => {
+                        const defaultState = {
+                            dialogCloseDate: Date.now(),
+                            feedbackDialogCloseDate: Date.now(),
+                            hasSeenFeedbackTooltip: false,
+                        };
+                        updateWebviewState(defaultState);
+                        setEditableStateText(
+                            JSON.stringify(defaultState, null, 2),
+                        );
+                        setNotification('State cleared');
+                    }}
+                >
+                    Clear State
+                </button>
+                <hr />
                 <details>
                     <summary>
                         <b>{t('license')}</b>
@@ -607,6 +677,14 @@ function Judge(props: {
             {notification && <div className="notification">{notification}</div>}
             {renderDonateButton()}
             {renderInfoPage()}
+            <Feedback
+                webviewState={webviewState}
+                updateWebviewState={updateWebviewState}
+                t={t}
+                notify={notify}
+                feedbackPageVisible={feedbackPageVisible}
+                setFeedbackPageVisible={setFeedbackPageVisible}
+            />
             <div className="meta">
                 <span className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
@@ -669,10 +747,21 @@ function Judge(props: {
                         </a>
                     </small>
                     <small>
-                        <a href="https://rb.gy/vw82u5" className="btn">
-                            <i className="codicon codicon-feedback"></i>{' '}
-                            {t('feedback')}
-                        </a>
+                        <span style={{ position: 'relative' }}>
+                            {showFeedbackTooltip && (
+                                <div className="feedback-tooltip">
+                                    Share feedback in-app
+                                </div>
+                            )}
+                            <a
+                                role="button"
+                                className="btn"
+                                onClick={() => setFeedbackPageVisible(true)}
+                            >
+                                <i className="codicon codicon-feedback"></i>{' '}
+                                {t('feedback')}
+                            </a>
+                        </span>
                     </small>
                     <small>
                         <a
