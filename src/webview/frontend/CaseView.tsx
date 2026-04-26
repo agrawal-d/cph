@@ -309,8 +309,11 @@ function DiffView({
         return null;
     }
 
-    // Plain text version for clipboard
-    const plainText = diff.tokenDiff.map((t) => t.token).join(' ');
+    // Plain text version for clipboard (actual received output)
+    const plainText = diff.tokenDiff
+        .filter((t) => t.status !== 'missing')
+        .map((t) => t.token)
+        .join('');
 
     return (
         <div className="textarea-container">
@@ -326,7 +329,7 @@ function DiffView({
                 className="selectable received-textarea"
                 style={{
                     padding: '6px',
-                    lineHeight: '2',
+                    lineHeight: '1.5',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
                 }}
@@ -340,18 +343,20 @@ function DiffView({
 }
 
 function TokenChip({ token }: { token: TokenDiff }) {
+    if (token.token === '\n') {
+        return <br />;
+    }
+
     if (token.status === 'match') {
-        return <span style={{ marginRight: '4px' }}>{token.token}</span>;
+        return <span>{token.token}</span>;
     }
 
     if (token.status === 'extra') {
         return (
             <span
                 style={{
-                    marginRight: '4px',
                     backgroundColor:
-                        'var(--vscode-diffEditor-removedTextBackground)',
-                    textDecoration: 'line-through',
+                        'var(--vscode-diffEditor-insertedTextBackground)',
                     borderRadius: '3px',
                     padding: '1px 3px',
                 }}
@@ -365,9 +370,9 @@ function TokenChip({ token }: { token: TokenDiff }) {
     return (
         <span
             style={{
-                marginRight: '4px',
                 backgroundColor:
-                    'var(--vscode-diffEditor-insertedTextBackground)',
+                    'var(--vscode-diffEditor-removedTextBackground)',
+                textDecoration: 'line-through',
                 borderRadius: '3px',
                 padding: '1px 3px',
             }}
