@@ -42,8 +42,13 @@ interface CustomWindow extends Window {
     remoteServerAddress: string;
     showLiveUserCount: boolean;
     console: Console;
+    translations: Record<string, string>;
 }
 declare const window: CustomWindow;
+
+const t = (key: string): string => {
+    return window.translations[key] || key;
+};
 
 window.console.log = customLogger.bind(window.console, originalConsole.log);
 window.console.error = customLogger.bind(window.console, originalConsole.error);
@@ -262,7 +267,7 @@ function Judge(props: {
 
     // Stop running executions.
     const stop = () => {
-        notify('Stopped any running processes');
+        notify(t('stoppedProcesses'));
         sendMessageToVSCode({
             command: 'kill-running',
             problem,
@@ -420,7 +425,7 @@ function Judge(props: {
                     <span className="icon">
                         <i className="codicon codicon-cloud-upload"></i>
                     </span>{' '}
-                    Submit
+                    {t('submit')}
                 </button>
             );
         } else if (url.hostname == 'open.kattis.com') {
@@ -430,25 +435,16 @@ function Judge(props: {
                         <span className="icon">
                             <i className="codicon codicon-cloud-upload"></i>
                         </span>{' '}
-                        Submit on Kattis
+                        {t('submitOnKattis')}
                     </button>
                     {waitingForSubmit && (
                         <>
-                            <span className="loader"></span> Submitting...
+                            <span className="loader"></span> {t('submitting')}
                             <br />
                             <small>
-                                To submit to Kattis, you need to have the{' '}
-                                <a href="https://github.com/Kattis/kattis-cli/blob/main/submit.py">
-                                    submission client{' '}
-                                </a>
-                                and the{' '}
-                                <a href="https://open.kattis.com/download/kattisrc">
-                                    configuration file{' '}
-                                </a>
-                                downloaded in a folder called .kattis in your
-                                home directory.
+                                {t('kattisInstructions')}
                                 <br />
-                                Submission result will open in your browser.
+                                {t('kattisBrowserNote')}
                                 <br />
                                 <br />
                             </small>
@@ -486,23 +482,21 @@ function Judge(props: {
                 <a
                     href="javascript:void(0)"
                     className="right"
-                    title="Close dialog"
+                    title={t('close')}
                     onClick={() => closeDonateBox()}
                 >
                     <i className="codicon codicon-close"></i>
                 </a>
                 <h1>🌸</h1>
-                <h3>If you find CPH useful, please consider supporting.</h3>
-                <p>
-                    Your contribution helps support continued development of
-                    CPH. CPH is free and open source, thanks to your support.
-                </p>
+                <h3>{t('supportCPH')}</h3>
+                <p>{t('supportDescription')}</p>
                 <a
                     href={payPalUrl}
                     className="btn btn-pink"
-                    title="Open donation page"
+                    title={t('donate')}
                 >
-                    <i className="codicon codicon-heart-filled"></i> Donate
+                    <i className="codicon codicon-heart-filled"></i>{' '}
+                    {t('donate')}
                 </a>
             </div>
         );
@@ -516,8 +510,8 @@ function Judge(props: {
         if (generatedJson === null) {
             return (
                 <Page
-                    content="Loading..."
-                    title="About CPH"
+                    content={t('loading')}
+                    title={t('aboutCPH')}
                     closePage={() => setInfoPageVisible(false)}
                 />
             );
@@ -525,50 +519,49 @@ function Judge(props: {
         const logs = storedLogs;
         const contents = (
             <div>
-                A VS Code extension to make competitive programming easier,
-                created by Divyanshu Agrawal
+                {t('cphDescription')}
                 <hr />
-                <h3>🤖 Enable AI compilation</h3>
-                Get 100x faster compilation using AI, please opt-in below. Your
-                data will be used to train cats to write JavaScript.
+                <h3>{t('aiCompilation')}</h3>
+                {t('aiDescription')}
                 <br />
                 <br />
                 <button
                     className="btn btn-green"
                     onClick={(e) => {
                         const target = e.target as HTMLButtonElement;
-                        target.innerText = '🪄 AI training ...';
+                        target.innerText = t('enable');
                     }}
                 >
-                    Enable
+                    {t('enable')}
                 </button>
                 <hr />
-                <h3>Get Help</h3>
+                <h3>{t('getHelp')}</h3>
                 <a
                     className="btn"
                     href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
                 >
-                    User guide
+                    {t('userGuide')}
                 </a>
                 <hr />
-                <h3>Commit</h3>
+                <h3>{t('commit')}</h3>
                 <pre className="selectable">{generatedJson.gitCommitHash}</pre>
                 <hr />
-                <h3>Build Time</h3>
+                <h3>{t('buildTime')}</h3>
                 {generatedJson.dateTime}
                 <hr />
-                <h3>Live user count</h3>
-                {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'} online.
+                <h3>{t('liveUserCount')}</h3>
+                {liveUserCount} {liveUserCount === 1 ? t('user') : t('users')}{' '}
+                {t('online')}.
                 <hr />
-                <h3>UI Logs</h3>
+                <h3>{t('uiLogs')}</h3>
                 <pre className="selectable">{logs}</pre>
                 <hr />
-                <h3>Extension Logs</h3>
+                <h3>{t('extensionLogs')}</h3>
                 <pre className="selectable">{extLogs}</pre>
                 <hr />
                 <details>
                     <summary>
-                        <b>License</b>
+                        <b>{t('license')}</b>
                     </summary>
                     <pre className="selectable">
                         {generatedJson.licenseString}
@@ -580,7 +573,7 @@ function Judge(props: {
         return (
             <Page
                 content={contents}
-                title="About CPH"
+                title={t('aboutCPH')}
                 closePage={() => setInfoPageVisible(false)}
             />
         );
@@ -598,14 +591,10 @@ function Judge(props: {
             return (
                 <div className="timeout-av-suggestion">
                     <h5>
-                        <i className="codicon codicon-bug"></i> Getting SIGTERM
-                        due to antivirus?
+                        <i className="codicon codicon-bug"></i>{' '}
+                        {t('antivirusTitle')}
                     </h5>
-                    <p>
-                        If you are getting SIGTERM or Timed Out, your antivirus
-                        may be the problem. Try disabling it or adding the
-                        current folder to whitelist.
-                    </p>
+                    <p>{t('antivirusDescription')}</p>
                 </div>
             );
         } else {
@@ -622,7 +611,7 @@ function Judge(props: {
                 <span className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
                     {compiling && (
-                        <b className="compiling" title="Compiling">
+                        <b className="compiling" title={t('compiling')}>
                             <span className="loader"></span>
                         </b>
                     )}
@@ -636,7 +625,7 @@ function Judge(props: {
                               : ''
                     }`}
                 >
-                    {numPassed} / {total} passed{' '}
+                    {numPassed} / {total} {t('passedRate')}{' '}
                 </span>
             </div>
             <div className="results">{views}</div>
@@ -645,12 +634,12 @@ function Judge(props: {
                     <button
                         className="btn btn-green"
                         onClick={newCase}
-                        title="Create a new empty testcase"
+                        title={t('newTestcase')}
                     >
                         <span className="icon">
                             <i className="codicon codicon-add"></i>
                         </span>{' '}
-                        New Testcase
+                        {t('newTestcase')}
                     </button>
                     {renderSubmitButton()}
                 </div>
@@ -662,7 +651,7 @@ function Judge(props: {
                         }`}
                     >
                         {onlineJudgeEnv ? '☑' : '☐'}{' '}
-                        <span className="oj-code">Set ONLINE_JUDGE</span>
+                        <span className="oj-code">{t('setOnlineJudge')}</span>
                     </span>
                     {renderTimeoutAVSuggestion()}
                 </div>
@@ -673,16 +662,16 @@ function Judge(props: {
                         <a
                             href={payPalUrl}
                             className="btn btn-pink"
-                            title="Donate"
+                            title={t('donate')}
                         >
                             <i className="codicon codicon-heart-filled"></i>{' '}
-                            Support
+                            {t('support')}
                         </a>
                     </small>
                     <small>
                         <a href="https://rb.gy/vw82u5" className="btn">
                             <i className="codicon codicon-feedback"></i>{' '}
-                            Feedback
+                            {t('feedback')}
                         </a>
                     </small>
                     <small>
@@ -690,7 +679,8 @@ function Judge(props: {
                             href="https://github.com/agrawal-d/cph/issues"
                             className="btn btn-black"
                         >
-                            <i className="codicon codicon-github"></i> Bugs
+                            <i className="codicon codicon-github"></i>{' '}
+                            {t('bugs')}
                         </a>
                     </small>
                 </div>
@@ -704,8 +694,9 @@ function Judge(props: {
                 {window.showLiveUserCount && liveUserCount > 0 && (
                     <div className="liveUserCount">
                         <i className="codicon codicon-circle-filled color-green"></i>{' '}
-                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
-                        online.
+                        {liveUserCount}{' '}
+                        {liveUserCount === 1 ? t('user') : t('users')}{' '}
+                        {t('online')}.
                     </div>
                 )}
             </div>
@@ -714,38 +705,38 @@ function Judge(props: {
                     <button
                         className="btn"
                         onClick={runAll}
-                        title="Run all testcases again"
+                        title={t('runAll')}
                     >
                         <span className="icon">
                             <i className="codicon codicon-run-above"></i>
                         </span>{' '}
-                        <span className="action-text">Run All</span>
+                        <span className="action-text">{t('runAll')}</span>
                     </button>
                     <button
                         className="btn btn-green"
                         onClick={newCase}
-                        title="Create a new empty testcase"
+                        title={t('newTestcase')}
                     >
                         <span className="icon">
                             <i className="codicon codicon-add"></i>
                         </span>{' '}
-                        <span className="action-text">New</span>
+                        <span className="action-text">{t('new')}</span>
                     </button>
                 </div>
                 <div className="row">
                     <button
                         className="btn btn-orange"
                         onClick={stop}
-                        title="Kill all running testcases"
+                        title={t('stop')}
                     >
                         <span className="icon">
                             <i className="codicon codicon-circle-slash"></i>
                         </span>{' '}
-                        <span className="action-text">Stop</span>
+                        <span className="action-text">{t('stop')}</span>
                     </button>
                     <button
                         className="btn"
-                        title="Info"
+                        title={t('aboutCPH')}
                         onClick={() => showInfoPage()}
                     >
                         <span className="icon">
@@ -756,31 +747,25 @@ function Judge(props: {
                     <button
                         className="btn btn-red right"
                         onClick={deleteTcs}
-                        title="Delete all testcases and close results window"
+                        title={t('delete')}
                     >
                         <span className="icon">
                             <i className="codicon codicon-trash"></i>
                         </span>{' '}
-                        <span className="action-text">Delete</span>
+                        <span className="action-text">{t('delete')}</span>
                     </button>
                 </div>
             </div>
 
             {waitingForSubmit && (
                 <div className="margin-10">
-                    <span className="loader"></span> Waiting for extension ...
+                    <span className="loader"></span> {t('waitingForExtension')}
                     <br />
                     <small>
-                        To submit to codeforces, you need to have the{' '}
-                        <a href="https://github.com/agrawal-d/cph-submit">
-                            cph-submit browser extension{' '}
-                        </a>
-                        installed, and a browser window open. You can change
-                        language ID from VS Code settings.
+                        {t('codeforcesInstructions')}
                         <br />
                         <br />
-                        Hint: You can also press <kbd>Ctrl+Alt+S</kbd> to
-                        submit.
+                        {t('submitHint')}
                     </small>
                 </div>
             )}
@@ -887,16 +872,13 @@ function App() {
             <>
                 <div className={`ui p10 fallback`}>
                     <div className="text-center">
-                        <p>
-                            This document does not have a CPH problem associated
-                            with it.
-                        </p>
+                        <p>{t('noProblemAssociated')}</p>
                         <br />
                         <div className="btn btn-block" onClick={createProblem}>
                             <span className="icon">
                                 <i className="codicon codicon-add"></i>
                             </span>{' '}
-                            Create Problem
+                            {t('createProblem')}
                         </div>
                         <a
                             className="btn btn-block btn-green"
@@ -905,7 +887,7 @@ function App() {
                             <span className="icon">
                                 <i className="codicon codicon-question"></i>
                             </span>{' '}
-                            How to use this extension
+                            {t('howToUse')}
                         </a>
                     </div>
                 </div>
@@ -923,7 +905,7 @@ function App() {
     } else {
         return (
             <>
-                <div className="text-center">Loading...</div>
+                <div className="text-center">{t('loading')}</div>
             </>
         );
     }

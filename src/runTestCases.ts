@@ -7,6 +7,7 @@ import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import { getJudgeViewProvider } from './extension';
 import telmetry from './telmetry';
+import localize from './i18n';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -60,7 +61,11 @@ const createLocalProblem = async (editor: vscode.TextEditor) => {
     }
 
     const newProblem: Problem = {
-        name: 'Local: ' + path.basename(srcPath).split('.')[0],
+        name: localize(
+            'cph.runTestCases.localPrefix',
+            'Local: {0}',
+            path.basename(srcPath).split('.')[0],
+        ),
         url: srcPath,
         tests: [
             {

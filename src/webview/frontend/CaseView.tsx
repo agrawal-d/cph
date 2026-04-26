@@ -7,6 +7,15 @@ const converter = new AnsiToHtml(); // Create a converter instance
 
 import React from 'react';
 
+interface CustomWindow extends Window {
+    translations: Record<string, string>;
+}
+declare const window: CustomWindow;
+
+const t = (key: string): string => {
+    return window.translations[key] || key;
+};
+
 export default function CaseView(props: {
     num: number;
     case: Case;
@@ -72,7 +81,7 @@ export default function CaseView(props: {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
-        props.notify('Copied to clipboard');
+        props.notify(t('copiedToClipboard'));
     };
 
     useEffect(() => {
@@ -109,14 +118,18 @@ export default function CaseView(props: {
         resultText = result.stdout || ' ';
     }
     if (!result) {
-        resultText = 'Run to show output';
+        resultText = t('runToShowOutput');
     }
     if (running) {
         resultText = '...';
     }
-    const passFailText = result ? (result.pass ? 'passed' : 'failed') : '';
+    const passFailText = result
+        ? result.pass
+            ? t('passed')
+            : t('failed')
+        : '';
     const caseClassName = 'case ' + (running ? 'running' : passFailText);
-    const timeText = result?.timeOut ? 'Timed Out' : result?.time + 'ms';
+    const timeText = result?.timeOut ? t('timedOut') : result?.time + 'ms';
 
     return (
         <div className={caseClassName}>
@@ -124,14 +137,14 @@ export default function CaseView(props: {
                 <div className="toggle-minimize" onClick={toggle}>
                     <span className="case-number case-title">
                         {minimized && (
-                            <span onClick={expand} title="Expand">
+                            <span onClick={expand} title={t('expand')}>
                                 <span className="icon">
                                     <i className="codicon codicon-chevron-down"></i>
                                 </span>
                             </span>
                         )}
                         {!minimized && (
-                            <span onClick={minimize} title="Minimize">
+                            <span onClick={minimize} title={t('minimize')}>
                                 <span className="icon">
                                     <i className="codicon codicon-chevron-up"></i>
                                 </span>
@@ -139,7 +152,9 @@ export default function CaseView(props: {
                         )}
                         &nbsp;TC {props.num}
                     </span>
-                    {running && <span className="running-text">Running</span>}
+                    {running && (
+                        <span className="running-text">{t('running')}</span>
+                    )}
                     {result && !running && (
                         <>
                             <span className="result-data">
@@ -151,7 +166,7 @@ export default function CaseView(props: {
                                     }
                                 >
                                     &nbsp; &nbsp;
-                                    {result.pass ? 'Passed' : 'Failed'}
+                                    {result.pass ? t('Passed') : t('Failed')}
                                 </span>
                             </span>
                             <span className="exec-time">{timeText}</span>
@@ -161,7 +176,7 @@ export default function CaseView(props: {
                 <div className="time">
                     <button
                         className="btn btn-green"
-                        title="Run Again"
+                        title={t('runAgain')}
                         onClick={rerun}
                         disabled={running}
                     >
@@ -171,7 +186,7 @@ export default function CaseView(props: {
                     </button>
                     <button
                         className="btn btn-red"
-                        title="Delete Testcase"
+                        title={t('deleteTestcase')}
                         onClick={() => {
                             props.remove(id);
                         }}
@@ -185,15 +200,15 @@ export default function CaseView(props: {
             {!minimized && (
                 <>
                     <div className="textarea-container">
-                        Input:
+                        {t('inputLabel')}
                         <div
                             className="clipboard"
                             onClick={() => {
                                 copyToClipboard(input);
                             }}
-                            title="Copy to clipboard"
+                            title={t('copiedToClipboard')}
                         >
-                            Copy
+                            {t('copy')}
                         </div>
                         <TextareaAutosize
                             className="selectable input-textarea"
@@ -204,15 +219,15 @@ export default function CaseView(props: {
                         />
                     </div>
                     <div className="textarea-container">
-                        Expected Output:
+                        {t('expectedOutputLabel')}
                         <div
                             className="clipboard"
                             onClick={() => {
                                 copyToClipboard(output);
                             }}
-                            title="Copy to clipboard"
+                            title={t('copiedToClipboard')}
                         >
-                            Copy
+                            {t('copy')}
                         </div>
                         <TextareaAutosize
                             className="selectable expected-textarea"
@@ -222,25 +237,25 @@ export default function CaseView(props: {
                     </div>
                     {props.case.result != null && (
                         <div className="textarea-container">
-                            Received Output:
+                            {t('receivedOutputLabel')}
                             <div
                                 className="clipboard"
                                 onClick={() => {
                                     copyToClipboard(resultText);
                                 }}
-                                title="Copy to clipboard"
+                                title={t('copiedToClipboard')}
                             >
-                                Copy
+                                {t('copy')}
                             </div>
                             <div
                                 className="expectedoutput"
                                 onClick={() => {
                                     setOutput(resultText);
-                                    props.notify('Set As Expected Output');
+                                    props.notify(t('setAsExpectedOutput'));
                                 }}
-                                title="Set As Expected Output"
+                                title={t('setAsExpectedOutput')}
                             >
-                                Set
+                                {t('set')}
                             </div>
                             <>
                                 <TextareaAutosize
@@ -259,7 +274,7 @@ export default function CaseView(props: {
                     )}
                     {stderror && stderror.length > 0 && (
                         <div style={{ userSelect: 'text' }}>
-                            Standard Error:
+                            {t('standardError')}
                             <div
                                 className="selectable stderror-textarea"
                                 style={{
@@ -299,13 +314,13 @@ function DiffView({
 
     return (
         <div className="textarea-container">
-            Output Difference:
+            {t('outputDifference')}
             <div
                 className="clipboard"
                 onClick={() => copyToClipboard(plainText)}
-                title="Copy to clipboard"
+                title={t('copiedToClipboard')}
             >
-                Copy
+                {t('copy')}
             </div>
             <div
                 className="selectable received-textarea"

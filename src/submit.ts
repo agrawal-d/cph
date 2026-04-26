@@ -4,13 +4,17 @@ import { storeSubmitProblem, submitKattisProblem } from './companion';
 import { getJudgeViewProvider } from './extension';
 import { isCodeforcesUrl } from './utils';
 import telmetry from './telmetry';
+import localize from './i18n';
 
 export const submitToKattis = async () => {
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
     const srcPath = vscode.window.activeTextEditor?.document.fileName;
     if (!srcPath) {
         vscode.window.showErrorMessage(
-            'Active editor is not supported for submission',
+            localize(
+                'cph.submit.notSupported',
+                'Active editor is not supported for submission',
+            ),
         );
         return;
     }
@@ -22,7 +26,9 @@ export const submitToKattis = async () => {
     const problem = getProblem(srcPath);
 
     if (!problem) {
-        vscode.window.showErrorMessage('Failed to parse current code.');
+        vscode.window.showErrorMessage(
+            localize('cph.submit.parseFailed', 'Failed to parse current code.'),
+        );
         return;
     }
 
@@ -31,12 +37,16 @@ export const submitToKattis = async () => {
         url = new URL(problem.url);
     } catch (err) {
         globalThis.logger.error(err);
-        vscode.window.showErrorMessage('Not a kattis problem.');
+        vscode.window.showErrorMessage(
+            localize('cph.submit.notKattis', 'Not a kattis problem.'),
+        );
         return;
     }
 
     if (url.hostname !== 'open.kattis.com') {
-        vscode.window.showErrorMessage('Not a kattis problem.');
+        vscode.window.showErrorMessage(
+            localize('cph.submit.notKattis', 'Not a kattis problem.'),
+        );
         return;
     }
 
@@ -51,7 +61,10 @@ export const submitToCodeForces = async () => {
 
     if (!srcPath) {
         vscode.window.showErrorMessage(
-            'Active editor is not supported for submission',
+            localize(
+                'cph.submit.notSupported',
+                'Active editor is not supported for submission',
+            ),
         );
         return;
     }
@@ -63,7 +76,9 @@ export const submitToCodeForces = async () => {
     const problem = getProblem(srcPath);
 
     if (!problem) {
-        vscode.window.showErrorMessage('Failed to parse current code.');
+        vscode.window.showErrorMessage(
+            localize('cph.submit.parseFailed', 'Failed to parse current code.'),
+        );
         return;
     }
 
@@ -72,12 +87,16 @@ export const submitToCodeForces = async () => {
         url = new URL(problem.url);
     } catch (err) {
         globalThis.logger.error(err);
-        vscode.window.showErrorMessage('Not a codeforces problem.');
+        vscode.window.showErrorMessage(
+            localize('cph.submit.notCodeforces', 'Not a codeforces problem.'),
+        );
         return;
     }
 
     if (!isCodeforcesUrl(url)) {
-        vscode.window.showErrorMessage('Not a codeforces problem.');
+        vscode.window.showErrorMessage(
+            localize('cph.submit.notCodeforces', 'Not a codeforces problem.'),
+        );
         return;
     }
 
