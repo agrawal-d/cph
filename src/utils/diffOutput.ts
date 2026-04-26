@@ -12,8 +12,8 @@ function tokenize(raw: string): string[] {
     return raw
         .replace(/\r\n/g, '\n')
         .trim()
-        .split(/\s+/)
-        .filter((t) => t.length > 0);
+        .split(/(\n|[ \t]+)/)
+        .filter((t) => t !== undefined && t.length > 0);
 }
 
 /**

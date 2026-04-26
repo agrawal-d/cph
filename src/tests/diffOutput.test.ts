@@ -66,7 +66,8 @@ describe('diffOutput — token-level LCS diff', () => {
     it('extra tokens in received are marked extra', () => {
         const r = diffOutput('0 2 3 6 1 5', '0 2 3 9 6 1 5 10 15');
         const extras = r.tokenDiff.filter((t) => t.status === 'extra');
-        expect(extras.map((t) => t.token)).toEqual(['9', '10', '15']);
+        // Whitespaces are now tokens too. Depending on LCS path, it might be [' ', '9', ...] or ['9', ' ', ...]
+        expect(extras.map((t) => t.token)).toEqual([' ', '9', ' ', '10', ' ', '15']);
     });
 
     it('matching tokens are marked match', () => {
@@ -74,10 +75,15 @@ describe('diffOutput — token-level LCS diff', () => {
         const matches = r.tokenDiff.filter((t) => t.status === 'match');
         expect(matches.map((t) => t.token)).toEqual([
             '0',
+            ' ',
             '2',
+            ' ',
             '3',
+            ' ', // This space matched the space after 3 in Exp
             '6',
+            ' ',
             '1',
+            ' ',
             '5',
         ]);
     });
@@ -85,16 +91,15 @@ describe('diffOutput — token-level LCS diff', () => {
     it('missing tokens are marked missing', () => {
         const r = diffOutput('1 2 3 4', '1 2 3');
         const missing = r.tokenDiff.filter((t) => t.status === 'missing');
-        expect(missing.map((t) => t.token)).toEqual(['4']);
+        expect(missing.map((t) => t.token)).toEqual([' ', '4']);
     });
 
-    it('tokens across multiple lines are flattened — swapped token produces missing + extra', () => {
-        // '3' is in expected but not received → missing; '4' is in received but not expected → extra
+    it('tokens across multiple lines are preserved', () => {
         const r = diffOutput('1\n2\n3', '1\n2\n4');
-        const changed = r.tokenDiff.filter((t) => t.status !== 'match');
-        expect(changed).toHaveLength(2);
-        expect(changed.find((t) => t.status === 'missing')?.token).toBe('3');
-        expect(changed.find((t) => t.status === 'extra')?.token).toBe('4');
+        const tokens = r.tokenDiff.map((t) => t.token);
+        expect(tokens).toContain('\n');
+        expect(r.tokenDiff.find((t) => t.status === 'missing')?.token).toBe('3');
+        expect(r.tokenDiff.find((t) => t.status === 'extra')?.token).toBe('4');
     });
 
     it('completely correct output has all match tokens', () => {
