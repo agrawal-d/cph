@@ -122,7 +122,7 @@ Several options are available to customize the extension. Open VS Code settings
     -   $name$ - problem name
     -   $url$ - problem url
 -   For a full list, turn on debug mode in the Competitive Companion extension
-    preferences (right click on extension>manage extension>preferences) and use
+    preferences (Right Click on Extension>Manage extension>Preferences) and use
     the JSON keys shown in the console after activating it
     ![Variables](img/variableReplacementSettings.png)
     ![Variables](img/companionSettings.png) ![Variables](img/console.png)
