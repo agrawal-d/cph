@@ -4,6 +4,7 @@ import config from './config';
 import path from 'path';
 import fs from 'fs';
 import * as vscode from 'vscode';
+import localize from './i18n';
 
 const getPreference = (section: prefSection): any => {
     const ret = workspace.getConfiguration('cph').get(section);
@@ -28,7 +29,11 @@ export const getSaveLocationPref = (): string => {
     const validSaveLocation = pref == '' || fs.existsSync(pref);
     if (!validSaveLocation) {
         vscode.window.showErrorMessage(
-            `Invalid save location, reverting to default. path not exists: ${pref}`,
+            localize(
+                'cph.preferences.invalidSaveLocation',
+                'Invalid save location, reverting to default. path not exists: {0}',
+                pref,
+            ),
         );
         updatePreference(
             'general.saveLocation',
@@ -42,6 +47,9 @@ export const getSaveLocationPref = (): string => {
 
 export const getHideStderrorWhenCompiledOK = (): boolean =>
     getPreference('general.hideStderrorWhenCompiledOK');
+
+export const getDefaultOnlineJudge = (): boolean =>
+    getPreference('general.defaultOnlineJudge');
 
 export const getIgnoreSTDERRORPref = (): string =>
     getPreference('general.ignoreSTDERROR');
@@ -87,6 +95,9 @@ export const getGoArgsPref = (): string[] =>
 
 export const getCSharpArgsPref = (): string[] =>
     getPreference('language.csharp.Args').split(' ') || [];
+
+export const getCangejieArgsPref = (): string[] =>
+    getPreference('language.cangjie.Args').split(' ') || [];
 
 export const getRemoteServerAddressPref = (): string =>
     getPreference('general.remoteServerAddress') || '';
@@ -148,6 +159,8 @@ export const getHaskellCommand = (): string =>
     getPreference('language.haskell.Command') || 'ghc';
 export const getCSharpCommand = (): string =>
     getPreference('language.csharp.Command') || 'dotnet';
+export const getCangjieCommand = (): string =>
+    getPreference('language.cangjie.Command') || 'cangjie-compiler';
 
 export const getMenuChoices = (): string[] =>
     getPreference('general.menuChoices').split(' ');
@@ -208,6 +221,11 @@ export const getLanguageId = (srcPath: string): number => {
             compiler = getPreference('language.csharp.SubmissionCompiler');
             break;
         }
+
+        // case '.cj': {
+        //     compiler = getPreference('language.cangjie.SubmissionCompiler');
+        //     break;
+        // }
     }
     if (compiler == null) return -1;
     for (const [_compiler, id] of Object.entries(config.compilerToId)) {

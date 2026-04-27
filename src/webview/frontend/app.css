@@ -227,6 +227,34 @@ textarea:active {
     background-color: rgba(50, 50, 50, 0.3);
 }
 
+.feedback-tooltip {
+    position: absolute;
+    background: #3393cc;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    margin-bottom: 8px;
+    pointer-events: none;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.feedback-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #3393cc transparent transparent transparent;
+}
+
 .time {
     color: rgb(185, 185, 84);
 }

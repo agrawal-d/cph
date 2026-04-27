@@ -24,7 +24,7 @@
             "activitybar": [
                 {
                     "id": "cph-judge-view-container",
-                    "title": "CPH Judge",
+                    "title": "%cph.judgeViewContainer.title%",
                     "icon": "dist/static/panel-view-icon.svg"
                 }
             ]
@@ -34,19 +34,19 @@
                 {
                     "type": "webview",
                     "id": "cph.judgeView",
-                    "name": "Results"
+                    "name": "%cph.judgeView.name%"
                 }
             ]
         },
         "commands": [
             {
                 "command": "cph.runTestCases",
-                "title": "Run Testcases",
+                "title": "%cph.runTestCases.title%",
                 "icon": "dist/static/play.png"
             },
             {
                 "command": "cph.submitToCodeForces",
-                "title": "Submit to CodeForces",
+                "title": "%cph.submitToCodeForces.title%",
                 "icon": "dist/static/play.png"
             }
         ],
@@ -65,33 +65,38 @@
             }
         ],
         "configuration": {
-            "title": "Competitive Programming Helper",
+            "title": "%cph.configuration.title%",
             "properties": {
                 "cph.general.saveLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "Location where generated .tcs and .bin files will be saved. Leave empty to save the file in the source file directory. Use this to clean up your folders."
+                    "description": "%cph.general.saveLocation.description%"
                 },
                 "cph.general.timeOut": {
                     "type": "number",
                     "default": 3000,
-                    "description": "The time in ms for which a testcase is run before it is killed ( timed-out )."
+                    "description": "%cph.general.timeOut.description%"
                 },
                 "cph.general.hideStderrorWhenCompiledOK": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Ignore and don't show stderror when compilation exit code is zero."
+                    "description": "%cph.general.hideStderrorWhenCompiledOK.description%"
                 },
                 "cph.general.ignoreSTDERROR": {
                     "type": "boolean",
                     "default": false,
-                    "description": "If enabled, non-empty standard error will not result in testcase failing."
+                    "description": "%cph.general.ignoreSTDERROR.description%"
+                },
+                "cph.general.defaultOnlineJudge": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "%cph.general.defaultOnlineJudge.description%"
                 },
                 "cph.language.c.Args": {
-                    "title": "Compilation flags for .c files",
+                    "title": "%cph.language.c.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to gcc ( for C ) while compiling your file. Example '-O2 -Wall'"
+                    "description": "%cph.language.c.Args.description%"
                 },
                 "cph.language.c.SubmissionCompiler": {
                     "type": "string",
@@ -99,12 +104,12 @@
                     "enum": [
                         "GNU GCC C11 5.1.0"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for c"
+                    "description": "%cph.language.c.SubmissionCompiler.description%"
                 },
                 "cph.language.c.Command": {
                     "type": "string",
                     "default": "gcc",
-                    "description": "Command used to compile .c files. Example 'gcc', 'gcc-10', 'clang', 'msvc', etc."
+                    "description": "%cph.language.c.Command.description%"
                 },
                 "cph.language.c.OutputArg": {
                     "type": "string",
@@ -113,17 +118,16 @@
                         "-o",
                         "/Fe:"
                     ],
-                    "description": "C compiler's argument that specifies the output files."
+                    "description": "%cph.language.c.OutputArg.description%"
                 },
                 "cph.language.cpp.Args": {
-                    "title": "Compilation flags for .cpp files",
+                    "title": "%cph.language.cpp.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to g++ ( for C++ ) while compiling your file. Example '-Wmaybe-uninitialized -std=c++14'"
+                    "description": "%cph.language.cpp.Args.description%"
                 },
                 "cph.language.cpp.SubmissionCompiler": {
                     "type": "string",
-                    "title": "check12344566",
                     "default": "GNU G++23 14.2 (64 bit, msys2)",
                     "enum": [
                         "GNU G++17 7.3.0",
@@ -136,12 +140,12 @@
                         "Microsoft Visual C++ 2010",
                         "Clang++17 Diagnostics"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for cpp"
+                    "description": "%cph.language.cpp.SubmissionCompiler.description%"
                 },
                 "cph.language.cpp.Command": {
                     "type": "string",
                     "default": "g++",
-                    "description": "Command used to compile .cpp files. Example 'g++', 'g++-10', 'clang++', etc."
+                    "description": "%cph.language.cpp.Command.description%"
                 },
                 "cph.language.cpp.OutputArg": {
                     "type": "string",
@@ -150,13 +154,13 @@
                         "-o",
                         "/Fe:"
                     ],
-                    "description": "C++ compiler's argument that specifies the output files."
+                    "description": "%cph.language.cpp.OutputArg.description%"
                 },
                 "cph.language.csharp.Args": {
-                    "title": "Compilation flags for .cs files",
+                    "title": "%cph.language.csharp.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to dotnet while compiling your file."
+                    "description": "%cph.language.csharp.Args.description%"
                 },
                 "cph.language.csharp.SubmissionCompiler": {
                     "type": "string",
@@ -166,18 +170,18 @@
                         "C# 10, .NET SDK 6.0",
                         "C# Mono 6.8"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for C#"
+                    "description": "%cph.language.csharp.SubmissionCompiler.description%"
                 },
                 "cph.language.csharp.Command": {
                     "type": "string",
                     "default": "dotnet",
-                    "description": "Command used to compile .cs files. 'dotnet' for C# .NET, 'mcs' for C# Mono"
+                    "description": "%cph.language.csharp.Command.description%"
                 },
                 "cph.language.python.Args": {
-                    "title": "Compilation flags for Python",
+                    "title": "%cph.language.python.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to python while compiling your file. Example '-Wignore -u'"
+                    "description": "%cph.language.python.Args.description%"
                 },
                 "cph.language.python.SubmissionCompiler": {
                     "type": "string",
@@ -189,18 +193,18 @@
                         "Python 3.7.2",
                         "Python 2.7.15"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for python"
+                    "description": "%cph.language.python.SubmissionCompiler.description%"
                 },
                 "cph.language.python.Command": {
                     "type": "string",
                     "default": "python3",
-                    "description": "Command used to run python files. Example 'py', 'python3', 'pypy3', etc."
+                    "description": "%cph.language.python.Command.description%"
                 },
                 "cph.language.ruby.Args": {
-                    "title": "Compilation flags for ruby",
+                    "title": "%cph.language.ruby.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to ruby while compiling your file."
+                    "description": "%cph.language.ruby.Args.description%"
                 },
                 "cph.language.ruby.SubmissionCompiler": {
                     "type": "string",
@@ -208,18 +212,18 @@
                     "enum": [
                         "Ruby 3.2.2"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for python"
+                    "description": "%cph.language.ruby.SubmissionCompiler.description%"
                 },
                 "cph.language.ruby.Command": {
                     "type": "string",
                     "default": "ruby",
-                    "description": "Command used to run ruby files."
+                    "description": "%cph.language.ruby.Command.description%"
                 },
                 "cph.language.rust.Args": {
-                    "title": "Compilation flags for Rust",
+                    "title": "%cph.language.rust.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to rustc while compiling your file. Example '-O2 --verbose'"
+                    "description": "%cph.language.rust.Args.description%"
                 },
                 "cph.language.rust.SubmissionCompiler": {
                     "type": "string",
@@ -227,18 +231,18 @@
                     "enum": [
                         "Rust 1.75.0 (2021)"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for rust"
+                    "description": "%cph.language.rust.SubmissionCompiler.description%"
                 },
                 "cph.language.rust.Command": {
                     "type": "string",
                     "default": "rustc",
-                    "description": "Command used to compile rust files."
+                    "description": "%cph.language.rust.Command.description%"
                 },
                 "cph.language.go.Args": {
-                    "title": "Compilation flags for .go files",
+                    "title": "%cph.language.go.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to go while compiling your file. Example '-gcflags=-S'"
+                    "description": "%cph.language.go.Args.description%"
                 },
                 "cph.language.go.SubmissionCompiler": {
                     "type": "string",
@@ -246,18 +250,18 @@
                     "enum": [
                         "Go 1.22.2"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for go"
+                    "description": "%cph.language.go.SubmissionCompiler.description%"
                 },
                 "cph.language.go.Command": {
                     "type": "string",
                     "default": "go",
-                    "description": "Command used to compile .go files."
+                    "description": "%cph.language.go.Command.description%"
                 },
                 "cph.language.haskell.Args": {
-                    "title": "Compilation flags for .hs files",
+                    "title": "%cph.language.haskell.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to go while compiling your file."
+                    "description": "%cph.language.haskell.Args.description%"
                 },
                 "cph.language.haskell.SubmissionCompiler": {
                     "type": "string",
@@ -265,18 +269,18 @@
                     "enum": [
                         "Haskell GHC 8.10.1"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for haskell"
+                    "description": "%cph.language.haskell.SubmissionCompiler.description%"
                 },
                 "cph.language.haskell.Command": {
                     "type": "string",
                     "default": "ghc",
-                    "description": "Command used to compile .hs files."
+                    "description": "%cph.language.haskell.Command.description%"
                 },
                 "cph.language.java.Args": {
-                    "title": "Compilation flags for Java",
+                    "title": "%cph.language.java.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to javac while compiling your file. Example '-verbose'"
+                    "description": "%cph.language.java.Args.description%"
                 },
                 "cph.language.java.SubmissionCompiler": {
                     "type": "string",
@@ -286,18 +290,18 @@
                         "Java 11.0.6",
                         "Java 8 32bit"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for java"
+                    "description": "%cph.language.java.SubmissionCompiler.description%"
                 },
                 "cph.language.java.Command": {
                     "type": "string",
                     "default": "javac",
-                    "description": "Command used to compile java files."
+                    "description": "%cph.language.java.Command.description%"
                 },
                 "cph.language.js.Args": {
-                    "title": "Compilation flags for JavaScript",
+                    "title": "%cph.language.js.Args.title%",
                     "type": "string",
                     "default": "",
-                    "description": "Space seperated additional flags passed to node (for JavaScript) while compiling your file. Example '--abort-on-uncaught-exception'"
+                    "description": "%cph.language.js.Args.description%"
                 },
                 "cph.language.js.SubmissionCompiler": {
                     "type": "string",
@@ -306,21 +310,32 @@
                         "Node.js 15.8.0 (64bit)",
                         "JavaScript V8 4.8.0"
                     ],
-                    "description": "The compiler chosen in the drop down during Codeforces submission for js"
+                    "description": "%cph.language.js.SubmissionCompiler.description%"
                 },
                 "cph.language.js.Command": {
                     "type": "string",
                     "default": "node",
-                    "description": "Command used to compile .js files."
+                    "description": "%cph.language.js.Command.description%"
+                },
+                "cph.language.cangjie.Args": {
+                    "title": "%cph.language.cangjie.Args.title%",
+                    "type": "string",
+                    "default": "",
+                    "description": "%cph.language.cangjie.Args.description%"
+                },
+                "cph.language.cangjie.Command": {
+                    "type": "string",
+                    "default": "cjc",
+                    "description": "%cph.language.cangjie.Command.description%"
                 },
                 "cph.general.firstTime": {
-                    "title": "Show welcome message",
+                    "title": "%cph.general.firstTime.title%",
                     "type": "boolean",
                     "default": true,
-                    "description": "A welcome message is shown when you run a testcase for the first time. This setting is updated automatically after the first message is shown."
+                    "description": "%cph.general.firstTime.description%"
                 },
                 "cph.general.defaultLanguage": {
-                    "title": "Default language for new problems",
+                    "title": "%cph.general.defaultLanguage.title%",
                     "type": "string",
                     "default": "",
                     "enum": [
@@ -334,14 +349,15 @@
                         "ruby",
                         "csharp",
                         "go",
-                        "haskell"
+                        "haskell",
+                        "cangjie"
                     ],
-                    "description": "The default language for problems imported via Competitive Companion (None will give option to select language on importing problem every time)"
+                    "description": "%cph.general.defaultLanguage.description%"
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
                     "default": "cpp java js python c rust ruby csharp go haskell",
-                    "description": "Space separated languages, in top to bottom order, shown in menu when a problem is imported via Competitive Companion. Example 'java python' would show java on top, followed by python."
+                    "description": "%cph.general.menuChoices.description%"
                 },
                 "cph.general.includeProblemIndex": {
                     "type": "boolean",
@@ -356,27 +372,27 @@
                 "cph.general.useShortCodeForcesName": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Use a short ID for problem file generated ( like 144C ) instead of the complete problem name for codeforces problems"
+                    "description": "%cph.general.useShortCodeForcesName.description%"
                 },
                 "cph.general.useShortLuoguName": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Use a short ID for problem file generated ( like P1145 / U123456 ) instead of the complete problem name for luogu problems"
+                    "description": "%cph.general.useShortLuoguName.description%"
                 },
                 "cph.general.useShortAtCoderName": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Use a short ID for problem file generated ( like abc123a ) instead of the complete problem name for atcoder problems"
+                    "description": "%cph.general.useShortAtCoderName.description%"
                 },
                 "cph.general.retainWebviewContext": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Keep the webview active even when it's hidden. May improve performance but may cause some rendering issues."
+                    "description": "%cph.general.retainWebviewContext.description%"
                 },
                 "cph.general.defaultLanguageTemplateFileLocation": {
                     "type": "string",
                     "default": "",
-                    "description": "The path to the template file that will be used when creating a new file for the default language via Competitive Companion. For Java templates, use 'CLASS_NAME' as a placeholder for the class name like 'class CLASS_NAME{...}'"
+                    "description": "%cph.general.defaultLanguageTemplateFileLocation.description%"
                 },
                 "cph.general.doTemplateFileVariableReplacement": {
                     "type": "boolean",
@@ -386,17 +402,17 @@
                 "cph.general.autoShowJudge": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Automatically show the judge view when opening a file that has a problem associated with it"
+                    "description": "%cph.general.autoShowJudge.description%"
                 },
                 "cph.general.remoteServerAddress": {
                     "type": "string",
                     "default": "http://20.244.105.138:4546",
-                    "description": "The address of the remote server to which the extension will send requests. (Currently used for live user count)"
+                    "description": "%cph.general.remoteServerAddress.description%"
                 },
                 "cph.general.showLiveUserCount": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Whether to display the live user count."
+                    "description": "%cph.general.showLiveUserCount.description%"
                 }
             }
         }
@@ -437,11 +453,13 @@
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
+        "@vscode/extension-telemetry": "^0.9.0",
+        "ansi-to-html": "^0.7.2",
         "python-shell": "^5.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-textarea-autosize": "^8.5.3",
-        "@vscode/extension-telemetry": "^0.9.0"
+        "vscode-nls": "^5.2.0"
     },
     "repository": {
         "type": "git",

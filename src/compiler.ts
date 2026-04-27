@@ -8,15 +8,18 @@ import {
     getCppOutputArgPref,
     getSaveLocationPref,
     getHideStderrorWhenCompiledOK,
+    getDefaultOnlineJudge,
 } from './preferences';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from './extension';
 import { toAsciiFilename } from './utilsPure';
-export let onlineJudgeEnv = false;
+import localize from './i18n';
+export let onlineJudgeEnv = getDefaultOnlineJudge();
 
 export const setOnlineJudgeEnv = (value: boolean) => {
     onlineJudgeEnv = value;
     globalThis.logger.log('online judge env:', onlineJudgeEnv);
+    globalThis.logger.log('default online judge env', getDefaultOnlineJudge());
 };
 
 /**
@@ -167,6 +170,10 @@ const getFlags = (language: Language, srcPath: string): string[] => {
                     ret.push('-define:ONLINE_JUDGE');
                 }
             }
+            break;
+        }
+        case 'cangjie': {
+            ret = [srcPath, '-o', getBinSaveLocation(srcPath), ...args];
             break;
         }
         default: {
@@ -342,7 +349,11 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
             compiler = spawn(language.compiler, flags, spawnOpts);
         } catch (err) {
             vscode.window.showErrorMessage(
-                `Could not launch the compiler ${language.compiler}. Is it installed?`,
+                localize(
+                    'cph.compiler.launchError',
+                    'Could not launch the compiler {0}. Is it installed?',
+                    language.compiler,
+                ),
             );
             throw err;
         }
@@ -355,9 +366,12 @@ export const compileFile = async (srcPath: string): Promise<boolean> => {
         compiler.on('error', (err) => {
             globalThis.logger.error(err);
             ocWrite(
-                'Errors while compiling:\n' +
-                    err.message +
-                    `\n\nHint: Is the compiler ${language.compiler} installed? Check the compiler command in cph settings for the current language.`,
+                localize(
+                    'cph.compiler.compilationError',
+                    'Errors while compiling:\n{0}\n\nHint: Is the compiler {1} installed? Check the compiler command in cph settings for the current language.',
+                    err.message,
+                    language.compiler,
+                ),
             );
             getJudgeViewProvider().extensionToJudgeViewMessage({
                 command: 'compiling-stop',

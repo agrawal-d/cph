@@ -1,8 +1,5 @@
 # Competitive Programming Helper (cph)
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fagrawal-d%2Fcph%2Fbadge%3Fref%3Dmain&style=flat)](https://actions-badge.atrox.dev/agrawal-d/cph/goto?ref=main)
-[![Downloads](https://img.shields.io/visual-studio-marketplace/d/DivyanshuAgrawal.competitive-programming-helper)](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
-
 Quickly compile, run and judge competitive programming problems in VS Code.
 Automatically download testcases , or write & test your own problems. Once you
 are done, easily submit your solutions directly with the click of a button!
@@ -57,6 +54,20 @@ enter testcases.
 -   Ruby
 -   Java
 -   JavaScript (Node.js)
+-   Cangjie
+
+Interested in adding support for another language? Check out the
+[developer guide](docs/dev-guide.md#adding-support-for-a-new-language).
+
+## Supported Display Languages
+
+-   English
+-   Chinese (Simplified)
+-   Korean
+-   Japanese
+
+Interested in adding a new translation? See the [translation guide](docs/dev-guide.md#adding-a-new-translation).
+
 
 ## Contributing
 

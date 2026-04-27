@@ -7,7 +7,6 @@ const CopyPlugin = require('copy-webpack-plugin');
 const child_process = require('child_process');
 const fs = require('fs');
 
-
 /**@type {import('webpack').Configuration}*/
 const config = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
@@ -43,9 +42,18 @@ const config = {
     plugins: [
         {
             apply: (compiler) => {
-                compiler.hooks.compile.tap("CompileTimeData", () => {
-                    const gitCommitHash = child_process.execSync('git rev-parse HEAD').toString() || "unknown git commit hash";
-                    const licenseString = fs.readFileSync(path.join(__dirname, 'LICENSE'), 'utf8').toString() || "unknown license";
+                compiler.hooks.compile.tap('CompileTimeData', () => {
+                    const gitCommitHash =
+                        child_process
+                            .execSync('git rev-parse HEAD')
+                            .toString() || 'unknown git commit hash';
+                    const licenseString =
+                        fs
+                            .readFileSync(
+                                path.join(__dirname, 'LICENSE'),
+                                'utf8',
+                            )
+                            .toString() || 'unknown license';
                     const dateTime = new Date().toISOString();
                     const generatedDict = {
                         gitCommitHash,
@@ -53,12 +61,23 @@ const config = {
                         dateTime,
                     };
 
-                    const generatedJsonPath = path.join(__dirname, 'dist', 'static', 'generated.json');
-                    console.log(`Writing generated.json to ${generatedJsonPath}`);
-                    fs.mkdirSync(path.dirname(generatedJsonPath), { recursive: true });
-                    fs.writeFileSync(generatedJsonPath, JSON.stringify(generatedDict, null, 2));
+                    const generatedJsonPath = path.join(
+                        __dirname,
+                        'dist',
+                        'static',
+                        'generated.json',
+                    );
+                    console.log(
+                        `Writing generated.json to ${generatedJsonPath}`,
+                    );
+                    fs.mkdirSync(path.dirname(generatedJsonPath), {
+                        recursive: true,
+                    });
+                    fs.writeFileSync(
+                        generatedJsonPath,
+                        JSON.stringify(generatedDict, null, 2),
+                    );
                 });
-
             },
         },
         new CopyPlugin({
