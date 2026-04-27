@@ -123,8 +123,8 @@ Several options are available to customize the extension. Open VS Code settings
     -   $url$ - problem url
 -   For a full list, turn on debug mode in the Competitive Companion extension
     preferences (Right Click on Extension>Manage extension>Preferences) and use
-    the JSON keys shown in the console after activating it
-    ![Variables](img/variableReplacementSettings.png)
+    the JSON keys shown in the console (F12 > Navigate to the Console tab) after
+    activating it ![Variables](img/variableReplacementSettings.png)
     ![Variables](img/companionSettings.png) ![Variables](img/console.png)
 
 ## Getting help
