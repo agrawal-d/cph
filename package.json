@@ -397,7 +397,7 @@
                 "cph.general.doTemplateFileVariableReplacement": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Replace $var$ in the template file with its value. For example, replace $url$ with the problem's url. For a full list, see what is outputted in the console with debug mode on for Competitive Companion"
+                    "description": "Replace $var$ in the template file with its value. For example, replace $url$ with the problem's url. For more information, please refer to the user guide."
                 },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",
