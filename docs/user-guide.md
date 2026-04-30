@@ -114,6 +114,19 @@ Several options are available to customize the extension. Open VS Code settings
     replaced. \
     ![Templates](img/templateSettings.png) ![Templates](img/javaTemplate.png)
 
+### Template Variable Replacement
+
+-   Replace the pattern $var$ with its value when creating files with
+    Competitive Companion
+-   For example:
+    -   $name$ - problem name
+    -   $url$ - problem url
+-   For a full list, turn on debug mode in the Competitive Companion extension
+    preferences (Right Click on Extension>Manage extension>Preferences) and use
+    the JSON keys shown in the console (F12 > Navigate to the Console tab) after
+    activating it ![Variables](img/variableReplacementSettings.png)
+    ![Variables](img/companionSettings.png) ![Variables](img/console.png)
+
 ## Getting help
 
 If you have trouble using the extension, find any bugs, or want to request a new

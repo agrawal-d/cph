@@ -14,6 +14,9 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    includeProblemIndex,
+    wordRegex,
+    doTemplateFileVariableReplacement,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
@@ -161,6 +164,12 @@ export const setupCompanionServer = () => {
 };
 
 export const getProblemFileName = (problem: Problem, ext: string) => {
+    if (!includeProblemIndex()) {
+        const sections = problem.name.split(' - ');
+        if (sections.length > 1) {
+            problem.name = sections.splice(1).join();
+        }
+    }
     if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
         return `${getProblemName(problem.url)}.${ext}`;
     } else if (isLuoguUrl(new URL(problem.url)) && useShortLuoguName()) {
@@ -179,7 +188,7 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
             useShortCodeForcesName(),
         );
 
-        const words = words_in_text(problem.name);
+        const words = words_in_text(problem.name, wordRegex());
         let baseName: string;
         if (words === null) {
             baseName = problem.name.replace(/\W+/g, '_');
@@ -286,6 +295,19 @@ const handleNewProblem = async (problem: Problem) => {
                             'CLASS_NAME',
                             className,
                         );
+                    }
+                    if (doTemplateFileVariableReplacement()) {
+                        for (const [key, value] of Object.entries(problem)) {
+                            let replaceWith = JSON.stringify(value);
+                            replaceWith = replaceWith.substring(
+                                1,
+                                replaceWith.length - 1,
+                            );
+                            templateContents = templateContents.replace(
+                                `$${key}$`,
+                                replaceWith,
+                            );
+                        }
                     }
                     writeFileSync(srcPath, templateContents);
                 }

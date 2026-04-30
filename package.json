@@ -359,6 +359,16 @@
                     "default": "cpp java js python c rust ruby csharp go haskell",
                     "description": "%cph.general.menuChoices.description%"
                 },
+                "cph.general.includeProblemIndex": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include the problem index for problem file generated ( like P_1_abc ) instead of omitting it"
+                },
+                "cph.general.wordRegex": {
+                    "type": "string",
+                    "default": "[\\p{L}]+|[0-9]+",
+                    "description": "The regex that defines what a word is for problem file generated. Each word is separated by an underscore"
+                },
                 "cph.general.useShortCodeForcesName": {
                     "type": "boolean",
                     "default": false,
@@ -383,6 +393,11 @@
                     "type": "string",
                     "default": "",
                     "description": "%cph.general.defaultLanguageTemplateFileLocation.description%"
+                },
+                "cph.general.doTemplateFileVariableReplacement": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Replace $var$ in the template file with its value. For example, replace $url$ with the problem's url. For more information, please refer to the user guide."
                 },
                 "cph.general.autoShowJudge": {
                     "type": "boolean",

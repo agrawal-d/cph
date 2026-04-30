@@ -113,6 +113,12 @@ export const getDefaultLangPref = (): string | null => {
     return pref;
 };
 
+export const includeProblemIndex = (): boolean => {
+    return getPreference('general.includeProblemIndex');
+};
+export const wordRegex = (): string => {
+    return getPreference('general.wordRegex');
+};
 export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeForcesName');
 };
@@ -128,6 +134,9 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
         return null;
     }
     return pref;
+};
+export const doTemplateFileVariableReplacement = (): boolean => {
+    return getPreference('general.doTemplateFileVariableReplacement');
 };
 
 export const getCCommand = (): string =>
