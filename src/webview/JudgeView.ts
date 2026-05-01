@@ -13,6 +13,8 @@ import {
     getLiveUserCountPref,
     getRetainWebviewContextPref,
     getDefaultOnlineJudge,
+    getHideOutputDifferencePref,
+    updatePreference,
 } from '../preferences';
 import { setOnlineJudgeEnv } from '../compiler';
 import { translations } from './translations';
@@ -28,7 +30,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         return this._view === undefined;
     }
 
-    constructor(private readonly _extensionUri: vscode.Uri) {}
+    constructor(private readonly _extensionUri: vscode.Uri) { }
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
         this._view = webviewView;
@@ -111,6 +113,20 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
                     case 'get-initial-problem': {
                         this.getInitialProblem();
+                        break;
+                    }
+
+                    case 'set-hide-output-diff': {
+                        // message.value expected boolean
+                        try {
+                            await updatePreference(
+                                'general.hideOutputDifference',
+                                message.value,
+                                vscode.ConfigurationTarget.Global,
+                            );
+                        } catch (err) {
+                            globalThis.logger.error('Failed to update preference', err);
+                        }
                         break;
                     }
 
@@ -283,6 +299,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         window.generatedJsonUri = '${generatedJsonUri}';
                         window.remoteServerAddress = '${remoteServerAddress}';
                         window.showLiveUserCount = ${showLiveUserCount};
+                        window.showOutputDifference = ${!getHideOutputDifferencePref()};
                         window.translations = ${JSON.stringify(translation)};
 
                         document.addEventListener(

@@ -266,7 +266,7 @@ export default function CaseView(props: {
                             </>
                         </div>
                     )}
-                    {result != null && !result.pass && result.diff != null && (
+                    {result != null && !result.pass && result.diff != null && (window as any).showOutputDifference !== false && (
                         <DiffView
                             diff={result.diff}
                             copyToClipboard={copyToClipboard}
@@ -319,12 +319,17 @@ function DiffView({
         <div className="textarea-container">
             {t('outputDifference')}
             <div
-                className="clipboard"
-                onClick={() => copyToClipboard(plainText)}
-                title={t('copiedToClipboard')}
+                style={{ display: 'inline-flex', gap: '6px', float: 'right' }}
             >
-                {t('copy')}
+                <div
+                    className="clipboard"
+                    onClick={() => copyToClipboard(plainText)}
+                    title={t('copiedToClipboard')}
+                >
+                    {t('copy')}
+                </div>
             </div>
+            <div style={{ clear: 'both' }} />
             <div
                 className="selectable received-textarea"
                 style={{
