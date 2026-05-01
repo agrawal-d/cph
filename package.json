@@ -413,6 +413,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "%cph.general.showLiveUserCount.description%"
+                },
+                "cph.general.hideOutputDifference": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, the UI will hide the inline output difference by default. Users can toggle and this will be remembered."
                 }
             }
         }

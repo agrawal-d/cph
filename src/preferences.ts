@@ -105,6 +105,9 @@ export const getRemoteServerAddressPref = (): string =>
 export const getLiveUserCountPref = (): boolean =>
     getPreference('general.showLiveUserCount') || false;
 
+export const getHideOutputDifferencePref = (): boolean =>
+    getPreference('general.hideOutputDifference') || false;
+
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
     if (pref === 'none' || pref == ' ' || !pref) {

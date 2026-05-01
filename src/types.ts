@@ -57,7 +57,8 @@ export type prefSection =
     | 'general.defaultLanguageTemplateFileLocation'
     | 'general.doTemplateFileVariableReplacement'
     | 'general.remoteServerAddress'
-    | 'general.showLiveUserCount';
+    | 'general.showLiveUserCount'
+    | 'general.hideOutputDifference';
 
 export type Language = {
     name: LangNames;
@@ -194,6 +195,11 @@ export type GetExtLogs = {
     command: 'get-ext-logs';
 };
 
+export type SetHideOutputDiff = {
+    command: 'set-hide-output-diff';
+    value: boolean;
+};
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | GetInitialProblem
@@ -206,7 +212,8 @@ export type WebviewToVSEvent =
     | OnlineJudgeEnv
     | SubmitKattis
     | OpenUrl
-    | GetExtLogs;
+    | GetExtLogs
+    | SetHideOutputDiff;
 
 export type RunningCommand = {
     command: 'running';
