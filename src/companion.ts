@@ -297,7 +297,24 @@ const handleNewProblem = async (problem: Problem) => {
                         );
                     }
                     if (doTemplateFileVariableReplacement()) {
-                        for (const [key, value] of Object.entries(problem)) {
+                        const now = new Date();
+                        const pad2 = (value: number) =>
+                            value.toString().padStart(2, '0');
+                        const date = `${now.getFullYear()}-${pad2(
+                            now.getMonth() + 1,
+                        )}-${pad2(now.getDate())}`;
+                        const time = `${pad2(now.getHours())}:${pad2(
+                            now.getMinutes(),
+                        )}:${pad2(now.getSeconds())}`;
+                        const templateVariables: Record<string, unknown> = {
+                            ...problem,
+                            date,
+                            time,
+                        };
+
+                        for (const [key, value] of Object.entries(
+                            templateVariables,
+                        )) {
                             let replaceWith = JSON.stringify(value);
                             replaceWith = replaceWith.substring(
                                 1,
