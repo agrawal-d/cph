@@ -121,6 +121,8 @@ Several options are available to customize the extension. Open VS Code settings
 -   For example:
     -   $name$ - problem name
     -   $url$ - problem url
+    -   $date$ - local date in YYYY-MM-DD
+    -   $time$ - local time in HH:MM:SS
 -   For a full list, turn on debug mode in the Competitive Companion extension
     preferences (Right Click on Extension>Manage extension>Preferences) and use
     the JSON keys shown in the console (F12 > Navigate to the Console tab) after
