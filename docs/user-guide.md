@@ -28,6 +28,11 @@ actions remain the same.
    them. Or, use the 'Run Testcases' button from the activity bar ( in the
    bottom).
 
+1. Imported problems are placed into judge-named folders (for example
+    Codeforces, AtCoder, SPOJ, CSES, Eolymp, UVA) when recognized. Unknown judges
+    stay in the workspace root.
+
+
 ## Using with your own problems
 
 1. Write some code in any supported language ( .cpp, .c, .rs, .python).

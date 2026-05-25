@@ -4,8 +4,14 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
+import {
+    isCodeforcesUrl,
+    isLuoguUrl,
+    isAtCoderUrl,
+    randomId,
+    getJudgeFolderName,
+} from './utils';
 import {
     getDefaultLangPref,
     getLanguageId,
@@ -205,6 +211,44 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
     }
 };
 
+const getBaseFolderForNewProblem = (): string | undefined => {
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor) {
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(
+            activeEditor.document.uri,
+        );
+        if (workspaceFolder) {
+            return workspaceFolder.uri.fsPath;
+        }
+    }
+    return vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+};
+
+export const resolveProblemPath = (
+    problem: Problem,
+    ext: string,
+    baseFolder: string,
+): { srcPath: string; fileName: string } => {
+    const problemFileName = getProblemFileName(problem, ext);
+    const judgeFolderName = getJudgeFolderName(problem.url);
+    if (!judgeFolderName) {
+        return {
+            srcPath: path.join(baseFolder, problemFileName),
+            fileName: problemFileName,
+        };
+    }
+
+    const judgeFolderPath = path.join(baseFolder, judgeFolderName);
+    if (!existsSync(judgeFolderPath)) {
+        mkdirSync(judgeFolderPath, { recursive: true });
+    }
+
+    return {
+        srcPath: path.join(judgeFolderPath, problemFileName),
+        fileName: problemFileName,
+    };
+};
+
 /** Handle the `problem` sent by Competitive Companion, such as showing the webview, opening an editor, managing layout etc. */
 const handleNewProblem = async (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.GET_PROBLEM_FROM_COMPANION);
@@ -215,8 +259,8 @@ const handleNewProblem = async (problem: Problem) => {
             problem: undefined,
         });
     }
-    const folder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-    if (folder === undefined) {
+    const baseFolder = getBaseFolderForNewProblem();
+    if (baseFolder === undefined) {
         vscode.window.showInformationMessage(
             localize('cph.companion.openFolder', 'Please open a folder first.'),
         );
@@ -256,8 +300,11 @@ const handleNewProblem = async (problem: Problem) => {
         const splitUrl = problem.url.split('/');
         problem.name = splitUrl[splitUrl.length - 1];
     }
-    const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+    const { srcPath, fileName: problemFileName } = resolveProblemPath(
+        problem,
+        extn,
+        baseFolder,
+    );
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;

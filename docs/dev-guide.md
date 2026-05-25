@@ -28,6 +28,9 @@ The extension is integrated with the
 extension. Our extension runs a HTTP server on port `27121`, and companion
 `POST`s a new problem to this server, and we process it.
 
+Problems are stored under judge-named subfolders when the URL matches a known
+online judge. Unknown judges fall back to the workspace root.
+
 ## Kattis Auto-Submit Integration
 
 The extension summons a python shell when the `Submit to Kattis` button is
