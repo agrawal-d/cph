@@ -36,6 +36,11 @@ describe('diffOutput — line-level', () => {
         expect(diffOutput('42  \n', '42\n').isMatch).toBe(true);
     });
 
+    it('does not ignore leading newlines', () => {
+        expect(diffOutput('42\n', '\n42\n').isMatch).toBe(false);
+        expect(diffOutput('\n42\n', '42\n').isMatch).toBe(false);
+    });
+
     it('multiline exact match', () => {
         const r = diffOutput('1\n2\n3\n', '1\n2\n3\n');
         expect(r.isMatch).toBe(true);
