@@ -465,6 +465,10 @@ body.vscode-light .result-fail {
     font-size: 1.15em;
 }
 
+body.vscode-light .running-text {
+    color: rgb(160, 160, 0);
+}
+
 .problem-name {
     display: inline-block;
     font-size: 1.1em;

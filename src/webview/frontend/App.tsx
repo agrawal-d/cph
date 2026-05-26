@@ -8,6 +8,7 @@ import {
     VSToWebViewMessage,
     ResultCommand,
     RunningCommand,
+    CheckingCommand,
     WebViewpersistenceState,
 } from '../../types';
 import CaseView from './CaseView';
@@ -97,6 +98,7 @@ function Judge(props: {
 
     const [focusLast, setFocusLast] = useState<boolean>(false);
     const [forceRunning, setForceRunning] = useState<number | false>(false);
+    const [forceChecking, setForceChecking] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
@@ -217,8 +219,8 @@ function Judge(props: {
                     handleRunning(data);
                     break;
                 }
-                case 'run-all': {
-                    runAll();
+                case 'checking': {
+                    handleChecking(data);
                     break;
                 }
                 case 'compiling-start': {
@@ -251,6 +253,10 @@ function Judge(props: {
 
     const handleRunning = (data: RunningCommand) => {
         setForceRunning(data.id);
+    };
+
+    const handleChecking = (data: CheckingCommand) => {
+        setForceChecking(data.id);
     };
 
     const refreshOnlineJudge = () => {
@@ -369,6 +375,16 @@ function Judge(props: {
         return false;
     };
 
+    const getCheckingProp = (value: Case) => {
+        if (forceChecking === value.id) {
+            setTimeout(() => {
+                setForceChecking(false);
+            }, 100);
+            return true;
+        }
+        return false;
+    };
+
     const toggleOnlineJudgeEnv = () => {
         const newEnv = !onlineJudgeEnv;
         setOnlineJudgeEnv(newEnv);
@@ -438,6 +454,7 @@ function Judge(props: {
                     remove={remove}
                     doFocus={true}
                     forceRunning={getRunningProp(value)}
+                    forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
                     customCheckerPath={problem.customCheckerPath}
                 ></CaseView>,
@@ -453,6 +470,7 @@ function Judge(props: {
                     key={value.id.toString()}
                     remove={remove}
                     forceRunning={getRunningProp(value)}
+                    forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
                     customCheckerPath={problem.customCheckerPath}
                 ></CaseView>,

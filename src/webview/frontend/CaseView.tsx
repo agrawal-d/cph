@@ -22,6 +22,7 @@ export default function CaseView(props: {
     notify: (text: string) => void;
     doFocus?: boolean;
     forceRunning: boolean;
+    forceChecking: boolean;
     customCheckerPath?: string;
 }) {
     const { id, result } = props.case;
@@ -29,6 +30,7 @@ export default function CaseView(props: {
     const [input, setInput] = useState<string>(props.case.testcase.input);
     const [output, setOutput] = useState<string>(props.case.testcase.output);
     const [running, setRunning] = useState<boolean>(false);
+    const [checking, setChecking] = useState<boolean>(false);
     const [minimized, setMinimized] = useState<boolean>(
         props.case.result?.pass === true,
     );
@@ -47,8 +49,16 @@ export default function CaseView(props: {
     useEffect(() => {
         if (props.forceRunning) {
             setRunning(true);
+            setChecking(false);
         }
     }, [props.forceRunning]);
+
+    useEffect(() => {
+        if (props.forceChecking) {
+            setRunning(false);
+            setChecking(true);
+        }
+    }, [props.forceChecking]);
 
     const handleInputChange = (
         event: React.ChangeEvent<HTMLTextAreaElement>,
@@ -85,15 +95,16 @@ export default function CaseView(props: {
     useEffect(() => {
         if (props.case.result !== null) {
             setRunning(false);
+            setChecking(false);
             props.case.result.pass ? setMinimized(true) : setMinimized(false);
         }
     }, [props.case.result]);
 
     useEffect(() => {
-        if (running) {
+        if (running || checking) {
             setMinimized(true);
         }
-    }, [running]);
+    }, [running, checking]);
 
     useEffect(() => {
         window.addEventListener('message', function (event) {
@@ -118,7 +129,7 @@ export default function CaseView(props: {
     if (!result) {
         resultText = t('runToShowOutput');
     }
-    if (running) {
+    if (running || checking) {
         resultText = '...';
     }
     const passFailText = result
@@ -126,7 +137,8 @@ export default function CaseView(props: {
             ? t('passed')
             : t('failed')
         : '';
-    const caseClassName = 'case ' + (running ? 'running' : passFailText);
+    const caseClassName =
+        'case ' + (running || checking ? 'running' : passFailText);
     const timeText = result?.timeOut ? t('timedOut') : result?.time + 'ms';
 
     return (
@@ -150,10 +162,12 @@ export default function CaseView(props: {
                         )}
                         &nbsp;TC {props.num}
                     </span>
-                    {running && (
-                        <span className="running-text">{t('running')}</span>
+                    {(running || checking) && (
+                        <span className="running-text">
+                            {running ? t('running') : t('checking')}
+                        </span>
                     )}
-                    {result && !running && (
+                    {result && !running && !checking && (
                         <>
                             <span className="result-data">
                                 <span
@@ -280,19 +294,17 @@ export default function CaseView(props: {
                                 {t('checkerLog')}
                             </summary>
                             <div style={{ marginTop: '5px' }}>
-                                <small>{t('checkerInvocation')}</small>
-                                <textarea
-                                    className="selectable"
-                                    readOnly
-                                    value={props.case.result.checkerRun.command}
+                                <small
                                     style={{
-                                        fontSize: '0.9em',
-                                        height: '40px',
-                                        width: '100%',
                                         display: 'block',
                                         marginTop: '5px',
                                     }}
-                                />
+                                >
+                                    {t('checkerExitCode')}{' '}
+                                    <code>
+                                        {props.case.result.checkerRun.code}
+                                    </code>
+                                </small>
                                 <small
                                     style={{
                                         display: 'block',
@@ -315,6 +327,35 @@ export default function CaseView(props: {
                                         marginTop: '5px',
                                     }}
                                 />
+                                <small
+                                    style={{
+                                        display: 'block',
+                                        marginTop: '10px',
+                                    }}
+                                >
+                                    {t('checkerInvocation')}
+                                </small>
+                                <textarea
+                                    className="selectable"
+                                    readOnly
+                                    value={props.case.result.checkerRun.command}
+                                    style={{
+                                        fontSize: '0.9em',
+                                        height: '40px',
+                                        width: '100%',
+                                        display: 'block',
+                                        marginTop: '5px',
+                                    }}
+                                />
+                                <small
+                                    style={{
+                                        display: 'block',
+                                        marginTop: '10px',
+                                    }}
+                                >
+                                    {t('checkerDuration')}{' '}
+                                    {props.case.result.checkerRun.time}ms
+                                </small>
                             </div>
                         </details>
                     )}

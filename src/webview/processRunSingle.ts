@@ -70,6 +70,11 @@ export const runSingleAndSave = async (
     ) {
         const checkerPath = problem.customCheckerPath.trim();
         if (fs.existsSync(checkerPath)) {
+            getJudgeViewProvider().extensionToJudgeViewMessage({
+                command: 'checking',
+                id,
+                problem,
+            });
             checkerRun = await runCustomChecker(
                 checkerPath,
                 testCase.input,
