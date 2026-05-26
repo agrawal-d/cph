@@ -98,6 +98,7 @@ export type Problem = {
     tests: TestCase[];
     srcPath: string;
     local?: boolean;
+    customCheckerPath?: string;
 };
 
 export type Case = {
@@ -114,6 +115,10 @@ export type Run = {
     time: number;
     timeOut: boolean;
 };
+
+export type CustomCheckerRun = {
+    command: string;
+} & Run;
 
 export type DiffLine = {
     lineNumber: number;
@@ -138,6 +143,7 @@ export type RunResult = {
     pass: boolean | null;
     id: number;
     diff?: DiffResult;
+    checkerRun?: CustomCheckerRun;
 } & Run;
 
 export type WebviewMessageCommon = {
