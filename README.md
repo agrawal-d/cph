@@ -66,8 +66,8 @@ Interested in adding support for another language? Check out the
 -   Korean
 -   Japanese
 
-Interested in adding a new translation? See the [translation guide](docs/dev-guide.md#adding-a-new-translation).
-
+Interested in adding a new translation? See the
+[translation guide](docs/dev-guide.md#adding-a-new-translation).
 
 ## Contributing
 

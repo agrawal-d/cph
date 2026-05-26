@@ -252,6 +252,7 @@ export type SubmitFinishedCommand = {
 export type NewProblemCommand = {
     command: 'new-problem';
     problem: Problem | undefined;
+    onlineJudgeEnv?: boolean;
 };
 
 export type RemoteMessageCommand = {
@@ -262,6 +263,11 @@ export type RemoteMessageCommand = {
 export type ExtLogsCommand = {
     command: 'ext-logs';
     logs: string;
+};
+
+export type UpdateOnlineJudgeEnvCommand = {
+    command: 'update-online-judge-env';
+    value: boolean;
 };
 
 export type VSToWebViewMessage =
@@ -275,7 +281,8 @@ export type VSToWebViewMessage =
     | NotRunningCommand
     | RemoteMessageCommand
     | NewProblemCommand
-    | ExtLogsCommand;
+    | ExtLogsCommand
+    | UpdateOnlineJudgeEnvCommand;
 
 export type CphEmptyResponse = {
     empty: true;
