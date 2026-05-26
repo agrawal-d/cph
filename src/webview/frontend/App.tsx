@@ -84,18 +84,21 @@ function Judge(props: {
     updateProblem: (problem: Problem) => void;
     cases: Case[];
     updateCases: (cases: Case[]) => void;
+    onlineJudgeEnv: boolean;
+    setOnlineJudgeEnv: (value: boolean) => void;
 }) {
     const problem = props.problem;
     const cases = props.cases;
     const updateProblem = props.updateProblem;
     const updateCases = props.updateCases;
+    const onlineJudgeEnv = props.onlineJudgeEnv;
+    const setOnlineJudgeEnv = props.setOnlineJudgeEnv;
 
     const [focusLast, setFocusLast] = useState<boolean>(false);
     const [forceRunning, setForceRunning] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
-    const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
     const [infoPageVisible, setInfoPageVisible] = useState<boolean>(false);
     const [generatedJson, setGeneratedJson] = useState<any | null>(null);
     const [liveUserCount, setLiveUserCount] = useState<number>(0);
@@ -192,11 +195,6 @@ function Judge(props: {
         const fn = (event: any) => {
             const data: VSToWebViewMessage = event.data;
             switch (data.command) {
-                case 'new-problem': {
-                    setOnlineJudgeEnv(false);
-                    break;
-                }
-
                 case 'remote-message': {
                     window.remoteMessage = data.message;
                     break;
@@ -885,6 +883,7 @@ function App() {
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [, setSaving] = useState<boolean>(false);
     const [showFallback, setShowFallback] = useState<boolean>(false);
+    const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
 
     // Save the problem
     const save = () => {
@@ -936,10 +935,15 @@ function App() {
 
                     setProblem(data.problem);
                     setCases(getCasesFromProblem(data.problem));
+                    setOnlineJudgeEnv(data.onlineJudgeEnv ?? false);
                     break;
                 }
                 case 'run-single-result': {
                     handleRunSingleResult(data);
+                    break;
+                }
+                case 'update-online-judge-env': {
+                    setOnlineJudgeEnv(data.value);
                     break;
                 }
             }
@@ -989,6 +993,8 @@ function App() {
                 updateProblem={setProblem}
                 cases={cases}
                 updateCases={setCases}
+                onlineJudgeEnv={onlineJudgeEnv}
+                setOnlineJudgeEnv={setOnlineJudgeEnv}
             />
         );
     } else {

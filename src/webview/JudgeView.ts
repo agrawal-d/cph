@@ -16,7 +16,7 @@ import {
     getHideOutputDifferencePref,
     updatePreference,
 } from '../preferences';
-import { setOnlineJudgeEnv } from '../compiler';
+import { setOnlineJudgeEnv, onlineJudgeEnv } from '../compiler';
 import { translations } from './translations';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
@@ -79,6 +79,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         this.extensionToJudgeViewMessage({
                             command: 'new-problem',
                             problem: undefined,
+                            onlineJudgeEnv: getDefaultOnlineJudge(),
                         });
                         await deleteProblemFile(message.problem.srcPath);
                         break;
@@ -104,7 +105,12 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                                 break;
                             }
                             case 'default': {
-                                setOnlineJudgeEnv(getDefaultOnlineJudge());
+                                const val = getDefaultOnlineJudge();
+                                setOnlineJudgeEnv(val);
+                                this.extensionToJudgeViewMessage({
+                                    command: 'update-online-judge-env',
+                                    value: val,
+                                });
                                 break;
                             }
                         }
@@ -165,6 +171,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         this.extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: getProblemForDocument(doc),
+            onlineJudgeEnv: onlineJudgeEnv,
         });
 
         // also load any messages from before that were lost.
@@ -213,6 +220,9 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
     public extensionToJudgeViewMessage = async (
         message: VSToWebViewMessage,
     ) => {
+        if (message.command === 'new-problem') {
+            message.onlineJudgeEnv = message.onlineJudgeEnv ?? onlineJudgeEnv;
+        }
         this.focusIfNeeded(message);
         if (
             (this._view && this._view.visible) ||
