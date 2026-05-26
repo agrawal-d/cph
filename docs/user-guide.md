@@ -108,10 +108,11 @@ Several options are available to customize the extension. Open VS Code settings
 ## Default Language Templates
 
 -   The path of the template that will be loaded when a new file of the default
-    language is created by Competitive Companion
+    language is created by Competitive Companion.
 -   For Java Users, the template shall be in the format where class name is
     `CLASS_NAME` as the file name so that CLASS_NAME in the code gets auto
-    replaced. \
+    replaced.
+-   **Cursor Placement**: You can place `$CURSOR_PLACEHOLDER` in your template. When a new file is created, the cursor will automatically be moved to this position, and the placeholder string will be removed.
     ![Templates](img/templateSettings.png) ![Templates](img/javaTemplate.png)
 
 ### Template Variable Replacement
