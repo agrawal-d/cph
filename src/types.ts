@@ -98,6 +98,7 @@ export type Problem = {
     tests: TestCase[];
     srcPath: string;
     local?: boolean;
+    customCheckerPath?: string;
 };
 
 export type Case = {
@@ -114,6 +115,10 @@ export type Run = {
     time: number;
     timeOut: boolean;
 };
+
+export type CustomCheckerRun = {
+    command: string;
+} & Run;
 
 export type DiffLine = {
     lineNumber: number;
@@ -138,6 +143,7 @@ export type RunResult = {
     pass: boolean | null;
     id: number;
     diff?: DiffResult;
+    checkerRun?: CustomCheckerRun;
 } & Run;
 
 export type WebviewMessageCommon = {
@@ -220,6 +226,11 @@ export type RunningCommand = {
     id: number;
 } & WebviewMessageCommon;
 
+export type CheckingCommand = {
+    command: 'checking';
+    id: number;
+} & WebviewMessageCommon;
+
 export type NotRunningCommand = {
     command: 'not-running';
 };
@@ -252,6 +263,7 @@ export type SubmitFinishedCommand = {
 export type NewProblemCommand = {
     command: 'new-problem';
     problem: Problem | undefined;
+    onlineJudgeEnv?: boolean;
 };
 
 export type RemoteMessageCommand = {
@@ -264,9 +276,15 @@ export type ExtLogsCommand = {
     logs: string;
 };
 
+export type UpdateOnlineJudgeEnvCommand = {
+    command: 'update-online-judge-env';
+    value: boolean;
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
+    | CheckingCommand
     | RunAllInWebViewCommand
     | CompilingStartCommand
     | CompilingStopCommand
@@ -275,7 +293,8 @@ export type VSToWebViewMessage =
     | NotRunningCommand
     | RemoteMessageCommand
     | NewProblemCommand
-    | ExtLogsCommand;
+    | ExtLogsCommand
+    | UpdateOnlineJudgeEnvCommand;
 
 export type CphEmptyResponse = {
     empty: true;

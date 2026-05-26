@@ -1,15 +1,24 @@
-import { Language, Run } from './types';
+import { Language, Run, CustomCheckerRun } from './types';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { platform } from 'os';
 import config from './config';
 import { getTimeOutPref } from './preferences';
-import * as vscode from 'vscode';
-import path from 'path';
-import { onlineJudgeEnv } from './compiler';
 import telmetry from './telmetry';
-import localize from './i18n';
+import * as fs from 'fs';
+import { executeCustomChecker } from './utils/customChecker';
 
-const runningBinaries: ChildProcessWithoutNullStreams[] = [];
+export const runningBinaries: ChildProcessWithoutNullStreams[] = [];
+
+/**
+ * Run a custom checker script for a testcase.
+ */
+export const runCustomChecker = async (
+    checkerPath: string,
+    input: string,
+    output: string,
+): Promise<CustomCheckerRun> => {
+    return executeCustomChecker(checkerPath, input, output, runningBinaries);
+};
 
 /**
  * Run a single testcase, and return the raw results, without judging.
@@ -79,69 +88,39 @@ export const runTestCase = (
             break;
         }
         case 'java': {
-            const args: string[] = [];
-            if (onlineJudgeEnv) {
-                args.push('-DONLINE_JUDGE');
-            }
-
-            const binDir = path.dirname(binPath);
-            args.push('-cp');
-            args.push(binDir);
-
-            const binFileName = path.parse(binPath).name.slice(0, -1);
-            args.push(binFileName);
-
-            process = spawn('java', args);
+            process = spawn(
+                language.compiler,
+                ['cp', '.', ...language.args, binPath],
+                spawnOpts,
+            );
             break;
         }
-        case 'csharp': {
-            let binFileName: string;
-
-            if (language.compiler.includes('dotnet')) {
-                const projName = '.cphcsrun';
-                const isLinux = platform() == 'linux';
-                if (isLinux) {
-                    binFileName = projName;
-                } else {
-                    binFileName = projName + '.exe';
-                }
-
-                const binFilePath = path.join(binPath, binFileName);
-                process = spawn(binFilePath, ['/stack:67108864'], spawnOpts);
-            } else {
-                // Run with mono
-                process = spawn('mono', [binPath], spawnOpts);
-            }
-
+        case 'c':
+        case 'cpp':
+        case 'rust':
+        case 'go':
+        case 'hs':
+        case 'csharp':
+        case 'cangjie': {
+            process = spawn(binPath, language.args, spawnOpts);
             break;
         }
         default: {
-            process = spawn(binPath, spawnOpts);
+            // Should never happen, since language name is an enum.
+            throw new Error('Unsupported language: ' + language.name);
         }
     }
-
-    process.on('error', (err) => {
-        globalThis.logger.error(err);
-        vscode.window.showErrorMessage(
-            localize(
-                'cph.executor.launchError',
-                "Could not launch testcase process. Is '{0}' in your PATH?",
-                language.compiler,
-            ),
-        );
-    });
 
     const begin = Date.now();
     const ret: Promise<Run> = new Promise((resolve) => {
         runningBinaries.push(process);
         process.on('exit', (code, signal) => {
-            const end = Date.now();
             clearTimeout(killer);
+            const end = Date.now();
             result.code = code;
             result.signal = signal;
             result.time = end - begin;
             runningBinaries.pop();
-            globalThis.logger.log('Run Result:', result);
             resolve(result);
         });
 
@@ -150,66 +129,42 @@ export const runTestCase = (
         });
         process.stderr.on('data', (data) => (result.stderr += data));
 
-        globalThis.logger.log('Wrote to STDIN');
-        try {
-            process.stdin.write(input);
-        } catch (err) {
-            globalThis.logger.error('WRITEERROR', err);
-        }
-
-        process.stdin.end();
         process.on('error', (err) => {
-            const end = Date.now();
             clearTimeout(killer);
+            const end = Date.now();
             result.code = 1;
             result.signal = err.name;
             result.time = end - begin;
             runningBinaries.pop();
-            globalThis.logger.log('Run Error Result:', result);
             resolve(result);
         });
+
+        process.stdin.write(input);
+        process.stdin.end();
     });
 
     return ret;
 };
 
-/** Remove the generated binary from the file system, if present */
 export const deleteBinary = (language: Language, binPath: string) => {
     if (language.skipCompile) {
-        globalThis.logger.log(
-            "Skipping deletion of binary as it's not a compiled language.",
-        );
         return;
     }
-    globalThis.logger.log('Deleting binary', binPath);
     try {
-        const isLinux = platform() == 'linux';
-        const isFile = path.extname(binPath);
-
-        if (isLinux) {
-            if (isFile) {
-                spawn('rm', [binPath]);
-            } else {
-                spawn('rm', ['-r', binPath]);
-            }
+        if (language.name === 'java') {
+            fs.unlinkSync(binPath + '.class');
+        } else if (platform() === 'win32' && language.name !== 'python') {
+            fs.unlinkSync(binPath + '.exe');
         } else {
-            const nrmBinPath = '"' + binPath + '"';
-            if (isFile) {
-                spawn('cmd.exe', ['/c', 'del', nrmBinPath], {
-                    windowsVerbatimArguments: true,
-                });
-            } else {
-                spawn('cmd.exe', ['/c', 'rd', '/s', '/q', nrmBinPath], {
-                    windowsVerbatimArguments: true,
-                });
-            }
+            fs.unlinkSync(binPath);
         }
     } catch (err) {
-        globalThis.logger.error('Error while deleting binary', err);
+        // globalThis.logger.error("Error deleting binary: " + err);
     }
 };
 
-/** Kill all running binaries. Usually, only one should be running at a time. */
+/** Kill all currently running processes. Only one problem's testcases
+ * should be running at a time. */
 export const killRunning = () => {
     globalThis.reporter.sendTelemetryEvent(telmetry.KILL_RUNNING);
     globalThis.logger.log('Killling binaries');

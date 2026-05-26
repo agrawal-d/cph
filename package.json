@@ -416,7 +416,7 @@
                 },
                 "cph.general.hideOutputDifference": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "If true, the UI will hide the inline output difference by default. Users can toggle and this will be remembered."
                 }
             }

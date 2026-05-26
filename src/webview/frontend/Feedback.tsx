@@ -113,7 +113,6 @@ export const Feedback: React.FC<FeedbackProps> = ({
                         placeholder={t('nameLabel')}
                         rows={1}
                         style={{
-                            height: '30px',
                             borderColor: errors.name ? 'red' : undefined,
                         }}
                     />
@@ -129,7 +128,6 @@ export const Feedback: React.FC<FeedbackProps> = ({
                         placeholder={t('emailLabel')}
                         rows={1}
                         style={{
-                            height: '30px',
                             borderColor: errors.email ? 'red' : undefined,
                         }}
                     />

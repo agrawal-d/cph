@@ -35,10 +35,14 @@ import {
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
 import JudgeViewProvider from './webview/JudgeView';
-import { getRetainWebviewContextPref } from './preferences';
+import {
+    getRetainWebviewContextPref,
+    getDefaultOnlineJudge,
+} from './preferences';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import config from './config';
 import localize from './i18n';
+import { setOnlineJudgeEnv } from './compiler';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -128,6 +132,17 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.onDidChangeActiveTextEditor((e) => {
         editorChanged(e);
+    });
+
+    vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration('cph.general.defaultOnlineJudge')) {
+            const newValue = getDefaultOnlineJudge();
+            setOnlineJudgeEnv(newValue);
+            getJudgeViewProvider().extensionToJudgeViewMessage({
+                command: 'update-online-judge-env',
+                value: newValue,
+            });
+        }
     });
 
     vscode.window.onDidChangeVisibleTextEditors((editors) => {

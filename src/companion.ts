@@ -382,7 +382,29 @@ const handleNewProblem = async (problem: Problem) => {
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
 
-    await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
+    const editor = await vscode.window.showTextDocument(
+        doc,
+        vscode.ViewColumn.One,
+    );
+
+    // Move cursor to the first occurrence of $CURSOR_PLACEHOLDER and remove it
+    const cursorPlaceholder = '$CURSOR_PLACEHOLDER';
+    const text = doc.getText();
+    const index = text.indexOf(cursorPlaceholder);
+    if (index !== -1) {
+        const start = doc.positionAt(index);
+        const end = doc.positionAt(index + cursorPlaceholder.length);
+        await editor.edit((editBuilder) => {
+            editBuilder.delete(new vscode.Range(start, end));
+        });
+        // Set selection and reveal AFTER the edit so it isn't reset
+        editor.selection = new vscode.Selection(start, start);
+        editor.revealRange(
+            new vscode.Range(start, start),
+            vscode.TextEditorRevealType.InCenter,
+        );
+    }
+
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem,
