@@ -870,7 +870,7 @@ with open(sys.argv[2], "r") as f:
                                     />
                                     <br />
                                     <a
-                                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md#custom-checker"
+                                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md#custom-checker-special-judge"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="btn btn-black"
