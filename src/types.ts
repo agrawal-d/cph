@@ -226,6 +226,11 @@ export type RunningCommand = {
     id: number;
 } & WebviewMessageCommon;
 
+export type CheckingCommand = {
+    command: 'checking';
+    id: number;
+} & WebviewMessageCommon;
+
 export type NotRunningCommand = {
     command: 'not-running';
 };
@@ -279,6 +284,7 @@ export type UpdateOnlineJudgeEnvCommand = {
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
+    | CheckingCommand
     | RunAllInWebViewCommand
     | CompilingStartCommand
     | CompilingStopCommand
