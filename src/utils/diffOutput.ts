@@ -3,15 +3,15 @@ import { DiffLine, DiffResult, TokenDiff } from '../types';
 function normalizeLines(raw: string): string[] {
     return raw
         .replace(/\r\n/g, '\n')
-        .trim()
+        .replace(/\s+$/, '') // trim trailing whitespace and trailing newlines only
         .split('\n')
-        .map((l) => l.trim());
+        .map((l) => l.trimRight()); // trim only trailing whitespace of each line
 }
 
 function tokenize(raw: string): string[] {
     return raw
         .replace(/\r\n/g, '\n')
-        .trim()
+        .replace(/\s+$/, '') // trim trailing whitespace and trailing newlines only
         .split(/(\n|[ \t]+)/)
         .filter((t) => t !== undefined && t.length > 0);
 }
