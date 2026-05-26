@@ -147,10 +147,8 @@ a[href]:hover {
 .first-time-message ul li {
     margin-bottom: 10px;
 }
-
 .pre,
-pre,
-textarea {
+pre {
     background: var(--input-background);
     font-family: Consolas, 'Ubuntu Mono', monospace;
     width: 100%;
@@ -164,6 +162,23 @@ textarea {
     resize: none;
     border: 1px solid rgba(100, 100, 100, 0.2);
     margin-bottom: 4px;
+}
+
+textarea {
+    background: var(--input-background);
+    font-family: Consolas, 'Ubuntu Mono', monospace;
+    width: 100%;
+    display: block;
+    background: rgba(0, 0, 0, 0.2);
+    outline: none !important;
+    color: bisque;
+    max-width: 100%;
+    max-height: 250px !important;
+    overflow-y: auto;
+    resize: none;
+    border: 1px solid rgba(100, 100, 100, 0.2);
+    padding: 4px 8px;
+    margin-bottom: 0px;
 }
 
 .meta {
@@ -273,6 +288,25 @@ textarea:active {
 
 .o50 {
     opacity: 0.5;
+}
+
+.action-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.button-grid {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    gap: 5px;
+}
+
+.action-container .btn,
+.button-grid .btn {
+    margin: 0;
 }
 
 .pad-10 {
@@ -411,9 +445,17 @@ button:disabled {
     padding-right: 5px;
 }
 
+body.vscode-light .result-pass {
+    color: rgb(0, 128, 0);
+}
+
 .result-fail {
     color: red;
     padding-right: 5px;
+}
+
+body.vscode-light .result-fail {
+    color: rgb(160, 0, 0);
 }
 
 .running-text {
@@ -523,6 +565,24 @@ button:disabled {
 
 .textarea-container {
     position: relative;
+    margin-bottom: 10px;
+}
+
+.expected-output-container {
+    max-height: 500px;
+    opacity: 1;
+    overflow: hidden;
+    transition:
+        max-height 0.3s ease-in-out,
+        opacity 0.3s ease-in-out,
+        margin-bottom 0.3s ease-in-out;
+}
+
+.expected-output-container.hidden {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+    pointer-events: none;
 }
 
 .clipboard:hover {
@@ -580,6 +640,10 @@ body.vscode-light .case-number {
     display: inline;
 }
 
+.no-scroll {
+    overflow: hidden !important;
+}
+
 .page {
     position: fixed;
     top: 0px;
@@ -616,11 +680,20 @@ hr {
     color: rgb(64, 175, 64);
 }
 
+.custom-checker-area {
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background-color: rgba(128, 128, 128, 0.1);
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 @media only screen and (max-width: 400px) {
     .row {
         display: grid;
         grid-auto-columns: 1fr;
         grid-auto-flow: column;
+        column-gap: 5px;
     }
 
     .size-warning {

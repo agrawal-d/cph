@@ -39,6 +39,8 @@ enter testcases.
 -   [Codeforces auto-submit](https://github.com/agrawal-d/cph-submit)
     integration.
 -   [Kattis auto-submit](docs/user-guide.md) integration.
+-   **Custom Checker (Special Judge)**: Use Python scripts to evaluate problems
+    with multiple valid outputs or specific precision requirements.
 -   Works locally for your own problems.
 -   Support for several languages.
 

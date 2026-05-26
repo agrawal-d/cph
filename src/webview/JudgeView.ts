@@ -15,6 +15,7 @@ import {
     getDefaultOnlineJudge,
     getHideOutputDifferencePref,
     updatePreference,
+    getPythonCommand,
 } from '../preferences';
 import { setOnlineJudgeEnv, onlineJudgeEnv } from '../compiler';
 import { translations } from './translations';
@@ -288,6 +289,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         const locale = vscode.env.language;
         const translation = translations[locale] || translations['en'];
 
+        let pythonCommand = getPythonCommand();
+        if (process.platform === 'win32' && pythonCommand === 'python3') {
+            pythonCommand = 'python';
+        }
+
         const html = `
             <!DOCTYPE html>
             <html>
@@ -314,6 +320,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         window.showLiveUserCount = ${showLiveUserCount};
                         window.showOutputDifference = ${!getHideOutputDifferencePref()};
                         window.translations = ${JSON.stringify(translation)};
+                        window.pythonCommand = '${pythonCommand}';
 
                         document.addEventListener(
                             'DOMContentLoaded',
