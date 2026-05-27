@@ -150,6 +150,14 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         break;
                     }
 
+                    case 'open-settings': {
+                        vscode.commands.executeCommand(
+                            'workbench.action.openSettings',
+                            '@ext:DivyanshuAgrawal.competitive-programming-helper',
+                        );
+                        break;
+                    }
+
                     default: {
                         globalThis.logger.error(
                             'Unknown event received from webview',
