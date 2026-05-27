@@ -931,6 +931,20 @@ with open(sys.argv[2], "r") as f:
                         </a>
                     </small>
                     <small>
+                        <a
+                            role="button"
+                            className="btn"
+                            title="Open CPH settings and manage optional features"
+                            onClick={() =>
+                                sendMessageToVSCode({
+                                    command: 'open-settings',
+                                })
+                            }
+                        >
+                            <i className="codicon codicon-settings"></i>
+                        </a>
+                    </small>
+                    <small>
                         <span style={{ position: 'relative' }}>
                             {showFeedbackTooltip && (
                                 <div className="feedback-tooltip">

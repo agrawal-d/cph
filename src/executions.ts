@@ -139,7 +139,12 @@ export const runTestCase = (
             resolve(result);
         });
 
-        process.stdin.write(input);
+        globalThis.logger.log('Wrote to STDIN');
+        try {
+            process.stdin.write(input);
+        } catch (err) {
+            globalThis.logger.error('WRITEERROR', err);
+        }
         process.stdin.end();
     });
 

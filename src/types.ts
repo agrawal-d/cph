@@ -206,6 +206,10 @@ export type SetHideOutputDiff = {
     value: boolean;
 };
 
+export type OpenSettings = {
+    command: 'open-settings';
+};
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | GetInitialProblem
@@ -219,7 +223,8 @@ export type WebviewToVSEvent =
     | SubmitKattis
     | OpenUrl
     | GetExtLogs
-    | SetHideOutputDiff;
+    | SetHideOutputDiff
+    | OpenSettings;
 
 export type RunningCommand = {
     command: 'running';
