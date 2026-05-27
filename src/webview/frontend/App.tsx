@@ -8,6 +8,7 @@ import {
     VSToWebViewMessage,
     ResultCommand,
     RunningCommand,
+    CheckingCommand,
     WebViewpersistenceState,
 } from '../../types';
 import CaseView from './CaseView';
@@ -44,6 +45,7 @@ interface CustomWindow extends Window {
     showLiveUserCount: boolean;
     console: Console;
     translations: Record<string, string>;
+    pythonCommand: string;
 }
 declare const window: CustomWindow;
 
@@ -96,6 +98,7 @@ function Judge(props: {
 
     const [focusLast, setFocusLast] = useState<boolean>(false);
     const [forceRunning, setForceRunning] = useState<number | false>(false);
+    const [forceChecking, setForceChecking] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
@@ -103,11 +106,23 @@ function Judge(props: {
     const [generatedJson, setGeneratedJson] = useState<any | null>(null);
     const [liveUserCount, setLiveUserCount] = useState<number>(0);
     const [extLogs, setExtLogs] = useState<string>('');
+    const [checkerVisible, setCheckerVisible] = useState<boolean>(
+        !!problem.customCheckerPath,
+    );
+    const checkerInputRef = React.useRef<HTMLTextAreaElement>(null);
 
     const numPassed = cases.filter(
         (testCase) => testCase.result?.pass === true,
     ).length;
     const total = cases.length;
+
+    useEffect(() => {
+        if (infoPageVisible) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+    }, [infoPageVisible]);
 
     useEffect(() => {
         const updateLiveUserCount = (): void => {
@@ -204,8 +219,8 @@ function Judge(props: {
                     handleRunning(data);
                     break;
                 }
-                case 'run-all': {
-                    runAll();
+                case 'checking': {
+                    handleChecking(data);
                     break;
                 }
                 case 'compiling-start': {
@@ -238,6 +253,10 @@ function Judge(props: {
 
     const handleRunning = (data: RunningCommand) => {
         setForceRunning(data.id);
+    };
+
+    const handleChecking = (data: CheckingCommand) => {
+        setForceChecking(data.id);
     };
 
     const refreshOnlineJudge = () => {
@@ -356,6 +375,16 @@ function Judge(props: {
         return false;
     };
 
+    const getCheckingProp = (value: Case) => {
+        if (forceChecking === value.id) {
+            setTimeout(() => {
+                setForceChecking(false);
+            }, 100);
+            return true;
+        }
+        return false;
+    };
+
     const toggleOnlineJudgeEnv = () => {
         const newEnv = !onlineJudgeEnv;
         setOnlineJudgeEnv(newEnv);
@@ -386,6 +415,13 @@ function Judge(props: {
         updateCases(newCases);
     };
 
+    const updateCheckerPath = (path: string) => {
+        updateProblem({
+            ...problem,
+            customCheckerPath: path,
+        });
+    };
+
     const notify = (text: string) => {
         clearTimeout(notificationTimeout!);
         setNotification(text);
@@ -393,6 +429,16 @@ function Judge(props: {
             setNotification(null);
             notificationTimeout = undefined;
         }, 1000);
+    };
+
+    const toggleChecker = () => {
+        const nextVisible = !checkerVisible;
+        setCheckerVisible(nextVisible);
+        if (nextVisible) {
+            setTimeout(() => {
+                checkerInputRef.current?.focus();
+            }, 100);
+        }
     };
 
     const views: JSX.Element[] = [];
@@ -408,7 +454,9 @@ function Judge(props: {
                     remove={remove}
                     doFocus={true}
                     forceRunning={getRunningProp(value)}
+                    forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
+                    customCheckerPath={problem.customCheckerPath}
                 ></CaseView>,
             );
             debounceFocusLast();
@@ -422,7 +470,9 @@ function Judge(props: {
                     key={value.id.toString()}
                     remove={remove}
                     forceRunning={getRunningProp(value)}
+                    forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
+                    customCheckerPath={problem.customCheckerPath}
                 ></CaseView>,
             );
         }
@@ -449,7 +499,7 @@ function Judge(props: {
 
         if (url.hostname.endsWith('codeforces.com')) {
             return (
-                <button className="btn" onClick={submitCf}>
+                <button className="btn btn-block" onClick={submitCf}>
                     <span className="icon">
                         <i className="codicon codicon-cloud-upload"></i>
                     </span>{' '}
@@ -459,7 +509,7 @@ function Judge(props: {
         } else if (url.hostname == 'open.kattis.com') {
             return (
                 <div className="pad-10 submit-area">
-                    <button className="btn" onClick={submitKattis}>
+                    <button className="btn btn-block" onClick={submitKattis}>
                         <span className="icon">
                             <i className="codicon codicon-cloud-upload"></i>
                         </span>{' '}
@@ -566,9 +616,32 @@ function Judge(props: {
                 <br />
                 <button
                     className="btn btn-green"
+                    style={{ transition: 'all 0.5s ease-in-out' }}
                     onClick={(e) => {
                         const target = e.target as HTMLButtonElement;
-                        target.innerText = t('enable');
+                        const messages = [
+                            'Training cats...',
+                            'Teaching cats JS...',
+                            'Cats are lazy...',
+                            'AI is sleeping...',
+                            'Compiling with yarn...',
+                            'Maybe next time!',
+                        ];
+                        let i = 0;
+                        target.disabled = true;
+                        const interval = setInterval(() => {
+                            if (i < messages.length) {
+                                target.innerText = messages[i++];
+                            } else {
+                                clearInterval(interval);
+                                target.style.transform =
+                                    'rotate(720deg) scale(0)';
+                                target.style.opacity = '0';
+                                setTimeout(() => {
+                                    target.style.display = 'none';
+                                }, 500);
+                            }
+                        }, 800);
                     }}
                 >
                     {t('enable')}
@@ -706,19 +779,132 @@ function Judge(props: {
             </div>
             <div className="results">{views}</div>
             <div className="margin-10">
-                <div className="row">
+                <div className="action-container">
+                    <div className="button-grid">
+                        <button
+                            className="btn btn-green btn-block"
+                            onClick={newCase}
+                            title={t('newTestcase')}
+                        >
+                            <span className="icon">
+                                <i className="codicon codicon-add"></i>
+                            </span>{' '}
+                            {t('newTestcase')}
+                        </button>
+                        {renderSubmitButton()}
+                    </div>
                     <button
-                        className="btn btn-green"
-                        onClick={newCase}
-                        title={t('newTestcase')}
+                        className={`btn btn-block ${
+                            problem.customCheckerPath?.trim()
+                                ? 'btn-orange'
+                                : ''
+                        }`}
+                        onClick={toggleChecker}
                     >
                         <span className="icon">
-                            <i className="codicon codicon-add"></i>
+                            <i
+                                className={`codicon codicon-chevron-${
+                                    checkerVisible ? 'up' : 'down'
+                                }`}
+                            ></i>
                         </span>{' '}
-                        {t('newTestcase')}
+                        {problem.customCheckerPath?.trim()
+                            ? t('customCheckerEnabled')
+                            : t('customChecker')}
                     </button>
-                    {renderSubmitButton()}
                 </div>
+                {checkerVisible && (
+                    <div className="pad-10 custom-checker-area">
+                        <textarea
+                            className="selectable"
+                            placeholder={t('customCheckerPathPlaceholder')}
+                            value={problem.customCheckerPath || ''}
+                            onChange={(e) => updateCheckerPath(e.target.value)}
+                            rows={1}
+                            ref={checkerInputRef}
+                            style={{
+                                width: '100%',
+                            }}
+                        />
+                        <details style={{ marginTop: '10px' }}>
+                            <summary
+                                style={{
+                                    cursor: 'pointer',
+                                    fontSize: '0.9em',
+                                    opacity: 0.8,
+                                }}
+                            >
+                                {t('usageInstructions')}
+                            </summary>
+                            <div style={{ marginTop: '10px' }}>
+                                <small>
+                                    {t('customCheckerDescription')}
+                                    <br />
+                                    <br />
+                                    {t('exitCodes')}
+                                    <br />
+                                    <br />
+                                    {t('invocationFormat')}:
+                                    <br />
+                                    <code>
+                                        {window.pythonCommand}{' '}
+                                        &lt;script-path&gt; &lt;input-file&gt;
+                                        &lt;output-file&gt;
+                                    </code>
+                                    <ul
+                                        style={{
+                                            margin: '10px 0',
+                                            paddingLeft: '20px',
+                                        }}
+                                    >
+                                        <li>
+                                            <b>&lt;script-path&gt;</b>:{' '}
+                                            {t('argScriptPath')}
+                                        </li>
+                                        <li>
+                                            <b>&lt;input-file&gt;</b>:{' '}
+                                            {t('argInputFile')}
+                                        </li>
+                                        <li>
+                                            <b>&lt;output-file&gt;</b>:{' '}
+                                            {t('argOutputFile')}
+                                        </li>
+                                    </ul>
+                                    {t('expectedBehavior')}
+                                    <br />
+                                    <textarea
+                                        className="selectable"
+                                        readOnly
+                                        value={`with open(sys.argv[1], "r") as f:
+    test_input = f.read()
+with open(sys.argv[2], "r") as f:
+    code_output = f.read()`}
+                                        style={{
+                                            fontSize: '0.9em',
+                                            height: '95px',
+                                            width: '100%',
+                                            display: 'block',
+                                        }}
+                                    />
+                                    <br />
+                                    <a
+                                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md#custom-checker"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn btn-black"
+                                        style={{
+                                            fontSize: '0.9em',
+                                            display: 'inline-block',
+                                        }}
+                                    >
+                                        <i className="codicon codicon-book"></i>{' '}
+                                        {t('documentation')}
+                                    </a>
+                                </small>
+                            </div>
+                        </details>
+                    </div>
+                )}
                 <div>
                     <span
                         onClick={toggleOnlineJudgeEnv}
@@ -989,6 +1175,7 @@ function App() {
     } else if (problem !== undefined) {
         return (
             <Judge
+                key={problem.srcPath}
                 problem={problem}
                 updateProblem={setProblem}
                 cases={cases}

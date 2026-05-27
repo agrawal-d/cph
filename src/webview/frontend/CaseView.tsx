@@ -1,9 +1,6 @@
 import { Case, VSToWebViewMessage, DiffResult, TokenDiff } from '../../types';
 import { useState, createRef, useEffect } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import AnsiToHtml from 'ansi-to-html';
-
-const converter = new AnsiToHtml(); // Create a converter instance
 
 import React from 'react';
 
@@ -25,12 +22,15 @@ export default function CaseView(props: {
     notify: (text: string) => void;
     doFocus?: boolean;
     forceRunning: boolean;
+    forceChecking: boolean;
+    customCheckerPath?: string;
 }) {
     const { id, result } = props.case;
 
     const [input, setInput] = useState<string>(props.case.testcase.input);
     const [output, setOutput] = useState<string>(props.case.testcase.output);
     const [running, setRunning] = useState<boolean>(false);
+    const [checking, setChecking] = useState<boolean>(false);
     const [minimized, setMinimized] = useState<boolean>(
         props.case.result?.pass === true,
     );
@@ -49,8 +49,16 @@ export default function CaseView(props: {
     useEffect(() => {
         if (props.forceRunning) {
             setRunning(true);
+            setChecking(false);
         }
     }, [props.forceRunning]);
+
+    useEffect(() => {
+        if (props.forceChecking) {
+            setRunning(false);
+            setChecking(true);
+        }
+    }, [props.forceChecking]);
 
     const handleInputChange = (
         event: React.ChangeEvent<HTMLTextAreaElement>,
@@ -87,15 +95,16 @@ export default function CaseView(props: {
     useEffect(() => {
         if (props.case.result !== null) {
             setRunning(false);
+            setChecking(false);
             props.case.result.pass ? setMinimized(true) : setMinimized(false);
         }
     }, [props.case.result]);
 
     useEffect(() => {
-        if (running) {
+        if (running || checking) {
             setMinimized(true);
         }
-    }, [running]);
+    }, [running, checking]);
 
     useEffect(() => {
         window.addEventListener('message', function (event) {
@@ -120,7 +129,7 @@ export default function CaseView(props: {
     if (!result) {
         resultText = t('runToShowOutput');
     }
-    if (running) {
+    if (running || checking) {
         resultText = '...';
     }
     const passFailText = result
@@ -128,7 +137,8 @@ export default function CaseView(props: {
             ? t('passed')
             : t('failed')
         : '';
-    const caseClassName = 'case ' + (running ? 'running' : passFailText);
+    const caseClassName =
+        'case ' + (running || checking ? 'running' : passFailText);
     const timeText = result?.timeOut ? t('timedOut') : result?.time + 'ms';
 
     return (
@@ -152,10 +162,12 @@ export default function CaseView(props: {
                         )}
                         &nbsp;TC {props.num}
                     </span>
-                    {running && (
-                        <span className="running-text">{t('running')}</span>
+                    {(running || checking) && (
+                        <span className="running-text">
+                            {running ? t('running') : t('checking')}
+                        </span>
                     )}
-                    {result && !running && (
+                    {result && !running && !checking && (
                         <>
                             <span className="result-data">
                                 <span
@@ -218,7 +230,11 @@ export default function CaseView(props: {
                             autoFocus={props.doFocus}
                         />
                     </div>
-                    <div className="textarea-container">
+                    <div
+                        className={`textarea-container expected-output-container ${
+                            props.customCheckerPath?.trim() ? 'hidden' : ''
+                        }`}
+                    >
                         {t('expectedOutputLabel')}
                         <div
                             className="clipboard"
@@ -266,6 +282,83 @@ export default function CaseView(props: {
                             </>
                         </div>
                     )}
+                    {props.case.result?.checkerRun && (
+                        <details style={{ marginTop: '10px' }}>
+                            <summary
+                                style={{
+                                    cursor: 'pointer',
+                                    fontSize: '0.9em',
+                                    opacity: 0.8,
+                                }}
+                            >
+                                {t('checkerLog')}
+                            </summary>
+                            <div style={{ marginTop: '5px' }}>
+                                <small
+                                    style={{
+                                        display: 'block',
+                                        marginTop: '5px',
+                                    }}
+                                >
+                                    {t('checkerExitCode')}{' '}
+                                    <code>
+                                        {props.case.result.checkerRun.code}
+                                    </code>
+                                </small>
+                                <small
+                                    style={{
+                                        display: 'block',
+                                        marginTop: '10px',
+                                    }}
+                                >
+                                    {t('checkerOutput')}
+                                </small>
+                                <textarea
+                                    className="selectable"
+                                    readOnly
+                                    value={trunctateStdout(
+                                        `STDOUT:\n${props.case.result.checkerRun.stdout}\n\nSTDERR:\n${props.case.result.checkerRun.stderr}`,
+                                    )}
+                                    style={{
+                                        fontSize: '0.9em',
+                                        height: '100px',
+                                        width: '100%',
+                                        display: 'block',
+                                        marginTop: '5px',
+                                    }}
+                                />
+                                <small
+                                    style={{
+                                        display: 'block',
+                                        marginTop: '10px',
+                                    }}
+                                >
+                                    {t('checkerInvocation')}
+                                </small>
+                                <textarea
+                                    className="selectable"
+                                    readOnly
+                                    value={props.case.result.checkerRun.command}
+                                    style={{
+                                        fontSize: '0.9em',
+                                        height: '40px',
+                                        width: '100%',
+                                        display: 'block',
+                                        marginTop: '5px',
+                                    }}
+                                />
+                                <small
+                                    style={{
+                                        display: 'block',
+                                        marginTop: '10px',
+                                    }}
+                                >
+                                    {t('checkerDuration')}{' '}
+                                    {props.case.result.checkerRun.time}ms
+                                </small>
+                            </div>
+                        </details>
+                    )}
                     {result != null &&
                         !result.pass &&
                         result.diff != null &&
@@ -276,22 +369,12 @@ export default function CaseView(props: {
                             />
                         )}
                     {stderror && stderror.length > 0 && (
-                        <div style={{ userSelect: 'text' }}>
+                        <div className="textarea-container">
                             {t('standardError')}
-                            <div
+                            <TextareaAutosize
                                 className="selectable stderror-textarea"
-                                style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                                    maxHeight: '250px',
-                                    fontSize: '1.15em',
-                                    padding: '2px',
-                                    userSelect: 'text',
-                                    whiteSpace: 'pre-wrap',
-                                    overflowY: 'auto',
-                                }}
-                                dangerouslySetInnerHTML={{
-                                    __html: trunctateStdoutColored(stderror),
-                                }}
+                                value={trunctateStdout(stderror)}
+                                readOnly
                             />
                         </div>
                     )}
@@ -388,18 +471,9 @@ function TokenChip({ token }: { token: TokenDiff }) {
     );
 }
 
-/** Limit string length to 100,000. */
 const trunctateStdout = (stdout: string): string => {
     if (stdout.length > 100000) {
         stdout = '[Truncated]\n' + stdout.substr(0, 100000);
     }
     return stdout;
-};
-
-/** Limit string length to 100,000 and replaces ANSI colors */
-const trunctateStdoutColored = (stdout: string): string => {
-    if (stdout.length > 100000) {
-        stdout = '[Truncated]\n' + stdout.substr(0, 100000);
-    }
-    return converter.toHtml(stdout);
 };
