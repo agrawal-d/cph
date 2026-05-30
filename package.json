@@ -394,6 +394,23 @@
                     "default": "",
                     "description": "%cph.general.defaultLanguageTemplateFileLocation.description%"
                 },
+                "cph.general.siteTemplates": {
+                    "type": "object",
+                    "default": {},
+                    "description": "Maps Online Judge/site name patterns to template paths (e.g. key 'Codeforces' -> 'F:\\cf.cpp'). Matching is case-insensitive and checks if the key is a substring of the problem's group name.",
+                    "additionalProperties": {
+                        "type": "string",
+                        "description": "Absolute path to the template file."
+                    },
+                    "markdownDescription": "Maps Online Judge/site name patterns (case-insensitive substring match against the problem's group name) to template file locations.\n\n**Example:**\n* **Item (Online Judge)**: `Codeforces` &rarr; **Value (Template Location)**: `F:\\templates\\cf.cpp`\n* **Item (Online Judge)**: `USACO` &rarr; **Value (Template Location)**: `F:\\templates\\usaco.cpp`",
+                    "properties": {},
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "string",
+                            "description": "Absolute path to the template file."
+                        }
+                    }
+                },
                 "cph.general.doTemplateFileVariableReplacement": {
                     "type": "boolean",
                     "default": false,

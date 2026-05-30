@@ -14,6 +14,7 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    getSiteTemplatesPref,
     includeProblemIndex,
     wordRegex,
     doTemplateFileVariableReplacement,
@@ -271,7 +272,27 @@ const handleNewProblem = async (problem: Problem) => {
         writeFileSync(srcPath, '');
 
         if (defaultLanguage) {
-            const templateLocation = getDefaultLanguageTemplateFileLocation();
+            let templateLocation = null;
+            const siteTemplates = getSiteTemplatesPref();
+            const problemGroup = problem.group || '';
+
+            // Check if any site templates key matches as a substring of problem.group case-insensitively
+            for (const [siteKey, loc] of Object.entries(siteTemplates)) {
+                if (
+                    problemGroup
+                        .toLowerCase()
+                        .includes(siteKey.toLowerCase()) &&
+                    loc
+                ) {
+                    templateLocation = loc;
+                    break;
+                }
+            }
+
+            if (!templateLocation) {
+                templateLocation = getDefaultLanguageTemplateFileLocation();
+            }
+
             if (templateLocation !== null) {
                 const templateExists = existsSync(templateLocation);
                 if (!templateExists) {

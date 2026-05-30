@@ -138,6 +138,9 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
     }
     return pref;
 };
+export const getSiteTemplatesPref = (): Record<string, string> => {
+    return getPreference('general.siteTemplates') || {};
+};
 export const doTemplateFileVariableReplacement = (): boolean => {
     return getPreference('general.doTemplateFileVariableReplacement');
 };

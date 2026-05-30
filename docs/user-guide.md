@@ -114,6 +114,19 @@ Several options are available to customize the extension. Open VS Code settings
     replaced. \
     ![Templates](img/templateSettings.png) ![Templates](img/javaTemplate.png)
 
+### Site-Specific Templates
+
+You can configure different templates for different Online Judges / Platforms (e.g., Codeforces, USACO, AtCoder):
+
+1. Open VS Code Settings (`Ctrl + ,`) and search for `Site Templates` (or setting `cph.general.siteTemplates`).
+2. Click **Add Item** to specify a template mapping:
+   - **Item (Online Judge)**: Enter the keyword matching the platform (case-insensitive substring match of the problem group, e.g. `USACO` or `Codeforces`).
+   - **Value (Template Location)**: The absolute path to your site-specific template file.
+
+When CPH parses a problem, it checks if any configured keyword matches the problem's group. If a match is found, that template is used. Otherwise, it falls back to the default template.
+
+![Site Templates UI](img/siteTemplatesSettings.png)
+
 ### Template Variable Replacement
 
 -   Replace the pattern $var$ with its value when creating files with
