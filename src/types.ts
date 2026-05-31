@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 /** Valid name for a VS Code preference section for the extension */
 export type prefSection =
     | 'general.saveLocation'
+    | 'general.codeforcesNameStyle'
     | 'general.defaultLanguage'
     | 'general.defaultOnlineJudge'
     | 'general.timeOut'

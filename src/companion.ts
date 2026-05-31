@@ -10,6 +10,7 @@ import {
     getDefaultLangPref,
     getLanguageId,
     useShortCodeForcesName,
+    getCodeforcesNameStyle,
     useShortLuoguName,
     useShortAtCoderName,
     getMenuChoices,
@@ -170,8 +171,36 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
             problem.name = sections.splice(1).join();
         }
     }
-    if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
-        return `${getProblemName(problem.url)}.${ext}`;
+    if (isCodeforcesUrl(new URL(problem.url))) {
+        const style = getCodeforcesNameStyle();
+
+        const cfId = getProblemName(problem.url);
+
+        const originalName = problem.name;
+
+        const cleanName = originalName.replace(/^[A-Z][0-9]*\.\s*/, '');
+
+        const originalFile = originalName.replace(/\W+/g, '_');
+        const cleanFile = cleanName.replace(/\W+/g, '_');
+
+        if (style === 'shortcode') {
+            return `${cfId}.${ext}`;
+        }
+
+        if (style === 'both') {
+            return `${cfId}_${cleanFile}.${ext}`;
+        }
+
+        if (style === 'name') {
+            return `${originalFile}.${ext}`;
+        }
+
+        // legacy mode
+        if (useShortCodeForcesName()) {
+            return `${cfId}.${ext}`;
+        }
+
+        return `${originalFile}.${ext}`;
     } else if (isLuoguUrl(new URL(problem.url)) && useShortLuoguName()) {
         // Url is like https://www.luogu.com.cn/problem/P1000
         const pattern = /problem\/(\w+)/;

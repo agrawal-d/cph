@@ -374,6 +374,17 @@
                     "default": false,
                     "description": "%cph.general.useShortCodeForcesName.description%"
                 },
+                "cph.general.codeforcesNameStyle": {
+                    "type": "string",
+                    "default": "legacy",
+                    "enum": [
+                        "legacy",
+                        "name",
+                        "shortcode",
+                        "both"
+                    ],
+                    "description": "Choose how Codeforces problem files are named: name, shortcode, both, or legacy."
+                },
                 "cph.general.useShortLuoguName": {
                     "type": "boolean",
                     "default": false,
