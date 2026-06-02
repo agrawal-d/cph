@@ -383,7 +383,7 @@
                         "shortcode",
                         "both"
                     ],
-                    "description": "Choose how Codeforces problem files are named: name, shortcode, both, or legacy."
+                    "description": "Choose how Codeforces problem files are named. legacy: existing behavior, name: 'A_Line_Trip.cpp', shortcode: '1901A.cpp', both: '1901A_Line_Trip.cpp'."
                 },
                 "cph.general.useShortLuoguName": {
                     "type": "boolean",
