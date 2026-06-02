@@ -60,6 +60,7 @@
     "cph.general.defaultLanguage.description": "通过 Competitive Companion 导入题目的默认语言（选择 'none' 将在每次导入时提示选择语言）。",
     "cph.general.menuChoices.description": "通过 Competitive Companion 导入题目时，菜单中显示的语言（空格分隔，从上到下排序）。例如 'java python' 将先显示 Java，然后是 Python。",
     "cph.general.useShortCodeForcesName.description": "为生成的题目文件使用短 ID（如 144C），而不是 Codeforces 题目的完整名称。",
+    "cph.general.codeforcesNameStyle.description": "选择 Codeforces 题目文件的命名方式。legacy：现有的默认行为，name：A_Line_Trip.cpp，shortcode：1901A.cpp，both：1901A_Line_Trip.cpp。",
     "cph.general.useShortLuoguName.description": "为生成的题目文件使用短 ID（如 P1145 / U123456），而不是洛谷题目的完整名称。",
     "cph.general.useShortAtCoderName.description": "为生成的题目文件使用短 ID（如 abc123a），而不是 AtCoder 题目的完整名称。",
     "cph.general.retainWebviewContext.description": "即使在隐藏时也保持 Webview 处于活动状态。可能会提高性能，但可能会导致一些渲染问题。",
