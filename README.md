@@ -12,7 +12,9 @@ TopCoder etc. with the help of competitive companion browser extension
 ## Quick start
 
 1. [Install cph](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper)
-   in VS Code and open any folder.
+   in VS Code and open any folder. (Alternatively, the latest `.vsix` is
+   available for manual installation at the
+   [latest-vsix release](https://github.com/agrawal-d/cph/releases/tag/latest-vsix).)
 1. [Install competitive companion](https://github.com/jmerle/competitive-companion#readme)
    in your browser.
 1. Use Companion by pressing the green plus (+) circle from the browser toolbar
