@@ -17,7 +17,7 @@ export const runSingleAndSave = async (
     id: number,
     skipCompile = false,
     skipTelemetry = false,
-) => {
+): Promise<RunResult | undefined> => {
     if (!skipTelemetry) {
         globalThis.reporter.sendTelemetryEvent(telmetry.RUN_TESTCASE);
     }
@@ -62,7 +62,9 @@ export const runSingleAndSave = async (
     let pass: boolean | null = null;
     let checkerRun: any = undefined;
 
-    if (didError) {
+    if (run.signal === 'SIGTERM' || run.signal === 'SIGKILL') {
+        pass = false;
+    } else if (didError) {
         pass = false;
     } else if (
         problem.customCheckerPath &&
@@ -81,6 +83,12 @@ export const runSingleAndSave = async (
                 run.stdout,
             );
             pass = checkerRun.code === 0;
+            if (
+                checkerRun.signal === 'SIGTERM' ||
+                checkerRun.signal === 'SIGKILL'
+            ) {
+                run.signal = checkerRun.signal; // Propagate signal to main run object so processRunAll can stop
+            }
         } else {
             vscode.window.showErrorMessage(
                 localize(
@@ -102,7 +110,9 @@ export const runSingleAndSave = async (
         diff:
             didError ||
             (problem.customCheckerPath &&
-                problem.customCheckerPath.trim() !== '')
+                problem.customCheckerPath.trim() !== '') ||
+            run.signal === 'SIGTERM' ||
+            run.signal === 'SIGKILL'
                 ? undefined
                 : diffOutput(testCase.output, run.stdout),
         id,
@@ -114,4 +124,5 @@ export const runSingleAndSave = async (
         result,
         problem,
     });
+    return result;
 };

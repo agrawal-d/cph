@@ -14,6 +14,7 @@ import {
 import CaseView from './CaseView';
 import Page from './Page';
 import { Feedback } from './Feedback';
+import { CatCompanion } from './CatCompanion';
 
 let storedLogs = '';
 let notificationTimeout: NodeJS.Timeout | undefined = undefined;
@@ -85,7 +86,7 @@ function Judge(props: {
     problem: Problem;
     updateProblem: (problem: Problem) => void;
     cases: Case[];
-    updateCases: (cases: Case[]) => void;
+    updateCases: React.Dispatch<React.SetStateAction<Case[]>>;
     onlineJudgeEnv: boolean;
     setOnlineJudgeEnv: (value: boolean) => void;
 }) {
@@ -95,6 +96,11 @@ function Judge(props: {
     const updateCases = props.updateCases;
     const onlineJudgeEnv = props.onlineJudgeEnv;
     const setOnlineJudgeEnv = props.setOnlineJudgeEnv;
+
+    const casesRef = React.useRef(cases);
+    useEffect(() => {
+        casesRef.current = cases;
+    }, [cases]);
 
     const [focusLast, setFocusLast] = useState<boolean>(false);
     const [forceRunning, setForceRunning] = useState<number | false>(false);
@@ -106,10 +112,11 @@ function Judge(props: {
     const [generatedJson, setGeneratedJson] = useState<any | null>(null);
     const [liveUserCount, setLiveUserCount] = useState<number>(0);
     const [extLogs, setExtLogs] = useState<string>('');
+
     const [checkerVisible, setCheckerVisible] = useState<boolean>(
         !!problem.customCheckerPath,
     );
-    const checkerInputRef = React.useRef<HTMLTextAreaElement>(null);
+    const checkerInputRef = React.useRef<HTMLInputElement>(null);
 
     const numPassed = cases.filter(
         (testCase) => testCase.result?.pass === true,
@@ -145,12 +152,17 @@ function Judge(props: {
     const [webviewState, setWebviewState] = useState<WebViewpersistenceState>(
         () => {
             const vscodeState = vscodeApi.getState();
+            const currentLoads = (vscodeState?.totalLoads || 0) + 1;
             const ret = {
                 dialogCloseDate: vscodeState?.dialogCloseDate || Date.now(),
                 feedbackDialogCloseDate:
                     vscodeState?.feedbackDialogCloseDate || Date.now(),
                 hasSeenFeedbackTooltip:
                     vscodeState?.hasSeenFeedbackTooltip || false,
+                catCompanionEnabled: vscodeState?.catCompanionEnabled || false,
+                totalLoads: currentLoads,
+                hasSeenCompanionTooltip:
+                    vscodeState?.hasSeenCompanionTooltip || false,
             };
             vscodeApi.setState(ret);
             console.log('Restored to state:', ret);
@@ -165,19 +177,11 @@ function Judge(props: {
     const [showFeedbackTooltip, setShowFeedbackTooltip] = useState(
         !webviewState.hasSeenFeedbackTooltip,
     );
-
-    useEffect(() => {
-        if (showFeedbackTooltip) {
-            const timer = setTimeout(() => {
-                setShowFeedbackTooltip(false);
-                updateWebviewState({
-                    ...webviewState,
-                    hasSeenFeedbackTooltip: true,
-                });
-            }, 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [showFeedbackTooltip]);
+    const [showCompanionTooltip, setShowCompanionTooltip] = useState(
+        (webviewState.totalLoads || 0) >= 10 &&
+            !webviewState.hasSeenCompanionTooltip &&
+            !webviewState.catCompanionEnabled,
+    );
 
     const updateWebviewState = (newState: WebViewpersistenceState) => {
         setWebviewState(newState);
@@ -205,6 +209,30 @@ function Judge(props: {
     const sendMessageToVSCode = (message: WebviewToVSEvent) => {
         vscodeApi.postMessage(message);
     };
+
+    useEffect(() => {
+        const handleContextMenu = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target) {
+                const tagName = target.tagName;
+                if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
+                    return;
+                }
+                if (
+                    typeof target.closest === 'function' &&
+                    target.closest('.chevron-btn')
+                ) {
+                    return;
+                }
+            }
+            e.preventDefault();
+        };
+
+        document.addEventListener('contextmenu', handleContextMenu);
+        return () => {
+            document.removeEventListener('contextmenu', handleContextMenu);
+        };
+    }, []);
 
     useEffect(() => {
         const fn = (event: any) => {
@@ -253,10 +281,30 @@ function Judge(props: {
 
     const handleRunning = (data: RunningCommand) => {
         setForceRunning(data.id);
+        updateCases((prevCases) => {
+            const idx = prevCases.findIndex((c) => c.id === data.id);
+            if (idx === -1) return prevCases;
+            const newCases = prevCases.slice();
+            newCases[idx] = {
+                ...newCases[idx],
+                result: null,
+            };
+            return newCases;
+        });
     };
 
     const handleChecking = (data: CheckingCommand) => {
         setForceChecking(data.id);
+        updateCases((prevCases) => {
+            const idx = prevCases.findIndex((c) => c.id === data.id);
+            if (idx === -1) return prevCases;
+            const newCases = prevCases.slice();
+            newCases[idx] = {
+                ...newCases[idx],
+                result: null,
+            };
+            return newCases;
+        });
     };
 
     const refreshOnlineJudge = () => {
@@ -441,6 +489,16 @@ function Judge(props: {
         }
     };
 
+    const openCheckerFile = () => {
+        const checkerPath = problem.customCheckerPath?.trim();
+        if (checkerPath) {
+            sendMessageToVSCode({
+                command: 'open-file',
+                path: checkerPath,
+            });
+        }
+    };
+
     const views: JSX.Element[] = [];
     cases.forEach((value, index) => {
         if (focusLast && index === cases.length - 1) {
@@ -457,6 +515,7 @@ function Judge(props: {
                     forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
                     customCheckerPath={problem.customCheckerPath}
+                    stop={stop}
                 ></CaseView>,
             );
             debounceFocusLast();
@@ -473,6 +532,7 @@ function Judge(props: {
                     forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
                     customCheckerPath={problem.customCheckerPath}
+                    stop={stop}
                 ></CaseView>,
             );
         }
@@ -559,6 +619,20 @@ function Judge(props: {
         }
     };
 
+    const clearState = () => {
+        const defaultState = {
+            dialogCloseDate: Date.now(),
+            feedbackDialogCloseDate: Date.now(),
+            hasSeenFeedbackTooltip: false,
+            catCompanionEnabled: false,
+            totalLoads: 0,
+            hasSeenCompanionTooltip: false,
+        };
+        updateWebviewState(defaultState);
+        setEditableStateText(JSON.stringify(defaultState, null, 2));
+        setNotification('State cleared');
+    };
+
     const renderDonateButton = () => {
         const diff = new Date().getTime() - webviewState.dialogCloseDate;
         const diffInDays = diff / (1000 * 60 * 60 * 24);
@@ -610,43 +684,6 @@ function Judge(props: {
             <div>
                 {t('cphDescription')}
                 <hr />
-                <h3>{t('aiCompilation')}</h3>
-                {t('aiDescription')}
-                <br />
-                <br />
-                <button
-                    className="btn btn-green"
-                    style={{ transition: 'all 0.5s ease-in-out' }}
-                    onClick={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        const messages = [
-                            'Training cats...',
-                            'Teaching cats JS...',
-                            'Cats are lazy...',
-                            'AI is sleeping...',
-                            'Compiling with yarn...',
-                            'Maybe next time!',
-                        ];
-                        let i = 0;
-                        target.disabled = true;
-                        const interval = setInterval(() => {
-                            if (i < messages.length) {
-                                target.innerText = messages[i++];
-                            } else {
-                                clearInterval(interval);
-                                target.style.transform =
-                                    'rotate(720deg) scale(0)';
-                                target.style.opacity = '0';
-                                setTimeout(() => {
-                                    target.style.display = 'none';
-                                }, 500);
-                            }
-                        }, 800);
-                    }}
-                >
-                    {t('enable')}
-                </button>
-                <hr />
                 <h3>{t('getHelp')}</h3>
                 <a
                     className="btn"
@@ -682,21 +719,7 @@ function Judge(props: {
                 <button className="btn btn-green" onClick={saveDebugState}>
                     Save Changes
                 </button>
-                <button
-                    className="btn btn-red"
-                    onClick={() => {
-                        const defaultState = {
-                            dialogCloseDate: Date.now(),
-                            feedbackDialogCloseDate: Date.now(),
-                            hasSeenFeedbackTooltip: false,
-                        };
-                        updateWebviewState(defaultState);
-                        setEditableStateText(
-                            JSON.stringify(defaultState, null, 2),
-                        );
-                        setNotification('State cleared');
-                    }}
-                >
+                <button className="btn btn-red" onClick={clearState}>
                     Clear State
                 </button>
                 <hr />
@@ -744,7 +767,11 @@ function Judge(props: {
     };
 
     return (
-        <div className="ui">
+        <div
+            className={`ui ${
+                webviewState.catCompanionEnabled ? 'cat-companion-active' : ''
+            }`}
+        >
             {notification && <div className="notification">{notification}</div>}
             {renderDonateButton()}
             {renderInfoPage()}
@@ -793,6 +820,19 @@ function Judge(props: {
                         </button>
                         {renderSubmitButton()}
                     </div>
+                    {waitingForSubmit && (
+                        <div className="margin-10">
+                            <span className="loader"></span>{' '}
+                            {t('waitingForExtension')}
+                            <br />
+                            <small>
+                                {t('codeforcesInstructions')}
+                                <br />
+                                <br />
+                                {t('submitHint')}
+                            </small>
+                        </div>
+                    )}
                     <button
                         className={`btn btn-block ${
                             problem.customCheckerPath?.trim()
@@ -815,17 +855,46 @@ function Judge(props: {
                 </div>
                 {checkerVisible && (
                     <div className="pad-10 custom-checker-area">
-                        <textarea
-                            className="selectable"
-                            placeholder={t('customCheckerPathPlaceholder')}
-                            value={problem.customCheckerPath || ''}
-                            onChange={(e) => updateCheckerPath(e.target.value)}
-                            rows={1}
-                            ref={checkerInputRef}
+                        <div
                             style={{
-                                width: '100%',
+                                display: 'flex',
+                                gap: '5px',
+                                alignItems: 'center',
                             }}
-                        />
+                        >
+                            <input
+                                type="text"
+                                className="selectable"
+                                placeholder={t('customCheckerPathPlaceholder')}
+                                value={problem.customCheckerPath || ''}
+                                onChange={(e) =>
+                                    updateCheckerPath(e.target.value)
+                                }
+                                ref={checkerInputRef}
+                                style={{
+                                    flexGrow: 1,
+                                    width: '0',
+                                    padding: '4px 6px',
+                                }}
+                            />
+                            <button
+                                className="btn-chromeless"
+                                title="Open the checker script"
+                                onClick={openCheckerFile}
+                                disabled={!problem.customCheckerPath?.trim()}
+                            >
+                                <span
+                                    className="icon"
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <i className="codicon codicon-link-external"></i>
+                                </span>
+                            </button>
+                        </div>
                         <details style={{ marginTop: '10px' }}>
                             <summary
                                 style={{
@@ -905,6 +974,143 @@ with open(sys.argv[2], "r") as f:
                         </details>
                     </div>
                 )}
+                <small className="footer-button-grid">
+                    <a
+                        href={payPalUrl}
+                        className="btn btn-black footer-btn-row-1"
+                        title={t('donate')}
+                    >
+                        <i className="codicon codicon-heart-filled"></i>{' '}
+                        {t('support')}
+                    </a>
+                    <span
+                        className="footer-btn-row-1"
+                        style={{ position: 'relative' }}
+                    >
+                        {showFeedbackTooltip && (
+                            <div
+                                className="feedback-tooltip"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                }}
+                            >
+                                <span>{t('feedbackTooltip')}</span>
+                                <a
+                                    role="button"
+                                    style={{
+                                        cursor: 'pointer',
+                                        color: 'white',
+                                        opacity: 0.8,
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setShowFeedbackTooltip(false);
+                                        updateWebviewState({
+                                            ...webviewState,
+                                            hasSeenFeedbackTooltip: true,
+                                        });
+                                    }}
+                                    title="Close"
+                                >
+                                    <i
+                                        className="codicon codicon-close"
+                                        style={{ fontSize: '10px' }}
+                                    ></i>
+                                </a>
+                            </div>
+                        )}
+                        <a
+                            role="button"
+                            className="btn btn-black"
+                            onClick={() => setFeedbackPageVisible(true)}
+                        >
+                            <i className="codicon codicon-feedback"></i>{' '}
+                            {t('feedback')}
+                        </a>
+                    </span>
+                    <span
+                        className="footer-btn-row-2"
+                        style={{ position: 'relative' }}
+                    >
+                        {showCompanionTooltip &&
+                            !webviewState.catCompanionEnabled && (
+                                <div
+                                    className="feedback-tooltip"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                    }}
+                                >
+                                    <span>{t('companionTooltip')}</span>
+                                    <a
+                                        role="button"
+                                        style={{
+                                            cursor: 'pointer',
+                                            color: 'white',
+                                            opacity: 0.8,
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            setShowCompanionTooltip(false);
+                                            updateWebviewState({
+                                                ...webviewState,
+                                                hasSeenCompanionTooltip: true,
+                                            });
+                                        }}
+                                        title="Close"
+                                    >
+                                        <i
+                                            className="codicon codicon-close"
+                                            style={{ fontSize: '10px' }}
+                                        ></i>
+                                    </a>
+                                </div>
+                            )}
+                        <a
+                            role="button"
+                            className="btn btn-black"
+                            title={
+                                webviewState.catCompanionEnabled
+                                    ? t('disableCatCompanion')
+                                    : t('enableCatCompanion')
+                            }
+                            onClick={() => {
+                                updateWebviewState({
+                                    ...webviewState,
+                                    catCompanionEnabled:
+                                        !webviewState.catCompanionEnabled,
+                                    hasSeenCompanionTooltip: true,
+                                });
+                            }}
+                        >
+                            <i className="codicon codicon-octoface"></i>{' '}
+                            {t('cat')}
+                        </a>
+                    </span>
+                    <a
+                        href="https://github.com/agrawal-d/cph/issues"
+                        className="btn btn-black footer-btn-row-2"
+                    >
+                        <i className="codicon codicon-github"></i> {t('bugs')}
+                    </a>
+                    <a
+                        role="button"
+                        className="btn btn-black footer-btn-row-2"
+                        title={t('aboutCPH')}
+                        onClick={() => showInfoPage()}
+                    >
+                        <i className="codicon codicon-info"></i> {t('about')}
+                    </a>
+                </small>
                 <div>
                     <span
                         onClick={toggleOnlineJudgeEnv}
@@ -916,60 +1122,6 @@ with open(sys.argv[2], "r") as f:
                         <span className="oj-code">{t('setOnlineJudge')}</span>
                     </span>
                     {renderTimeoutAVSuggestion()}
-                </div>
-                <br />
-                <br />
-                <div>
-                    <small>
-                        <a
-                            href={payPalUrl}
-                            className="btn btn-pink"
-                            title={t('donate')}
-                        >
-                            <i className="codicon codicon-heart-filled"></i>{' '}
-                            {t('support')}
-                        </a>
-                    </small>
-                    <small>
-                        <a
-                            role="button"
-                            className="btn"
-                            title="Open CPH settings and manage optional features"
-                            onClick={() =>
-                                sendMessageToVSCode({
-                                    command: 'open-settings',
-                                })
-                            }
-                        >
-                            <i className="codicon codicon-settings"></i>
-                        </a>
-                    </small>
-                    <small>
-                        <span style={{ position: 'relative' }}>
-                            {showFeedbackTooltip && (
-                                <div className="feedback-tooltip">
-                                    Share feedback in-app
-                                </div>
-                            )}
-                            <a
-                                role="button"
-                                className="btn"
-                                onClick={() => setFeedbackPageVisible(true)}
-                            >
-                                <i className="codicon codicon-feedback"></i>{' '}
-                                {t('feedback')}
-                            </a>
-                        </span>
-                    </small>
-                    <small>
-                        <a
-                            href="https://github.com/agrawal-d/cph/issues"
-                            className="btn btn-black"
-                        >
-                            <i className="codicon codicon-github"></i>{' '}
-                            {t('bugs')}
-                        </a>
-                    </small>
                 </div>
                 <div className="remote-message">
                     <p
@@ -988,17 +1140,45 @@ with open(sys.argv[2], "r") as f:
                 )}
             </div>
             <div className="actions">
+                {webviewState.catCompanionEnabled && (
+                    <CatCompanion
+                        enabled={webviewState.catCompanionEnabled}
+                        total={total}
+                        numPassed={numPassed}
+                    />
+                )}
                 <div className="row">
-                    <button
-                        className="btn"
-                        onClick={runAll}
-                        title={t('runAll')}
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-run-above"></i>
-                        </span>{' '}
-                        <span className="action-text">{t('runAll')}</span>
-                    </button>
+                    <div className="split-btn">
+                        <button
+                            className="btn main-btn"
+                            onClick={runAll}
+                            title={t('runAll')}
+                        >
+                            <span className="icon">
+                                <i className="codicon codicon-run-above"></i>
+                            </span>{' '}
+                            <span className="action-text">{t('runAll')}</span>
+                        </button>
+                        <button
+                            className="btn chevron-btn"
+                            title={t('moreActions')}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const event = new MouseEvent('contextmenu', {
+                                    bubbles: true,
+                                    clientX: e.clientX,
+                                    clientY: e.clientY,
+                                });
+                                e.currentTarget.dispatchEvent(event);
+                            }}
+                            data-vscode-context='{"preventDefaultContextMenuItems": true, "webviewSection": "compile-button"}'
+                        >
+                            <span className="icon">
+                                <i className="codicon codicon-chevron-down"></i>
+                            </span>
+                        </button>
+                    </div>
                     <button
                         className="btn btn-green"
                         onClick={newCase}
@@ -1012,24 +1192,18 @@ with open(sys.argv[2], "r") as f:
                 </div>
                 <div className="row">
                     <button
-                        className="btn btn-orange"
-                        onClick={stop}
-                        title={t('stop')}
+                        className="btn btn-black"
+                        title={t('settings')}
+                        onClick={() =>
+                            sendMessageToVSCode({
+                                command: 'open-settings',
+                            })
+                        }
                     >
                         <span className="icon">
-                            <i className="codicon codicon-circle-slash"></i>
+                            <i className="codicon codicon-settings"></i>
                         </span>{' '}
-                        <span className="action-text">{t('stop')}</span>
-                    </button>
-                    <button
-                        className="btn"
-                        title={t('aboutCPH')}
-                        onClick={() => showInfoPage()}
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-info"></i>
-                        </span>{' '}
-                        <span className="action-text"></span>
+                        <span className="action-text">{t('settings')}</span>
                     </button>
                     <button
                         className="btn btn-red right"
@@ -1043,19 +1217,6 @@ with open(sys.argv[2], "r") as f:
                     </button>
                 </div>
             </div>
-
-            {waitingForSubmit && (
-                <div className="margin-10">
-                    <span className="loader"></span> {t('waitingForExtension')}
-                    <br />
-                    <small>
-                        {t('codeforcesInstructions')}
-                        <br />
-                        <br />
-                        {t('submitHint')}
-                    </small>
-                </div>
-            )}
         </div>
     );
 }

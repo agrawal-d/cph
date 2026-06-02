@@ -32,22 +32,25 @@ export const Feedback: React.FC<FeedbackProps> = ({
         const newErrors: Record<string, string> = {};
 
         if (!feedbackName.trim()) {
-            newErrors.name = 'Name is required';
+            newErrors.name = t('nameRequired');
         } else if (feedbackName.length > 100) {
-            newErrors.name = 'Name must be less than 100 characters';
+            newErrors.name = t('nameTooLong');
         }
 
         if (feedbackEmail.trim()) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(feedbackEmail)) {
-                newErrors.email = 'Invalid email address';
+                newErrors.email = t('invalidEmail');
             }
         }
 
         if (!feedbackComment.trim()) {
-            newErrors.comment = 'Comment is required';
+            newErrors.comment = t('commentRequired');
         } else if (feedbackComment.length > 2000) {
-            newErrors.comment = `Comment must be less than 2000 characters (currently ${feedbackComment.length})`;
+            newErrors.comment = t('commentTooLong').replace(
+                '{length}',
+                feedbackComment.length.toString(),
+            );
         }
 
         setErrors(newErrors);
@@ -103,14 +106,16 @@ export const Feedback: React.FC<FeedbackProps> = ({
 
         const content = (
             <div>
-                <p>{t('feedbackDescription')}</p>
-                <div className="pad-10">
+                <p>
+                    {t('feedbackDescription')} {t('feedbackReviewed')}
+                </p>
+                <div className="pad-10" style={{ background: 'transparent' }}>
                     <label>{t('nameLabel')}</label>
                     <textarea
                         className="selectable"
                         value={feedbackName}
                         onChange={(e) => setFeedbackName(e.target.value)}
-                        placeholder={t('nameLabel')}
+                        placeholder={t('feedbackNamePlaceholder')}
                         rows={1}
                         style={{
                             borderColor: errors.name ? 'red' : undefined,
@@ -125,7 +130,7 @@ export const Feedback: React.FC<FeedbackProps> = ({
                         className="selectable"
                         value={feedbackEmail}
                         onChange={(e) => setFeedbackEmail(e.target.value)}
-                        placeholder={t('emailLabel')}
+                        placeholder={t('feedbackEmailPlaceholder')}
                         rows={1}
                         style={{
                             borderColor: errors.email ? 'red' : undefined,
@@ -142,7 +147,7 @@ export const Feedback: React.FC<FeedbackProps> = ({
                         className="selectable"
                         value={feedbackComment}
                         onChange={(e) => setFeedbackComment(e.target.value)}
-                        placeholder={t('commentLabel')}
+                        placeholder={t('feedbackCommentPlaceholder')}
                         rows={5}
                         style={{
                             borderColor: errors.comment ? 'red' : undefined,

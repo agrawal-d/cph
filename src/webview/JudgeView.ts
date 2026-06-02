@@ -158,6 +158,24 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         break;
                     }
 
+                    case 'open-file': {
+                        try {
+                            const doc = await vscode.workspace.openTextDocument(
+                                message.path,
+                            );
+                            await vscode.window.showTextDocument(
+                                doc,
+                                vscode.ViewColumn.One,
+                            );
+                        } catch (err: any) {
+                            globalThis.logger.error('Failed to open file', err);
+                            vscode.window.showErrorMessage(
+                                `Failed to open file: ${err.message}`,
+                            );
+                        }
+                        break;
+                    }
+
                     default: {
                         globalThis.logger.error(
                             'Unknown event received from webview',
@@ -290,6 +308,10 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             ),
         );
 
+        const meowAudioUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, 'dist', 'meow.mp3'),
+        );
+
         const remoteMessage = globalThis.remoteMessage
             ? globalThis.remoteMessage.trim()
             : ' ';
@@ -322,6 +344,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         // Since the react script takes time to load, the problem is sent to the webview before it has even loaded.
                         // So, for the initial request, ask for it again.
                         window.vscodeApi = acquireVsCodeApi();
+                        window.meowAudioUri = '${meowAudioUri}';
                         window.remoteMessage = '${remoteMessage}';
                         window.generatedJsonUri = '${generatedJsonUri}';
                         window.remoteServerAddress = '${remoteServerAddress}';

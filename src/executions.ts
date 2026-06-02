@@ -152,7 +152,10 @@ export const runTestCase = (
             result.code = code;
             result.signal = signal;
             result.time = end - begin;
-            runningBinaries.pop();
+            const idx = runningBinaries.indexOf(process);
+            if (idx > -1) {
+                runningBinaries.splice(idx, 1);
+            }
             resolve(result);
         });
 
@@ -167,7 +170,10 @@ export const runTestCase = (
             result.code = 1;
             result.signal = err.name;
             result.time = end - begin;
-            runningBinaries.pop();
+            const idx = runningBinaries.indexOf(process);
+            if (idx > -1) {
+                runningBinaries.splice(idx, 1);
+            }
             resolve(result);
         });
 

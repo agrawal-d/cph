@@ -210,6 +210,11 @@ export type OpenSettings = {
     command: 'open-settings';
 };
 
+export type OpenFile = {
+    command: 'open-file';
+    path: string;
+};
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | GetInitialProblem
@@ -224,7 +229,8 @@ export type WebviewToVSEvent =
     | OpenUrl
     | GetExtLogs
     | SetHideOutputDiff
-    | OpenSettings;
+    | OpenSettings
+    | OpenFile;
 
 export type RunningCommand = {
     command: 'running';
@@ -317,6 +323,9 @@ export type WebViewpersistenceState = {
     dialogCloseDate: number;
     feedbackDialogCloseDate?: number;
     hasSeenFeedbackTooltip?: boolean;
+    catCompanionEnabled?: boolean;
+    totalLoads?: number;
+    hasSeenCompanionTooltip?: boolean;
 };
 
 declare global {

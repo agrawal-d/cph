@@ -48,8 +48,20 @@
                 "command": "cph.submitToCodeForces",
                 "title": "%cph.submitToCodeForces.title%",
                 "icon": "dist/static/play.png"
+            },
+            {
+                "command": "cph.compileWithoutRunning",
+                "title": "%cph.compileWithoutRunning.title%"
             }
         ],
+        "menus": {
+            "webview/context": [
+                {
+                    "command": "cph.compileWithoutRunning",
+                    "when": "webviewId == cph.judgeView && webviewSection == 'compile-button'"
+                }
+            ]
+        },
         "keybindings": [
             {
                 "key": "ctrl+alt+b",
