@@ -227,9 +227,9 @@
                 },
                 "cph.language.rust.SubmissionCompiler": {
                     "type": "string",
-                    "default": "Rust 1.75.0 (2021)",
+                    "default": "Rust 1.89.0 (2024)",
                     "enum": [
-                        "Rust 1.75.0 (2021)"
+                        "Rust 1.89.0 (2024)"
                     ],
                     "description": "%cph.language.rust.SubmissionCompiler.description%"
                 },
