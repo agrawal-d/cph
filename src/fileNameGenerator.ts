@@ -15,7 +15,7 @@ export const getCodeforcesFileName = (
     useShortCodeforcesName: boolean,
     ext: string,
 ): string => {
-   const cfId = getCodeforcesProblemId(problemUrl);
+    const cfId = getCodeforcesProblemId(problemUrl);
 
     const cleanName = problemName.replace(/^[A-Z][0-9]*\.\s*/, '');
 
