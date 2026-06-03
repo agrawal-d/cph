@@ -1,6 +1,7 @@
 {
     "cph.runTestCases.title": "テストケースを実行",
     "cph.submitToCodeForces.title": "CodeForcesに提出",
+    "cph.compileWithoutRunning.title": "実行せずにコンパイル",
     "cph.judgeView.name": "結果",
     "cph.judgeViewContainer.title": "CPH ジャッジ",
     "cph.configuration.title": "Competitive Programming Helper (CPH)",

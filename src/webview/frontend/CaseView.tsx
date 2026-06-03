@@ -24,6 +24,7 @@ export default function CaseView(props: {
     forceRunning: boolean;
     forceChecking: boolean;
     customCheckerPath?: string;
+    stop: () => void;
 }) {
     const { id, result } = props.case;
 
@@ -186,16 +187,27 @@ export default function CaseView(props: {
                     )}
                 </div>
                 <div className="time">
-                    <button
-                        className="btn btn-green"
-                        title={t('runAgain')}
-                        onClick={rerun}
-                        disabled={running}
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-play"></i>
-                        </span>{' '}
-                    </button>
+                    {running || checking ? (
+                        <button
+                            className="btn btn-orange"
+                            title={t('stop')}
+                            onClick={props.stop}
+                        >
+                            <span className="icon">
+                                <i className="codicon codicon-circle-slash"></i>
+                            </span>{' '}
+                        </button>
+                    ) : (
+                        <button
+                            className="btn btn-green"
+                            title={t('runAgain')}
+                            onClick={rerun}
+                        >
+                            <span className="icon">
+                                <i className="codicon codicon-play"></i>
+                            </span>{' '}
+                        </button>
+                    )}
                     <button
                         className="btn btn-red"
                         title={t('deleteTestcase')}
@@ -282,7 +294,7 @@ export default function CaseView(props: {
                             </>
                         </div>
                     )}
-                    {props.case.result?.checkerRun && (
+                    {props.case.result?.checkerRun && !running && !checking && (
                         <details style={{ marginTop: '10px' }}>
                             <summary
                                 style={{
@@ -302,7 +314,11 @@ export default function CaseView(props: {
                                 >
                                     {t('checkerExitCode')}{' '}
                                     <code>
-                                        {props.case.result.checkerRun.code}
+                                        {props.case.result.checkerRun.code !==
+                                        null
+                                            ? props.case.result.checkerRun.code
+                                            : props.case.result.checkerRun
+                                                  .signal || 'Terminated'}
                                     </code>
                                 </small>
                                 <small
@@ -354,7 +370,9 @@ export default function CaseView(props: {
                                     }}
                                 >
                                     {t('checkerDuration')}{' '}
-                                    {props.case.result.checkerRun.time}ms
+                                    {props.case.result.checkerRun.code === null
+                                        ? 'Terminated'
+                                        : `${props.case.result.checkerRun.time}ms`}
                                 </small>
                             </div>
                         </details>

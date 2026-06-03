@@ -1,6 +1,7 @@
 {
     "cph.runTestCases.title": "테스트케이스 실행",
     "cph.submitToCodeForces.title": "CodeForces에 제출",
+    "cph.compileWithoutRunning.title": "실행하지 않고 컴파일",
     "cph.judgeView.name": "결과",
     "cph.judgeViewContainer.title": "CPH 채점기",
     "cph.configuration.title": "Competitive Programming Helper (CPH)",

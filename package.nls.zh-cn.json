@@ -1,6 +1,7 @@
 {
     "cph.runTestCases.title": "运行测试用例",
     "cph.submitToCodeForces.title": "提交到 CodeForces",
+    "cph.compileWithoutRunning.title": "编译但不运行",
     "cph.judgeView.name": "结果",
     "cph.judgeViewContainer.title": "CPH 评测器",
     "cph.configuration.title": "Competitive Programming Helper (CPH)",

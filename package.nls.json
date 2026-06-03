@@ -1,6 +1,7 @@
 {
     "cph.runTestCases.title": "Run Testcases",
     "cph.submitToCodeForces.title": "Submit to CodeForces",
+    "cph.compileWithoutRunning.title": "Compile Without Running",
     "cph.judgeView.name": "Results",
     "cph.judgeViewContainer.title": "CPH Judge",
     "cph.configuration.title": "Competitive Programming Helper",

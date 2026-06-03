@@ -42,7 +42,8 @@ import {
 import TelemetryReporter from '@vscode/extension-telemetry';
 import config from './config';
 import localize from './i18n';
-import { setOnlineJudgeEnv } from './compiler';
+import { setOnlineJudgeEnv, compileFile } from './compiler';
+import { checkUnsupported } from './utils';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -79,6 +80,23 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         },
     );
 
+    const disposable5 = vscode.commands.registerCommand(
+        'cph.compileWithoutRunning',
+        async () => {
+            globalThis.logger.log('Running command "compileWithoutRunning"');
+            const editor = vscode.window.activeTextEditor;
+            if (editor === undefined) {
+                checkUnsupported('');
+                return;
+            }
+            const srcPath = editor.document.fileName;
+            if (checkUnsupported(srcPath)) {
+                return;
+            }
+            await compileFile(srcPath);
+        },
+    );
+
     judgeViewProvider = new JudgeViewProvider(context.extensionUri);
 
     const webviewView = vscode.window.registerWebviewViewProvider(
@@ -96,6 +114,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
+    context.subscriptions.push(disposable5);
     globalThis.reporter = new TelemetryReporter(config.telemetryKey);
     context.subscriptions.push(globalThis.reporter);
 };

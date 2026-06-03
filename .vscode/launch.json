@@ -10,8 +10,8 @@
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-            "preLaunchTask": "npm: webpack"
+            "args": ["--extensionDevelopmentPath=${workspaceFolder}"]
+            // "preLaunchTask": "npm: webpack"
         },
         {
             "name": "Extension Tests",

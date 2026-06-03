@@ -164,21 +164,25 @@ pre {
     margin-bottom: 4px;
 }
 
-textarea {
+textarea,
+input[type='text'] {
     background: var(--input-background);
     font-family: Consolas, 'Ubuntu Mono', monospace;
-    width: 100%;
-    display: block;
     background: rgba(0, 0, 0, 0.2);
     outline: none !important;
     color: bisque;
+    border: 1px solid rgba(100, 100, 100, 0.2);
+    padding: 4px 8px;
+    margin-bottom: 0px;
+}
+
+textarea {
+    width: 100%;
+    display: block;
     max-width: 100%;
     max-height: 250px !important;
     overflow-y: auto;
     resize: none;
-    border: 1px solid rgba(100, 100, 100, 0.2);
-    padding: 4px 8px;
-    margin-bottom: 0px;
 }
 
 .meta {
@@ -254,7 +258,7 @@ textarea:active {
     transform: translateX(-50%);
     white-space: nowrap;
     margin-bottom: 8px;
-    pointer-events: none;
+    pointer-events: auto;
     z-index: 10;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
@@ -342,6 +346,16 @@ textarea:active {
     background: #383838;
 }
 
+body.vscode-light .btn.btn-black {
+    background: rgba(108, 108, 108, 0.1);
+    border-color: rgba(0, 0, 0, 0.01) !important;
+}
+
+body.vscode-light .btn.btn-black,
+body.vscode-light .btn.btn-black * {
+    color: black !important;
+}
+
 .btn-pink {
     background: #ae70ab;
     text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
@@ -359,6 +373,34 @@ body.vscode-light .btn-pink {
 
 .btn-orange {
     background: rgba(244, 164, 15, 0.781);
+}
+
+.btn-chromeless {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: var(--vscode-foreground, bisque) !important;
+    cursor: pointer;
+    padding: 2px 4px !important;
+    margin: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition:
+        opacity 0.1s ease,
+        color 0.1s ease;
+}
+
+.btn-chromeless:hover:not(:disabled) {
+    opacity: 1;
+    color: var(--vscode-textLink-activeForeground, #177bb4) !important;
+}
+
+.btn-chromeless:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 .btn-submit {
@@ -403,6 +445,7 @@ body.vscode-light .btn {
 }
 
 body.vscode-light textarea,
+body.vscode-light input[type='text'],
 pre {
     background: rgba(255, 255, 255, 0.5);
     outline: none !important;
@@ -420,7 +463,8 @@ body.vscode-light .case {
     margin-bottom: 4px;
 }
 
-body.vscode-light textarea:focus {
+body.vscode-light textarea:focus,
+body.vscode-light input[type='text']:focus {
     background: white;
     outline: none !important;
     border: 1px solid rgb(28, 145, 184);
@@ -429,6 +473,12 @@ body.vscode-light textarea:focus {
 button:disabled {
     background: rgb(66, 66, 66) !important;
     opacity: 0.1 !important;
+}
+
+button.btn-chromeless:disabled,
+.btn-chromeless:disabled {
+    background: transparent !important;
+    opacity: 0.3 !important;
 }
 
 #problem,
@@ -684,6 +734,12 @@ hr {
     color: rgb(64, 175, 64);
 }
 
+.color-orange,
+.btn .color-orange,
+body.vscode-light .btn .color-orange {
+    color: orange !important;
+}
+
 .custom-checker-area {
     border: 1px solid rgba(128, 128, 128, 0.3);
     background-color: rgba(128, 128, 128, 0.1);
@@ -693,11 +749,22 @@ hr {
 }
 
 @media only screen and (max-width: 400px) {
+    .actions {
+        padding: 8px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        row-gap: 4px !important;
+    }
+
     .row {
-        display: grid;
-        grid-auto-columns: 1fr;
-        grid-auto-flow: column;
-        column-gap: 5px;
+        display: grid !important;
+        grid-auto-columns: 1fr !important;
+        grid-auto-flow: column !important;
+        column-gap: 4px !important;
+    }
+
+    .actions .btn {
+        margin: 0 !important;
     }
 
     .size-warning {
@@ -707,4 +774,250 @@ hr {
     .fallback {
         display: block !important;
     }
+}
+
+/* Split button styles */
+.split-btn {
+    display: inline-flex;
+    vertical-align: bottom;
+    margin-right: 4px;
+    margin-bottom: 5px;
+    align-items: stretch;
+}
+
+.split-btn .btn {
+    margin: 0 !important;
+}
+
+.split-btn .main-btn {
+    flex-grow: 1;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+}
+
+.split-btn .chevron-btn {
+    flex-grow: 0;
+    flex-shrink: 0;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    border-left: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+@media only screen and (max-width: 400px) {
+    .actions .split-btn {
+        margin: 0 !important;
+        width: 100%;
+    }
+}
+
+/* Walking cat emoji standing on the bottom bar */
+.cat-emoji {
+    position: absolute;
+    bottom: 100%;
+    font-size: 24px;
+    line-height: 1;
+    pointer-events: auto;
+    z-index: 1001;
+    margin-bottom: 3px;
+}
+
+.cat-emoji .cat-bounce.bounce-walk {
+    animation: cat-bounce-walk 0.4s infinite ease-in-out;
+}
+
+@keyframes cat-bounce-walk {
+    0%,
+    100% {
+        transform: translateY(0) scaleY(1);
+    }
+    50% {
+        transform: translateY(-12px) scaleY(0.85);
+    }
+}
+
+/* Mouse emoji */
+.mouse-emoji {
+    position: absolute;
+    bottom: 100%;
+    font-size: 16px;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1000;
+    margin-bottom: 3px;
+    animation: mouse-idle 1s infinite alternate ease-in-out;
+}
+
+@keyframes mouse-idle {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-2px);
+    }
+}
+
+/* Floating heart emojis */
+.floating-heart {
+    position: absolute;
+    bottom: 100%;
+    font-size: 20px;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1002;
+    margin-bottom: 3px;
+    animation: float-up-heart 1.5s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+@keyframes float-up-heart {
+    0% {
+        transform: translateY(0) scale(0.5) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-50px) scale(1.3) rotate(-15deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-100px) scale(0.7) rotate(15deg);
+        opacity: 0;
+    }
+}
+
+/* Joyful celebration animation when all testcases pass */
+.cat-emoji.celebrating .cat-bounce {
+    animation: cat-celebrate 1.5s infinite ease-in-out;
+}
+
+@keyframes cat-celebrate {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    30% {
+        transform: translateY(-30px) rotate(180deg) scale(1.2);
+    }
+    50% {
+        transform: translateY(0) rotate(360deg) scale(0.9);
+    }
+    70% {
+        transform: translateY(-15px) rotate(360deg) scale(1.1);
+    }
+    85% {
+        transform: translateY(0) rotate(360deg) scale(0.95);
+    }
+}
+
+/* Floating celebration particles */
+.floating-particle {
+    position: absolute;
+    bottom: 100%;
+    font-size: 18px;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1002;
+    margin-bottom: 3px;
+    animation: float-up-particle 1.2s forwards cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes float-up-particle {
+    0% {
+        transform: translateY(0) scale(0.3) rotate(0deg);
+        opacity: 1;
+    }
+    30% {
+        transform: translateY(-40px) scale(1.4) rotate(120deg);
+        opacity: 0.9;
+    }
+    70% {
+        transform: translateY(-80px) scale(1) rotate(240deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-120px) scale(0.5) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Cat speech bubble */
+.cat-speech-bubble {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--vscode-notifications-background, #252526);
+    color: var(--vscode-notifications-foreground, #cccccc);
+    border: 1px solid var(--vscode-notifications-border, #3c3c3c);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 1005;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    animation: bubble-bounce 0.5s ease-out;
+}
+
+/* Tiny triangle pointer at the bottom of the bubble */
+.cat-speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--vscode-notifications-background, #252526) transparent
+        transparent transparent;
+}
+
+@keyframes bubble-bounce {
+    0% {
+        transform: translateX(-50%) translateY(10px) scale(0.8);
+        opacity: 0;
+    }
+    70% {
+        transform: translateX(-50%) translateY(-2px) scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Footer button grid layout */
+.footer-button-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.footer-button-grid .btn {
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.footer-button-grid span {
+    display: flex;
+    width: 100%;
+}
+
+/* Row 1: 2 buttons, each spans 3 columns */
+.footer-btn-row-1 {
+    grid-column: span 3;
+}
+
+/* Row 2: 3 buttons, each spans 2 columns */
+.footer-btn-row-2 {
+    grid-column: span 2;
 }
