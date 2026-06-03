@@ -210,13 +210,14 @@ Several options are available to customize the extension. Open VS Code settings
 
 ### Codeforces Filename Style
 
- Controls how filenames are generated for Codeforces problems.
- 
+Controls how filenames are generated for Codeforces problems.
+
 -   Example problem: `1901A - A. Line Trip`
 -   `name` → `A_Line_Trip.cpp`
 -   `shortcode` → `1901A.cpp`
 -   `both` → `1901A_Line_Trip.cpp`
--   `legacy` preserves the existing behavior and works with the `Use Short Codeforces Name` setting.
+-   `legacy` preserves the existing behavior and works with the
+    `Use Short Codeforces Name` setting.
 
 ### Language Settings (for each language)
 
@@ -227,7 +228,6 @@ Several options are available to customize the extension. Open VS Code settings
 -   [Requires [cph-submit](#submit-to-codeforces)] Compiler selected in drop
     down during codeforces submission.
 -   [Python] Command used to run python files. For eg. py, python3, pypy3, etc.
-
 
 ## Default Language Templates
 
