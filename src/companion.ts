@@ -19,6 +19,7 @@ import {
     wordRegex,
     doTemplateFileVariableReplacement,
 } from './preferences';
+import { getCodeforcesFileName } from './fileNameGenerator';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
@@ -172,35 +173,13 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
         }
     }
     if (isCodeforcesUrl(new URL(problem.url))) {
-        const style = getCodeforcesNameStyle();
-
-        const cfId = getProblemName(problem.url);
-
-        const originalName = problem.name;
-
-        const cleanName = originalName.replace(/^[A-Z][0-9]*\.\s*/, '');
-
-        const originalFile = originalName.replace(/\W+/g, '_');
-        const cleanFile = cleanName.replace(/\W+/g, '_');
-
-        if (style === 'shortcode') {
-            return `${cfId}.${ext}`;
-        }
-
-        if (style === 'both') {
-            return `${cfId}_${cleanFile}.${ext}`;
-        }
-
-        if (style === 'name') {
-            return `${originalFile}.${ext}`;
-        }
-
-        // legacy mode
-        if (useShortCodeForcesName()) {
-            return `${cfId}.${ext}`;
-        }
-
-        return `${originalFile}.${ext}`;
+        return getCodeforcesFileName(
+            problem.name,
+            problem.url,
+            getCodeforcesNameStyle(),
+            useShortCodeForcesName(),
+            ext,
+        );
     } else if (isLuoguUrl(new URL(problem.url)) && useShortLuoguName()) {
         // Url is like https://www.luogu.com.cn/problem/P1000
         const pattern = /problem\/(\w+)/;
