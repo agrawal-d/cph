@@ -131,6 +131,10 @@ export const translations: Record<string, any> = {
         feedbackEmailPlaceholder: 'username@server.com',
         feedbackCommentPlaceholder:
             'What can we improve? (e.g. features, bugs, checkers)',
+        rateCPH: 'If you find CPH useful, please consider rating it.',
+        rateDescription:
+            'Your rating helps other developers find CPH and supports its development.',
+        rate: 'Rate on Marketplace',
     },
     'zh-cn': {
         runTestcases: '运行测试用例',
@@ -256,6 +260,9 @@ export const translations: Record<string, any> = {
         feedbackEmailPlaceholder: 'username@server.com',
         feedbackCommentPlaceholder:
             '我们能改进什么？（例如：功能、Bug、判题脚本）',
+        rateCPH: '如果您觉得 CPH 有用，请考虑在应用商店给它评分。',
+        rateDescription: '您的评分可以帮助其他开发者找到 CPH，并支持它的开发。',
+        rate: '在应用商店评分',
     },
     ko: {
         runTestcases: '테스트케이스 실행',
@@ -383,6 +390,10 @@ export const translations: Record<string, any> = {
         feedbackEmailPlaceholder: 'username@server.com',
         feedbackCommentPlaceholder:
             '어떤 점을 개선하면 좋을까요? (예: 기능, 버그, 채점 스크립트)',
+        rateCPH: 'CPH가 유용하다면 별점을 남겨주세요.',
+        rateDescription:
+            '귀하의 별점은 다른 개발자들이 CPH를 찾는 데 도움이 되며, 개발을 지원합니다.',
+        rate: '마켓플레이스에서 별점 주기',
     },
     ja: {
         runTestcases: 'テストケースを実行',
@@ -514,5 +525,9 @@ export const translations: Record<string, any> = {
         feedbackEmailPlaceholder: 'username@server.com',
         feedbackCommentPlaceholder:
             '改善できる点はありますか？（例：機能、バグ、判題スクリプト）',
+        rateCPH: 'CPH が役に立った場合は、評価をご検討ください。',
+        rateDescription:
+            '皆様の評価は他の開発者が CPH を見つけるのに役立ち、その開発を支えます。',
+        rate: 'マーケットプレイスで評価する',
     },
 };

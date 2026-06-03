@@ -163,6 +163,8 @@ function Judge(props: {
                 totalLoads: currentLoads,
                 hasSeenCompanionTooltip:
                     vscodeState?.hasSeenCompanionTooltip || false,
+                rateDialogCloseDate:
+                    vscodeState?.rateDialogCloseDate || Date.now(),
             };
             vscodeApi.setState(ret);
             console.log('Restored to state:', ret);
@@ -202,6 +204,14 @@ function Judge(props: {
         const newState = {
             ...webviewState,
             dialogCloseDate: Date.now(),
+        };
+        updateWebviewState(newState);
+    };
+
+    const closeRateReminder = () => {
+        const newState = {
+            ...webviewState,
+            rateDialogCloseDate: Date.now(),
         };
         updateWebviewState(newState);
     };
@@ -627,6 +637,7 @@ function Judge(props: {
             catCompanionEnabled: false,
             totalLoads: 0,
             hasSeenCompanionTooltip: false,
+            rateDialogCloseDate: Date.now(),
         };
         updateWebviewState(defaultState);
         setEditableStateText(JSON.stringify(defaultState, null, 2));
@@ -660,6 +671,46 @@ function Judge(props: {
                 >
                     <i className="codicon codicon-heart-filled"></i>{' '}
                     {t('donate')}
+                </a>
+            </div>
+        );
+    };
+
+    const renderRateReminder = () => {
+        const diff =
+            new Date().getTime() -
+            (webviewState.rateDialogCloseDate || Date.now());
+        const diffInDays = diff / (1000 * 60 * 60 * 24);
+        if (diffInDays < 30) {
+            return null;
+        }
+
+        return (
+            <div
+                className="donate-box"
+                style={{
+                    background:
+                        'linear-gradient(0deg, rgba(255, 234, 130, 0.23), transparent)',
+                }}
+            >
+                <a
+                    role="button"
+                    className="right"
+                    title={t('close')}
+                    onClick={() => closeRateReminder()}
+                >
+                    <i className="codicon codicon-close"></i>
+                </a>
+                <h1>⭐</h1>
+                <h3>{t('rateCPH')}</h3>
+                <p>{t('rateDescription')}</p>
+                <a
+                    href="https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper&ssr=false#review-details"
+                    className="btn btn-yellow"
+                    title={t('rate')}
+                    onClick={() => closeRateReminder()}
+                >
+                    <i className="codicon codicon-star-full"></i> {t('rate')}
                 </a>
             </div>
         );
@@ -774,6 +825,7 @@ function Judge(props: {
         >
             {notification && <div className="notification">{notification}</div>}
             {renderDonateButton()}
+            {renderRateReminder()}
             {renderInfoPage()}
             <Feedback
                 webviewState={webviewState}
@@ -786,11 +838,16 @@ function Judge(props: {
             <div className="meta">
                 <span className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
-                    {compiling && (
-                        <b className="compiling" title={t('compiling')}>
-                            <span className="loader"></span>
-                        </b>
-                    )}
+                    <b
+                        className="compiling"
+                        title={compiling ? t('compiling') : undefined}
+                        style={{
+                            opacity: compiling ? 1 : 0,
+                            pointerEvents: compiling ? 'auto' : 'none',
+                        }}
+                    >
+                        <span className="loader"></span>
+                    </b>
                 </span>
                 <span
                     className={`pass-rate ${
@@ -1192,7 +1249,7 @@ with open(sys.argv[2], "r") as f:
                 </div>
                 <div className="row">
                     <button
-                        className="btn btn-black"
+                        className="btn btn-yellow"
                         title={t('settings')}
                         onClick={() =>
                             sendMessageToVSCode({

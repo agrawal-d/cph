@@ -326,6 +326,7 @@ export type WebViewpersistenceState = {
     catCompanionEnabled?: boolean;
     totalLoads?: number;
     hasSeenCompanionTooltip?: boolean;
+    rateDialogCloseDate?: number;
 };
 
 declare global {

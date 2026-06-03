@@ -342,8 +342,12 @@ textarea:active {
     background: #b0203d;
 }
 
+.btn-yellow {
+    background: #ab7e29;
+}
+
 .btn-black {
-    background: #383838;
+    background: rgba(65, 65, 65, 0.4);
 }
 
 body.vscode-light .btn.btn-black {
@@ -455,8 +459,8 @@ pre {
 body.vscode-light .case {
     background: linear-gradient(
         to right,
-        rgba(255, 255, 255, 0.9),
-        rgba(220, 220, 220, 0.9)
+        rgba(255, 255, 255, 0.4),
+        rgba(220, 220, 220, 0.4)
     );
     box-shadow: none;
     border-left: 5px solid rgba(0, 0, 0, 0.3);
