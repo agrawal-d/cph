@@ -90,6 +90,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         storeSubmitProblem(message.problem);
                         break;
                     }
+
+                    case 'submitCSES': {
+                        storeSubmitProblem(message.problem);
+                        break;
+                    }
                     case 'submitKattis': {
                         submitKattisProblem(message.problem);
                         break;
