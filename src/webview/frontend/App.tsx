@@ -412,7 +412,6 @@ function Judge(props: {
 
         setWaitingForSubmit(true);
     };
-    
     const submitCSES = () => {
         sendMessageToVSCode({
             command: 'submitCSES',
@@ -421,7 +420,6 @@ function Judge(props: {
 
         setWaitingForSubmit(true);
     };
-
     const debounceFocusLast = () => {
         setTimeout(() => {
             setFocusLast(false);
