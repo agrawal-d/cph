@@ -570,7 +570,6 @@ function Judge(props: {
         if (
             !url.hostname.endsWith('codeforces.com') &&
             url.hostname !== 'open.kattis.com' &&
-            !url.hostname.endsWith('codechef.com') &&
             !url.hostname.endsWith('cses.fi')
         ) {
             return null;
