@@ -58,6 +58,7 @@ export type prefSection =
     | 'general.doTemplateFileVariableReplacement'
     | 'general.remoteServerAddress'
     | 'general.showLiveUserCount'
+    | 'general.siteTemplates'
     | 'general.hideOutputDifference';
 
 export type Language = {
