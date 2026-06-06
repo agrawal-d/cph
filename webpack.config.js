@@ -43,10 +43,13 @@ const config = {
         {
             apply: (compiler) => {
                 compiler.hooks.compile.tap('CompileTimeData', () => {
-                    const gitCommitHash =
-                        child_process
-                            .execSync('git rev-parse HEAD')
-                            .toString() || 'unknown git commit hash';
+                    let gitCommitHash = 'unknown git commit hash';
+                    try {
+                        gitCommitHash =
+                            child_process
+                                .execSync('git rev-parse HEAD')
+                                .toString().trim() || gitCommitHash;
+                    } catch (_) {}
                     const licenseString =
                         fs
                             .readFileSync(

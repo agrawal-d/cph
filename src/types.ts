@@ -184,6 +184,14 @@ export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
 
+export type SubmitCodeChef = {
+    command: 'submitCodeChef';
+} & WebviewMessageCommon;
+
+export type SubmitCSES = {
+    command: 'submitCSES';
+} & WebviewMessageCommon;
+
 export type GetInitialProblem = {
     command: 'get-initial-problem';
 };
@@ -226,6 +234,8 @@ export type WebviewToVSEvent =
     | SubmitCf
     | OnlineJudgeEnv
     | SubmitKattis
+    | SubmitCodeChef
+    | SubmitCSES
     | OpenUrl
     | GetExtLogs
     | SetHideOutputDiff

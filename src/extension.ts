@@ -33,7 +33,7 @@ import {
     editorClosed,
     checkLaunchWebview,
 } from './webview/editorChange';
-import { submitToCodeForces, submitToKattis } from './submit';
+import { submitToCodeForces, submitToKattis, submitToCodeChef, submitToCSES } from './submit';
 import JudgeViewProvider from './webview/JudgeView';
 import {
     getRetainWebviewContextPref,
@@ -80,6 +80,20 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         },
     );
 
+    const disposable6 = vscode.commands.registerCommand(
+        'cph.submitToCodeChef',
+        () => {
+            submitToCodeChef();
+        },
+    );
+
+    const disposable7 = vscode.commands.registerCommand(
+        'cph.submitToCSES',
+        () => {
+            submitToCSES();
+        },
+    );
+
     const disposable5 = vscode.commands.registerCommand(
         'cph.compileWithoutRunning',
         async () => {
@@ -115,6 +129,8 @@ const registerCommands = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
     context.subscriptions.push(disposable5);
+    context.subscriptions.push(disposable6);
+    context.subscriptions.push(disposable7);
     globalThis.reporter = new TelemetryReporter(config.telemetryKey);
     context.subscriptions.push(globalThis.reporter);
 };

@@ -135,6 +135,12 @@ export const translations: Record<string, any> = {
         rateDescription:
             'Your rating helps other developers find CPH and supports its development.',
         rate: 'Rate on Marketplace',
+        submitOnCodeChef: 'Submit on CodeChef',
+        submitOnCSES: 'Submit on CSES',
+        codechefInstructions:
+            'Your code has been copied to the clipboard. Paste it on the CodeChef submission page.',
+        csesInstructions:
+            'Your code has been copied to the clipboard. Paste it on the CSES submission page.',
     },
     'zh-cn': {
         runTestcases: '运行测试用例',
@@ -263,6 +269,12 @@ export const translations: Record<string, any> = {
         rateCPH: '如果您觉得 CPH 有用，请考虑在应用商店给它评分。',
         rateDescription: '您的评分可以帮助其他开发者找到 CPH，并支持它的开发。',
         rate: '在应用商店评分',
+        submitOnCodeChef: '在 CodeChef 上提交',
+        submitOnCSES: '在 CSES 上提交',
+        codechefInstructions:
+            '您的代码已复制到剪贴板。请将其粘贴到 CodeChef 提交页面。',
+        csesInstructions:
+            '您的代码已复制到剪贴板。请将其粘贴到 CSES 提交页面。',
     },
     ko: {
         runTestcases: '테스트케이스 실행',
@@ -394,6 +406,12 @@ export const translations: Record<string, any> = {
         rateDescription:
             '귀하의 별점은 다른 개발자들이 CPH를 찾는 데 도움이 되며, 개발을 지원합니다.',
         rate: '마켓플레이스에서 별점 주기',
+        submitOnCodeChef: 'CodeChef에 제출',
+        submitOnCSES: 'CSES에 제출',
+        codechefInstructions:
+            '코드가 클립보드에 복사되었습니다. CodeChef 제출 페이지에 붙여넣으세요.',
+        csesInstructions:
+            '코드가 클립보드에 복사되었습니다. CSES 제출 페이지에 붙여넣으세요.',
     },
     ja: {
         runTestcases: 'テストケースを実行',
@@ -529,5 +547,11 @@ export const translations: Record<string, any> = {
         rateDescription:
             '皆様の評価は他の開発者が CPH を見つけるのに役立ち、その開発を支えます。',
         rate: 'マーケットプレイスで評価する',
+        submitOnCodeChef: 'CodeChef に提出',
+        submitOnCSES: 'CSES に提出',
+        codechefInstructions:
+            'コードがクリップボードにコピーされました。CodeChef の提出ページに貼り付けてください。',
+        csesInstructions:
+            'コードがクリップボードにコピーされました。CSES の提出ページに貼り付けてください。',
     },
 };

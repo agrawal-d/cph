@@ -50,6 +50,16 @@
                 "icon": "dist/static/play.png"
             },
             {
+                "command": "cph.submitToCodeChef",
+                "title": "Submit to CodeChef",
+                "icon": "dist/static/play.png"
+            },
+            {
+                "command": "cph.submitToCSES",
+                "title": "Submit to CSES",
+                "icon": "dist/static/play.png"
+            },
+            {
                 "command": "cph.compileWithoutRunning",
                 "title": "%cph.compileWithoutRunning.title%"
             }
@@ -70,6 +80,14 @@
             {
                 "key": "ctrl+alt+s",
                 "command": "cph.submitToCodeForces"
+            },
+            {
+                "key": "ctrl+alt+h",
+                "command": "cph.submitToCodeChef"
+            },
+            {
+                "key": "ctrl+alt+e",
+                "command": "cph.submitToCSES"
             },
             {
                 "key": "ctrl+alt+d",

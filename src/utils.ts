@@ -162,6 +162,12 @@ export const isLuoguUrl = (url: URL): boolean => {
 export const isAtCoderUrl = (url: URL): boolean => {
     return url.hostname === 'atcoder.jp';
 };
+export const isCodeChefUrl = (url: URL): boolean => {
+    return url.hostname === 'www.codechef.com' || url.hostname === 'codechef.com';
+};
+export const isCsesUrl = (url: URL): boolean => {
+    return url.hostname === 'cses.fi';
+};
 
 export const ocAppend = (string: string) => {
     oc.append(string);
