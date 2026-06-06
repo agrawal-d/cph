@@ -413,6 +413,24 @@ function Judge(props: {
         setWaitingForSubmit(true);
     };
 
+    const submitCodeChef = () => {
+        sendMessageToVSCode({
+            command: 'submitCodeChef',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
+
+    const submitCSES = () => {
+        sendMessageToVSCode({
+            command: 'submitCSES',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
+
     const debounceFocusLast = () => {
         setTimeout(() => {
             setFocusLast(false);
@@ -562,7 +580,10 @@ function Judge(props: {
         }
         if (
             !url.hostname.endsWith('codeforces.com') &&
-            url.hostname !== 'open.kattis.com'
+            url.hostname !== 'open.kattis.com' &&
+            url.hostname !== 'www.codechef.com' &&
+            url.hostname !== 'codechef.com' &&
+            url.hostname !== 'cses.fi'
         ) {
             return null;
         }
@@ -599,6 +620,24 @@ function Judge(props: {
                         </>
                     )}
                 </div>
+            );
+        } else if (url.hostname === 'www.codechef.com' || url.hostname === 'codechef.com') {
+            return (
+                <button className="btn btn-block" onClick={submitCodeChef}>
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
+                    {t('submitOnCodeChef')}
+                </button>
+            );
+        } else if (url.hostname === 'cses.fi') {
+            return (
+                <button className="btn btn-block" onClick={submitCSES}>
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
+                    {t('submitOnCSES')}
+                </button>
             );
         }
     };
@@ -883,10 +922,24 @@ function Judge(props: {
                             {t('waitingForExtension')}
                             <br />
                             <small>
-                                {t('codeforcesInstructions')}
-                                <br />
-                                <br />
-                                {t('submitHint')}
+                                {(() => {
+                                    try {
+                                        const u = new URL(problem.url);
+                                        if (u.hostname === 'www.codechef.com' || u.hostname === 'codechef.com') {
+                                            return t('codechefInstructions');
+                                        } else if (u.hostname === 'cses.fi') {
+                                            return t('csesInstructions');
+                                        }
+                                    } catch (_) {}
+                                    return (
+                                        <>
+                                            {t('codeforcesInstructions')}
+                                            <br />
+                                            <br />
+                                            {t('submitHint')}
+                                        </>
+                                    );
+                                })()}
                             </small>
                         </div>
                     )}

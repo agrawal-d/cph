@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { storeSubmitProblem, submitKattisProblem } from '../companion';
+import { submitCodeChefProblem, submitCSESProblem } from '../submit';
 import { killRunning } from '../executions';
 import { saveProblem } from '../parser';
 import { VSToWebViewMessage, WebviewToVSEvent } from '../types';
@@ -92,6 +93,14 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                     }
                     case 'submitKattis': {
                         submitKattisProblem(message.problem);
+                        break;
+                    }
+                    case 'submitCodeChef': {
+                        submitCodeChefProblem(message.problem);
+                        break;
+                    }
+                    case 'submitCSES': {
+                        submitCSESProblem(message.problem);
                         break;
                     }
 
