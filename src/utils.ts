@@ -162,6 +162,47 @@ export const isLuoguUrl = (url: URL): boolean => {
 export const isAtCoderUrl = (url: URL): boolean => {
     return url.hostname === 'atcoder.jp';
 };
+export const isKattisUrl = (url: URL): boolean => {
+    return url.hostname.endsWith('kattis.com');
+};
+export const isSpojUrl = (url: URL): boolean => {
+    return url.hostname.endsWith('spoj.com');
+};
+export const isCsesUrl = (url: URL): boolean => {
+    return url.hostname.endsWith('cses.fi');
+};
+export const isEOlympUrl = (url: URL): boolean => {
+    return (
+        url.hostname.endsWith('e-olymp.com') ||
+        url.hostname.endsWith('eolymp.com')
+    );
+};
+export const isUvaUrl = (url: URL): boolean => {
+    return (
+        url.hostname.endsWith('onlinejudge.org') ||
+        url.hostname.endsWith('uva.onlinejudge.org')
+    );
+};
+
+export const getJudgeFolderName = (problemUrl: string): string | null => {
+    let url: URL;
+    try {
+        url = new URL(problemUrl);
+    } catch (error) {
+        globalThis.logger.error('Invalid problem URL', error);
+        return null;
+    }
+
+    if (isCodeforcesUrl(url)) return 'Codeforces';
+    if (isAtCoderUrl(url)) return 'AtCoder';
+    if (isLuoguUrl(url)) return 'Luogu';
+    if (isKattisUrl(url)) return 'Kattis';
+    if (isSpojUrl(url)) return 'SPOJ';
+    if (isCsesUrl(url)) return 'CSES';
+    if (isEOlympUrl(url)) return 'Eolymp';
+    if (isUvaUrl(url)) return 'UVA';
+    return null;
+};
 
 export const ocAppend = (string: string) => {
     oc.append(string);
