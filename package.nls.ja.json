@@ -61,6 +61,7 @@
     "cph.general.defaultLanguage.description": "Competitive Companion 経由でインポートされた問題のデフォルト言語。('None' にすると、毎回言語を選択するオプションが表示されます)",
     "cph.general.menuChoices.description": "Competitive Companion 経由で問題をインポートする際に、メニューに表示される言語（スペース区切り、上から下の順）。例: 'java python' は Java を一番上に表示し、その次に Python を表示します。",
     "cph.general.useShortCodeForcesName.description": "Codeforces の問題で、生成されるファイル名に完全な名前ではなく短い ID（例: 144C）を使用します。",
+    "cph.general.codeforcesNameStyle.description": "Codeforcesの問題ファイルの命名方法を選択します。legacy: 既存の動作、name: A_Line_Trip.cpp、shortcode: 1901A.cpp、both: 1901A_Line_Trip.cpp。",
     "cph.general.useShortLuoguName.description": "Luogu の問題で、生成されるファイル名に完全な名前ではなく短い ID（例: P1145 / U123456）を使用します。",
     "cph.general.useShortAtCoderName.description": "AtCoder の問題で、生成されるファイル名に完全な名前ではなく短い ID（例: abc123a）を使用します。",
     "cph.general.retainWebviewContext.description": "Webview が非表示のときでもアクティブな状態を維持します。パフォーマンスは向上する可能性がありますが、レン더링の問題が発生する場合があります。",

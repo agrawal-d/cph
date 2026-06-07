@@ -208,6 +208,17 @@ Several options are available to customize the extension. Open VS Code settings
     Companion.
 -   Timeout for testcases.
 
+### Codeforces Filename Style
+
+Controls how filenames are generated for Codeforces problems.
+
+-   Example problem: `1901A - A. Line Trip`
+-   `name` → `A_Line_Trip.cpp`
+-   `shortcode` → `1901A.cpp`
+-   `both` → `1901A_Line_Trip.cpp`
+-   `legacy` preserves the existing behavior and works with the
+    `Use Short Codeforces Name` setting.
+
 ### Language Settings (for each language)
 
 \

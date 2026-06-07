@@ -125,6 +125,9 @@ export const wordRegex = (): string => {
 export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeForcesName');
 };
+export const getCodeforcesNameStyle = (): string => {
+    return getPreference('general.codeforcesNameStyle') || 'legacy';
+};
 export const useShortLuoguName = (): boolean => {
     return getPreference('general.useShortLuoguName');
 };

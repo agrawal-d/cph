@@ -10,6 +10,7 @@ import {
     getDefaultLangPref,
     getLanguageId,
     useShortCodeForcesName,
+    getCodeforcesNameStyle,
     useShortLuoguName,
     useShortAtCoderName,
     getMenuChoices,
@@ -18,6 +19,7 @@ import {
     wordRegex,
     doTemplateFileVariableReplacement,
 } from './preferences';
+import { getCodeforcesFileName } from './fileNameGenerator';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
@@ -170,8 +172,14 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
             problem.name = sections.splice(1).join();
         }
     }
-    if (isCodeforcesUrl(new URL(problem.url)) && useShortCodeForcesName()) {
-        return `${getProblemName(problem.url)}.${ext}`;
+    if (isCodeforcesUrl(new URL(problem.url))) {
+        return getCodeforcesFileName(
+            problem.name,
+            problem.url,
+            getCodeforcesNameStyle(),
+            useShortCodeForcesName(),
+            ext,
+        );
     } else if (isLuoguUrl(new URL(problem.url)) && useShortLuoguName()) {
         // Url is like https://www.luogu.com.cn/problem/P1000
         const pattern = /problem\/(\w+)/;

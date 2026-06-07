@@ -386,6 +386,17 @@
                     "default": false,
                     "description": "%cph.general.useShortCodeForcesName.description%"
                 },
+                "cph.general.codeforcesNameStyle": {
+                    "type": "string",
+                    "default": "legacy",
+                    "enum": [
+                        "legacy",
+                        "name",
+                        "shortcode",
+                        "both"
+                    ],
+                    "description": "%cph.general.codeforcesNameStyle.description%"
+                },
                 "cph.general.useShortLuoguName": {
                     "type": "boolean",
                     "default": false,

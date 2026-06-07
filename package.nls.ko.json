@@ -61,6 +61,7 @@
     "cph.general.defaultLanguage.description": "Competitive Companion을 통해 가져온 문제의 기본 언어입니다. (None으로 설정하면 매번 언어를 선택하는 옵션이 표시됩니다)",
     "cph.general.menuChoices.description": "Competitive Companion을 통해 문제를 가져올 때 메뉴에 표시될 언어들입니다(공백으로 구분, 위에서 아래 순서). 예: 'java python'은 java를 맨 위에, 그 다음에 python을 표시합니다.",
     "cph.general.useShortCodeForcesName.description": "Codeforces 문제의 경우 전체 이름 대신 짧은 ID(예: 144C)를 생성된 파일 이름으로 사용합니다.",
+    "cph.general.codeforcesNameStyle.description": "Codeforces 파일 이름 지정 스타일을 선택합니다. legacy: 기존 동작, name: A_Line_Trip.cpp, shortcode: 1901A.cpp, both: 1901A_Line_Trip.cpp.",
     "cph.general.useShortLuoguName.description": "Luogu 문제의 경우 전체 이름 대신 짧은 ID(예: P1145 / U123456)를 생성된 파일 이름으로 사용합니다.",
     "cph.general.useShortAtCoderName.description": "AtCoder 문제의 경우 전체 이름 대신 짧은 ID(예: abc123a)를 생성된 파일 이름으로 사용합니다.",
     "cph.general.retainWebviewContext.description": "웹뷰가 숨겨져 있을 때도 활성 상태를 유지합니다. 성능은 향상될 수 있으나 렌더링 문제가 발생할 수 있습니다.",
