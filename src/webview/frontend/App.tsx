@@ -1224,75 +1224,59 @@ with open(sys.argv[2], "r") as f:
                         numPassed={numPassed}
                     />
                 )}
-                <div className="row">
-                    <div className="split-btn">
-                        <button
-                            className="btn main-btn"
-                            onClick={runAll}
-                            title={t('runAll')}
-                        >
-                            <span className="icon">
-                                <i className="codicon codicon-run-above"></i>
-                            </span>{' '}
-                            <span className="action-text">{t('runAll')}</span>
-                        </button>
-                        <button
-                            className="btn chevron-btn"
-                            title={t('moreActions')}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                const event = new MouseEvent('contextmenu', {
-                                    bubbles: true,
-                                    clientX: e.clientX,
-                                    clientY: e.clientY,
-                                });
-                                e.currentTarget.dispatchEvent(event);
-                            }}
-                            data-vscode-context='{"preventDefaultContextMenuItems": true, "webviewSection": "compile-button"}'
-                        >
-                            <span className="icon">
-                                <i className="codicon codicon-chevron-down"></i>
-                            </span>
-                        </button>
-                    </div>
+                <div className="split-btn">
                     <button
-                        className="btn btn-green"
-                        onClick={newCase}
-                        title={t('newTestcase')}
+                        className="btn main-btn"
+                        onClick={runAll}
+                        title={t('runAll')}
                     >
                         <span className="icon">
-                            <i className="codicon codicon-add"></i>
+                            <i className="codicon codicon-run-above"></i>
                         </span>{' '}
-                        <span className="action-text">{t('new')}</span>
+                        <span className="action-text">{t('runAll')}</span>
+                    </button>
+                    <button
+                        className="btn chevron-btn"
+                        title={t('moreActions')}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const event = new MouseEvent('contextmenu', {
+                                bubbles: true,
+                                clientX: e.clientX,
+                                clientY: e.clientY,
+                            });
+                            e.currentTarget.dispatchEvent(event);
+                        }}
+                        data-vscode-context='{"preventDefaultContextMenuItems": true, "webviewSection": "compile-button"}'
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-chevron-down"></i>
+                        </span>
                     </button>
                 </div>
-                <div className="row">
-                    <button
-                        className="btn btn-yellow"
-                        title={t('settings')}
-                        onClick={() =>
-                            sendMessageToVSCode({
-                                command: 'open-settings',
-                            })
-                        }
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-settings"></i>
-                        </span>{' '}
-                        <span className="action-text">{t('settings')}</span>
-                    </button>
-                    <button
-                        className="btn btn-red right"
-                        onClick={deleteTcs}
-                        title={t('delete')}
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-trash"></i>
-                        </span>{' '}
-                        <span className="action-text">{t('delete')}</span>
-                    </button>
-                </div>
+                <button
+                    className="btn btn-red delete-btn"
+                    onClick={deleteTcs}
+                    title={t('delete')}
+                >
+                    <span className="icon">
+                        <i className="codicon codicon-trash"></i>
+                    </span>
+                </button>
+                <button
+                    className="btn btn-yellow settings-btn"
+                    title={t('settings')}
+                    onClick={() =>
+                        sendMessageToVSCode({
+                            command: 'open-settings',
+                        })
+                    }
+                >
+                    <span className="icon">
+                        <i className="codicon codicon-settings"></i>
+                    </span>
+                </button>
             </div>
         </div>
     );

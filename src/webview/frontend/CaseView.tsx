@@ -125,7 +125,17 @@ export default function CaseView(props: {
     if (result?.signal) {
         resultText = result?.signal;
     } else if (result?.stdout) {
-        resultText = result.stdout || ' ';
+        const rawStdout = result.stdout || ' ';
+        if (rawStdout.endsWith('\r\n')) {
+            resultText = rawStdout.slice(0, -2);
+        } else if (rawStdout.endsWith('\n')) {
+            resultText = rawStdout.slice(0, -1);
+        } else {
+            resultText = rawStdout;
+        }
+        if (resultText === '') {
+            resultText = ' ';
+        }
     }
     if (!result) {
         resultText = t('runToShowOutput');

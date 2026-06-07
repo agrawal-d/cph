@@ -99,29 +99,11 @@ export const CatCompanion: React.FC<CatCompanionProps> = ({
                     if (reachTimeoutId) clearTimeout(reachTimeoutId);
                     reachTimeoutId = setTimeout(() => {
                         // Spawn satiety/food emojis!
-                        const foodEmojis = [
-                            '🐟',
-                            '😋',
-                            '🧀',
-                            '🍖',
-                            '🍗',
-                            '🍤',
-                            '🥛',
-                            '🤤',
-                        ];
+                        const foodEmojis = ['😋', '🧀', '🍖', '🍗'];
                         const newParticles = [
                             {
                                 id: Date.now() + Math.random(),
-                                left: nextLeft + 1,
-                                emoji: foodEmojis[
-                                    Math.floor(
-                                        Math.random() * foodEmojis.length,
-                                    )
-                                ],
-                            },
-                            {
-                                id: Date.now() + Math.random(),
-                                left: nextLeft + 3,
+                                left: nextLeft + 2,
                                 emoji: foodEmojis[
                                     Math.floor(
                                         Math.random() * foodEmojis.length,
