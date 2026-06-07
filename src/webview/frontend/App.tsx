@@ -14,6 +14,7 @@ import {
 import CaseView from './CaseView';
 import Page from './Page';
 import { Feedback } from './Feedback';
+import { ImportCases } from './ImportCases';
 import { CatCompanion } from './CatCompanion';
 
 let storedLogs = '';
@@ -173,6 +174,7 @@ function Judge(props: {
     );
 
     const [feedbackPageVisible, setFeedbackPageVisible] = useState(false);
+    const [importPageVisible, setImportPageVisible] = useState(false);
     const [editableStateText, setEditableStateText] = useState(
         JSON.stringify(webviewState, null, 2),
     );
@@ -837,6 +839,25 @@ function Judge(props: {
         }
     };
 
+    const importCases = (newTestcases: { input: string; output: string }[]) => {
+        const generatedCases = newTestcases.map((tc, index) => {
+            const id = Date.now() + index;
+            const testCase: TestCase = {
+                id,
+                input: tc.input,
+                output: tc.output,
+            };
+            return {
+                id,
+                result: null,
+                testcase: testCase,
+            };
+        });
+
+        updateCases((prevCases) => [...prevCases, ...generatedCases]);
+        setFocusLast(true);
+    };
+
     return (
         <div
             className={`ui ${
@@ -854,6 +875,13 @@ function Judge(props: {
                 notify={notify}
                 feedbackPageVisible={feedbackPageVisible}
                 setFeedbackPageVisible={setFeedbackPageVisible}
+            />
+            <ImportCases
+                t={t}
+                notify={notify}
+                importPageVisible={importPageVisible}
+                setImportPageVisible={setImportPageVisible}
+                importCases={importCases}
             />
             <div className="meta">
                 <span className="problem-name">
@@ -1054,14 +1082,14 @@ with open(sys.argv[2], "r") as f:
                 <small className="footer-button-grid">
                     <a
                         href={payPalUrl}
-                        className="btn btn-black footer-btn-row-1"
+                        className="btn btn-black footer-btn-row-2"
                         title={t('donate')}
                     >
                         <i className="codicon codicon-heart-filled"></i>{' '}
                         {t('support')}
                     </a>
                     <span
-                        className="footer-btn-row-1"
+                        className="footer-btn-row-2"
                         style={{ position: 'relative' }}
                     >
                         {showFeedbackTooltip && (
@@ -1110,6 +1138,15 @@ with open(sys.argv[2], "r") as f:
                             {t('feedback')}
                         </a>
                     </span>
+                    <a
+                        role="button"
+                        className="btn btn-black footer-btn-row-2"
+                        title={t('importTooltip')}
+                        onClick={() => setImportPageVisible(true)}
+                    >
+                        <i className="codicon codicon-cloud-upload"></i>{' '}
+                        {t('import')}
+                    </a>
                     <span
                         className="footer-btn-row-2"
                         style={{ position: 'relative' }}
