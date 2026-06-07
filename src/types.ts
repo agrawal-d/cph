@@ -180,6 +180,10 @@ export type SubmitCf = {
     command: 'submitCf';
 } & WebviewMessageCommon;
 
+export type SubmitCSES = {
+    command: 'submitCSES';
+} & WebviewMessageCommon;
+
 export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
@@ -224,6 +228,7 @@ export type WebviewToVSEvent =
     | SaveCommand
     | DeleteTcsCommand
     | SubmitCf
+    | SubmitCSES
     | OnlineJudgeEnv
     | SubmitKattis
     | OpenUrl

@@ -412,7 +412,14 @@ function Judge(props: {
 
         setWaitingForSubmit(true);
     };
+    const submitCSES = () => {
+        sendMessageToVSCode({
+            command: 'submitCSES',
+            problem,
+        });
 
+        setWaitingForSubmit(true);
+    };
     const debounceFocusLast = () => {
         setTimeout(() => {
             setFocusLast(false);
@@ -562,7 +569,8 @@ function Judge(props: {
         }
         if (
             !url.hostname.endsWith('codeforces.com') &&
-            url.hostname !== 'open.kattis.com'
+            url.hostname !== 'open.kattis.com' &&
+            !url.hostname.endsWith('cses.fi')
         ) {
             return null;
         }
@@ -599,6 +607,18 @@ function Judge(props: {
                         </>
                     )}
                 </div>
+            );
+        } else if (
+            url.hostname == 'cses.fi' ||
+            url.hostname.endsWith('cses.fi')
+        ) {
+            return (
+                <button className="btn btn-block" onClick={submitCSES}>
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
+                    {t('submit')}
+                </button>
             );
         }
     };
