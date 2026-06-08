@@ -1,7 +1,7 @@
 import http from 'http';
 import config from './config';
 import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
-import { saveProblem } from './parser';
+import { saveProblem, getProbSaveLocation } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
@@ -205,6 +205,34 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
     }
 };
 
+/** Derives a short contest+problem prefix from a URL to avoid filename collisions.
+ *  e.g. https://codeforces.com/problemset/problem/96/A  -> "96A"
+ *       https://codeforces.com/contest/123/problem/B    -> "123B"
+ *       https://atcoder.jp/contests/abc311/tasks/abc311_a -> "abc311a"
+ */
+const getContestPrefix = (url: string): string => {
+    // Codeforces: /problemset/problem/96/A  or  /contest/123/problem/B
+    const cfMatch = url.match(/(?:contest|problem)\/(\d+)\/(?:problem\/)?(\w+)/);
+    if (cfMatch) {
+        return `${cfMatch[1]}${cfMatch[2]}`;
+    }
+    // AtCoder: /tasks/abc311_a
+    const acMatch = url.match(/tasks\/(\w+)_(\w+)/);
+    if (acMatch) {
+        return `${acMatch[1]}${acMatch[2]}`;
+    }
+    // Luogu: /problem/P1000
+    const lgMatch = url.match(/problem\/(\w+)/);
+    if (lgMatch) {
+        return lgMatch[1];
+    }
+    try {
+        return new URL(url).hostname.replace(/\W+/g, '_');
+    } catch {
+        return 'unknown';
+    }
+};
+
 /** Handle the `problem` sent by Competitive Companion, such as showing the webview, opening an editor, managing layout etc. */
 const handleNewProblem = async (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.GET_PROBLEM_FROM_COMPANION);
@@ -256,8 +284,28 @@ const handleNewProblem = async (problem: Problem) => {
         const splitUrl = problem.url.split('/');
         problem.name = splitUrl[splitUrl.length - 1];
     }
-    const problemFileName = getProblemFileName(problem, extn);
-    const srcPath = path.join(folder, problemFileName);
+    let problemFileName = getProblemFileName(problem, extn);
+    let srcPath = path.join(folder, problemFileName);
+
+    // If a file with this name already exists but belongs to a *different*
+    // problem (different URL), prefix with the contest ID to avoid collision.
+    if (existsSync(srcPath)) {
+        const existingProbPath = getProbSaveLocation(srcPath);
+        let existingUrl: string | null = null;
+        try {
+            const existingProb: Problem = JSON.parse(
+                readFileSync(existingProbPath).toString(),
+            );
+            existingUrl = existingProb.url;
+        } catch (_) {
+            // No .prob file — file was created manually, leave it alone.
+        }
+        if (existingUrl !== null && existingUrl !== problem.url) {
+            const contestPrefix = getContestPrefix(problem.url);
+            problemFileName = `${contestPrefix}_${problemFileName}`;
+            srcPath = path.join(folder, problemFileName);
+        }
+    }
 
     // Add fields absent in competitive companion.
     problem.srcPath = srcPath;
