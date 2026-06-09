@@ -212,7 +212,9 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
  */
 const getContestPrefix = (url: string): string => {
     // Codeforces: /problemset/problem/96/A  or  /contest/123/problem/B
-    const cfMatch = url.match(/(?:contest|problem)\/(\d+)\/(?:problem\/)?(\w+)/);
+    const cfMatch = url.match(
+        /(?:contest|problem)\/(\d+)\/(?:problem\/)?(\w+)/,
+    );
     if (cfMatch) {
         return `${cfMatch[1]}${cfMatch[2]}`;
     }
