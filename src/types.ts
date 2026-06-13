@@ -186,6 +186,9 @@ export type SubmitCSES = {
 export type SubmitCodeChef = {
     command: 'submitCodeChef';
 } & WebviewMessageCommon;
+export type SubmitAtcoder = {
+    command: 'submitAtcoder';
+} & WebviewMessageCommon;
 export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
@@ -232,6 +235,7 @@ export type WebviewToVSEvent =
     | SubmitCf
     | SubmitCSES
     | SubmitCodeChef
+    | SubmitAtcoder
     | OnlineJudgeEnv
     | SubmitKattis
     | OpenUrl
