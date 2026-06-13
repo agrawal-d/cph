@@ -422,6 +422,22 @@ function Judge(props: {
 
         setWaitingForSubmit(true);
     };
+    const submitCodeChef = () => {
+        sendMessageToVSCode({
+            command: 'submitCodeChef',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
+    const submitAtcoder = () => {
+        sendMessageToVSCode({
+            command: 'submitAtcoder',
+            problem,
+        });
+
+        setWaitingForSubmit(true);
+    };
     const debounceFocusLast = () => {
         setTimeout(() => {
             setFocusLast(false);
@@ -572,7 +588,9 @@ function Judge(props: {
         if (
             !url.hostname.endsWith('codeforces.com') &&
             url.hostname !== 'open.kattis.com' &&
-            !url.hostname.endsWith('cses.fi')
+            !url.hostname.endsWith('cses.fi') &&
+            !url.hostname.endsWith('codechef.com') &&
+            !url.hostname.endsWith('atcoder.jp')
         ) {
             return null;
         }
@@ -616,6 +634,24 @@ function Judge(props: {
         ) {
             return (
                 <button className="btn btn-block" onClick={submitCSES}>
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
+                    {t('submit')}
+                </button>
+            );
+        } else if (url.hostname.endsWith('codechef.com')) {
+            return (
+                <button className="btn btn-block" onClick={submitCodeChef}>
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
+                    {t('submit')}
+                </button>
+            );
+        } else if (url.hostname.endsWith('atcoder.jp')) {
+            return (
+                <button className="btn btn-block" onClick={submitAtcoder}>
                     <span className="icon">
                         <i className="codicon codicon-cloud-upload"></i>
                     </span>{' '}
