@@ -40,12 +40,19 @@ const oc = vscode.window.createOutputChannel('cph');
  * Get language based on file extension
  */
 export const getLanguage = (srcPath: string): Language => {
-    const extension = path.extname(srcPath).split('.').pop();
+    const extension = path.extname(srcPath).toLowerCase().replace('.', '');
     let langName: string | void = undefined;
     for (const [lang, ext] of Object.entries(config.extensions)) {
         if (ext === extension) {
             langName = lang;
         }
+    }
+
+    if (
+        langName === undefined &&
+        (config.extensions as any)[extension] !== undefined
+    ) {
+        langName = extension;
     }
 
     if (langName === undefined) {
@@ -148,9 +155,8 @@ export const getLanguage = (srcPath: string): Language => {
 };
 
 export const isValidLanguage = (srcPath: string): boolean => {
-    return config.supportedExtensions.includes(
-        path.extname(srcPath).split('.')[1],
-    );
+    const ext = path.extname(srcPath).toLowerCase().replace('.', '');
+    return config.supportedExtensions.includes(ext);
 };
 
 export const isCodeforcesUrl = (url: URL): boolean => {
@@ -194,6 +200,12 @@ export const randomId = (index: number | null) => {
  * unsupported.
  */
 export const checkUnsupported = (srcPath: string): boolean => {
+    if (srcPath === '') {
+        vscode.window.showErrorMessage(
+            localize('cph.utils.noActiveEditor', 'No active editor found.'),
+        );
+        return true;
+    }
     if (!isValidLanguage(srcPath)) {
         vscode.window.showErrorMessage(
             localize(
