@@ -87,12 +87,14 @@ function Judge(props: {
     problem: Problem;
     updateProblem: (problem: Problem) => void;
     cases: Case[];
+    originalTests: TestCase[] | null;
     updateCases: React.Dispatch<React.SetStateAction<Case[]>>;
     onlineJudgeEnv: boolean;
     setOnlineJudgeEnv: (value: boolean) => void;
 }) {
     const problem = props.problem;
     const cases = props.cases;
+    const originalTests = props.originalTests;
     const updateProblem = props.updateProblem;
     const updateCases = props.updateCases;
     const onlineJudgeEnv = props.onlineJudgeEnv;
@@ -118,6 +120,28 @@ function Judge(props: {
         !!problem.customCheckerPath,
     );
     const checkerInputRef = React.useRef<HTMLInputElement>(null);
+
+    const resetToOriginalTests = () => {
+        if (!originalTests) {
+            return;
+        }
+
+        const restoredProblemTests = originalTests.map((testcase) => ({
+            ...testcase,
+        }));
+
+        const restoredCases = restoredProblemTests.map((testcase) => ({
+            id: testcase.id,
+            result: null,
+            testcase,
+        }));
+
+        updateCases(restoredCases);
+        updateProblem({
+            ...problem,
+            tests: restoredProblemTests,
+        });
+    };
 
     const numPassed = cases.filter(
         (testCase) => testCase.result?.pass === true,
@@ -1293,6 +1317,17 @@ with open(sys.argv[2], "r") as f:
                     </button>
                 </div>
                 <button
+                    className="btn btn-purple reset-btn"
+                    onClick={resetToOriginalTests}
+                    title={t('reset')}
+                    disabled={!originalTests || originalTests.length === 0}
+                >
+                    <span className="icon">
+                        <i className="codicon codicon-refresh"></i>
+                    </span>{' '}
+                    {t('reset')}
+                </button>
+                <button
                     className="btn btn-red delete-btn"
                     onClick={deleteTcs}
                     title={t('delete')}
@@ -1339,6 +1374,7 @@ const getCasesFromProblem = (problem: Problem | undefined): Case[] => {
 function App() {
     const [problem, setProblem] = useState<Problem | undefined>(undefined);
     const [cases, setCases] = useState<Case[]>([]);
+    const [originalTests, setOriginalTests] = useState<TestCase[] | null>(null);
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [, setSaving] = useState<boolean>(false);
     const [showFallback, setShowFallback] = useState<boolean>(false);
@@ -1394,6 +1430,13 @@ function App() {
 
                     setProblem(data.problem);
                     setCases(getCasesFromProblem(data.problem));
+                    setOriginalTests(
+                        data.problem?.tests
+                            ? data.problem.tests.map((testcase) => ({
+                                  ...testcase,
+                              }))
+                            : null,
+                    );
                     setOnlineJudgeEnv(data.onlineJudgeEnv ?? false);
                     break;
                 }
@@ -1452,6 +1495,7 @@ function App() {
                 problem={problem}
                 updateProblem={setProblem}
                 cases={cases}
+                originalTests={originalTests}
                 updateCases={setCases}
                 onlineJudgeEnv={onlineJudgeEnv}
                 setOnlineJudgeEnv={setOnlineJudgeEnv}

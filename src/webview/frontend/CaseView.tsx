@@ -38,6 +38,11 @@ export default function CaseView(props: {
     const inputBox = createRef<HTMLTextAreaElement>();
 
     useEffect(() => {
+        setInput(props.case.testcase.input);
+        setOutput(props.case.testcase.output);
+    }, [props.case.id, props.case.testcase.input, props.case.testcase.output]);
+
+    useEffect(() => {
         if (props.doFocus) {
             inputBox.current?.scrollIntoView({ behavior: 'smooth' });
         }

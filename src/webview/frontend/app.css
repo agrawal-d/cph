@@ -393,6 +393,15 @@ body.vscode-light .btn-pink {
     text-shadow: none;
 }
 
+.btn-purple {
+    background: #7a59ac;
+    text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.4);
+}
+
+body.vscode-light .btn-purple {
+    text-shadow: none;
+}
+
 .btn:focus {
     border-color: var(--vscode-focusBorder);
     outline: 3px solid var(--vscode-focusBorder);
