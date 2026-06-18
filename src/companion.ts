@@ -14,13 +14,17 @@ import {
     useShortAtCoderName,
     getMenuChoices,
     getDefaultLanguageTemplateFileLocation,
+    includeProblemIndex,
+    wordRegex,
+    doTemplateFileVariableReplacement,
 } from './preferences';
 import { getProblemName } from './submit';
 import { spawn } from 'child_process';
 import { getJudgeViewProvider } from './extension';
-import { words_in_text } from './utilsPure';
+import { words_in_text, toPascalCase } from './utilsPure';
 import telmetry from './telmetry';
 import os from 'os';
+import localize from './i18n';
 
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
@@ -42,7 +46,11 @@ export const submitKattisProblem = (problem: Problem) => {
         )
     ) {
         vscode.window.showErrorMessage(
-            `Please ensure .kattisrc and submit.py are present in ${homedir}${directoryChar}.kattis${directoryChar}`,
+            localize(
+                'cph.companion.kattisError',
+                'Please ensure .kattisrc and submit.py are present in {0}',
+                `${homedir}${directoryChar}.kattis${directoryChar}`,
+            ),
         );
         return;
     }
@@ -109,7 +117,12 @@ export const setupCompanionServer = () => {
                         );
                 } catch (e) {
                     vscode.window.showErrorMessage(
-                        `Error parsing problem from companion "${e}. Raw problem: '${rawProblem}'"`,
+                        localize(
+                            'cph.companion.parseError',
+                            'Error parsing problem from companion {0}. Raw problem: {1}',
+                            String(e),
+                            rawProblem,
+                        ),
                     );
                 }
             });
@@ -133,7 +146,11 @@ export const setupCompanionServer = () => {
         server.listen(config.port);
         server.on('error', (err) => {
             vscode.window.showErrorMessage(
-                `Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: "${err.message}" , companion may not work.`,
+                localize(
+                    'cph.companion.serverError',
+                    'Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: {0}, companion may not work.',
+                    err.message,
+                ),
             );
         });
         globalThis.logger.log(
@@ -215,6 +232,8 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
                 return `${words.join('_')}.${ext}`;
             }
         }
+
+        return `${baseName}.${ext}`;
     }
 
     // OI-Codes 文件夹下的新逻辑
@@ -270,7 +289,9 @@ const handleNewProblem = async (problem: Problem) => {
     }
     const folder = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     if (folder === undefined) {
-        vscode.window.showInformationMessage('Please open a folder first.');
+        vscode.window.showInformationMessage(
+            localize('cph.companion.openFolder', 'Please open a folder first.'),
+        );
         return;
     }
     const defaultLanguage = getDefaultLangPref();
@@ -283,7 +304,10 @@ const handleNewProblem = async (problem: Problem) => {
         const selected = await vscode.window.showQuickPick(choices);
         if (!selected) {
             vscode.window.showInformationMessage(
-                'Aborted creation of new file',
+                localize(
+                    'cph.companion.aborted',
+                    'Aborted creation of new file',
+                ),
             );
             return;
         }
@@ -331,7 +355,11 @@ const handleNewProblem = async (problem: Problem) => {
                 const templateExists = existsSync(templateLocation);
                 if (!templateExists) {
                     vscode.window.showErrorMessage(
-                        `Template file does not exist: ${templateLocation}`,
+                        localize(
+                            'cph.companion.templateMissing',
+                            'Template file does not exist: {0}',
+                            templateLocation,
+                        ),
                     );
                 } else {
                     let templateContents =
@@ -347,6 +375,36 @@ const handleNewProblem = async (problem: Problem) => {
                             className,
                         );
                     }
+                    if (doTemplateFileVariableReplacement()) {
+                        const now = new Date();
+                        const pad2 = (value: number) =>
+                            value.toString().padStart(2, '0');
+                        const date = `${now.getFullYear()}-${pad2(
+                            now.getMonth() + 1,
+                        )}-${pad2(now.getDate())}`;
+                        const time = `${pad2(now.getHours())}:${pad2(
+                            now.getMinutes(),
+                        )}:${pad2(now.getSeconds())}`;
+                        const templateVariables: Record<string, unknown> = {
+                            ...problem,
+                            date,
+                            time,
+                        };
+
+                        for (const [key, value] of Object.entries(
+                            templateVariables,
+                        )) {
+                            let replaceWith = JSON.stringify(value);
+                            replaceWith = replaceWith.substring(
+                                1,
+                                replaceWith.length - 1,
+                            );
+                            templateContents = templateContents.replace(
+                                `$${key}$`,
+                                replaceWith,
+                            );
+                        }
+                    }
                     writeFileSync(srcPath, templateContents);
                 }
             }
@@ -356,7 +414,29 @@ const handleNewProblem = async (problem: Problem) => {
     saveProblem(srcPath, problem);
     const doc = await vscode.workspace.openTextDocument(srcPath);
 
-    await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
+    const editor = await vscode.window.showTextDocument(
+        doc,
+        vscode.ViewColumn.One,
+    );
+
+    // Move cursor to the first occurrence of $CURSOR_PLACEHOLDER and remove it
+    const cursorPlaceholder = '$CURSOR_PLACEHOLDER';
+    const text = doc.getText();
+    const index = text.indexOf(cursorPlaceholder);
+    if (index !== -1) {
+        const start = doc.positionAt(index);
+        const end = doc.positionAt(index + cursorPlaceholder.length);
+        await editor.edit((editBuilder) => {
+            editBuilder.delete(new vscode.Range(start, end));
+        });
+        // Set selection and reveal AFTER the edit so it isn't reset
+        editor.selection = new vscode.Selection(start, start);
+        editor.revealRange(
+            new vscode.Range(start, start),
+            vscode.TextEditorRevealType.InCenter,
+        );
+    }
+
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'new-problem',
         problem,

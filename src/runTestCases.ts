@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import { checkUnsupported, randomId } from './utils';
 import { Problem } from './types';
 import { getProblem, saveProblem } from './parser';
-import { compileFile } from './compiler';
 import runAllAndSave from './webview/processRunAll';
 import path from 'path';
 import { getJudgeViewProvider } from './extension';
 import telmetry from './telmetry';
+import localize from './i18n';
 
 /**
  * Execution for the run testcases command. Runs all testcases for the active
@@ -34,13 +34,6 @@ export default async () => {
         createLocalProblem(editor);
         return;
     }
-
-    const didCompile = await compileFile(srcPath);
-
-    if (!didCompile) {
-        globalThis.logger.error('Could not compile', srcPath);
-        return;
-    }
     await editor.document.save();
     getJudgeViewProvider().focus();
     getJudgeViewProvider().extensionToJudgeViewMessage({
@@ -60,7 +53,11 @@ const createLocalProblem = async (editor: vscode.TextEditor) => {
     }
 
     const newProblem: Problem = {
-        name: 'Local: ' + path.basename(srcPath).split('.')[0],
+        name: localize(
+            'cph.runTestCases.localPrefix',
+            'Local: {0}',
+            path.basename(srcPath).split('.')[0],
+        ),
         url: srcPath,
         tests: [
             {

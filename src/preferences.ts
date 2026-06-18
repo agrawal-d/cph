@@ -4,6 +4,7 @@ import config from './config';
 import path from 'path';
 import fs from 'fs';
 import * as vscode from 'vscode';
+import localize from './i18n';
 
 const getPreference = (section: prefSection): any => {
     const ret = workspace.getConfiguration('cph').get(section);
@@ -28,7 +29,11 @@ export const getSaveLocationPref = (): string => {
     const validSaveLocation = pref == '' || fs.existsSync(pref);
     if (!validSaveLocation) {
         vscode.window.showErrorMessage(
-            `Invalid save location, reverting to default. path not exists: ${pref}`,
+            localize(
+                'cph.preferences.invalidSaveLocation',
+                'Invalid save location, reverting to default. path not exists: {0}',
+                pref,
+            ),
         );
         updatePreference(
             'general.saveLocation',
@@ -100,6 +105,9 @@ export const getRemoteServerAddressPref = (): string =>
 export const getLiveUserCountPref = (): boolean =>
     getPreference('general.showLiveUserCount') || false;
 
+export const getHideOutputDifferencePref = (): boolean =>
+    getPreference('general.hideOutputDifference') || false;
+
 export const getDefaultLangPref = (): string | null => {
     const pref = getPreference('general.defaultLanguage');
     if (pref === 'none' || pref == ' ' || !pref) {
@@ -108,6 +116,12 @@ export const getDefaultLangPref = (): string | null => {
     return pref;
 };
 
+export const includeProblemIndex = (): boolean => {
+    return getPreference('general.includeProblemIndex');
+};
+export const wordRegex = (): string => {
+    return getPreference('general.wordRegex');
+};
 export const useShortCodeForcesName = (): boolean => {
     return getPreference('general.useShortCodeForcesName');
 };
@@ -123,6 +137,9 @@ export const getDefaultLanguageTemplateFileLocation = (): string | null => {
         return null;
     }
     return pref;
+};
+export const doTemplateFileVariableReplacement = (): boolean => {
+    return getPreference('general.doTemplateFileVariableReplacement');
 };
 
 export const getCCommand = (): string =>

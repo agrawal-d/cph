@@ -13,8 +13,12 @@ import {
     getLiveUserCountPref,
     getRetainWebviewContextPref,
     getDefaultOnlineJudge,
+    getHideOutputDifferencePref,
+    updatePreference,
+    getPythonCommand,
 } from '../preferences';
-import { setOnlineJudgeEnv } from '../compiler';
+import { setOnlineJudgeEnv, onlineJudgeEnv } from '../compiler';
+import { translations } from './translations';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -76,12 +80,18 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         this.extensionToJudgeViewMessage({
                             command: 'new-problem',
                             problem: undefined,
+                            onlineJudgeEnv: getDefaultOnlineJudge(),
                         });
                         await deleteProblemFile(message.problem.srcPath);
                         break;
                     }
 
                     case 'submitCf': {
+                        storeSubmitProblem(message.problem);
+                        break;
+                    }
+
+                    case 'submitCSES': {
                         storeSubmitProblem(message.problem);
                         break;
                     }
@@ -101,7 +111,12 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                                 break;
                             }
                             case 'default': {
-                                setOnlineJudgeEnv(getDefaultOnlineJudge());
+                                const val = getDefaultOnlineJudge();
+                                setOnlineJudgeEnv(val);
+                                this.extensionToJudgeViewMessage({
+                                    command: 'update-online-judge-env',
+                                    value: val,
+                                });
                                 break;
                             }
                         }
@@ -113,6 +128,23 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         break;
                     }
 
+                    case 'set-hide-output-diff': {
+                        // message.value expected boolean
+                        try {
+                            await updatePreference(
+                                'general.hideOutputDifference',
+                                message.value,
+                                vscode.ConfigurationTarget.Global,
+                            );
+                        } catch (err) {
+                            globalThis.logger.error(
+                                'Failed to update preference',
+                                err,
+                            );
+                        }
+                        break;
+                    }
+
                     case 'create-local-problem': {
                         runTestCases();
                         break;
@@ -120,6 +152,32 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
                     case 'url': {
                         vscode.env.openExternal(vscode.Uri.parse(message.url));
+                        break;
+                    }
+
+                    case 'open-settings': {
+                        vscode.commands.executeCommand(
+                            'workbench.action.openSettings',
+                            '@ext:DivyanshuAgrawal.competitive-programming-helper',
+                        );
+                        break;
+                    }
+
+                    case 'open-file': {
+                        try {
+                            const doc = await vscode.workspace.openTextDocument(
+                                message.path,
+                            );
+                            await vscode.window.showTextDocument(
+                                doc,
+                                vscode.ViewColumn.One,
+                            );
+                        } catch (err: any) {
+                            globalThis.logger.error('Failed to open file', err);
+                            vscode.window.showErrorMessage(
+                                `Failed to open file: ${err.message}`,
+                            );
+                        }
                         break;
                     }
 
@@ -145,6 +203,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
         this.extensionToJudgeViewMessage({
             command: 'new-problem',
             problem: getProblemForDocument(doc),
+            onlineJudgeEnv: onlineJudgeEnv,
         });
 
         // also load any messages from before that were lost.
@@ -193,6 +252,9 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
     public extensionToJudgeViewMessage = async (
         message: VSToWebViewMessage,
     ) => {
+        if (message.command === 'new-problem') {
+            message.onlineJudgeEnv = message.onlineJudgeEnv ?? onlineJudgeEnv;
+        }
         this.focusIfNeeded(message);
         if (
             (this._view && this._view.visible) ||
@@ -251,12 +313,24 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             ),
         );
 
+        const meowAudioUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this._extensionUri, 'dist', 'meow.mp3'),
+        );
+
         const remoteMessage = globalThis.remoteMessage
             ? globalThis.remoteMessage.trim()
             : ' ';
 
+        const locale = vscode.env.language;
+        const translation = translations[locale] || translations['en'];
+
+        let pythonCommand = getPythonCommand();
+        if (process.platform === 'win32' && pythonCommand === 'python3') {
+            pythonCommand = 'python';
+        }
+
         const html = `
-            <!DOCTYPE html lang="EN">
+            <!DOCTYPE html>
             <html>
                 <head>
                     <link rel="stylesheet" href="${styleUri}" />
@@ -275,10 +349,14 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         // Since the react script takes time to load, the problem is sent to the webview before it has even loaded.
                         // So, for the initial request, ask for it again.
                         window.vscodeApi = acquireVsCodeApi();
+                        window.meowAudioUri = '${meowAudioUri}';
                         window.remoteMessage = '${remoteMessage}';
                         window.generatedJsonUri = '${generatedJsonUri}';
                         window.remoteServerAddress = '${remoteServerAddress}';
                         window.showLiveUserCount = ${showLiveUserCount};
+                        window.showOutputDifference = ${!getHideOutputDifferencePref()};
+                        window.translations = ${JSON.stringify(translation)};
+                        window.pythonCommand = '${pythonCommand}';
 
                         document.addEventListener(
                             'DOMContentLoaded',

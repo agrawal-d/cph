@@ -35,9 +35,15 @@ import {
 } from './webview/editorChange';
 import { submitToCodeForces, submitToKattis } from './submit';
 import JudgeViewProvider from './webview/JudgeView';
-import { getRetainWebviewContextPref } from './preferences';
+import {
+    getRetainWebviewContextPref,
+    getDefaultOnlineJudge,
+} from './preferences';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import config from './config';
+import localize from './i18n';
+import { setOnlineJudgeEnv, compileFile } from './compiler';
+import { checkUnsupported } from './utils';
 
 let judgeViewProvider: JudgeViewProvider;
 
@@ -74,6 +80,23 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         },
     );
 
+    const disposable5 = vscode.commands.registerCommand(
+        'cph.compileWithoutRunning',
+        async () => {
+            globalThis.logger.log('Running command "compileWithoutRunning"');
+            const editor = vscode.window.activeTextEditor;
+            if (editor === undefined) {
+                checkUnsupported('');
+                return;
+            }
+            const srcPath = editor.document.fileName;
+            if (checkUnsupported(srcPath)) {
+                return;
+            }
+            await compileFile(srcPath);
+        },
+    );
+
     judgeViewProvider = new JudgeViewProvider(context.extensionUri);
 
     const webviewView = vscode.window.registerWebviewViewProvider(
@@ -91,6 +114,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
+    context.subscriptions.push(disposable5);
     globalThis.reporter = new TelemetryReporter(config.telemetryKey);
     context.subscriptions.push(globalThis.reporter);
 };
@@ -106,9 +130,14 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.StatusBarAlignment.Left,
         1000,
     );
-    statusBarItem.text = ' $(run-all)  Run Testcases';
-    statusBarItem.tooltip =
-        'Competitive Programming Helper - Run all testcases or create if none exist.';
+    statusBarItem.text = localize(
+        'cph.extension.statusBarText',
+        ' $(run-all)  Run Testcases',
+    );
+    statusBarItem.tooltip = localize(
+        'cph.extension.statusBarTooltip',
+        'Competitive Programming Helper - Run all testcases or create if none exist.',
+    );
     statusBarItem.show();
     statusBarItem.command = 'cph.runTestCases';
 
@@ -122,6 +151,17 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.onDidChangeActiveTextEditor((e) => {
         editorChanged(e);
+    });
+
+    vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration('cph.general.defaultOnlineJudge')) {
+            const newValue = getDefaultOnlineJudge();
+            setOnlineJudgeEnv(newValue);
+            getJudgeViewProvider().extensionToJudgeViewMessage({
+                command: 'update-online-judge-env',
+                value: newValue,
+            });
+        }
     });
 
     vscode.window.onDidChangeVisibleTextEditors((editors) => {

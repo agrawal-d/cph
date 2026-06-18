@@ -32,6 +32,7 @@ import {
 } from './preferences';
 import { Language, Problem } from './types';
 import telmetry from './telmetry';
+import localize from './i18n';
 
 const oc = vscode.window.createOutputChannel('cph');
 
@@ -153,7 +154,7 @@ export const isValidLanguage = (srcPath: string): boolean => {
 };
 
 export const isCodeforcesUrl = (url: URL): boolean => {
-    return url.hostname.includes('codeforces.com');
+    return url.hostname.endsWith('codeforces.com');
 };
 export const isLuoguUrl = (url: URL): boolean => {
     return url.hostname.indexOf('luogu.com.cn') !== -1;
@@ -195,7 +196,11 @@ export const randomId = (index: number | null) => {
 export const checkUnsupported = (srcPath: string): boolean => {
     if (!isValidLanguage(srcPath)) {
         vscode.window.showErrorMessage(
-            `Unsupported file extension. Only these types are valid: ${config.supportedExtensions}`,
+            localize(
+                'cph.utils.unsupported',
+                'Unsupported file extension. Only these types are valid: {0}',
+                config.supportedExtensions.join(', '),
+            ),
         );
         return true;
     }

@@ -11,6 +11,8 @@ export type prefSection =
     | 'general.hideStderrorWhenCompiledOK'
     | 'general.ignoreSTDERROR'
     | 'general.firstTime'
+    | 'general.includeProblemIndex'
+    | 'general.wordRegex'
     | 'general.useShortCodeForcesName'
     | 'general.useShortLuoguName'
     | 'general.useShortAtCoderName'
@@ -53,8 +55,10 @@ export type prefSection =
     | 'general.retainWebviewContext'
     | 'general.autoShowJudge'
     | 'general.defaultLanguageTemplateFileLocation'
+    | 'general.doTemplateFileVariableReplacement'
     | 'general.remoteServerAddress'
-    | 'general.showLiveUserCount';
+    | 'general.showLiveUserCount'
+    | 'general.hideOutputDifference';
 
 export type Language = {
     name: LangNames;
@@ -94,6 +98,7 @@ export type Problem = {
     tests: TestCase[];
     srcPath: string;
     local?: boolean;
+    customCheckerPath?: string;
 };
 
 export type Case = {
@@ -111,9 +116,34 @@ export type Run = {
     timeOut: boolean;
 };
 
+export type CustomCheckerRun = {
+    command: string;
+} & Run;
+
+export type DiffLine = {
+    lineNumber: number;
+    expected: string | null;
+    received: string | null;
+    type: 'match' | 'changed' | 'missing' | 'extra';
+};
+
+export type TokenDiff = {
+    token: string;
+    status: 'match' | 'extra' | 'missing';
+};
+
+export type DiffResult = {
+    isMatch: boolean;
+    lines: DiffLine[];
+    summary: string;
+    tokenDiff: TokenDiff[];
+};
+
 export type RunResult = {
     pass: boolean | null;
     id: number;
+    diff?: DiffResult;
+    checkerRun?: CustomCheckerRun;
 } & Run;
 
 export type WebviewMessageCommon = {
@@ -150,6 +180,10 @@ export type SubmitCf = {
     command: 'submitCf';
 } & WebviewMessageCommon;
 
+export type SubmitCSES = {
+    command: 'submitCSES';
+} & WebviewMessageCommon;
+
 export type SubmitKattis = {
     command: 'submitKattis';
 } & WebviewMessageCommon;
@@ -171,6 +205,20 @@ export type GetExtLogs = {
     command: 'get-ext-logs';
 };
 
+export type SetHideOutputDiff = {
+    command: 'set-hide-output-diff';
+    value: boolean;
+};
+
+export type OpenSettings = {
+    command: 'open-settings';
+};
+
+export type OpenFile = {
+    command: 'open-file';
+    path: string;
+};
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | GetInitialProblem
@@ -180,13 +228,22 @@ export type WebviewToVSEvent =
     | SaveCommand
     | DeleteTcsCommand
     | SubmitCf
+    | SubmitCSES
     | OnlineJudgeEnv
     | SubmitKattis
     | OpenUrl
-    | GetExtLogs;
+    | GetExtLogs
+    | SetHideOutputDiff
+    | OpenSettings
+    | OpenFile;
 
 export type RunningCommand = {
     command: 'running';
+    id: number;
+} & WebviewMessageCommon;
+
+export type CheckingCommand = {
+    command: 'checking';
     id: number;
 } & WebviewMessageCommon;
 
@@ -222,6 +279,7 @@ export type SubmitFinishedCommand = {
 export type NewProblemCommand = {
     command: 'new-problem';
     problem: Problem | undefined;
+    onlineJudgeEnv?: boolean;
 };
 
 export type RemoteMessageCommand = {
@@ -234,9 +292,15 @@ export type ExtLogsCommand = {
     logs: string;
 };
 
+export type UpdateOnlineJudgeEnvCommand = {
+    command: 'update-online-judge-env';
+    value: boolean;
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
+    | CheckingCommand
     | RunAllInWebViewCommand
     | CompilingStartCommand
     | CompilingStopCommand
@@ -245,7 +309,8 @@ export type VSToWebViewMessage =
     | NotRunningCommand
     | RemoteMessageCommand
     | NewProblemCommand
-    | ExtLogsCommand;
+    | ExtLogsCommand
+    | UpdateOnlineJudgeEnvCommand;
 
 export type CphEmptyResponse = {
     empty: true;
@@ -261,6 +326,12 @@ export type CphSubmitResponse = {
 
 export type WebViewpersistenceState = {
     dialogCloseDate: number;
+    feedbackDialogCloseDate?: number;
+    hasSeenFeedbackTooltip?: boolean;
+    catCompanionEnabled?: boolean;
+    totalLoads?: number;
+    hasSeenCompanionTooltip?: boolean;
+    rateDialogCloseDate?: number;
 };
 
 declare global {

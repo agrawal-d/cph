@@ -3,8 +3,8 @@
 This document contains a basic developer guide to get started with the extension
 development. In case of any confusions/ need for additional information, please
 create an issue in the [repo](https://github.com/agrawal-d/cph). You should also
-take a look at the [user guide](user-guide.md) to understand the
-user-facing terms.
+take a look at the [user guide](user-guide.md) to understand the user-facing
+terms.
 
 ## Architecture
 
@@ -65,10 +65,10 @@ in `dist/`.
 We recommend installing `Prettier` and `ESLint` VS Code extensions. Before
 commiting, make sure you are passing the following tests:
 
-- ESLint lint: `npm run lint`.
-- Jest unit tests: `npm run test`.
-- Typescript compilation: `npm run test-compile`.
-- Pre-publish bundling: `npm run vscode:prepublish`.
+-   ESLint lint: `npm run lint`.
+-   Jest unit tests: `npm run test`.
+-   Typescript compilation: `npm run test-compile`.
+-   Pre-publish bundling: `npm run vscode:prepublish`.
 
 ## Bundling as `.vsix`
 
@@ -76,6 +76,68 @@ To generate the extension bundle for publishing, install
 [VSCE package](https://www.npmjs.com/package/vsce) first (globally).
 
 Then, in the root directory, run `vsce package` to generate the extension file.
+
+## Adding support for a new language
+
+To add support for a new language, follow these steps:
+
+1.  **Update `src/config.ts`**:
+
+    -   Add the file extension to the `extensions` object.
+    -   Add the default compiler command to the `compilers` object.
+    -   Add the extension to the `supportedExtensions` array.
+    -   If the language doesn't need compilation (interpreted), add it to the
+        `skipCompile` array.
+    -   If it supports auto-submit, add the compiler names and their
+        corresponding IDs to `compilerToId`.
+
+2.  **Update `package.json`**:
+
+    -   Add configuration properties for the new language (Args, Command,
+        SubmissionCompiler) under `contributes.configuration.properties`. Use
+        `%cph.language.name.Args.title%` etc. for localized strings.
+    -   Add the language name to the `enum` of `cph.general.defaultLanguage`.
+
+3.  **Update `package.nls.json` and `package.nls.zh-cn.json`**:
+
+    -   Add the titles and descriptions for the new configuration properties.
+
+4.  **Update `src/preferences.ts`**:
+
+    -   Add getter functions for the new language's arguments and command.
+    -   Update `getLanguageId` to return the correct compiler ID for the new
+        extension.
+
+5.  **Update `src/utils.ts`**:
+
+    -   Update the `getLanguage` function to return a `Language` object for the
+        new language, using the getters created in `src/preferences.ts`.
+
+6.  **Update `src/executions.ts` (if needed)**:
+    -   If the language requires special logic to run (like Java's classpath or
+        C#'s dotnet/mono), update the `switch` statement in `runTestCase`.
+
+## Adding a new translation
+
+To add support for a new display language:
+
+1.  **Extension Metadata & Backend**:
+
+    -   Create a new file `package.nls.<locale>.json` in the root directory
+        (e.g., `package.nls.fr.json` for French).
+    -   Copy the keys from `package.nls.json` and translate the values. This
+        covers settings titles, descriptions, commands, and extension-side error
+        messages.
+
+2.  **Webview Frontend**:
+
+    -   Open `src/webview/translations.ts`.
+    -   Add a new entry to the `translations` object with your locale key and
+        the translated strings.
+
+3.  **Verification**:
+    -   The extension automatically detects the language using
+        `vscode.env.language`. To test, change your VS Code display language.
 
 ## Getting help
 

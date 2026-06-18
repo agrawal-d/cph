@@ -1,5 +1,14 @@
 import React from 'react';
 
+interface CustomWindow extends Window {
+    translations: Record<string, string>;
+}
+declare const window: CustomWindow;
+
+const t = (key: string): string => {
+    return window.translations[key] || key;
+};
+
 export default function Page(props: {
     content: React.ReactNode;
     title: string;
@@ -8,8 +17,9 @@ export default function Page(props: {
     return (
         <div className="page selectable">
             <a
+                role="button"
                 className="right"
-                title="Close dialog"
+                title={t('close')}
                 onClick={() => props.closePage()}
             >
                 <i className="codicon codicon-close"></i>

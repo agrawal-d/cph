@@ -8,10 +8,14 @@ import {
     VSToWebViewMessage,
     ResultCommand,
     RunningCommand,
+    CheckingCommand,
     WebViewpersistenceState,
 } from '../../types';
 import CaseView from './CaseView';
 import Page from './Page';
+import { Feedback } from './Feedback';
+import { ImportCases } from './ImportCases';
+import { CatCompanion } from './CatCompanion';
 
 let storedLogs = '';
 let notificationTimeout: NodeJS.Timeout | undefined = undefined;
@@ -42,8 +46,14 @@ interface CustomWindow extends Window {
     remoteServerAddress: string;
     showLiveUserCount: boolean;
     console: Console;
+    translations: Record<string, string>;
+    pythonCommand: string;
 }
 declare const window: CustomWindow;
+
+const t = (key: string): string => {
+    return window.translations[key] || key;
+};
 
 window.console.log = customLogger.bind(window.console, originalConsole.log);
 window.console.error = customLogger.bind(window.console, originalConsole.error);
@@ -77,28 +87,50 @@ function Judge(props: {
     problem: Problem;
     updateProblem: (problem: Problem) => void;
     cases: Case[];
-    updateCases: (cases: Case[]) => void;
+    updateCases: React.Dispatch<React.SetStateAction<Case[]>>;
+    onlineJudgeEnv: boolean;
+    setOnlineJudgeEnv: (value: boolean) => void;
 }) {
     const problem = props.problem;
     const cases = props.cases;
     const updateProblem = props.updateProblem;
     const updateCases = props.updateCases;
+    const onlineJudgeEnv = props.onlineJudgeEnv;
+    const setOnlineJudgeEnv = props.setOnlineJudgeEnv;
+
+    const casesRef = React.useRef(cases);
+    useEffect(() => {
+        casesRef.current = cases;
+    }, [cases]);
 
     const [focusLast, setFocusLast] = useState<boolean>(false);
     const [forceRunning, setForceRunning] = useState<number | false>(false);
+    const [forceChecking, setForceChecking] = useState<number | false>(false);
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
-    const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
     const [infoPageVisible, setInfoPageVisible] = useState<boolean>(false);
     const [generatedJson, setGeneratedJson] = useState<any | null>(null);
     const [liveUserCount, setLiveUserCount] = useState<number>(0);
     const [extLogs, setExtLogs] = useState<string>('');
 
+    const [checkerVisible, setCheckerVisible] = useState<boolean>(
+        !!problem.customCheckerPath,
+    );
+    const checkerInputRef = React.useRef<HTMLInputElement>(null);
+
     const numPassed = cases.filter(
         (testCase) => testCase.result?.pass === true,
     ).length;
     const total = cases.length;
+
+    useEffect(() => {
+        if (infoPageVisible) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+    }, [infoPageVisible]);
 
     useEffect(() => {
         const updateLiveUserCount = (): void => {
@@ -121,14 +153,44 @@ function Judge(props: {
     const [webviewState, setWebviewState] = useState<WebViewpersistenceState>(
         () => {
             const vscodeState = vscodeApi.getState();
+            const currentLoads = (vscodeState?.totalLoads || 0) + 1;
             const ret = {
                 dialogCloseDate: vscodeState?.dialogCloseDate || Date.now(),
+                feedbackDialogCloseDate:
+                    vscodeState?.feedbackDialogCloseDate || Date.now(),
+                hasSeenFeedbackTooltip:
+                    vscodeState?.hasSeenFeedbackTooltip || false,
+                catCompanionEnabled: vscodeState?.catCompanionEnabled || false,
+                totalLoads: currentLoads,
+                hasSeenCompanionTooltip:
+                    vscodeState?.hasSeenCompanionTooltip || false,
+                rateDialogCloseDate:
+                    vscodeState?.rateDialogCloseDate || Date.now(),
             };
             vscodeApi.setState(ret);
             console.log('Restored to state:', ret);
             return ret;
         },
     );
+
+    const [feedbackPageVisible, setFeedbackPageVisible] = useState(false);
+    const [importPageVisible, setImportPageVisible] = useState(false);
+    const [editableStateText, setEditableStateText] = useState(
+        JSON.stringify(webviewState, null, 2),
+    );
+    const [showFeedbackTooltip, setShowFeedbackTooltip] = useState(
+        !webviewState.hasSeenFeedbackTooltip,
+    );
+    const [showCompanionTooltip, setShowCompanionTooltip] = useState(
+        (webviewState.totalLoads || 0) >= 10 &&
+            !webviewState.hasSeenCompanionTooltip &&
+            !webviewState.catCompanionEnabled,
+    );
+
+    const updateWebviewState = (newState: WebViewpersistenceState) => {
+        setWebviewState(newState);
+        vscodeApi.setState(newState);
+    };
 
     // Update problem if cases change. The only place where `updateProblem` is
     // allowed to ensure sync.
@@ -145,8 +207,15 @@ function Judge(props: {
             ...webviewState,
             dialogCloseDate: Date.now(),
         };
-        setWebviewState(newState);
-        vscodeApi.setState(newState);
+        updateWebviewState(newState);
+    };
+
+    const closeRateReminder = () => {
+        const newState = {
+            ...webviewState,
+            rateDialogCloseDate: Date.now(),
+        };
+        updateWebviewState(newState);
     };
 
     const sendMessageToVSCode = (message: WebviewToVSEvent) => {
@@ -154,14 +223,33 @@ function Judge(props: {
     };
 
     useEffect(() => {
+        const handleContextMenu = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target) {
+                const tagName = target.tagName;
+                if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
+                    return;
+                }
+                if (
+                    typeof target.closest === 'function' &&
+                    target.closest('.chevron-btn')
+                ) {
+                    return;
+                }
+            }
+            e.preventDefault();
+        };
+
+        document.addEventListener('contextmenu', handleContextMenu);
+        return () => {
+            document.removeEventListener('contextmenu', handleContextMenu);
+        };
+    }, []);
+
+    useEffect(() => {
         const fn = (event: any) => {
             const data: VSToWebViewMessage = event.data;
             switch (data.command) {
-                case 'new-problem': {
-                    setOnlineJudgeEnv(false);
-                    break;
-                }
-
                 case 'remote-message': {
                     window.remoteMessage = data.message;
                     break;
@@ -171,8 +259,8 @@ function Judge(props: {
                     handleRunning(data);
                     break;
                 }
-                case 'run-all': {
-                    runAll();
+                case 'checking': {
+                    handleChecking(data);
                     break;
                 }
                 case 'compiling-start': {
@@ -205,6 +293,30 @@ function Judge(props: {
 
     const handleRunning = (data: RunningCommand) => {
         setForceRunning(data.id);
+        updateCases((prevCases) => {
+            const idx = prevCases.findIndex((c) => c.id === data.id);
+            if (idx === -1) return prevCases;
+            const newCases = prevCases.slice();
+            newCases[idx] = {
+                ...newCases[idx],
+                result: null,
+            };
+            return newCases;
+        });
+    };
+
+    const handleChecking = (data: CheckingCommand) => {
+        setForceChecking(data.id);
+        updateCases((prevCases) => {
+            const idx = prevCases.findIndex((c) => c.id === data.id);
+            if (idx === -1) return prevCases;
+            const newCases = prevCases.slice();
+            newCases[idx] = {
+                ...newCases[idx],
+                result: null,
+            };
+            return newCases;
+        });
     };
 
     const refreshOnlineJudge = () => {
@@ -262,7 +374,7 @@ function Judge(props: {
 
     // Stop running executions.
     const stop = () => {
-        notify('Stopped any running processes');
+        notify(t('stoppedProcesses'));
         sendMessageToVSCode({
             command: 'kill-running',
             problem,
@@ -302,7 +414,14 @@ function Judge(props: {
 
         setWaitingForSubmit(true);
     };
+    const submitCSES = () => {
+        sendMessageToVSCode({
+            command: 'submitCSES',
+            problem,
+        });
 
+        setWaitingForSubmit(true);
+    };
     const debounceFocusLast = () => {
         setTimeout(() => {
             setFocusLast(false);
@@ -319,6 +438,16 @@ function Judge(props: {
         if (forceRunning === value.id) {
             debounceForceRunning();
             return forceRunning === value.id;
+        }
+        return false;
+    };
+
+    const getCheckingProp = (value: Case) => {
+        if (forceChecking === value.id) {
+            setTimeout(() => {
+                setForceChecking(false);
+            }, 100);
+            return true;
         }
         return false;
     };
@@ -353,6 +482,13 @@ function Judge(props: {
         updateCases(newCases);
     };
 
+    const updateCheckerPath = (path: string) => {
+        updateProblem({
+            ...problem,
+            customCheckerPath: path,
+        });
+    };
+
     const notify = (text: string) => {
         clearTimeout(notificationTimeout!);
         setNotification(text);
@@ -360,6 +496,26 @@ function Judge(props: {
             setNotification(null);
             notificationTimeout = undefined;
         }, 1000);
+    };
+
+    const toggleChecker = () => {
+        const nextVisible = !checkerVisible;
+        setCheckerVisible(nextVisible);
+        if (nextVisible) {
+            setTimeout(() => {
+                checkerInputRef.current?.focus();
+            }, 100);
+        }
+    };
+
+    const openCheckerFile = () => {
+        const checkerPath = problem.customCheckerPath?.trim();
+        if (checkerPath) {
+            sendMessageToVSCode({
+                command: 'open-file',
+                path: checkerPath,
+            });
+        }
     };
 
     const views: JSX.Element[] = [];
@@ -375,7 +531,10 @@ function Judge(props: {
                     remove={remove}
                     doFocus={true}
                     forceRunning={getRunningProp(value)}
+                    forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
+                    customCheckerPath={problem.customCheckerPath}
+                    stop={stop}
                 ></CaseView>,
             );
             debounceFocusLast();
@@ -389,7 +548,10 @@ function Judge(props: {
                     key={value.id.toString()}
                     remove={remove}
                     forceRunning={getRunningProp(value)}
+                    forceChecking={getCheckingProp(value)}
                     updateCase={updateCase}
+                    customCheckerPath={problem.customCheckerPath}
+                    stop={stop}
                 ></CaseView>,
             );
         }
@@ -408,53 +570,57 @@ function Judge(props: {
             return null;
         }
         if (
-            url.hostname !== 'codeforces.com' &&
-            url.hostname !== 'open.kattis.com'
+            !url.hostname.endsWith('codeforces.com') &&
+            url.hostname !== 'open.kattis.com' &&
+            !url.hostname.endsWith('cses.fi')
         ) {
             return null;
         }
 
-        if (url.hostname == 'codeforces.com') {
+        if (url.hostname.endsWith('codeforces.com')) {
             return (
-                <button className="btn" onClick={submitCf}>
+                <button className="btn btn-block" onClick={submitCf}>
                     <span className="icon">
                         <i className="codicon codicon-cloud-upload"></i>
                     </span>{' '}
-                    Submit
+                    {t('submit')}
                 </button>
             );
         } else if (url.hostname == 'open.kattis.com') {
             return (
                 <div className="pad-10 submit-area">
-                    <button className="btn" onClick={submitKattis}>
+                    <button className="btn btn-block" onClick={submitKattis}>
                         <span className="icon">
                             <i className="codicon codicon-cloud-upload"></i>
                         </span>{' '}
-                        Submit on Kattis
+                        {t('submitOnKattis')}
                     </button>
                     {waitingForSubmit && (
                         <>
-                            <span className="loader"></span> Submitting...
+                            <span className="loader"></span> {t('submitting')}
                             <br />
                             <small>
-                                To submit to Kattis, you need to have the{' '}
-                                <a href="https://github.com/Kattis/kattis-cli/blob/main/submit.py">
-                                    submission client{' '}
-                                </a>
-                                and the{' '}
-                                <a href="https://open.kattis.com/download/kattisrc">
-                                    configuration file{' '}
-                                </a>
-                                downloaded in a folder called .kattis in your
-                                home directory.
+                                {t('kattisInstructions')}
                                 <br />
-                                Submission result will open in your browser.
+                                {t('kattisBrowserNote')}
                                 <br />
                                 <br />
                             </small>
                         </>
                     )}
                 </div>
+            );
+        } else if (
+            url.hostname == 'cses.fi' ||
+            url.hostname.endsWith('cses.fi')
+        ) {
+            return (
+                <button className="btn btn-block" onClick={submitCSES}>
+                    <span className="icon">
+                        <i className="codicon codicon-cloud-upload"></i>
+                    </span>{' '}
+                    {t('submit')}
+                </button>
             );
         }
     };
@@ -471,7 +637,33 @@ function Judge(props: {
         sendMessageToVSCode({
             command: 'get-ext-logs',
         });
+        setEditableStateText(JSON.stringify(webviewState, null, 2));
         setInfoPageVisible(true);
+    };
+
+    const saveDebugState = () => {
+        try {
+            const newState = JSON.parse(editableStateText);
+            updateWebviewState(newState);
+            setNotification('State saved');
+        } catch (e) {
+            setNotification('Invalid JSON');
+        }
+    };
+
+    const clearState = () => {
+        const defaultState = {
+            dialogCloseDate: Date.now(),
+            feedbackDialogCloseDate: Date.now(),
+            hasSeenFeedbackTooltip: false,
+            catCompanionEnabled: false,
+            totalLoads: 0,
+            hasSeenCompanionTooltip: false,
+            rateDialogCloseDate: Date.now(),
+        };
+        updateWebviewState(defaultState);
+        setEditableStateText(JSON.stringify(defaultState, null, 2));
+        setNotification('State cleared');
     };
 
     const renderDonateButton = () => {
@@ -484,25 +676,63 @@ function Judge(props: {
         return (
             <div className="donate-box">
                 <a
-                    href="javascript:void(0)"
+                    role="button"
                     className="right"
-                    title="Close dialog"
+                    title={t('close')}
                     onClick={() => closeDonateBox()}
                 >
                     <i className="codicon codicon-close"></i>
                 </a>
                 <h1>🌸</h1>
-                <h3>If you find CPH useful, please consider supporting.</h3>
-                <p>
-                    Your contribution helps support continued development of
-                    CPH. CPH is free and open source, thanks to your support.
-                </p>
+                <h3>{t('supportCPH')}</h3>
+                <p>{t('supportDescription')}</p>
                 <a
                     href={payPalUrl}
                     className="btn btn-pink"
-                    title="Open donation page"
+                    title={t('donate')}
                 >
-                    <i className="codicon codicon-heart-filled"></i> Donate
+                    <i className="codicon codicon-heart-filled"></i>{' '}
+                    {t('donate')}
+                </a>
+            </div>
+        );
+    };
+
+    const renderRateReminder = () => {
+        const diff =
+            new Date().getTime() -
+            (webviewState.rateDialogCloseDate || Date.now());
+        const diffInDays = diff / (1000 * 60 * 60 * 24);
+        if (diffInDays < 30) {
+            return null;
+        }
+
+        return (
+            <div
+                className="donate-box"
+                style={{
+                    background:
+                        'linear-gradient(0deg, rgba(255, 234, 130, 0.23), transparent)',
+                }}
+            >
+                <a
+                    role="button"
+                    className="right"
+                    title={t('close')}
+                    onClick={() => closeRateReminder()}
+                >
+                    <i className="codicon codicon-close"></i>
+                </a>
+                <h1>⭐</h1>
+                <h3>{t('rateCPH')}</h3>
+                <p>{t('rateDescription')}</p>
+                <a
+                    href="https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper&ssr=false#review-details"
+                    className="btn btn-yellow"
+                    title={t('rate')}
+                    onClick={() => closeRateReminder()}
+                >
+                    <i className="codicon codicon-star-full"></i> {t('rate')}
                 </a>
             </div>
         );
@@ -516,8 +746,8 @@ function Judge(props: {
         if (generatedJson === null) {
             return (
                 <Page
-                    content="Loading..."
-                    title="About CPH"
+                    content={t('loading')}
+                    title={t('aboutCPH')}
                     closePage={() => setInfoPageVisible(false)}
                 />
             );
@@ -525,50 +755,50 @@ function Judge(props: {
         const logs = storedLogs;
         const contents = (
             <div>
-                A VS Code extension to make competitive programming easier,
-                created by Divyanshu Agrawal
+                {t('cphDescription')}
                 <hr />
-                <h3>🤖 Enable AI compilation</h3>
-                Get 100x faster compilation using AI, please opt-in below. Your
-                data will be used to train cats to write JavaScript.
-                <br />
-                <br />
-                <button
-                    className="btn btn-green"
-                    onClick={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        target.innerText = '🪄 AI training ...';
-                    }}
-                >
-                    Enable
-                </button>
-                <hr />
-                <h3>Get Help</h3>
+                <h3>{t('getHelp')}</h3>
                 <a
                     className="btn"
                     href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md"
                 >
-                    User guide
+                    {t('userGuide')}
                 </a>
                 <hr />
-                <h3>Commit</h3>
+                <h3>{t('commit')}</h3>
                 <pre className="selectable">{generatedJson.gitCommitHash}</pre>
                 <hr />
-                <h3>Build Time</h3>
+                <h3>{t('buildTime')}</h3>
                 {generatedJson.dateTime}
                 <hr />
-                <h3>Live user count</h3>
-                {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'} online.
+                <h3>{t('liveUserCount')}</h3>
+                {liveUserCount} {liveUserCount === 1 ? t('user') : t('users')}{' '}
+                {t('online')}.
                 <hr />
-                <h3>UI Logs</h3>
+                <h3>{t('uiLogs')}</h3>
                 <pre className="selectable">{logs}</pre>
                 <hr />
-                <h3>Extension Logs</h3>
+                <h3>{t('extensionLogs')}</h3>
                 <pre className="selectable">{extLogs}</pre>
+                <hr />
+                <h3>Debug</h3>
+                <textarea
+                    className="selectable"
+                    value={editableStateText}
+                    onChange={(e) => setEditableStateText(e.target.value)}
+                    rows={10}
+                    style={{ height: '200px', fontSize: '12px' }}
+                />
+                <button className="btn btn-green" onClick={saveDebugState}>
+                    Save Changes
+                </button>
+                <button className="btn btn-red" onClick={clearState}>
+                    Clear State
+                </button>
                 <hr />
                 <details>
                     <summary>
-                        <b>License</b>
+                        <b>{t('license')}</b>
                     </summary>
                     <pre className="selectable">
                         {generatedJson.licenseString}
@@ -580,7 +810,7 @@ function Judge(props: {
         return (
             <Page
                 content={contents}
-                title="About CPH"
+                title={t('aboutCPH')}
                 closePage={() => setInfoPageVisible(false)}
             />
         );
@@ -598,14 +828,10 @@ function Judge(props: {
             return (
                 <div className="timeout-av-suggestion">
                     <h5>
-                        <i className="codicon codicon-bug"></i> Getting SIGTERM
-                        due to antivirus?
+                        <i className="codicon codicon-bug"></i>{' '}
+                        {t('antivirusTitle')}
                     </h5>
-                    <p>
-                        If you are getting SIGTERM or Timed Out, your antivirus
-                        may be the problem. Try disabling it or adding the
-                        current folder to whitelist.
-                    </p>
+                    <p>{t('antivirusDescription')}</p>
                 </div>
             );
         } else {
@@ -613,19 +839,63 @@ function Judge(props: {
         }
     };
 
+    const importCases = (newTestcases: { input: string; output: string }[]) => {
+        const generatedCases = newTestcases.map((tc, index) => {
+            const id = Date.now() + index;
+            const testCase: TestCase = {
+                id,
+                input: tc.input,
+                output: tc.output,
+            };
+            return {
+                id,
+                result: null,
+                testcase: testCase,
+            };
+        });
+
+        updateCases((prevCases) => [...prevCases, ...generatedCases]);
+        setFocusLast(true);
+    };
+
     return (
-        <div className="ui">
+        <div
+            className={`ui ${
+                webviewState.catCompanionEnabled ? 'cat-companion-active' : ''
+            }`}
+        >
             {notification && <div className="notification">{notification}</div>}
             {renderDonateButton()}
+            {renderRateReminder()}
             {renderInfoPage()}
+            <Feedback
+                webviewState={webviewState}
+                updateWebviewState={updateWebviewState}
+                t={t}
+                notify={notify}
+                feedbackPageVisible={feedbackPageVisible}
+                setFeedbackPageVisible={setFeedbackPageVisible}
+            />
+            <ImportCases
+                t={t}
+                notify={notify}
+                importPageVisible={importPageVisible}
+                setImportPageVisible={setImportPageVisible}
+                importCases={importCases}
+            />
             <div className="meta">
                 <span className="problem-name">
                     <a href={getHref()}>{problem.name}</a>{' '}
-                    {compiling && (
-                        <b className="compiling" title="Compiling">
-                            <span className="loader"></span>
-                        </b>
-                    )}
+                    <b
+                        className="compiling"
+                        title={compiling ? t('compiling') : undefined}
+                        style={{
+                            opacity: compiling ? 1 : 0,
+                            pointerEvents: compiling ? 'auto' : 'none',
+                        }}
+                    >
+                        <span className="loader"></span>
+                    </b>
                 </span>
                 <span
                     className={`pass-rate ${
@@ -636,24 +906,325 @@ function Judge(props: {
                               : ''
                     }`}
                 >
-                    {numPassed} / {total} passed{' '}
+                    {numPassed} / {total} {t('passedRate')}{' '}
                 </span>
             </div>
             <div className="results">{views}</div>
             <div className="margin-10">
-                <div className="row">
+                <div className="action-container">
+                    <div className="button-grid">
+                        <button
+                            className="btn btn-green btn-block"
+                            onClick={newCase}
+                            title={t('newTestcase')}
+                        >
+                            <span className="icon">
+                                <i className="codicon codicon-add"></i>
+                            </span>{' '}
+                            {t('newTestcase')}
+                        </button>
+                        {renderSubmitButton()}
+                    </div>
+                    {waitingForSubmit && (
+                        <div className="margin-10">
+                            <span className="loader"></span>{' '}
+                            {t('waitingForExtension')}
+                            <br />
+                            <small>
+                                {t('codeforcesInstructions')}
+                                <br />
+                                <br />
+                                {t('submitHint')}
+                            </small>
+                        </div>
+                    )}
                     <button
-                        className="btn btn-green"
-                        onClick={newCase}
-                        title="Create a new empty testcase"
+                        className={`btn btn-block ${
+                            problem.customCheckerPath?.trim()
+                                ? 'btn-orange'
+                                : ''
+                        }`}
+                        onClick={toggleChecker}
                     >
                         <span className="icon">
-                            <i className="codicon codicon-add"></i>
+                            <i
+                                className={`codicon codicon-chevron-${
+                                    checkerVisible ? 'up' : 'down'
+                                }`}
+                            ></i>
                         </span>{' '}
-                        New Testcase
+                        {problem.customCheckerPath?.trim()
+                            ? t('customCheckerEnabled')
+                            : t('customChecker')}
                     </button>
-                    {renderSubmitButton()}
                 </div>
+                {checkerVisible && (
+                    <div className="pad-10 custom-checker-area">
+                        <div
+                            style={{
+                                display: 'flex',
+                                gap: '5px',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <input
+                                type="text"
+                                className="selectable"
+                                placeholder={t('customCheckerPathPlaceholder')}
+                                value={problem.customCheckerPath || ''}
+                                onChange={(e) =>
+                                    updateCheckerPath(e.target.value)
+                                }
+                                ref={checkerInputRef}
+                                style={{
+                                    flexGrow: 1,
+                                    width: '0',
+                                    padding: '4px 6px',
+                                }}
+                            />
+                            <button
+                                className="btn-chromeless"
+                                title="Open the checker script"
+                                onClick={openCheckerFile}
+                                disabled={!problem.customCheckerPath?.trim()}
+                            >
+                                <span
+                                    className="icon"
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <i className="codicon codicon-link-external"></i>
+                                </span>
+                            </button>
+                        </div>
+                        <details style={{ marginTop: '10px' }}>
+                            <summary
+                                style={{
+                                    cursor: 'pointer',
+                                    fontSize: '0.9em',
+                                    opacity: 0.8,
+                                }}
+                            >
+                                {t('usageInstructions')}
+                            </summary>
+                            <div style={{ marginTop: '10px' }}>
+                                <small>
+                                    {t('customCheckerDescription')}
+                                    <br />
+                                    <br />
+                                    {t('exitCodes')}
+                                    <br />
+                                    <br />
+                                    {t('invocationFormat')}:
+                                    <br />
+                                    <code>
+                                        {window.pythonCommand}{' '}
+                                        &lt;script-path&gt; &lt;input-file&gt;
+                                        &lt;output-file&gt;
+                                    </code>
+                                    <ul
+                                        style={{
+                                            margin: '10px 0',
+                                            paddingLeft: '20px',
+                                        }}
+                                    >
+                                        <li>
+                                            <b>&lt;script-path&gt;</b>:{' '}
+                                            {t('argScriptPath')}
+                                        </li>
+                                        <li>
+                                            <b>&lt;input-file&gt;</b>:{' '}
+                                            {t('argInputFile')}
+                                        </li>
+                                        <li>
+                                            <b>&lt;output-file&gt;</b>:{' '}
+                                            {t('argOutputFile')}
+                                        </li>
+                                    </ul>
+                                    {t('expectedBehavior')}
+                                    <br />
+                                    <textarea
+                                        className="selectable"
+                                        readOnly
+                                        value={`with open(sys.argv[1], "r") as f:
+    test_input = f.read()
+with open(sys.argv[2], "r") as f:
+    code_output = f.read()`}
+                                        style={{
+                                            fontSize: '0.9em',
+                                            height: '95px',
+                                            width: '100%',
+                                            display: 'block',
+                                        }}
+                                    />
+                                    <br />
+                                    <a
+                                        href="https://github.com/agrawal-d/cph/blob/main/docs/user-guide.md#custom-checker"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn btn-black"
+                                        style={{
+                                            fontSize: '0.9em',
+                                            display: 'inline-block',
+                                        }}
+                                    >
+                                        <i className="codicon codicon-book"></i>{' '}
+                                        {t('documentation')}
+                                    </a>
+                                </small>
+                            </div>
+                        </details>
+                    </div>
+                )}
+                <small className="footer-button-grid">
+                    <a
+                        href={payPalUrl}
+                        className="btn btn-black footer-btn-row-2"
+                        title={t('donate')}
+                    >
+                        <i className="codicon codicon-heart-filled"></i>{' '}
+                        {t('support')}
+                    </a>
+                    <span
+                        className="footer-btn-row-2"
+                        style={{ position: 'relative' }}
+                    >
+                        {showFeedbackTooltip && (
+                            <div
+                                className="feedback-tooltip"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                }}
+                            >
+                                <span>{t('feedbackTooltip')}</span>
+                                <a
+                                    role="button"
+                                    style={{
+                                        cursor: 'pointer',
+                                        color: 'white',
+                                        opacity: 0.8,
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setShowFeedbackTooltip(false);
+                                        updateWebviewState({
+                                            ...webviewState,
+                                            hasSeenFeedbackTooltip: true,
+                                        });
+                                    }}
+                                    title="Close"
+                                >
+                                    <i
+                                        className="codicon codicon-close"
+                                        style={{ fontSize: '10px' }}
+                                    ></i>
+                                </a>
+                            </div>
+                        )}
+                        <a
+                            role="button"
+                            className="btn btn-black"
+                            onClick={() => setFeedbackPageVisible(true)}
+                        >
+                            <i className="codicon codicon-feedback"></i>{' '}
+                            {t('feedback')}
+                        </a>
+                    </span>
+                    <a
+                        role="button"
+                        className="btn btn-black footer-btn-row-2"
+                        title={t('importTooltip')}
+                        onClick={() => setImportPageVisible(true)}
+                    >
+                        <i className="codicon codicon-cloud-upload"></i>{' '}
+                        {t('import')}
+                    </a>
+                    <span
+                        className="footer-btn-row-2"
+                        style={{ position: 'relative' }}
+                    >
+                        {showCompanionTooltip &&
+                            !webviewState.catCompanionEnabled && (
+                                <div
+                                    className="feedback-tooltip"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                    }}
+                                >
+                                    <span>{t('companionTooltip')}</span>
+                                    <a
+                                        role="button"
+                                        style={{
+                                            cursor: 'pointer',
+                                            color: 'white',
+                                            opacity: 0.8,
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            setShowCompanionTooltip(false);
+                                            updateWebviewState({
+                                                ...webviewState,
+                                                hasSeenCompanionTooltip: true,
+                                            });
+                                        }}
+                                        title="Close"
+                                    >
+                                        <i
+                                            className="codicon codicon-close"
+                                            style={{ fontSize: '10px' }}
+                                        ></i>
+                                    </a>
+                                </div>
+                            )}
+                        <a
+                            role="button"
+                            className="btn btn-black"
+                            title={
+                                webviewState.catCompanionEnabled
+                                    ? t('disableCatCompanion')
+                                    : t('enableCatCompanion')
+                            }
+                            onClick={() => {
+                                updateWebviewState({
+                                    ...webviewState,
+                                    catCompanionEnabled:
+                                        !webviewState.catCompanionEnabled,
+                                    hasSeenCompanionTooltip: true,
+                                });
+                            }}
+                        >
+                            <i className="codicon codicon-octoface"></i>{' '}
+                            {t('cat')}
+                        </a>
+                    </span>
+                    <a
+                        href="https://github.com/agrawal-d/cph/issues"
+                        className="btn btn-black footer-btn-row-2"
+                    >
+                        <i className="codicon codicon-github"></i> {t('bugs')}
+                    </a>
+                    <a
+                        role="button"
+                        className="btn btn-black footer-btn-row-2"
+                        title={t('aboutCPH')}
+                        onClick={() => showInfoPage()}
+                    >
+                        <i className="codicon codicon-info"></i> {t('about')}
+                    </a>
+                </small>
                 <div>
                     <span
                         onClick={toggleOnlineJudgeEnv}
@@ -662,37 +1233,9 @@ function Judge(props: {
                         }`}
                     >
                         {onlineJudgeEnv ? '☑' : '☐'}{' '}
-                        <span className="oj-code">Set ONLINE_JUDGE</span>
+                        <span className="oj-code">{t('setOnlineJudge')}</span>
                     </span>
                     {renderTimeoutAVSuggestion()}
-                </div>
-                <br />
-                <br />
-                <div>
-                    <small>
-                        <a
-                            href={payPalUrl}
-                            className="btn btn-pink"
-                            title="Donate"
-                        >
-                            <i className="codicon codicon-heart-filled"></i>{' '}
-                            Support
-                        </a>
-                    </small>
-                    <small>
-                        <a href="https://rb.gy/vw82u5" className="btn">
-                            <i className="codicon codicon-feedback"></i>{' '}
-                            Feedback
-                        </a>
-                    </small>
-                    <small>
-                        <a
-                            href="https://github.com/agrawal-d/cph/issues"
-                            className="btn btn-black"
-                        >
-                            <i className="codicon codicon-github"></i> Bugs
-                        </a>
-                    </small>
                 </div>
                 <div className="remote-message">
                     <p
@@ -704,86 +1247,74 @@ function Judge(props: {
                 {window.showLiveUserCount && liveUserCount > 0 && (
                     <div className="liveUserCount">
                         <i className="codicon codicon-circle-filled color-green"></i>{' '}
-                        {liveUserCount} {liveUserCount === 1 ? 'user' : 'users'}{' '}
-                        online.
+                        {liveUserCount}{' '}
+                        {liveUserCount === 1 ? t('user') : t('users')}{' '}
+                        {t('online')}.
                     </div>
                 )}
             </div>
             <div className="actions">
-                <div className="row">
+                {webviewState.catCompanionEnabled && (
+                    <CatCompanion
+                        enabled={webviewState.catCompanionEnabled}
+                        total={total}
+                        numPassed={numPassed}
+                    />
+                )}
+                <div className="split-btn">
                     <button
-                        className="btn"
+                        className="btn main-btn"
                         onClick={runAll}
-                        title="Run all testcases again"
+                        title={t('runAll')}
                     >
                         <span className="icon">
                             <i className="codicon codicon-run-above"></i>
                         </span>{' '}
-                        <span className="action-text">Run All</span>
+                        <span className="action-text">{t('runAll')}</span>
                     </button>
                     <button
-                        className="btn btn-green"
-                        onClick={newCase}
-                        title="Create a new empty testcase"
+                        className="btn chevron-btn"
+                        title={t('moreActions')}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const event = new MouseEvent('contextmenu', {
+                                bubbles: true,
+                                clientX: e.clientX,
+                                clientY: e.clientY,
+                            });
+                            e.currentTarget.dispatchEvent(event);
+                        }}
+                        data-vscode-context='{"preventDefaultContextMenuItems": true, "webviewSection": "compile-button"}'
                     >
                         <span className="icon">
-                            <i className="codicon codicon-add"></i>
-                        </span>{' '}
-                        <span className="action-text">New</span>
+                            <i className="codicon codicon-chevron-down"></i>
+                        </span>
                     </button>
                 </div>
-                <div className="row">
-                    <button
-                        className="btn btn-orange"
-                        onClick={stop}
-                        title="Kill all running testcases"
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-circle-slash"></i>
-                        </span>{' '}
-                        <span className="action-text">Stop</span>
-                    </button>
-                    <button
-                        className="btn"
-                        title="Info"
-                        onClick={() => showInfoPage()}
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-info"></i>
-                        </span>{' '}
-                        <span className="action-text"></span>
-                    </button>
-                    <button
-                        className="btn btn-red right"
-                        onClick={deleteTcs}
-                        title="Delete all testcases and close results window"
-                    >
-                        <span className="icon">
-                            <i className="codicon codicon-trash"></i>
-                        </span>{' '}
-                        <span className="action-text">Delete</span>
-                    </button>
-                </div>
+                <button
+                    className="btn btn-red delete-btn"
+                    onClick={deleteTcs}
+                    title={t('delete')}
+                >
+                    <span className="icon">
+                        <i className="codicon codicon-trash"></i>
+                    </span>
+                </button>
+                <button
+                    className="btn btn-yellow settings-btn"
+                    title={t('settings')}
+                    onClick={() =>
+                        sendMessageToVSCode({
+                            command: 'open-settings',
+                        })
+                    }
+                >
+                    <span className="icon">
+                        <i className="codicon codicon-settings"></i>
+                    </span>
+                </button>
             </div>
-
-            {waitingForSubmit && (
-                <div className="margin-10">
-                    <span className="loader"></span> Waiting for extension ...
-                    <br />
-                    <small>
-                        To submit to codeforces, you need to have the{' '}
-                        <a href="https://github.com/agrawal-d/cph-submit">
-                            cph-submit browser extension{' '}
-                        </a>
-                        installed, and a browser window open. You can change
-                        language ID from VS Code settings.
-                        <br />
-                        <br />
-                        Hint: You can also press <kbd>Ctrl+Alt+S</kbd> to
-                        submit.
-                    </small>
-                </div>
-            )}
         </div>
     );
 }
@@ -811,6 +1342,7 @@ function App() {
     const [deferSaveTimer, setDeferSaveTimer] = useState<number | null>(null);
     const [, setSaving] = useState<boolean>(false);
     const [showFallback, setShowFallback] = useState<boolean>(false);
+    const [onlineJudgeEnv, setOnlineJudgeEnv] = useState<boolean>(false);
 
     // Save the problem
     const save = () => {
@@ -862,10 +1394,15 @@ function App() {
 
                     setProblem(data.problem);
                     setCases(getCasesFromProblem(data.problem));
+                    setOnlineJudgeEnv(data.onlineJudgeEnv ?? false);
                     break;
                 }
                 case 'run-single-result': {
                     handleRunSingleResult(data);
+                    break;
+                }
+                case 'update-online-judge-env': {
+                    setOnlineJudgeEnv(data.value);
                     break;
                 }
             }
@@ -887,16 +1424,13 @@ function App() {
             <>
                 <div className={`ui p10 fallback`}>
                     <div className="text-center">
-                        <p>
-                            This document does not have a CPH problem associated
-                            with it.
-                        </p>
+                        <p>{t('noProblemAssociated')}</p>
                         <br />
                         <div className="btn btn-block" onClick={createProblem}>
                             <span className="icon">
                                 <i className="codicon codicon-add"></i>
                             </span>{' '}
-                            Create Problem
+                            {t('createProblem')}
                         </div>
                         <a
                             className="btn btn-block btn-green"
@@ -905,7 +1439,7 @@ function App() {
                             <span className="icon">
                                 <i className="codicon codicon-question"></i>
                             </span>{' '}
-                            How to use this extension
+                            {t('howToUse')}
                         </a>
                     </div>
                 </div>
@@ -914,16 +1448,19 @@ function App() {
     } else if (problem !== undefined) {
         return (
             <Judge
+                key={problem.srcPath}
                 problem={problem}
                 updateProblem={setProblem}
                 cases={cases}
                 updateCases={setCases}
+                onlineJudgeEnv={onlineJudgeEnv}
+                setOnlineJudgeEnv={setOnlineJudgeEnv}
             />
         );
     } else {
         return (
             <>
-                <div className="text-center">Loading...</div>
+                <div className="text-center">{t('loading')}</div>
             </>
         );
     }

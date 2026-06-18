@@ -3,12 +3,14 @@ const { env } = require('process');
 
 class HeartbeatServer {
     constructor() {
-        console.log("Creating new HeartbeatServer instance");
+        console.log('Creating new HeartbeatServer instance');
 
         this.ips = new Map();
         this.refresh_interval_seconds = parseInt(env.REFRESH_INTERVAL) || 30;
         this.port = parseInt(env.PORT) || 8080;
-        console.log(`Refresh interval: ${this.refresh_interval_seconds} seconds`);
+        console.log(
+            `Refresh interval: ${this.refresh_interval_seconds} seconds`,
+        );
 
         this.runServer(this.port);
 
@@ -18,7 +20,7 @@ class HeartbeatServer {
     }
 
     runServer(port) {
-        console.log("Starting heartbeat server on port " + port);
+        console.log('Starting heartbeat server on port ' + port);
         this.serverInstance = http.createServer((req, res) => {
             this.processHeartbeat(req.socket.remoteAddress);
             res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -26,7 +28,7 @@ class HeartbeatServer {
             res.end(this.ips.size.toString());
         });
         this.serverInstance.listen(port);
-        console.log("Heartbeat server started.");
+        console.log('Heartbeat server started.');
     }
 
     runCleanup() {
@@ -35,11 +37,13 @@ class HeartbeatServer {
         for (const [ip, timestamp] of this.ips.entries()) {
             if (now - timestamp > this.refresh_interval_seconds * 1000) {
                 this.ips.delete(ip);
-                console.log("Deleted stale IP: " + ip);
+                console.log('Deleted stale IP: ' + ip);
             }
         }
         const newLen = this.ips.size;
-        console.log(`Cleaned up ${oldLen - newLen} stale IPs. New count: ${newLen}`);
+        console.log(
+            `Cleaned up ${oldLen - newLen} stale IPs. New count: ${newLen}`,
+        );
     }
 
     // Called when a heartbeat is received from an IP
@@ -48,5 +52,5 @@ class HeartbeatServer {
     }
 }
 
-console.log("Starting app");
+console.log('Starting app');
 new HeartbeatServer();

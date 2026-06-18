@@ -1,4 +1,4 @@
-import { Language, Run } from './types';
+import { Language, Run, CustomCheckerRun } from './types';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { platform } from 'os';
 import config from './config';
@@ -7,8 +7,21 @@ import * as vscode from 'vscode';
 import path from 'path';
 import { onlineJudgeEnv } from './compiler';
 import telmetry from './telmetry';
+import localize from './i18n';
+import { executeCustomChecker } from './utils/customChecker';
 
-const runningBinaries: ChildProcessWithoutNullStreams[] = [];
+export const runningBinaries: ChildProcessWithoutNullStreams[] = [];
+
+/**
+ * Run a custom checker script for a testcase.
+ */
+export const runCustomChecker = async (
+    checkerPath: string,
+    input: string,
+    output: string,
+): Promise<CustomCheckerRun> => {
+    return executeCustomChecker(checkerPath, input, output, runningBinaries);
+};
 
 /**
  * Run a single testcase, and return the raw results, without judging.
@@ -122,7 +135,11 @@ export const runTestCase = (
     process.on('error', (err) => {
         globalThis.logger.error(err);
         vscode.window.showErrorMessage(
-            `Could not launch testcase process. Is '${language.compiler}' in your PATH?`,
+            localize(
+                'cph.executor.launchError',
+                "Could not launch testcase process. Is '{0}' in your PATH?",
+                language.compiler,
+            ),
         );
     });
 
@@ -130,13 +147,15 @@ export const runTestCase = (
     const ret: Promise<Run> = new Promise((resolve) => {
         runningBinaries.push(process);
         process.on('exit', (code, signal) => {
-            const end = Date.now();
             clearTimeout(killer);
+            const end = Date.now();
             result.code = code;
             result.signal = signal;
             result.time = end - begin;
-            runningBinaries.pop();
-            globalThis.logger.log('Run Result:', result);
+            const idx = runningBinaries.indexOf(process);
+            if (idx > -1) {
+                runningBinaries.splice(idx, 1);
+            }
             resolve(result);
         });
 
@@ -144,6 +163,19 @@ export const runTestCase = (
             result.stdout += data;
         });
         process.stderr.on('data', (data) => (result.stderr += data));
+
+        process.on('error', (err) => {
+            clearTimeout(killer);
+            const end = Date.now();
+            result.code = 1;
+            result.signal = err.name;
+            result.time = end - begin;
+            const idx = runningBinaries.indexOf(process);
+            if (idx > -1) {
+                runningBinaries.splice(idx, 1);
+            }
+            resolve(result);
+        });
 
         globalThis.logger.log('Wrote to STDIN');
         try {
@@ -153,22 +185,11 @@ export const runTestCase = (
         }
 
         process.stdin.end();
-        process.on('error', (err) => {
-            const end = Date.now();
-            clearTimeout(killer);
-            result.code = 1;
-            result.signal = err.name;
-            result.time = end - begin;
-            runningBinaries.pop();
-            globalThis.logger.log('Run Error Result:', result);
-            resolve(result);
-        });
     });
 
     return ret;
 };
 
-/** Remove the generated binary from the file system, if present */
 export const deleteBinary = (language: Language, binPath: string) => {
     if (language.skipCompile) {
         globalThis.logger.log(
@@ -204,7 +225,8 @@ export const deleteBinary = (language: Language, binPath: string) => {
     }
 };
 
-/** Kill all running binaries. Usually, only one should be running at a time. */
+/** Kill all currently running processes. Only one problem's testcases
+ * should be running at a time. */
 export const killRunning = () => {
     globalThis.reporter.sendTelemetryEvent(telmetry.KILL_RUNNING);
     globalThis.logger.log('Killling binaries');

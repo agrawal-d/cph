@@ -1,0 +1,63 @@
+name: Release Latest VSIX
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+
+        # Crucial: Give GITHUB_TOKEN write access to releases
+        permissions:
+            contents: write
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Package extension
+              run: npx @vscode/vsce package --no-dependencies
+
+            - name: Update GitHub Release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  echo "Checking existing assets in release 'latest-vsix'..."
+                  # Get list of assets, fallback to empty string if fails
+                  assets=$(gh release view latest-vsix --json assets --jq '.assets[].name' 2>/dev/null || echo "")
+
+                  if [ -n "$assets" ]; then
+                    echo "Deleting existing assets: $assets"
+                    for asset in $assets; do
+                      gh release delete-asset latest-vsix "$asset" -y
+                    done
+                  else
+                    echo "No existing assets found."
+                  fi
+
+                  echo "Uploading new VSIX asset..."
+                  gh release upload latest-vsix *.vsix
+
+                  echo "Updating release description with commit details..."
+                  commit_sha=$(git rev-parse --short HEAD)
+                  commit_msg=$(git log -1 --pretty=%B | head -n 1)
+                  gh release edit latest-vsix \
+                    --title "Latest VSIX Build" \
+                    --notes "This release is automatically updated on every commit to the \`main\` branch.
+
+                    **Latest Build Info:**
+                    - **Commit**: $commit_sha
+                    - **Message**: $commit_msg
+                    - **Date**: $(date -u)"

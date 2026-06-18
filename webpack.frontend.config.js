@@ -46,6 +46,10 @@ const config = {
                 },
                 { from: 'src/webview/frontend/index.html', to: 'index.html' },
                 {
+                    from: 'src/webview/frontend/meow.mp3',
+                    to: 'meow.mp3',
+                },
+                {
                     from: 'node_modules/@vscode/codicons/dist/codicon.css',
                     to: 'codicon.css',
                 },
