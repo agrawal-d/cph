@@ -66,6 +66,7 @@ export const CatCompanion: React.FC<CatCompanionProps> = ({
     useEffect(() => {
         const isSuccess = total > 0 && numPassed === total;
         if (isSuccess && !prevSuccessRef.current) {
+            playMeow();
             spawnTrophy();
         }
         prevSuccessRef.current = isSuccess;
