@@ -69,17 +69,18 @@ export const CatCompanion: React.FC<CatCompanionProps> = ({
     useEffect(() => {
         const isFinished = total > 0 && numFinished === total;
         const isSuccess = isFinished && numPassed === total;
-        
+
         if (isSuccess && !prevSuccessRef.current) {
             playMeow();
             spawnTrophy();
         } else if (isFinished && !isSuccess && !prevFinishedRef.current) {
             // Failure! Spawn an encouraging emoji
             const sadEmojis = ['😿', '💪', '🩹', '💔'];
-            const randomEmoji = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+            const randomEmoji =
+                sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
             spawnFloatingEmoji(randomEmoji);
         }
-        
+
         prevSuccessRef.current = isSuccess;
         prevFinishedRef.current = isFinished;
     }, [numPassed, numFinished, total]);
