@@ -122,6 +122,9 @@ function Judge(props: {
     const numPassed = cases.filter(
         (testCase) => testCase.result?.pass === true,
     ).length;
+    const numFinished = cases.filter(
+        (testCase) => testCase.result !== null,
+    ).length;
     const total = cases.length;
 
     useEffect(() => {
@@ -1259,6 +1262,7 @@ with open(sys.argv[2], "r") as f:
                         enabled={webviewState.catCompanionEnabled}
                         total={total}
                         numPassed={numPassed}
+                        numFinished={numFinished}
                     />
                 )}
                 <div className="split-btn">
