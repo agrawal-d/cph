@@ -19,6 +19,7 @@ import {
 } from '../preferences';
 import { setOnlineJudgeEnv, onlineJudgeEnv } from '../compiler';
 import { translations } from './translations';
+import { serializeForInlineScript } from '../utilsPure';
 
 class JudgeViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'cph.judgeView';
@@ -329,6 +330,17 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             pythonCommand = 'python';
         }
 
+        const initialState = serializeForInlineScript({
+            meowAudioUri: meowAudioUri.toString(),
+            remoteMessage,
+            generatedJsonUri: generatedJsonUri.toString(),
+            remoteServerAddress,
+            showLiveUserCount,
+            showOutputDifference: !getHideOutputDifferencePref(),
+            translations: translation,
+            pythonCommand,
+        });
+
         const html = `
             <!DOCTYPE html>
             <html>
@@ -349,14 +361,7 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                         // Since the react script takes time to load, the problem is sent to the webview before it has even loaded.
                         // So, for the initial request, ask for it again.
                         window.vscodeApi = acquireVsCodeApi();
-                        window.meowAudioUri = '${meowAudioUri}';
-                        window.remoteMessage = '${remoteMessage}';
-                        window.generatedJsonUri = '${generatedJsonUri}';
-                        window.remoteServerAddress = '${remoteServerAddress}';
-                        window.showLiveUserCount = ${showLiveUserCount};
-                        window.showOutputDifference = ${!getHideOutputDifferencePref()};
-                        window.translations = ${JSON.stringify(translation)};
-                        window.pythonCommand = '${pythonCommand}';
+                        Object.assign(window, ${initialState});
 
                         document.addEventListener(
                             'DOMContentLoaded',

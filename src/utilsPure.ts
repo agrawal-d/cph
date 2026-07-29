@@ -48,3 +48,18 @@ export const toAsciiFilename = (input: string): string => {
         })
         .join('');
 };
+
+/** Serializes a value for use as an expression inside an HTML script element. */
+export const serializeForInlineScript = (value: unknown): string => {
+    const serialized = JSON.stringify(value);
+    if (serialized === undefined) {
+        throw new TypeError('Cannot serialize value for an inline script');
+    }
+
+    return serialized
+        .replace(/&/g, '\\u0026')
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/\u2028/g, '\\u2028')
+        .replace(/\u2029/g, '\\u2029');
+};
