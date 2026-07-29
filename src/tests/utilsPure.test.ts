@@ -1,5 +1,9 @@
 globalThis.logger = { ...console };
-import { words_in_text, toPascalCase } from '../utilsPure';
+import {
+    serializeForInlineScript,
+    words_in_text,
+    toPascalCase,
+} from '../utilsPure';
 
 describe('problem name parser', () => {
     test('mix of latin, non latin and numbers', () => {
@@ -103,5 +107,27 @@ describe('toPascalCase', () => {
         expect(toPascalCase('A_Watermelon')).toBe('AWatermelon');
         expect(toPascalCase('Two_Sum')).toBe('TwoSum');
         expect(toPascalCase('Binary_Search_Tree')).toBe('BinarySearchTree');
+    });
+});
+
+describe('serializeForInlineScript', () => {
+    test('preserves Windows paths without creating escape sequences', () => {
+        const pythonCommand =
+            'C:\\Users\\ExampleUser\\AppData\\Roaming\\uv\\python\\cpython-xxx\\python.exe';
+        const serialized = serializeForInlineScript(pythonCommand);
+
+        expect(serialized).toContain('C:\\\\Users\\\\ExampleUser');
+        expect(serialized).toContain(
+            'Roaming\\\\uv\\\\python\\\\cpython-xxx\\\\python.exe',
+        );
+        expect(JSON.parse(serialized)).toBe(pythonCommand);
+    });
+
+    test('escapes characters that can terminate or alter an inline script', () => {
+        const value = "'</script><script>alert(1)</script>\n\u2028\u2029&";
+        const serialized = serializeForInlineScript({ value });
+
+        expect(serialized).not.toMatch(/[<>&\u2028\u2029]/u);
+        expect(JSON.parse(serialized)).toEqual({ value });
     });
 });
