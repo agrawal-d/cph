@@ -145,6 +145,14 @@ export const setupCompanionServer = () => {
         });
         server.listen(config.port);
         server.on('error', (err) => {
+            if ((err as NodeJS.ErrnoException).code === 'EADDRINUSE') {
+                globalThis.logger.warn(
+                    'Companion server is already running on port',
+                    config.port,
+                );
+                return;
+            }
+
             vscode.window.showErrorMessage(
                 localize(
                     'cph.companion.serverError',
