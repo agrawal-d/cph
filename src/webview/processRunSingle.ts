@@ -49,12 +49,15 @@ export const runSingleAndSave = async (
     }
 
     let runInput = testCase.input;
+    const fileName = problem.inputFileName?.trim();
+    const fileInput: boolean = !!fileName && fileName !== '';
 
-    if (problem.inputFileName && problem.inputFileName.trim() !== '') {
-        const inputFilePath = path.join(
-            process.cwd(),
-            problem.inputFileName.trim(),
-        );
+    let inputFilePath: string | undefined;
+    if (fileInput && fileName) {
+        inputFilePath = path.join(process.cwd(), fileName);
+    }
+
+    if (fileInput && inputFilePath) {
         fs.writeFile(inputFilePath, testCase.input, function (err) {
             if (err) {
                 vscode.window.showErrorMessage(
@@ -78,6 +81,17 @@ export const runSingleAndSave = async (
 
     if (!skipCompile) {
         deleteBinary(language, binPath);
+    }
+
+    if (fileInput && inputFilePath) {
+        try {
+            console.log(`delete ${inputFilePath}`);
+            if (fs.existsSync(inputFilePath)) {
+                fs.unlinkSync(inputFilePath);
+            }
+        } catch (err) {
+            globalThis.logger.error('Error while deleting data files', err);
+        }
     }
 
     const stderrorFailure = getIgnoreSTDERRORPref() ? false : run.stderr !== '';

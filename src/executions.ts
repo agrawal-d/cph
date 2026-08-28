@@ -178,30 +178,8 @@ export const runTestCase = (
                     }
                     try {
                         console.log(`delete ${outputFileDir}`);
-                        const isLinux = platform() == 'linux';
-                        const isFile = path.extname(outputFileDir);
-
-                        if (isLinux) {
-                            if (isFile) {
-                                spawn('rm', [outputFileDir]);
-                            } else {
-                                spawn('rm', ['-r', outputFileDir]);
-                            }
-                        } else {
-                            const nrmFilePath = '"' + outputFileDir + '"';
-                            if (isFile) {
-                                spawn('cmd.exe', ['/c', 'del', nrmFilePath], {
-                                    windowsVerbatimArguments: true,
-                                });
-                            } else {
-                                spawn(
-                                    'cmd.exe',
-                                    ['/c', 'rd', '/s', '/q', nrmFilePath],
-                                    {
-                                        windowsVerbatimArguments: true,
-                                    },
-                                );
-                            }
+                        if (fs.existsSync(outputFileDir)) {
+                            fs.unlinkSync(outputFileDir);
                         }
                     } catch (err) {
                         globalThis.logger.error(
