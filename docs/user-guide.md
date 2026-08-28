@@ -182,6 +182,16 @@ if __name__ == "__main__":
     `sys.exit(1)`. Some Python environments might return `0` by default even on
     some logical errors if not specified.
 
+## File-IO
+In some Online Judge(OJ) environment ,you need redirect your program's standard input and output streams to files. This is not convenient for local testing. CPH provides another powerful "File-IO" feature.
+
+### How it Works
+When you enable File-IO, CPH will write a input-file with your specified name and put it into your program's workdir.When your program exit normally, CPH will read the output-file. Then it will judge regular or use Custom Checker.
+
+1.  **Activation**: Click the **File-IO Settings** button in the judge view.
+    This will reveal the configuration area.
+2.  **File Name Configuration**: Enter the **input file name** and **output file name**.(Note, this can't be a full path. Otherwise, it will fail. But it can be relative.)
+
 ## Environment
 
 ## Environment
