@@ -309,6 +309,26 @@
                     "default": "javac",
                     "description": "%cph.language.java.Command.description%"
                 },
+                "cph.language.kotlin.Args": {
+                    "title": "%cph.language.kotlin.Args.title%",
+                    "type": "string",
+                    "default": "",
+                    "description": "%cph.language.kotlin.Args.description%"
+                },
+                "cph.language.kotlin.SubmissionCompiler": {
+                    "type": "string",
+                    "default": "Kotlin 1.9.21",
+                    "enum": [
+                        "Kotlin 1.9.21",
+                        "Kotlin 1.7.20"
+                    ],
+                    "description": "%cph.language.kotlin.SubmissionCompiler.description%"
+                },
+                "cph.language.kotlin.Command": {
+                    "type": "string",
+                    "default": "kotlinc",
+                    "description": "%cph.language.kotlin.Command.description%"
+                },
                 "cph.language.js.Args": {
                     "title": "%cph.language.js.Args.title%",
                     "type": "string",
@@ -358,6 +378,7 @@
                         "rust",
                         "js",
                         "java",
+                        "kotlin",
                         "ruby",
                         "csharp",
                         "go",
@@ -368,7 +389,7 @@
                 },
                 "cph.general.menuChoices": {
                     "type": "string",
-                    "default": "cpp java js python c rust ruby csharp go haskell",
+                    "default": "cpp java kotlin js python c rust ruby csharp go haskell",
                     "description": "%cph.general.menuChoices.description%"
                 },
                 "cph.general.includeProblemIndex": {

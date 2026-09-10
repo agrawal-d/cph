@@ -87,6 +87,9 @@ export const getRustArgsPref = (): string[] =>
 export const getJavaArgsPref = (): string[] =>
     getPreference('language.java.Args').split(' ') || [];
 
+export const getKotlinArgsPref = (): string[] =>
+    getPreference('language.kotlin.Args').split(' ') || [];
+
 export const getJsArgsPref = (): string[] =>
     getPreference('language.js.Args').split(' ') || [];
 
@@ -154,6 +157,8 @@ export const getRustCommand = (): string =>
     getPreference('language.rust.Command') || 'rustc';
 export const getJavaCommand = (): string =>
     getPreference('language.java.Command') || 'javac';
+export const getKotlinCommand = (): string =>
+    getPreference('language.kotlin.Command') || 'kotlinc';
 export const getJsCommand = (): string =>
     getPreference('language.js.Command') || 'node';
 export const getGoCommand = (): string =>
@@ -182,6 +187,11 @@ export const getLanguageId = (srcPath: string): number => {
 
         case '.java': {
             compiler = getPreference('language.java.SubmissionCompiler');
+            break;
+        }
+
+        case '.kt': {
+            compiler = getPreference('language.kotlin.SubmissionCompiler');
             break;
         }
 

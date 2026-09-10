@@ -196,8 +196,8 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
             baseName = words.join('_');
         }
 
-        // For Java, use PascalCase without underscores
-        if (ext === 'java') {
+        // For Java and Kotlin, use PascalCase without underscores
+        if (ext === 'java' || ext === 'kt') {
             baseName = toPascalCase(baseName);
         }
 

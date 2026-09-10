@@ -59,6 +59,7 @@ enter testcases.
 -   Python
 -   Ruby
 -   Java
+-   Kotlin
 -   JavaScript (Node.js)
 -   Cangjie
 
