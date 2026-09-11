@@ -142,7 +142,10 @@ export function activate(context: vscode.ExtensionContext) {
     statusBarItem.command = 'cph.runTestCases';
 
     registerCommands(context);
-    setupCompanionServer();
+    const companionServer = setupCompanionServer();
+    if (companionServer !== undefined) {
+        context.subscriptions.push(companionServer);
+    }
     checkLaunchWebview();
 
     vscode.workspace.onDidCloseTextDocument((e) => {

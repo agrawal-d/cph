@@ -93,8 +93,15 @@ export const storeSubmitProblem = (problem: Problem) => {
     globalThis.logger.log('Stored savedResponse', savedResponse);
 };
 
-export const setupCompanionServer = () => {
+/** Delay between attempts to bind the companion port when another VS Code
+ *  window currently owns it. Keeps retrying so this window takes over
+ *  automatically once the owning window closes. */
+const PORT_RETRY_INTERVAL_MS = 5000;
+
+export const setupCompanionServer = (): vscode.Disposable | undefined => {
     try {
+        let retryTimer: ReturnType<typeof setTimeout> | undefined;
+        let disposed = false;
         const server = http.createServer((req, res) => {
             const { headers } = req;
             let rawProblem = '';
@@ -143,21 +150,47 @@ export const setupCompanionServer = () => {
             }
             res.end();
         });
-        server.listen(config.port);
-        server.on('error', (err) => {
-            vscode.window.showErrorMessage(
-                localize(
-                    'cph.companion.serverError',
-                    'Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: {0}, companion may not work.',
-                    err.message,
-                ),
+        server.on('error', (err: NodeJS.ErrnoException) => {
+            if (err.code === 'EADDRINUSE') {
+                // Another VS Code window is serving the companion port.
+                // Keep retrying quietly; this window takes over the port
+                // once the window owning it closes.
+                globalThis.logger.log(
+                    'Companion port',
+                    config.port,
+                    'is in use by another window; retrying in',
+                    PORT_RETRY_INTERVAL_MS,
+                    'ms',
+                );
+                retryTimer = setTimeout(() => {
+                    if (!disposed) {
+                        server.listen(config.port);
+                    }
+                }, PORT_RETRY_INTERVAL_MS);
+            } else {
+                vscode.window.showErrorMessage(
+                    localize(
+                        'cph.companion.serverError',
+                        'Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: {0}, companion may not work.',
+                        err.message,
+                    ),
+                );
+            }
+        });
+        server.on('listening', () => {
+            globalThis.logger.log(
+                'Companion server listening on port',
+                config.port,
             );
         });
-        globalThis.logger.log(
-            'Companion server listening on port',
-            config.port,
-        );
-        return server;
+        server.listen(config.port);
+        return new vscode.Disposable(() => {
+            disposed = true;
+            if (retryTimer !== undefined) {
+                clearTimeout(retryTimer);
+            }
+            server.close();
+        });
     } catch (e) {
         globalThis.logger.error('Companion server error :', e);
     }
