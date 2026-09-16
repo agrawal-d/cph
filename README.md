@@ -70,7 +70,7 @@ Interested in adding support for another language? Check out the
 
 -   English
 -   Chinese (Simplified)
--   Chinese (Traditional, Taiwan)
+-   Chinese (Traditional)
 -   Korean
 -   Japanese
 
