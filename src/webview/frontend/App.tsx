@@ -132,6 +132,10 @@ function Judge(props: {
     );
     const checkerInputRef = React.useRef<HTMLInputElement>(null);
 
+    const [ioVisible, setIoVisible] = useState<boolean>(false);
+    const inpInputRef = React.useRef<HTMLInputElement>(null);
+    const outInputRef = React.useRef<HTMLInputElement>(null);
+
     const numPassed = cases.filter(
         (testCase) => testCase.result?.pass === true,
     ).length;
@@ -500,6 +504,30 @@ function Judge(props: {
             ...problem,
             customCheckerPath: path,
         });
+    };
+
+    const updateInputFileName = (path: string) => {
+        updateProblem({
+            ...problem,
+            inputFileName: path,
+        });
+    };
+
+    const updateOutputFileName = (path: string) => {
+        updateProblem({
+            ...problem,
+            outputFileName: path,
+        });
+    };
+
+    const toggleIoSetting = () => {
+        const next = !ioVisible;
+        setIoVisible(next);
+        if (next) {
+            setTimeout(() => {
+                inpInputRef.current?.focus();
+            }, 100);
+        }
     };
 
     const notify = (text: string) => {
@@ -1088,6 +1116,99 @@ with open(sys.argv[2], "r") as f:
                                         {t('documentation')}
                                     </a>
                                 </small>
+                            </div>
+                        </details>
+                    </div>
+                )}
+                <div className="action-container">
+                    <button
+                        className={`btn btn-block ${
+                            problem.inputFileName?.trim() ||
+                            problem.outputFileName?.trim()
+                                ? 'btn-orange'
+                                : ''
+                        }`}
+                        onClick={toggleIoSetting}
+                    >
+                        <span className="icon">
+                            <i
+                                className={`codicon codicon-chevron-${
+                                    ioVisible ? 'up' : 'down'
+                                }`}
+                            ></i>
+                        </span>{' '}
+                        {problem.inputFileName?.trim() ||
+                        problem.outputFileName?.trim()
+                            ? t('ioSettingEnabled')
+                            : t('ioSetting')}
+                    </button>
+                </div>
+                {ioVisible && (
+                    <div className="pad-10 custom-checker-area">
+                        <div
+                            style={{
+                                display: 'flex',
+                                gap: '5px',
+                                alignItems: 'center',
+                                marginBottom: '8px',
+                            }}
+                        >
+                            <input
+                                type="text"
+                                className="selectable"
+                                placeholder={t('inputFilePathPlaceholder')}
+                                value={problem.inputFileName || ''}
+                                onChange={(e) =>
+                                    updateInputFileName(e.target.value)
+                                }
+                                ref={inpInputRef}
+                                style={{
+                                    flexGrow: 1,
+                                    width: '0',
+                                    padding: '4px 6px',
+                                }}
+                            />
+                        </div>
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                gap: '5px',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <input
+                                type="text"
+                                className="selectable"
+                                placeholder={t('outputFilePathPlaceholder')}
+                                value={problem.outputFileName || ''}
+                                onChange={(e) =>
+                                    updateOutputFileName(e.target.value)
+                                }
+                                ref={outInputRef}
+                                style={{
+                                    flexGrow: 1,
+                                    width: '0',
+                                    padding: '4px 6px',
+                                }}
+                            />
+                        </div>
+
+                        <details style={{ marginTop: '10px' }}>
+                            <summary
+                                style={{
+                                    cursor: 'pointer',
+                                    fontSize: '0.9em',
+                                    opacity: 0.8,
+                                }}
+                            >
+                                {t('ioUsageInstructions')}
+                            </summary>
+                            <div style={{ marginTop: '10px' }}>
+                                <small>{t('ioSettingDesc')}</small>
+                                <br />
+                                <br />
+                                <small>{t('ioSettingTip')}</small>
                             </div>
                         </details>
                     </div>

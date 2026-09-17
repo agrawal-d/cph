@@ -97,5 +97,8 @@
     "cph.utils.unsupported": "不支持的文件扩展名。只有以下类型有效：{0}",
     "cph.utils.noActiveEditor": "未发现活动中的编辑器。",
     "cph.preferences.invalidSaveLocation": "保存位置无效，正在恢复为默认值。路径不存在：{0}",
-    "cph.processRunSingle.invalidChecker": "在“{0}”处未找到自定义判题脚本"
+    "cph.processRunSingle.invalidChecker": "在“{0}”处未找到自定义判题脚本",
+    "cph.processRunSingle.createInputFileError": "无法创建输入文件",
+    "cph.processRunSingle.readOutputFileError": "无法读取输出文件",
+    "cph.processRunSingle.outputFileDoesNotExist": "输出文件不存在，请确认你的程序生成了{0}"
 }

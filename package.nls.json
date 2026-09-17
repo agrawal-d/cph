@@ -97,5 +97,8 @@
     "cph.utils.unsupported": "Unsupported file extension. Only these types are valid: {0}",
     "cph.utils.noActiveEditor": "No active editor found.",
     "cph.preferences.invalidSaveLocation": "Invalid save location, reverting to default. path not exists: {0}",
-    "cph.processRunSingle.invalidChecker": "Custom checker script not found at '{0}'"
+    "cph.processRunSingle.invalidChecker": "Custom checker script not found at '{0}'",
+    "cph.processRunSingle.createInputFileError": "Cannot create input file",
+    "cph.processRunSingle.readOutputFileError": "Cannot read output file",
+    "cph.processRunSingle.outputFileDoesNotExist": "The output‑file does not exist. Please make sure your program created {0}"
 }

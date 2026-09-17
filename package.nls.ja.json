@@ -96,5 +96,8 @@
     "cph.submit.notCodeforces": "Codeforces の問題ではありません。",
     "cph.utils.unsupported": "サポートされていないファイル拡張子です。以下の形式のみ有効です: {0}",
     "cph.preferences.invalidSaveLocation": "保存場所が無効です。デフォルトに復元します。存在しないパス: {0}",
-    "cph.processRunSingle.invalidChecker": "カスタム判題スクリプトが '{0}' に見つかりません"
+    "cph.processRunSingle.invalidChecker": "カスタム判題スクリプトが '{0}' に見つかりません",
+    "cph.processRunSingle.createInputFileError": "入力ファイルを作成できません",
+    "cph.processRunSingle.readOutputFileError": "出力ファイルを読み込めません",
+    "cph.processRunSingle.outputFileDoesNotExist": "出力ファイルが存在しません。プログラムにより{0}が作成されているか確認してください"
 }

@@ -156,6 +156,15 @@ export const translations: Record<string, any> = {
         jsonFormatValid: 'Validated. Found {count} testcase(s).',
         testcasesImported: 'Testcases imported successfully!',
         importTooltip: 'Import testcases from JSON',
+        ioSetting: 'File-IO Settings',
+        ioSettingEnabled: 'File-IO Settings (Enabled)',
+        inputFilePathPlaceholder: 'Name of your code input file',
+        outputFilePathPlaceholder: 'Name of your code output file',
+        ioUsageInstructions: 'File IO Settings Instructions',
+        ioSettingDesc:
+            'These settings allow you to use file-io. CPH will auto-generate input file and auto-read your code output file,and judge them.',
+        ioSettingTip:
+            'If the output file does not exist, CPH will read stdout.',
     },
     'zh-tw': {
         runTestcases: '執行測試案例',
@@ -450,6 +459,14 @@ export const translations: Record<string, any> = {
         jsonFormatValid: '已验证。找到 {count} 个测试用例。',
         testcasesImported: '测试用例导入成功！',
         importTooltip: '从 JSON 导入测试用例',
+        ioSetting: '文件IO设置',
+        ioSettingEnabled: '文件IO设置 (已启用)',
+        inputFilePathPlaceholder: '程序输入文件的名称',
+        outputFilePathPlaceholder: '程序输出文件的名称',
+        ioUsageInstructions: '文件IO使用说明',
+        ioSettingDesc:
+            '这些设置可以启用文件输入输出功能。CPH插件将会自动生成输入文件、读取你的程序输出文件并完成评测。',
+        ioSettingTip: '倘若输出文件不存在，CPH 将会读取标准输出。',
     },
     ko: {
         runTestcases: '테스트케이스 실행',
@@ -602,6 +619,14 @@ export const translations: Record<string, any> = {
         jsonFormatValid: '검증됨. {count}개의 테스트케이스를 찾았습니다.',
         testcasesImported: '테스트케이스를 성공적으로 가져왔습니다!',
         importTooltip: 'JSON에서 테스트케이스 가져오기',
+        ioSetting: '파일‑IO 설정',
+        ioSettingEnabled: '파일‑IO 설정 (활성화됨)',
+        inputFilePathPlaceholder: '프로그램 입력 파일의 이름',
+        outputFilePathPlaceholder: '프로그램 출력 파일의 이름',
+        ioUsageInstructions: '파일 IO 사용 안내',
+        ioSettingDesc:
+            '이 설정을 통해 파일 입출력 기능을 사용할 수 있습니다. CPH는 입력 파일을 자동으로 생성하고 코드의 출력 파일을 읽은 뒤 채점을 진행합니다.',
+        ioSettingTip: '출력 파일이 없을 경우 CPH는 표준 출력을 읽어옵니다.',
     },
     ja: {
         runTestcases: 'テストケースを実行',
@@ -759,5 +784,14 @@ export const translations: Record<string, any> = {
         jsonFormatValid: '検証済み。{count}個のテストケースが見つかりました。',
         testcasesImported: 'テストケースが正常にインポートされました！',
         importTooltip: 'JSON からテストケースをインポート',
+        ioSetting: 'ファイルIO設定',
+        ioSettingEnabled: 'ファイルIO設定（有効）',
+        inputFilePathPlaceholder: 'プログラム入力ファイルの名前',
+        outputFilePathPlaceholder: 'プログラム出力ファイルの名前',
+        ioUsageInstructions: 'ファイルIO 使用手順',
+        ioSettingDesc:
+            'これらの設定でファイル入出力機能を利用できます。CPH が入力ファイルを自動生成し、コードの出力ファイルを読み取って採点を行います。',
+        ioSettingTip:
+            '出力ファイルが存在しない場合、CPH は標準出力を読み取ります。',
     },
 };

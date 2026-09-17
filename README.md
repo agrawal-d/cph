@@ -45,6 +45,8 @@ enter testcases.
 -   [Kattis auto-submit](docs/user-guide.md) integration.
 -   **Custom Checker (Special Judge)**: Use Python scripts to evaluate problems
     with multiple valid outputs or specific precision requirements.
+-   **File-IO**：You may configure the File‑IO function to work normally just as
+    when you submit your code online.
 -   Works locally for your own problems.
 -   Support for several languages.
 
