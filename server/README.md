@@ -57,28 +57,13 @@ Run directly on your server without cloning the repo:
 
 ```bash
 # One-liner Install (requires root and --read-password)
-curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/main/server/setup.sh | sudo bash -s -- --install --read-password="your_password"
+curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/refs/heads/main/server/setup.sh | sudo bash -s -- --install --read-password="your_password"
 
 # One-liner Install with custom port
-curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/main/server/setup.sh | sudo bash -s -- --install --read-password="your_password" --port=8090
+curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/refs/heads/main/server/setup.sh | sudo bash -s -- --install --read-password="your_password" --port=8090
 
 # One-liner Uninstall
-curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/main/server/setup.sh | sudo bash -s -- --uninstall
-```
-
-### Automated Installation / Uninstallation (Local `setup.sh`)
-
-If you have already downloaded or cloned `setup.sh`:
-
-```bash
-# Automated install (requires root and --read-password)
-sudo bash setup.sh --install --read-password="your_password"
-
-# Optional custom port (default: 8090)
-sudo bash setup.sh --install --read-password="your_password" --port=8090
-
-# Automated uninstall (stops, disables, removes service unit and cleans up files while preserving feedback.csv)
-sudo bash setup.sh --uninstall
+curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/refs/heads/main/server/setup.sh | sudo bash -s -- --uninstall
 ```
 
 ### Manual Installation as a Systemd Service

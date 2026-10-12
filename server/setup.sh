@@ -13,7 +13,7 @@ READ_PASSWORD=""
 TEMP_DIR=""
 
 log() {
-    echo "[INFO] $*"
+    echo "[INFO] $*" >&2
 }
 
 error() {
@@ -138,14 +138,14 @@ download_and_extract() {
     log "Extracting repository files..."
     tar -xzf "${TEMP_DIR}/repo.tar.gz" -C "${TEMP_DIR}"
 
-    local extracted_root
-    extracted_root="$(find "${TEMP_DIR}" -maxdepth 1 -type d -name "cph-*" | head -n 1)"
-    if [[ -z "${extracted_root}" || ! -d "${extracted_root}/server" ]]; then
+    local server_dir
+    server_dir="$(find "${TEMP_DIR}" -type d -name "server" | head -n 1)"
+    if [[ -z "${server_dir}" || ! -f "${server_dir}/feedback-collector.js" ]]; then
         error "Archive does not contain server directory."
         exit 1
     fi
 
-    echo "${extracted_root}/server"
+    echo "${server_dir}"
 }
 
 rollback_install() {
