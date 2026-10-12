@@ -230,6 +230,20 @@
                             autocomplete="current-password"
                             autofocus
                         />
+                        <label
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                font-size: 12px;
+                                color: #57606a;
+                                cursor: pointer;
+                                user-select: none;
+                            "
+                        >
+                            <input type="checkbox" id="savePasswordCheckbox" />
+                            Remember password
+                        </label>
                         <div id="modalError" class="modal-error"></div>
                         <button type="submit" id="fetchBtn" class="modal-btn">
                             Load Feedback
@@ -297,6 +311,9 @@
         <script>
             const modalOverlay = document.getElementById('modalOverlay');
             const passwordInput = document.getElementById('passwordInput');
+            const savePasswordCheckbox = document.getElementById(
+                'savePasswordCheckbox',
+            );
             const modalError = document.getElementById('modalError');
             const fetchBtn = document.getElementById('fetchBtn');
             const statusSpan = document.getElementById('status');
@@ -308,6 +325,25 @@
             let activePassword = '';
             let currentFeedbackData = null;
 
+            const getSavedPasswordCookie = () => {
+                const match = document.cookie.match(
+                    /(?:^|;\s*)saved_feedback_password=([^;]+)/,
+                );
+                return match ? decodeURIComponent(match[1]) : '';
+            };
+
+            const setSavedPasswordCookie = (password) => {
+                const oneYearSeconds = 365 * 24 * 60 * 60;
+                document.cookie = `saved_feedback_password=${encodeURIComponent(
+                    password,
+                )}; max-age=${oneYearSeconds}; path=/; SameSite=Lax`;
+            };
+
+            const clearSavedPasswordCookie = () => {
+                document.cookie =
+                    'saved_feedback_password=; max-age=0; path=/; SameSite=Lax';
+            };
+
             const setStatus = (text, type = 'info') => {
                 statusSpan.textContent = text;
                 statusSpan.className = type;
@@ -317,6 +353,9 @@
                 modalError.textContent = '';
                 modalOverlay.classList.remove('hidden');
                 passwordInput.value = '';
+                savePasswordCheckbox.checked = Boolean(
+                    getSavedPasswordCookie(),
+                );
                 passwordInput.focus();
             };
 
@@ -448,6 +487,11 @@
                     if (res.status === 200 && Array.isArray(data)) {
                         activePassword = password;
                         currentFeedbackData = data;
+                        if (savePasswordCheckbox.checked) {
+                            setSavedPasswordCookie(password);
+                        } else {
+                            clearSavedPasswordCookie();
+                        }
                         hidePasswordModal();
                         renderFeedbackRows(data);
                         setStatus(
@@ -455,6 +499,10 @@
                             'ok',
                         );
                     } else if (res.status === 401) {
+                        clearSavedPasswordCookie();
+                        savePasswordCheckbox.checked = false;
+                        passwordInput.value = '';
+                        modalOverlay.classList.remove('hidden');
                         modalError.textContent = 'Incorrect password';
                         passwordInput.focus();
                     } else if (res.status === 429) {
@@ -482,6 +530,13 @@
                 passwordInput.value = activePassword;
                 await loadFeedback();
             };
+
+            const savedPassword = getSavedPasswordCookie();
+            if (savedPassword) {
+                passwordInput.value = savedPassword;
+                savePasswordCheckbox.checked = true;
+                loadFeedback();
+            }
         </script>
     </body>
 </html>
