@@ -129,3 +129,6 @@ dist
 releases/
 **/*.vsix
 src/secrets.ts
+
+# local files
+server/feedback.csv

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { WebViewpersistenceState } from '../../types';
 import Page from './Page';
 
-const FEEDBACK_URL =
-    'https://script.google.com/macros/s/AKfycbzIoi7qv_BlY4k-pPPi-aM42OkcmpuG1SVG-iGZqXmpAP2ZP8NZh4Yxh4Px48S3Wp6HQw/exec';
+// Swap comment below to test against local server
+// const FEEDBACK_URL = 'http://127.0.0.1:8090/submit-feedback';
+const FEEDBACK_URL = 'http://20.244.105.138:8090/submit-feedback';
 
 interface FeedbackProps {
     webviewState: WebViewpersistenceState;
@@ -81,7 +82,7 @@ export const Feedback: React.FC<FeedbackProps> = ({
                     name: feedbackName,
                     email: feedbackEmail,
                     comment: feedbackComment,
-                    token: 'iiYNOEs4z1P2y3aGciErN8VAZZUWg4UuIz1pwCWK2n8=', // Must match Apps Script
+                    token: 'iiYNOEs4z1P2y3aGciErN8VAZZUWg4UuIz1pwCWK2n8=', // Must match server
                 }),
             });
             notify(t('feedbackSent'));

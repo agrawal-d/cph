@@ -128,10 +128,9 @@ export const translations: Record<string, any> = {
         commentRequired: 'Comment is required',
         commentTooLong:
             'Comment must be less than 2000 characters (currently {length})',
-        feedbackNamePlaceholder: 'Gennady',
-        feedbackEmailPlaceholder: 'username@server.com',
-        feedbackCommentPlaceholder:
-            'What can we improve? (e.g. features, bugs, checkers)',
+        feedbackNamePlaceholder: 'Gavin Belson',
+        feedbackEmailPlaceholder: 'gavin@hooli.net',
+        feedbackCommentPlaceholder: 'What is on your mind?',
         rateCPH: 'If you find CPH useful, please consider rating it.',
         rateDescription:
             'Your rating helps other developers find CPH and supports its development.',
