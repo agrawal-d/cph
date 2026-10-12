@@ -5,8 +5,11 @@ REPO_TAR_URL="https://github.com/agrawal-d/cph/archive/refs/heads/main.tar.gz"
 INSTALL_DIR="/opt/cph-feedback"
 SERVICE_NAME="feedback-collector.service"
 SYSTEMD_PATH="/etc/systemd/system/${SERVICE_NAME}"
+HEARTBEAT_SERVICE_NAME="server.service"
+HEARTBEAT_SYSTEMD_PATH="/etc/systemd/system/${HEARTBEAT_SERVICE_NAME}"
 SERVICE_USER="server"
 SERVICE_PORT="8090"
+HEARTBEAT_PORT="4546"
 
 MODE=""
 READ_PASSWORD=""
@@ -36,13 +39,14 @@ cleanup_temp() {
 trap cleanup_temp EXIT
 
 usage() {
-    echo "Usage: $0 <--install|--uninstall> [--read-password=<password>] [--port=<port>]"
+    echo "Usage: $0 <--install|--uninstall> [--read-password=<password>] [--port=<port>] [--heartbeat-port=<port>]"
     echo ""
     echo "Options:"
-    echo "  --install                  Install and start feedback collector service"
-    echo "  --uninstall                Stop, disable and remove feedback collector service"
+    echo "  --install                  Install and start feedback collector & heartbeat services"
+    echo "  --uninstall                Stop, disable and remove feedback collector & heartbeat services"
     echo "  --read-password=<password> Required when installing. Access password for viewer and API"
-    echo "  --port=<port>              Optional HTTP listening port (default: 8090)"
+    echo "  --port=<port>              Optional HTTP port for feedback collector [default: 8090]"
+    echo "  --heartbeat-port=<port>    Optional HTTP port for heartbeat server [default: 4546]"
     echo "  --help, -h                 Show this help message"
     exit 0
 }
@@ -85,6 +89,19 @@ parse_arguments() {
                     shift 2
                 else
                     error "--port requires an argument"
+                    exit 1
+                fi
+                ;;
+            --heartbeat-port=*)
+                HEARTBEAT_PORT="${1#*=}"
+                shift
+                ;;
+            --heartbeat-port)
+                if [[ -n "${2:-}" && ! "$2" =~ ^-- ]]; then
+                    HEARTBEAT_PORT="$2"
+                    shift 2
+                else
+                    error "--heartbeat-port requires an argument"
                     exit 1
                 fi
                 ;;
@@ -150,9 +167,9 @@ download_and_extract() {
 
 rollback_install() {
     error "Installation failed. Rolling back changes..."
-    systemctl stop "${SERVICE_NAME}" 2>/dev/null || true
-    systemctl disable "${SERVICE_NAME}" 2>/dev/null || true
-    rm -f "${SYSTEMD_PATH}"
+    systemctl stop "${SERVICE_NAME}" "${HEARTBEAT_SERVICE_NAME}" 2>/dev/null || true
+    systemctl disable "${SERVICE_NAME}" "${HEARTBEAT_SERVICE_NAME}" 2>/dev/null || true
+    rm -f "${SYSTEMD_PATH}" "${HEARTBEAT_SYSTEMD_PATH}"
     systemctl daemon-reload 2>/dev/null || true
     if [[ -d "${INSTALL_DIR}" ]]; then
         rm -rf "${INSTALL_DIR}"
@@ -166,14 +183,16 @@ deploy_files() {
 
     cp "${source_dir}/feedback-collector.js" "${INSTALL_DIR}/feedback-collector.js"
     cp "${source_dir}/feedback-viewer.html" "${INSTALL_DIR}/feedback-viewer.html"
+    cp "${source_dir}/server.js" "${INSTALL_DIR}/server.js"
 
     chown -R "${SERVICE_USER}:${SERVICE_USER}" "${INSTALL_DIR}"
     chmod 750 "${INSTALL_DIR}"
     chmod 640 "${INSTALL_DIR}/feedback-collector.js"
     chmod 640 "${INSTALL_DIR}/feedback-viewer.html"
+    chmod 640 "${INSTALL_DIR}/server.js"
 }
 
-create_systemd_service() {
+create_systemd_services() {
     cat <<EOF > "${SYSTEMD_PATH}"
 [Unit]
 Description=CPH Feedback Collector Service
@@ -195,32 +214,50 @@ WorkingDirectory=${INSTALL_DIR}
 WantedBy=multi-user.target
 EOF
 
-    chmod 644 "${SYSTEMD_PATH}"
+    cat <<EOF > "${HEARTBEAT_SYSTEMD_PATH}"
+[Unit]
+Description=Node.js heartbeat server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/env node ${INSTALL_DIR}/server.js
+Restart=always
+RestartSec=5
+Environment=PORT=${HEARTBEAT_PORT}
+User=${SERVICE_USER}
+Group=${SERVICE_USER}
+WorkingDirectory=${INSTALL_DIR}
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    chmod 644 "${SYSTEMD_PATH}" "${HEARTBEAT_SYSTEMD_PATH}"
 }
 
-start_and_validate_service() {
+start_and_validate_services() {
     log "Reloading systemd daemon..."
     systemctl daemon-reload
 
-    log "Enabling and starting ${SERVICE_NAME}..."
-    systemctl enable "${SERVICE_NAME}"
-    systemctl restart "${SERVICE_NAME}"
+    log "Enabling and starting services..."
+    systemctl enable "${SERVICE_NAME}" "${HEARTBEAT_SERVICE_NAME}"
+    systemctl restart "${SERVICE_NAME}" "${HEARTBEAT_SERVICE_NAME}"
 
-    log "Validating service status..."
+    log "Validating services status..."
     local attempts=10
-    local running=false
+    local all_running=false
     for ((i=1; i<=attempts; i++)); do
-        if systemctl is-active --quiet "${SERVICE_NAME}"; then
-            running=true
+        if systemctl is-active --quiet "${SERVICE_NAME}" && systemctl is-active --quiet "${HEARTBEAT_SERVICE_NAME}"; then
+            all_running=true
             break
         fi
         sleep 1
     done
 
-    if [[ "${running}" != "true" ]]; then
-        error "Service failed to start properly."
-        systemctl status "${SERVICE_NAME}" --no-pager || true
-        journalctl -u "${SERVICE_NAME}" -n 20 --no-pager || true
+    if [[ "${all_running}" != "true" ]]; then
+        error "One or more services failed to start properly."
+        systemctl status "${SERVICE_NAME}" "${HEARTBEAT_SERVICE_NAME}" --no-pager || true
+        journalctl -u "${SERVICE_NAME}" -u "${HEARTBEAT_SERVICE_NAME}" -n 20 --no-pager || true
         rollback_install
     fi
 }
@@ -233,31 +270,30 @@ run_install() {
     source_dir="$(download_and_extract)"
 
     deploy_files "${source_dir}"
-    create_systemd_service
-    start_and_validate_service
+    create_systemd_services
+    start_and_validate_services
 
     log "Installation completed successfully."
     log "Service '${SERVICE_NAME}' is active and running on port ${SERVICE_PORT}."
+    log "Service '${HEARTBEAT_SERVICE_NAME}' is active and running on port ${HEARTBEAT_PORT}."
     log "Access viewer at: http://<server-ip>:${SERVICE_PORT}/feedback-viewer.html"
 }
 
 run_uninstall() {
-    log "Stopping service ${SERVICE_NAME}..."
-    systemctl stop "${SERVICE_NAME}" 2>/dev/null || true
+    log "Stopping services..."
+    systemctl stop "${SERVICE_NAME}" "${HEARTBEAT_SERVICE_NAME}" 2>/dev/null || true
 
-    log "Disabling service ${SERVICE_NAME}..."
-    systemctl disable "${SERVICE_NAME}" 2>/dev/null || true
+    log "Disabling services..."
+    systemctl disable "${SERVICE_NAME}" "${HEARTBEAT_SERVICE_NAME}" 2>/dev/null || true
 
-    if [[ -f "${SYSTEMD_PATH}" ]]; then
-        rm -f "${SYSTEMD_PATH}"
-        systemctl daemon-reload
-        log "Removed systemd service unit."
-    fi
+    rm -f "${SYSTEMD_PATH}" "${HEARTBEAT_SYSTEMD_PATH}"
+    systemctl daemon-reload
+    log "Removed systemd service units."
 
     if [[ -d "${INSTALL_DIR}" ]]; then
         if [[ -f "${INSTALL_DIR}/feedback.csv" ]]; then
             log "Preserving existing feedback data at ${INSTALL_DIR}/feedback.csv"
-            rm -f "${INSTALL_DIR}/feedback-collector.js" "${INSTALL_DIR}/feedback-viewer.html"
+            rm -f "${INSTALL_DIR}/feedback-collector.js" "${INSTALL_DIR}/feedback-viewer.html" "${INSTALL_DIR}/server.js"
         else
             rm -rf "${INSTALL_DIR}"
         fi

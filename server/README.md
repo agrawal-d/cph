@@ -53,16 +53,17 @@ READ_PASSWORD="your_password" node feedback-collector.js
 
 ### Quick Setup (One-Liner)
 
-Run directly on your server without cloning the repo:
+Installs and starts both the **Feedback Collector** and **Heartbeat Server** as
+systemd services:
 
 ```bash
 # One-liner Install (requires root and --read-password)
 curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/refs/heads/main/server/setup.sh | sudo bash -s -- --install --read-password="your_password"
 
-# One-liner Install with custom port
-curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/refs/heads/main/server/setup.sh | sudo bash -s -- --install --read-password="your_password" --port=8090
+# One-liner Install with custom ports (feedback port default: 8090, heartbeat port default: 4546)
+curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/refs/heads/main/server/setup.sh | sudo bash -s -- --install --read-password="your_password" --port=8090 --heartbeat-port=4546
 
-# One-liner Uninstall
+# One-liner Uninstall (stops, disables, and removes both services)
 curl -fsSL https://raw.githubusercontent.com/agrawal-d/cph/refs/heads/main/server/setup.sh | sudo bash -s -- --uninstall
 ```
 
