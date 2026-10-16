@@ -74,7 +74,6 @@
     "cph.general.showLiveUserCount.description": "是否显示实时用户统计。",
     "cph.companion.kattisError": "请确保 {0} 中存在 .kattisrc 和 submit.py",
     "cph.companion.parseError": "解析来自 companion 的题目时出错 {0}。原始题目: {1}",
-    "cph.companion.serverError": "是否打开了多个 VSCode 窗口？CPH 将在第一个打开的窗口中工作。CPH 服务器遇到错误: {0}，companion 可能无法工作。",
     "cph.companion.openFolder": "请先打开一个文件夹。",
     "cph.companion.aborted": "已中止创建新文件",
     "cph.companion.templateMissing": "模板文件不存在: {0}",

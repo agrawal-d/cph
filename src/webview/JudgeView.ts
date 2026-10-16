@@ -1,5 +1,10 @@
 import * as vscode from 'vscode';
-import { storeSubmitProblem, submitKattisProblem } from '../companion';
+import {
+    storeSubmitProblem,
+    submitKattisProblem,
+    hasSubmitServerFailed,
+} from '../companion';
+import config from '../config';
 import { killRunning } from '../executions';
 import { saveProblem } from '../parser';
 import { VSToWebViewMessage, WebviewToVSEvent } from '../types';
@@ -89,11 +94,23 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
 
                     case 'submitCf': {
                         storeSubmitProblem(message.problem);
+                        if (hasSubmitServerFailed()) {
+                            this.extensionToJudgeViewMessage({
+                                command: 'submit-server-failed',
+                                port: config.port,
+                            });
+                        }
                         break;
                     }
 
                     case 'submitCSES': {
                         storeSubmitProblem(message.problem);
+                        if (hasSubmitServerFailed()) {
+                            this.extensionToJudgeViewMessage({
+                                command: 'submit-server-failed',
+                                port: config.port,
+                            });
+                        }
                         break;
                     }
                     case 'submitKattis': {
@@ -206,6 +223,13 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             problem: getProblemForDocument(doc),
             onlineJudgeEnv: onlineJudgeEnv,
         });
+
+        if (hasSubmitServerFailed()) {
+            this.extensionToJudgeViewMessage({
+                command: 'submit-server-failed',
+                port: config.port,
+            });
+        }
 
         // also load any messages from before that were lost.
         this.messageBuffer.forEach((message) => {
@@ -339,6 +363,8 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
             showOutputDifference: !getHideOutputDifferencePref(),
             translations: translation,
             pythonCommand,
+            cphSubmitServerFailed: hasSubmitServerFailed(),
+            cphSubmitServerPort: config.port,
         });
 
         const html = `

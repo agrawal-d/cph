@@ -1,6 +1,11 @@
 import { getProblem } from './parser';
 import * as vscode from 'vscode';
-import { storeSubmitProblem, submitKattisProblem } from './companion';
+import {
+    storeSubmitProblem,
+    submitKattisProblem,
+    hasSubmitServerFailed,
+} from './companion';
+import config from './config';
 import { getJudgeViewProvider } from './extension';
 import { isCodeforcesUrl } from './utils';
 import telmetry from './telmetry';
@@ -101,6 +106,12 @@ export const submitToCodeForces = async () => {
     }
 
     storeSubmitProblem(problem);
+    if (hasSubmitServerFailed()) {
+        getJudgeViewProvider().extensionToJudgeViewMessage({
+            command: 'submit-server-failed',
+            port: config.port,
+        });
+    }
     getJudgeViewProvider().extensionToJudgeViewMessage({
         command: 'waiting-for-submit',
     });

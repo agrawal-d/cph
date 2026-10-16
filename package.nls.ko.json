@@ -74,7 +74,6 @@
     "cph.general.showLiveUserCount.description": "라이브 사용자 수를 표시할지 여부입니다.",
     "cph.companion.kattisError": "{0}에 .kattisrc 및 submit.py가 있는지 확인해 주세요.",
     "cph.companion.parseError": "companion에서 문제를 파싱하는 중 오류가 발생했습니다: {0}. 원본 문제: {1}",
-    "cph.companion.serverError": "여러 개의 VSCode 창이 열려 있나요? CPH는 처음 열린 창에서 작동합니다. CPH 서버에 오류가 발생했습니다: {0}. companion이 작동하지 않을 수 있습니다.",
     "cph.companion.openFolder": "먼저 폴더를 열어주세요.",
     "cph.companion.aborted": "새 파일 생성이 취소되었습니다.",
     "cph.companion.templateMissing": "템플릿 파일이 존재하지 않습니다: {0}",

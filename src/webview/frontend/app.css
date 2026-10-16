@@ -719,6 +719,13 @@ body.vscode-light .case-number {
     font-size: 80%;
 }
 
+.codicon-error {
+    color: var(
+        --vscode-editorError-foreground,
+        var(--vscode-testing-iconFailed, #f48771)
+    );
+}
+
 .row {
     display: inline;
 }

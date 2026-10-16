@@ -29,6 +29,12 @@ import localize from './i18n';
 const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 const COMPANION_LOGGING = false;
+let submitServerFailed = false;
+
+export const hasSubmitServerFailed = () => submitServerFailed;
+export const setSubmitServerFailed = (val: boolean) => {
+    submitServerFailed = val;
+};
 
 export const submitKattisProblem = (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_KATTIS);
@@ -145,13 +151,14 @@ export const setupCompanionServer = () => {
         });
         server.listen(config.port);
         server.on('error', (err) => {
-            vscode.window.showErrorMessage(
-                localize(
-                    'cph.companion.serverError',
-                    'Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: {0}, companion may not work.',
-                    err.message,
-                ),
-            );
+            submitServerFailed = true;
+            globalThis.logger.error('Companion server error :', err);
+            try {
+                getJudgeViewProvider()?.extensionToJudgeViewMessage({
+                    command: 'submit-server-failed',
+                    port: config.port,
+                });
+            } catch (_) {}
         });
         globalThis.logger.log(
             'Companion server listening on port',
@@ -159,7 +166,14 @@ export const setupCompanionServer = () => {
         );
         return server;
     } catch (e) {
+        submitServerFailed = true;
         globalThis.logger.error('Companion server error :', e);
+        try {
+            getJudgeViewProvider()?.extensionToJudgeViewMessage({
+                command: 'submit-server-failed',
+                port: config.port,
+            });
+        } catch (_) {}
     }
 };
 

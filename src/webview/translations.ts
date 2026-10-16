@@ -47,6 +47,8 @@ export const translations: Record<string, any> = {
         stop: 'Stop',
         delete: 'Delete',
         waitingForExtension: 'Waiting for extension ...',
+        submitServerFailed:
+            'CPH was unable to start the cph-submit server on port {0}. This usually happens another VS Code window was already open. Please close all other VS Code windows and reload this window.',
         codeforcesInstructions:
             'To submit to codeforces, you need to have the cph-submit browser extension installed, and a browser window open. You can change language ID from VS Code settings.',
         submitHint: 'Hint: You can also press Ctrl+Alt+S to submit.',
@@ -203,6 +205,8 @@ export const translations: Record<string, any> = {
         stop: '停止',
         delete: '刪除',
         waitingForExtension: '等待擴充功能回應...',
+        submitServerFailed:
+            'CPH 無法在連接埠 {0} 啟動 cph-submit 伺服器。這通常是因為已開啟另一個 VS Code 視窗。請關閉所有其他 VS Code 視窗並重新載入此視窗。',
         codeforcesInstructions:
             '若要提交至 Codeforces，請先安裝 cph-submit 瀏覽器擴充功能，並開啟瀏覽器視窗。你可以在 VS Code 設定中變更語言 ID。',
         submitHint: '提示：也可以按 Ctrl+Alt+S 提交。',
@@ -350,6 +354,8 @@ export const translations: Record<string, any> = {
         stop: '停止',
         delete: '删除',
         waitingForExtension: '等待扩展...',
+        submitServerFailed:
+            'CPH 无法在端口 {0} 启动 cph-submit 服务器。这通常是因为已打开另一个 VS Code 窗口。请关闭所有其他 VS Code 窗口并重新加载此窗口。',
         codeforcesInstructions:
             '要提交到 Codeforces，您需要安装 cph-submit 浏览器扩展，并打开浏览器窗口。您可以从 VS Code 设置中更改语言 ID。',
         submitHint: '提示：您也可以按 Ctrl+Alt+S 进行提交。',
@@ -497,6 +503,8 @@ export const translations: Record<string, any> = {
         stop: '중지',
         delete: '삭제',
         waitingForExtension: '확장 프로그램 대기 중...',
+        submitServerFailed:
+            'CPH가 포트 {0}에서 cph-submit 서버를 시작할 수 없습니다. 이는 대개 다른 VS Code 창이 이미 열려 있는 경우에 발생합니다. 다른 모든 VS Code 창을 닫고 이 창을 다시 로드하세요.',
         codeforcesInstructions:
             'Codeforces에 제출하려면 cph-submit 브라우저 확장 프로그램이 설치되어 있어야 하며 브라우저 창이 열려 있어야 합니다. VS Code 설정에서 언어 ID를 변경할 수 있습니다.',
         submitHint: '힌트: Ctrl+Alt+S를 눌러 제출할 수도 있습니다.',
@@ -649,6 +657,8 @@ export const translations: Record<string, any> = {
         stop: '停止',
         delete: '削除',
         waitingForExtension: '拡張機能を待機中...',
+        submitServerFailed:
+            'CPH はポート {0} で cph-submit サーバーを起動できませんでした。これは通常、別の VS Code ウィンドウが既に開いている場合に発生します。他のすべての VS Code ウィンドウを閉じて、このウィンドウを再読み込みしてください。',
         codeforcesInstructions:
             'Codeforcesに提出するには、cph-submit ブラウザ拡張機能がインストールされ、ブラウザウィンドウが開いている必要があります。VS Code の設定から言語IDを変更できます。',
         submitHint: 'ヒント: Ctrl+Alt+S を押して提出することもできます。',

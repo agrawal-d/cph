@@ -301,6 +301,11 @@ export type UpdateOnlineJudgeEnvCommand = {
     value: boolean;
 };
 
+export type SubmitServerFailedCommand = {
+    command: 'submit-server-failed';
+    port: number;
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
@@ -314,7 +319,8 @@ export type VSToWebViewMessage =
     | RemoteMessageCommand
     | NewProblemCommand
     | ExtLogsCommand
-    | UpdateOnlineJudgeEnvCommand;
+    | UpdateOnlineJudgeEnvCommand
+    | SubmitServerFailedCommand;
 
 export type CphEmptyResponse = {
     empty: true;

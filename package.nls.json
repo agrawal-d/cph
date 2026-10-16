@@ -74,7 +74,6 @@
     "cph.general.showLiveUserCount.description": "Whether to display the live user count.",
     "cph.companion.kattisError": "Please ensure .kattisrc and submit.py are present in {0}",
     "cph.companion.parseError": "Error parsing problem from companion {0}. Raw problem: {1}",
-    "cph.companion.serverError": "Are multiple VSCode windows open? CPH will work on the first opened window. CPH server encountered an error: {0}, companion may not work.",
     "cph.companion.openFolder": "Please open a folder first.",
     "cph.companion.aborted": "Aborted creation of new file",
     "cph.companion.templateMissing": "Template file does not exist: {0}",

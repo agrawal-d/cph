@@ -48,6 +48,8 @@ interface CustomWindow extends Window {
     console: Console;
     translations: Record<string, string>;
     pythonCommand: string;
+    cphSubmitServerFailed?: boolean;
+    cphSubmitServerPort?: number;
 }
 declare const window: CustomWindow;
 
@@ -122,6 +124,12 @@ function Judge(props: {
     const [compiling, setCompiling] = useState<boolean>(false);
     const [notification, setNotification] = useState<string | null>(null);
     const [waitingForSubmit, setWaitingForSubmit] = useState<boolean>(false);
+    const [submitServerFailed, setSubmitServerFailed] = useState<boolean>(
+        Boolean(window.cphSubmitServerFailed),
+    );
+    const [submitServerPort, setSubmitServerPort] = useState<number>(
+        window.cphSubmitServerPort || 27121,
+    );
     const [infoPageVisible, setInfoPageVisible] = useState<boolean>(false);
     const [generatedJson, setGeneratedJson] = useState<any | null>(null);
     const [liveUserCount, setLiveUserCount] = useState<number>(0);
@@ -290,6 +298,13 @@ function Judge(props: {
                 }
                 case 'waiting-for-submit': {
                     setWaitingForSubmit(true);
+                    break;
+                }
+                case 'submit-server-failed': {
+                    setSubmitServerFailed(true);
+                    if (data.port) {
+                        setSubmitServerPort(data.port);
+                    }
                     break;
                 }
                 case 'ext-logs': {
@@ -940,15 +955,54 @@ function Judge(props: {
                     </div>
                     {waitingForSubmit && (
                         <div className="margin-10">
-                            <span className="loader"></span>{' '}
-                            {t('waitingForExtension')}
-                            <br />
-                            <small>
-                                {t('codeforcesInstructions')}
-                                <br />
-                                <br />
-                                {t('submitHint')}
-                            </small>
+                            {submitServerFailed ? (
+                                <div
+                                    style={{
+                                        position: 'relative',
+                                        paddingRight: '20px',
+                                    }}
+                                >
+                                    <a
+                                        role="button"
+                                        className="right"
+                                        title={t('close')}
+                                        onClick={() =>
+                                            setWaitingForSubmit(false)
+                                        }
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            right: 0,
+                                            cursor: 'pointer',
+                                            color: 'inherit',
+                                            opacity: 0.8,
+                                        }}
+                                    >
+                                        <i className="codicon codicon-close"></i>
+                                    </a>
+                                    <i className="codicon codicon-error"></i>{' '}
+                                    {t('submitServerFailed') &&
+                                    t('submitServerFailed') !==
+                                        'submitServerFailed'
+                                        ? t('submitServerFailed').replace(
+                                              '{0}',
+                                              String(submitServerPort),
+                                          )
+                                        : `CPH was unable to start the cph-submit server on port ${submitServerPort}. This usually happens another VS Code window was already open. Please close all other VS Code windows and reload this window.`}
+                                </div>
+                            ) : (
+                                <>
+                                    <span className="loader"></span>{' '}
+                                    {t('waitingForExtension')}
+                                    <br />
+                                    <small>
+                                        {t('codeforcesInstructions')}
+                                        <br />
+                                        <br />
+                                        {t('submitHint')}
+                                    </small>
+                                </>
+                            )}
                         </div>
                     )}
                     <button

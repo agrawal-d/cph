@@ -74,7 +74,6 @@
     "cph.general.showLiveUserCount.description": "ライブユーザー数を表示するかどうか。",
     "cph.companion.kattisError": "{0} に .kattisrc と submit.py が存在することを確認してください。",
     "cph.companion.parseError": "companion からの問題の解析中にエラーが発生しました: {0}。元の問題: {1}",
-    "cph.companion.serverError": "複数の VSCode ウィンドウが開いていますか？CPH は最初に開いたウィンドウで動作します。CPH サーバーでエラーが発生しました: {0}。companion が動作しない可能性があります。",
     "cph.companion.openFolder": "先にフォルダを開いてください。",
     "cph.companion.aborted": "新しいファイルの作成が中止されました。",
     "cph.companion.templateMissing": "テンプレートファイルが存在しません: {0}",
