@@ -47,6 +47,7 @@ export const translations: Record<string, any> = {
         stop: 'Stop',
         delete: 'Delete',
         waitingForExtension: 'Waiting for extension ...',
+        focusCph: 'Focus CPH on this window',
         submitServerFailed:
             'CPH was unable to start the cph-submit server on port {0}. This usually happens another VS Code window was already open. Please close all other VS Code windows and reload this window.',
         codeforcesInstructions:
@@ -205,6 +206,7 @@ export const translations: Record<string, any> = {
         stop: '停止',
         delete: '刪除',
         waitingForExtension: '等待擴充功能回應...',
+        focusCph: '將 CPH 聚焦至此視窗',
         submitServerFailed:
             'CPH 無法在連接埠 {0} 啟動 cph-submit 伺服器。這通常是因為已開啟另一個 VS Code 視窗。請關閉所有其他 VS Code 視窗並重新載入此視窗。',
         codeforcesInstructions:
@@ -354,6 +356,7 @@ export const translations: Record<string, any> = {
         stop: '停止',
         delete: '删除',
         waitingForExtension: '等待扩展...',
+        focusCph: '将 CPH 聚焦到此窗口',
         submitServerFailed:
             'CPH 无法在端口 {0} 启动 cph-submit 服务器。这通常是因为已打开另一个 VS Code 窗口。请关闭所有其他 VS Code 窗口并重新加载此窗口。',
         codeforcesInstructions:
@@ -503,6 +506,7 @@ export const translations: Record<string, any> = {
         stop: '중지',
         delete: '삭제',
         waitingForExtension: '확장 프로그램 대기 중...',
+        focusCph: '이 창에 CPH 집중',
         submitServerFailed:
             'CPH가 포트 {0}에서 cph-submit 서버를 시작할 수 없습니다. 이는 대개 다른 VS Code 창이 이미 열려 있는 경우에 발생합니다. 다른 모든 VS Code 창을 닫고 이 창을 다시 로드하세요.',
         codeforcesInstructions:
@@ -657,6 +661,7 @@ export const translations: Record<string, any> = {
         stop: '停止',
         delete: '削除',
         waitingForExtension: '拡張機能を待機中...',
+        focusCph: 'CPH をこのウィンドウにフォーカス',
         submitServerFailed:
             'CPH はポート {0} で cph-submit サーバーを起動できませんでした。これは通常、別の VS Code ウィンドウが既に開いている場合に発生します。他のすべての VS Code ウィンドウを閉じて、このウィンドウを再読み込みしてください。',
         codeforcesInstructions:

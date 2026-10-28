@@ -223,6 +223,10 @@ export type OpenFile = {
     path: string;
 };
 
+export type FocusCphCommand = {
+    command: 'focus-cph';
+};
+
 export type WebviewToVSEvent =
     | RunAllCommand
     | GetInitialProblem
@@ -239,7 +243,8 @@ export type WebviewToVSEvent =
     | GetExtLogs
     | SetHideOutputDiff
     | OpenSettings
-    | OpenFile;
+    | OpenFile
+    | FocusCphCommand;
 
 export type RunningCommand = {
     command: 'running';
@@ -306,6 +311,10 @@ export type SubmitServerFailedCommand = {
     port: number;
 };
 
+export type SubmitServerOkCommand = {
+    command: 'submit-server-ok';
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
@@ -320,7 +329,8 @@ export type VSToWebViewMessage =
     | NewProblemCommand
     | ExtLogsCommand
     | UpdateOnlineJudgeEnvCommand
-    | SubmitServerFailedCommand;
+    | SubmitServerFailedCommand
+    | SubmitServerOkCommand;
 
 export type CphEmptyResponse = {
     empty: true;

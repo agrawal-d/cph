@@ -50,6 +50,10 @@
                 "icon": "dist/static/play.png"
             },
             {
+                "command": "cph.focusServerHere",
+                "title": "%cph.focusServerHere.title%"
+            },
+            {
                 "command": "cph.compileWithoutRunning",
                 "title": "%cph.compileWithoutRunning.title%"
             }

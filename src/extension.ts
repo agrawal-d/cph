@@ -26,7 +26,11 @@ globalThis.logger.debug = (...args: any[]) =>
 /************************************************************************************/
 
 import * as vscode from 'vscode';
-import { setupCompanionServer } from './companion';
+import {
+    setupCompanionServer,
+    focusServerHere,
+    setStatusBarItem,
+} from './companion';
 import runTestCases from './runTestCases';
 import {
     editorChanged,
@@ -97,6 +101,13 @@ const registerCommands = (context: vscode.ExtensionContext) => {
         },
     );
 
+    const focusCmd = vscode.commands.registerCommand(
+        'cph.focusServerHere',
+        () => {
+            focusServerHere(true);
+        },
+    );
+
     judgeViewProvider = new JudgeViewProvider(context.extensionUri);
 
     const webviewView = vscode.window.registerWebviewViewProvider(
@@ -115,6 +126,7 @@ const registerCommands = (context: vscode.ExtensionContext) => {
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
     context.subscriptions.push(disposable5);
+    context.subscriptions.push(focusCmd);
     globalThis.reporter = new TelemetryReporter(config.telemetryKey);
     context.subscriptions.push(globalThis.reporter);
 };
@@ -140,6 +152,14 @@ export function activate(context: vscode.ExtensionContext) {
     );
     statusBarItem.show();
     statusBarItem.command = 'cph.runTestCases';
+
+    const focusStatusBarItem = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Left,
+        999,
+    );
+    focusStatusBarItem.command = 'cph.focusServerHere';
+    setStatusBarItem(focusStatusBarItem);
+    context.subscriptions.push(focusStatusBarItem);
 
     registerCommands(context);
     setupCompanionServer();

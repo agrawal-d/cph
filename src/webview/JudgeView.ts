@@ -3,6 +3,7 @@ import {
     storeSubmitProblem,
     submitKattisProblem,
     hasSubmitServerFailed,
+    focusServerHere,
 } from '../companion';
 import config from '../config';
 import { killRunning } from '../executions';
@@ -89,6 +90,11 @@ class JudgeViewProvider implements vscode.WebviewViewProvider {
                             onlineJudgeEnv: getDefaultOnlineJudge(),
                         });
                         await deleteProblemFile(message.problem.srcPath);
+                        break;
+                    }
+
+                    case 'focus-cph': {
+                        focusServerHere(true);
                         break;
                     }
 

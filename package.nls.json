@@ -1,5 +1,6 @@
 {
     "cph.runTestCases.title": "Run Testcases",
+    "cph.focusServerHere.title": "Focus CPH on Current Window",
     "cph.submitToCodeForces.title": "Submit to CodeForces",
     "cph.compileWithoutRunning.title": "Compile Without Running",
     "cph.judgeView.name": "Results",

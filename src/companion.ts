@@ -4,7 +4,7 @@ import { Problem, CphSubmitResponse, CphEmptyResponse } from './types';
 import { saveProblem } from './parser';
 import * as vscode from 'vscode';
 import path from 'path';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, unlinkSync } from 'fs';
 import { isCodeforcesUrl, isLuoguUrl, isAtCoderUrl, randomId } from './utils';
 import {
     getDefaultLangPref,
@@ -19,7 +19,7 @@ import {
     doTemplateFileVariableReplacement,
 } from './preferences';
 import { getProblemName } from './submit';
-import { spawn } from 'child_process';
+import { spawn, execSync } from 'child_process';
 import { getJudgeViewProvider } from './extension';
 import { words_in_text, toPascalCase } from './utilsPure';
 import telmetry from './telmetry';
@@ -30,6 +30,328 @@ const emptyResponse: CphEmptyResponse = { empty: true };
 let savedResponse: CphEmptyResponse | CphSubmitResponse = emptyResponse;
 const COMPANION_LOGGING = false;
 let submitServerFailed = false;
+
+const cphUser = process.env.USER || 'user';
+const cphSubmitFile = path.join(os.tmpdir(), `cph-submit-${cphUser}.json`);
+const cphFinishedFile = path.join(os.tmpdir(), `cph-finished-${cphUser}.json`);
+const cphIncomingFile = path.join(os.tmpdir(), `cph-incoming-${cphUser}.json`);
+
+let isServerRunning = false;
+let currentServer: http.Server | null = null;
+let focusStatusBarItem: vscode.StatusBarItem | null = null;
+let incomingWatcherInstalled = false;
+
+export const setStatusBarItem = (item: vscode.StatusBarItem) => {
+    focusStatusBarItem = item;
+    updateStatusBar(isServerRunning);
+};
+
+export const updateStatusBar = (active: boolean) => {
+    if (!focusStatusBarItem) {
+        return;
+    }
+    if (active) {
+        focusStatusBarItem.text = '$(radio-tower) CPH: Active';
+        focusStatusBarItem.tooltip =
+            'CPH companion server is running in this window (Port 27121). Click to re-focus.';
+        focusStatusBarItem.backgroundColor = undefined;
+    } else {
+        focusStatusBarItem.text = '$(target) CPH: Focus Here';
+        focusStatusBarItem.tooltip =
+            'Click to focus CPH companion server on this window (Port 27121).';
+        focusStatusBarItem.backgroundColor = new vscode.ThemeColor(
+            'statusBarItem.warningBackground',
+        );
+    }
+    focusStatusBarItem.show();
+};
+
+export const focusServerHere = async (showNotice = true): Promise<boolean> => {
+    globalThis.logger?.log('CPH: focusServerHere in pid ' + process.pid);
+    if (isServerRunning && currentServer) {
+        updateStatusBar(true);
+        if (showNotice) {
+            vscode.window.showInformationMessage(
+                '🎯 CPH is already focused on this window (Port 27121 active).',
+            );
+        }
+        return true;
+    }
+
+    try {
+        await new Promise<void>((resolve) => {
+            const req = http.request(
+                {
+                    hostname: '127.0.0.1',
+                    port: config.port,
+                    path: '/__release',
+                    method: 'POST',
+                    timeout: 250,
+                },
+                (res) => {
+                    res.on('data', () => {});
+                    res.on('end', () => resolve());
+                },
+            );
+            req.on('error', () => resolve());
+            req.on('timeout', () => {
+                req.destroy();
+                resolve();
+            });
+            req.end();
+        });
+    } catch (_) {
+        // ignore
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    if (process.platform === 'linux') {
+        try {
+            execSync(`fuser -k ${config.port}/tcp 2>/dev/null || true`);
+            await new Promise((resolve) => setTimeout(resolve, 150));
+        } catch (_) {
+            // ignore
+        }
+    }
+
+    return new Promise((resolve) => {
+        try {
+            if (currentServer) {
+                currentServer.close();
+                currentServer = null;
+            }
+            const srv = createServerInstance();
+            srv.listen(config.port, () => {
+                submitServerFailed = false;
+                isServerRunning = true;
+                currentServer = srv;
+                updateStatusBar(true);
+                globalThis.logger?.log('CPH: Successfully claimed port 27121.');
+                try {
+                    getJudgeViewProvider()?.extensionToJudgeViewMessage({
+                        command: 'submit-server-ok',
+                    });
+                } catch (_) {
+                    // ignore
+                }
+                if (showNotice) {
+                    vscode.window.showInformationMessage(
+                        '🎯 CPH is now focused on this window (Port 27121 active).',
+                    );
+                }
+                resolve(true);
+            });
+            srv.on('error', (err: any) => {
+                if (err && err.code === 'EADDRINUSE') {
+                    submitServerFailed = false;
+                    isServerRunning = false;
+                    currentServer = null;
+                    updateStatusBar(false);
+                    if (showNotice) {
+                        vscode.window.showErrorMessage(
+                            'Port 27121 still busy. Please click Focus again.',
+                        );
+                    }
+                    resolve(false);
+                    return;
+                }
+                submitServerFailed = true;
+                isServerRunning = false;
+                currentServer = null;
+                updateStatusBar(false);
+                if (showNotice) {
+                    vscode.window.showErrorMessage(
+                        'Failed to focus CPH: ' + (err.message || err),
+                    );
+                }
+                resolve(false);
+            });
+        } catch (err: any) {
+            updateStatusBar(false);
+            if (showNotice) {
+                vscode.window.showErrorMessage(
+                    'Failed to start CPH server: ' + (err.message || err),
+                );
+            }
+            resolve(false);
+        }
+    });
+};
+
+function setupIncomingProblemWatcher() {
+    if (incomingWatcherInstalled) {
+        return;
+    }
+    incomingWatcherInstalled = true;
+    try {
+        vscode.window.onDidChangeWindowState((e) => {
+            if (e && e.focused) {
+                checkIncomingProblem();
+            }
+        });
+    } catch (_) {
+        // ignore
+    }
+    setInterval(checkIncomingProblem, 500);
+}
+
+function checkIncomingProblem() {
+    try {
+        if (vscode.window.state && !vscode.window.state.focused) {
+            return;
+        }
+        if (existsSync(cphIncomingFile)) {
+            const data = JSON.parse(readFileSync(cphIncomingFile).toString());
+            if (data && data.problem && Date.now() - data.timestamp < 10000) {
+                unlinkSync(cphIncomingFile);
+                handleNewProblem(data.problem);
+            }
+        }
+    } catch (_) {
+        // ignore
+    }
+}
+
+const createServerInstance = (): http.Server => {
+    const server = http.createServer((req, res) => {
+        const { headers } = req;
+        if (req.url === '/__release') {
+            globalThis.logger?.log('CPH: Yielding port 27121.');
+            try {
+                currentServer?.close();
+            } catch (_) {
+                // ignore
+            }
+            isServerRunning = false;
+            currentServer = null;
+            updateStatusBar(false);
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end('released');
+            return;
+        }
+
+        let rawProblem = '';
+        req.on('data', (chunk) => {
+            COMPANION_LOGGING &&
+                globalThis.logger.log('Companion server got data');
+            rawProblem += chunk;
+        });
+        req.on('close', function () {
+            try {
+                if (rawProblem == '') {
+                    return;
+                }
+                const problem: Problem = JSON.parse(rawProblem);
+                if (vscode.window.state && vscode.window.state.focused) {
+                    handleNewProblem(problem);
+                } else {
+                    try {
+                        writeFileSync(
+                            cphIncomingFile,
+                            JSON.stringify({
+                                problem,
+                                timestamp: Date.now(),
+                            }),
+                        );
+                        setTimeout(() => {
+                            try {
+                                if (existsSync(cphIncomingFile)) {
+                                    unlinkSync(cphIncomingFile);
+                                    handleNewProblem(problem);
+                                }
+                            } catch (_) {
+                                // ignore
+                            }
+                        }, 700);
+                    } catch (_) {
+                        handleNewProblem(problem);
+                    }
+                }
+                COMPANION_LOGGING &&
+                    globalThis.logger.log(
+                        'Companion server closed connection.',
+                    );
+            } catch (e) {
+                vscode.window.showErrorMessage(
+                    localize(
+                        'cph.companion.parseError',
+                        'Error parsing problem from companion {0}. Raw problem: {1}',
+                        String(e),
+                        rawProblem,
+                    ),
+                );
+            }
+        });
+
+        let payload: any = savedResponse;
+        try {
+            if (existsSync(cphSubmitFile)) {
+                const content = JSON.parse(
+                    readFileSync(cphSubmitFile).toString(),
+                );
+                if (content && !content.empty) {
+                    payload = content;
+                }
+            }
+        } catch (_) {
+            // ignore
+        }
+
+        res.write(JSON.stringify(payload));
+        if (headers['cph-submit'] == 'true' && !payload.empty) {
+            try {
+                getJudgeViewProvider()?.extensionToJudgeViewMessage({
+                    command: 'submit-finished',
+                });
+            } catch (_) {
+                // ignore
+            }
+            try {
+                writeFileSync(
+                    cphFinishedFile,
+                    JSON.stringify({
+                        finished: true,
+                        timestamp: Date.now(),
+                    }),
+                );
+                writeFileSync(cphSubmitFile, JSON.stringify(emptyResponse));
+            } catch (_) {
+                // ignore
+            }
+            savedResponse = emptyResponse;
+        }
+        res.end();
+    });
+
+    server.on('error', (err: any) => {
+        if (err && err.code === 'EADDRINUSE') {
+            submitServerFailed = false;
+            isServerRunning = false;
+            currentServer = null;
+            updateStatusBar(false);
+            globalThis.logger?.log(
+                'CPH: Port 27121 in use by another window; standby mode.',
+            );
+            return;
+        }
+        submitServerFailed = true;
+        isServerRunning = false;
+        currentServer = null;
+        updateStatusBar(false);
+        globalThis.logger?.error('Companion server error:', err);
+        try {
+            getJudgeViewProvider()?.extensionToJudgeViewMessage({
+                command: 'submit-server-failed',
+                port: config.port,
+            });
+        } catch (_) {
+            // ignore
+        }
+    });
+
+    return server;
+};
 
 export const hasSubmitServerFailed = () => submitServerFailed;
 export const setSubmitServerFailed = (val: boolean) => {
@@ -83,7 +405,7 @@ export const submitKattisProblem = (problem: Problem) => {
 };
 
 /** Stores a response to be submitted to CF page soon. */
-export const storeSubmitProblem = (problem: Problem) => {
+export const storeSubmitProblem = async (problem: Problem) => {
     const srcPath = problem.srcPath;
     const problemName = getProblemName(problem.url);
     const sourceCode = readFileSync(srcPath).toString();
@@ -95,75 +417,61 @@ export const storeSubmitProblem = (problem: Problem) => {
         sourceCode,
         languageId,
     };
+
+    if (!isServerRunning) {
+        await focusServerHere(false);
+    }
+
+    try {
+        writeFileSync(cphSubmitFile, JSON.stringify(savedResponse));
+        try {
+            if (existsSync(cphFinishedFile)) {
+                unlinkSync(cphFinishedFile);
+            }
+        } catch (_) {
+            // ignore
+        }
+
+        let polls = 0;
+        const interval = setInterval(() => {
+            polls++;
+            try {
+                if (existsSync(cphFinishedFile)) {
+                    unlinkSync(cphFinishedFile);
+                    clearInterval(interval);
+                    getJudgeViewProvider()?.extensionToJudgeViewMessage({
+                        command: 'submit-finished',
+                    });
+                }
+            } catch (_) {
+                // ignore
+            }
+            if (polls > 60) {
+                clearInterval(interval);
+            }
+        }, 500);
+    } catch (_) {
+        // ignore
+    }
+
     globalThis.reporter.sendTelemetryEvent(telmetry.SUBMIT_TO_CODEFORCES);
     globalThis.logger.log('Stored savedResponse', savedResponse);
 };
 
 export const setupCompanionServer = () => {
     try {
-        const server = http.createServer((req, res) => {
-            const { headers } = req;
-            let rawProblem = '';
-
-            req.on('data', (chunk) => {
-                COMPANION_LOGGING &&
-                    globalThis.logger.log('Companion server got data');
-                rawProblem += chunk;
-            });
-            req.on('close', function () {
-                try {
-                    if (rawProblem == '') {
-                        return;
-                    }
-                    const problem: Problem = JSON.parse(rawProblem);
-                    handleNewProblem(problem);
-                    COMPANION_LOGGING &&
-                        globalThis.logger.log(
-                            'Companion server closed connection.',
-                        );
-                } catch (e) {
-                    vscode.window.showErrorMessage(
-                        localize(
-                            'cph.companion.parseError',
-                            'Error parsing problem from companion {0}. Raw problem: {1}',
-                            String(e),
-                            rawProblem,
-                        ),
-                    );
-                }
-            });
-            res.write(JSON.stringify(savedResponse));
-            if (headers['cph-submit'] == 'true') {
-                COMPANION_LOGGING &&
-                    globalThis.logger.log(
-                        'Request was from the cph-submit extension; sending savedResponse and clearing it',
-                        savedResponse,
-                    );
-
-                if (savedResponse.empty != true) {
-                    getJudgeViewProvider().extensionToJudgeViewMessage({
-                        command: 'submit-finished',
-                    });
-                }
-                savedResponse = emptyResponse;
-            }
-            res.end();
+        setupIncomingProblemWatcher();
+        const server = createServerInstance();
+        server.listen(config.port, () => {
+            isServerRunning = true;
+            currentServer = server;
+            submitServerFailed = false;
+            updateStatusBar(true);
+            globalThis.logger.log(
+                'Companion server listening on port',
+                config.port,
+            );
         });
-        server.listen(config.port);
-        server.on('error', (err) => {
-            submitServerFailed = true;
-            globalThis.logger.error('Companion server error :', err);
-            try {
-                getJudgeViewProvider()?.extensionToJudgeViewMessage({
-                    command: 'submit-server-failed',
-                    port: config.port,
-                });
-            } catch (_) {}
-        });
-        globalThis.logger.log(
-            'Companion server listening on port',
-            config.port,
-        );
         return server;
     } catch (e) {
         submitServerFailed = true;
@@ -173,7 +481,9 @@ export const setupCompanionServer = () => {
                 command: 'submit-server-failed',
                 port: config.port,
             });
-        } catch (_) {}
+        } catch (_) {
+            // ignore
+        }
     }
 };
 

@@ -1,5 +1,6 @@
 {
     "cph.runTestCases.title": "テストケースを実行",
+    "cph.focusServerHere.title": "CPHを現在のウィンドウにフォーカス",
     "cph.submitToCodeForces.title": "CodeForcesに提出",
     "cph.compileWithoutRunning.title": "実行せずにコンパイル",
     "cph.judgeView.name": "結果",

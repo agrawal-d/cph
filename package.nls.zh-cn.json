@@ -1,5 +1,6 @@
 {
     "cph.runTestCases.title": "运行测试用例",
+    "cph.focusServerHere.title": "聚焦 CPH 到当前窗口",
     "cph.submitToCodeForces.title": "提交到 CodeForces",
     "cph.compileWithoutRunning.title": "编译但不运行",
     "cph.judgeView.name": "结果",

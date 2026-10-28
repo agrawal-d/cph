@@ -300,6 +300,11 @@ function Judge(props: {
                     setWaitingForSubmit(true);
                     break;
                 }
+                case 'submit-server-ok': {
+                    setSubmitServerFailed(false);
+                    setWaitingForSubmit(false);
+                    break;
+                }
                 case 'submit-server-failed': {
                     setSubmitServerFailed(true);
                     if (data.port) {
@@ -953,6 +958,23 @@ function Judge(props: {
                         </button>
                         {renderSubmitButton()}
                     </div>
+                    <button
+                        className="btn btn-block"
+                        style={{ marginTop: '6px', marginBottom: '6px' }}
+                        onClick={() => {
+                            sendMessageToVSCode({ command: 'focus-cph' });
+                            setSubmitServerFailed(false);
+                        }}
+                        title={
+                            t('focusCphTooltip') ||
+                            'Focus CPH companion server on this window (Port 27121)'
+                        }
+                    >
+                        <span className="icon">
+                            <i className="codicon codicon-target"></i>
+                        </span>{' '}
+                        {t('focusCph') || 'Focus CPH on this window'}
+                    </button>
                     {waitingForSubmit && (
                         <div className="margin-10">
                             {submitServerFailed ? (
@@ -989,6 +1011,25 @@ function Judge(props: {
                                               String(submitServerPort),
                                           )
                                         : `CPH was unable to start the cph-submit server on port ${submitServerPort}. This usually happens another VS Code window was already open. Please close all other VS Code windows and reload this window.`}
+                                    <div style={{ marginTop: '8px' }}>
+                                        <button
+                                            className="btn btn-block"
+                                            onClick={() => {
+                                                sendMessageToVSCode({
+                                                    command: 'focus-cph',
+                                                });
+                                                setWaitingForSubmit(false);
+                                                setSubmitServerFailed(false);
+                                            }}
+                                            title="Focus CPH on this window"
+                                        >
+                                            <span className="icon">
+                                                <i className="codicon codicon-target"></i>
+                                            </span>{' '}
+                                            {t('focusCph') ||
+                                                'Focus CPH on this window'}
+                                        </button>
+                                    </div>
                                 </div>
                             ) : (
                                 <>

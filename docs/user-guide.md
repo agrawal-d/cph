@@ -46,6 +46,18 @@ actions remain the same.
 1. Click on the 'Submit to CF' button in the results window.
 1. A tab opens in the browser and the problem is submitted.
 
+### Multiple VS Code Windows
+
+When multiple VS Code windows are open simultaneously, secondary windows enter a
+standby mode to prevent port 27121 conflicts. You can focus the CPH companion
+server on any active window at any time:
+
+-   Click the **Focus CPH on this window** button in the CPH Judge panel.
+-   Click the **CPH: Focus Here** status bar button.
+-   Run the command `CPH: Focus CPH on Current Window` from the Command Palette.
+-   Clicking Submit in any window will also automatically switch focus to that
+    window before submitting.
+
 ## Submit to Kattis
 
 1. Install Kattis [config file](https://open.kattis.com/download/kattisrc) and
