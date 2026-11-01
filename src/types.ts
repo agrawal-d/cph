@@ -37,6 +37,9 @@ export type prefSection =
     | 'language.java.Args'
     | 'language.java.SubmissionCompiler'
     | 'language.java.Command'
+    | 'language.kotlin.Args'
+    | 'language.kotlin.SubmissionCompiler'
+    | 'language.kotlin.Command'
     | 'language.js.Args'
     | 'language.js.SubmissionCompiler'
     | 'language.js.Command'
@@ -76,6 +79,7 @@ export type LangNames =
     | 'cxx'
     | 'rust'
     | 'java'
+    | 'kotlin'
     | 'js'
     | 'go'
     | 'hs'
@@ -299,6 +303,11 @@ export type UpdateOnlineJudgeEnvCommand = {
     value: boolean;
 };
 
+export type SubmitServerFailedCommand = {
+    command: 'submit-server-failed';
+    port: number;
+};
+
 export type VSToWebViewMessage =
     | ResultCommand
     | RunningCommand
@@ -312,7 +321,8 @@ export type VSToWebViewMessage =
     | RemoteMessageCommand
     | NewProblemCommand
     | ExtLogsCommand
-    | UpdateOnlineJudgeEnvCommand;
+    | UpdateOnlineJudgeEnvCommand
+    | SubmitServerFailedCommand;
 
 export type CphEmptyResponse = {
     empty: true;

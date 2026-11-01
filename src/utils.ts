@@ -13,6 +13,7 @@ import {
     getRubyArgsPref,
     getRustArgsPref,
     getJavaArgsPref,
+    getKotlinArgsPref,
     getJsArgsPref,
     getGoArgsPref,
     getHaskellArgsPref,
@@ -24,6 +25,7 @@ import {
     getRubyCommand,
     getRustCommand,
     getJavaCommand,
+    getKotlinCommand,
     getJsCommand,
     getGoCommand,
     getHaskellCommand,
@@ -107,6 +109,14 @@ export const getLanguage = (srcPath: string): Language => {
                 name: langName,
                 args: [...getJavaArgsPref()],
                 compiler: getJavaCommand(),
+                skipCompile: false,
+            };
+        }
+        case 'kotlin': {
+            return {
+                name: langName,
+                args: [...getKotlinArgsPref()],
+                compiler: getKotlinCommand(),
                 skipCompile: false,
             };
         }

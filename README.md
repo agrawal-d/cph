@@ -61,6 +61,7 @@ enter testcases.
 -   Python
 -   Ruby
 -   Java
+-   Kotlin
 -   JavaScript (Node.js)
 -   Cangjie
 
@@ -71,6 +72,7 @@ Interested in adding support for another language? Check out the
 
 -   English
 -   Chinese (Simplified)
+-   Chinese (Traditional)
 -   Korean
 -   Japanese
 

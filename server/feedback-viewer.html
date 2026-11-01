@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Feedback Viewer</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                    Roboto, monospace, sans-serif;
+                font-size: 13px;
+                color: #1f2328;
+                background: #fff;
+            }
+            #app {
+                display: flex;
+                flex-direction: column;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+            header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 6px 10px;
+                background: #f6f8fa;
+                border-bottom: 1px solid #d0d7de;
+                gap: 10px;
+            }
+            button {
+                padding: 4px 10px;
+                background: #2da44e;
+                color: #fff;
+                border: 1px solid rgba(27, 31, 36, 0.15);
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            button:hover {
+                background: #2c974b;
+            }
+            button:disabled {
+                background: #94d3a2;
+                cursor: not-allowed;
+            }
+            button.secondary {
+                background: #f6f8fa;
+                color: #24292f;
+                border: 1px solid #d0d7de;
+            }
+            button.secondary:hover {
+                background: #f3f4f6;
+            }
+            .meta {
+                font-size: 12px;
+                color: #57606a;
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+            #status {
+                font-weight: 500;
+            }
+            #status.error {
+                color: #cf222e;
+            }
+            #status.ok {
+                color: #1a7f37;
+            }
+            #status.info {
+                color: #57606a;
+            }
+            .table-wrap {
+                flex: 1;
+                overflow: auto;
+                width: 100%;
+                background: #fff;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: fixed;
+            }
+            th,
+            td {
+                border: 1px solid #d0d7de;
+                padding: 4px 8px;
+                text-align: left;
+                vertical-align: top;
+                word-break: break-word;
+                white-space: pre-wrap;
+                font-size: 12px;
+            }
+            th {
+                position: sticky;
+                top: 0;
+                background: #f6f8fa;
+                z-index: 2;
+                font-weight: 600;
+                color: #24292f;
+                border-bottom: 2px solid #afb8c1;
+                user-select: none;
+            }
+            tr:nth-child(even) td {
+                background: #fcfcfc;
+            }
+            tr.new-row td {
+                background: #fffdf0;
+            }
+            tr.new-row:nth-child(even) td {
+                background: #fcf9e8;
+            }
+            tr:hover td {
+                background: #f0f7ff;
+            }
+            tr.new-row:hover td {
+                background: #faf5d8;
+            }
+            .th-idx {
+                width: 44px;
+                text-align: right;
+                color: #57606a;
+            }
+            .th-time {
+                width: 150px;
+            }
+            .th-name {
+                width: 170px;
+            }
+            .th-email {
+                width: 220px;
+            }
+            .th-comment {
+                width: auto;
+            }
+            td.idx {
+                text-align: right;
+                color: #57606a;
+                user-select: none;
+            }
+            .center-msg {
+                padding: 40px 16px;
+                text-align: center;
+                color: #57606a;
+                font-size: 14px;
+            }
+
+            #modalOverlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(27, 31, 36, 0.6);
+                backdrop-filter: blur(2px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            #modalOverlay.hidden {
+                display: none;
+            }
+            .modal-card {
+                background: #fff;
+                border: 1px solid #d0d7de;
+                border-radius: 6px;
+                box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+                width: 320px;
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            .modal-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #24292f;
+            }
+            .modal-input {
+                width: 100%;
+                padding: 6px 10px;
+                border: 1px solid #d0d7de;
+                border-radius: 4px;
+                font-size: 13px;
+                outline: none;
+            }
+            .modal-input:focus {
+                border-color: #0969da;
+                box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+            }
+            .modal-error {
+                font-size: 12px;
+                color: #cf222e;
+                min-height: 16px;
+            }
+            .modal-btn {
+                width: 100%;
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="modalOverlay">
+            <div class="modal-card">
+                <h2 class="modal-title">Feedback Access</h2>
+                <form
+                    id="authForm"
+                    onsubmit="event.preventDefault(); loadFeedback();"
+                >
+                    <div
+                        style="display: flex; flex-direction: column; gap: 10px"
+                    >
+                        <input
+                            type="password"
+                            id="passwordInput"
+                            class="modal-input"
+                            placeholder="Enter READ_PASSWORD"
+                            autocomplete="current-password"
+                            autofocus
+                        />
+                        <label
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                font-size: 12px;
+                                color: #57606a;
+                                cursor: pointer;
+                                user-select: none;
+                            "
+                        >
+                            <input type="checkbox" id="savePasswordCheckbox" />
+                            Remember password
+                        </label>
+                        <div id="modalError" class="modal-error"></div>
+                        <button type="submit" id="fetchBtn" class="modal-btn">
+                            Load Feedback
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="app">
+            <header>
+                <div style="display: flex; align-items: center; gap: 8px">
+                    <button
+                        type="button"
+                        class="secondary"
+                        onclick="reloadWithStoredPassword()"
+                    >
+                        Refresh
+                    </button>
+                    <button
+                        type="button"
+                        class="secondary"
+                        id="downloadBtn"
+                        onclick="downloadFeedbackJson()"
+                        disabled
+                    >
+                        Download JSON
+                    </button>
+                    <button
+                        type="button"
+                        class="secondary"
+                        onclick="showPasswordModal()"
+                    >
+                        Change Password
+                    </button>
+                </div>
+                <div class="meta">
+                    <span id="rowCount">0 entries</span>
+                    <span id="status" class="info"
+                        >Waiting for authorization</span
+                    >
+                </div>
+            </header>
+            <div class="table-wrap">
+                <table id="feedbackTable">
+                    <thead>
+                        <tr>
+                            <th class="th-idx">#</th>
+                            <th class="th-time">Timestamp</th>
+                            <th class="th-name">Name</th>
+                            <th class="th-email">Email</th>
+                            <th class="th-comment">Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="5" class="center-msg">
+                                No data loaded yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            const modalOverlay = document.getElementById('modalOverlay');
+            const passwordInput = document.getElementById('passwordInput');
+            const savePasswordCheckbox = document.getElementById(
+                'savePasswordCheckbox',
+            );
+            const modalError = document.getElementById('modalError');
+            const fetchBtn = document.getElementById('fetchBtn');
+            const statusSpan = document.getElementById('status');
+            const rowCountSpan = document.getElementById('rowCount');
+            const tableBody = document.getElementById('tableBody');
+
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            let activePassword = '';
+            let currentFeedbackData = null;
+
+            const getSavedPasswordCookie = () => {
+                const match = document.cookie.match(
+                    /(?:^|;\s*)saved_feedback_password=([^;]+)/,
+                );
+                return match ? decodeURIComponent(match[1]) : '';
+            };
+
+            const setSavedPasswordCookie = (password) => {
+                const oneYearSeconds = 365 * 24 * 60 * 60;
+                document.cookie = `saved_feedback_password=${encodeURIComponent(
+                    password,
+                )}; max-age=${oneYearSeconds}; path=/; SameSite=Lax`;
+            };
+
+            const clearSavedPasswordCookie = () => {
+                document.cookie =
+                    'saved_feedback_password=; max-age=0; path=/; SameSite=Lax';
+            };
+
+            const setStatus = (text, type = 'info') => {
+                statusSpan.textContent = text;
+                statusSpan.className = type;
+            };
+
+            const showPasswordModal = () => {
+                modalError.textContent = '';
+                modalOverlay.classList.remove('hidden');
+                passwordInput.value = '';
+                savePasswordCheckbox.checked = Boolean(
+                    getSavedPasswordCookie(),
+                );
+                passwordInput.focus();
+            };
+
+            const hidePasswordModal = () => {
+                modalOverlay.classList.add('hidden');
+                modalError.textContent = '';
+            };
+
+            const createCell = (text, className = '') => {
+                const td = document.createElement('td');
+                if (className) td.className = className;
+                td.textContent = text ?? '';
+                return td;
+            };
+
+            const formatDisplayDate = (raw) => {
+                if (!raw) return '';
+                const date = new Date(raw);
+                if (isNaN(date.getTime())) return raw;
+                const day = date.getUTCDate();
+                const month = date.toLocaleDateString('en-GB', {
+                    month: 'long',
+                    timeZone: 'UTC',
+                });
+                const year = date.getUTCFullYear();
+                return `${day} ${month} ${year}`;
+            };
+
+            const getSeenCountCookie = () => {
+                const match = document.cookie.match(
+                    /(?:^|;\s*)last_seen_feedback_count=(\d+)/,
+                );
+                return match ? parseInt(match[1], 10) : 0;
+            };
+
+            const setSeenCountCookie = (count) => {
+                const oneYearSeconds = 365 * 24 * 60 * 60;
+                document.cookie = `last_seen_feedback_count=${count}; max-age=${oneYearSeconds}; path=/; SameSite=Lax`;
+            };
+
+            const renderFeedbackRows = (items) => {
+                tableBody.textContent = '';
+                if (!items || items.length === 0) {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = 5;
+                    td.className = 'center-msg';
+                    td.textContent = 'No feedback entries found.';
+                    tr.appendChild(td);
+                    tableBody.appendChild(tr);
+                    rowCountSpan.textContent = '0 entries';
+                    downloadBtn.disabled = true;
+                    return;
+                }
+
+                const previousSeen = getSeenCountCookie();
+                const currentTotal = items.length;
+                let newEntriesCount = 0;
+
+                items.forEach((item, index) => {
+                    const rowNumber = currentTotal - index;
+                    const isNew = rowNumber > previousSeen;
+                    if (isNew) newEntriesCount++;
+
+                    const tr = document.createElement('tr');
+                    if (isNew) tr.classList.add('new-row');
+
+                    tr.appendChild(createCell(rowNumber, 'idx'));
+                    tr.appendChild(
+                        createCell(formatDisplayDate(item.timestamp)),
+                    );
+                    tr.appendChild(createCell(item.name || ''));
+                    tr.appendChild(createCell(item.email || ''));
+                    tr.appendChild(createCell(item.comment || ''));
+                    tableBody.appendChild(tr);
+                });
+
+                setSeenCountCookie(currentTotal);
+
+                if (newEntriesCount > 0 && previousSeen > 0) {
+                    rowCountSpan.textContent = `${currentTotal} entries (${newEntriesCount} new)`;
+                } else {
+                    rowCountSpan.textContent = `${currentTotal} entries`;
+                }
+
+                downloadBtn.disabled = false;
+            };
+
+            const downloadFeedbackJson = () => {
+                if (!currentFeedbackData || currentFeedbackData.length === 0)
+                    return;
+                const jsonStr = JSON.stringify(currentFeedbackData, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `feedback-${new Date()
+                    .toISOString()
+                    .slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+
+            const loadFeedback = async () => {
+                const password = passwordInput.value;
+                if (!password) {
+                    modalError.textContent = 'Password cannot be empty';
+                    passwordInput.focus();
+                    return;
+                }
+
+                fetchBtn.disabled = true;
+                modalError.textContent = '';
+
+                try {
+                    const res = await fetch('/fetch-feedback', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password }),
+                    });
+
+                    const contentType = res.headers.get('content-type') || '';
+                    const data = contentType.includes('application/json')
+                        ? await res.json()
+                        : await res.text();
+
+                    if (res.status === 200 && Array.isArray(data)) {
+                        activePassword = password;
+                        currentFeedbackData = data;
+                        if (savePasswordCheckbox.checked) {
+                            setSavedPasswordCookie(password);
+                        } else {
+                            clearSavedPasswordCookie();
+                        }
+                        hidePasswordModal();
+                        renderFeedbackRows(data);
+                        setStatus(
+                            'Updated ' + new Date().toLocaleTimeString(),
+                            'ok',
+                        );
+                    } else if (res.status === 401) {
+                        clearSavedPasswordCookie();
+                        savePasswordCheckbox.checked = false;
+                        passwordInput.value = '';
+                        modalOverlay.classList.remove('hidden');
+                        modalError.textContent = 'Incorrect password';
+                        passwordInput.focus();
+                    } else if (res.status === 429) {
+                        modalError.textContent =
+                            'Rate limit exceeded. Please wait.';
+                    } else {
+                        const err =
+                            typeof data === 'object' && data && data.error
+                                ? data.error
+                                : 'Error ' + res.status;
+                        modalError.textContent = err;
+                    }
+                } catch (err) {
+                    modalError.textContent = 'Failed to connect to server';
+                } finally {
+                    fetchBtn.disabled = false;
+                }
+            };
+
+            const reloadWithStoredPassword = async () => {
+                if (!activePassword) {
+                    showPasswordModal();
+                    return;
+                }
+                passwordInput.value = activePassword;
+                await loadFeedback();
+            };
+
+            const savedPassword = getSavedPasswordCookie();
+            if (savedPassword) {
+                passwordInput.value = savedPassword;
+                savePasswordCheckbox.checked = true;
+                loadFeedback();
+            }
+        </script>
+    </body>
+</html>

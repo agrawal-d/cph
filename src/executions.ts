@@ -108,6 +108,15 @@ export const runTestCase = (
             childProc = spawn('java', args);
             break;
         }
+        case 'kotlin': {
+            const args: string[] = [];
+            if (onlineJudgeEnv) {
+                args.push('-DONLINE_JUDGE');
+            }
+            args.push('-jar', binPath);
+            process = spawn('java', args, spawnOpts);
+            break;
+        }
         case 'csharp': {
             let binFileName: string;
 

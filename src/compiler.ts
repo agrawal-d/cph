@@ -42,6 +42,10 @@ export const getBinSaveLocation = (srcPath: string): string => {
             ext = '*.class';
             break;
         }
+        case 'kotlin': {
+            ext = '.jar';
+            break;
+        }
         case 'csharp': {
             ext = language.compiler.includes('dotnet') ? '_bin' : '.bin';
             break;
@@ -124,6 +128,16 @@ const getFlags = (language: Language, srcPath: string): string[] => {
         case 'java': {
             const binDir = path.dirname(getBinSaveLocation(srcPath));
             ret = [srcPath, '-d', binDir, ...args];
+            break;
+        }
+        case 'kotlin': {
+            ret = [
+                srcPath,
+                '-include-runtime',
+                '-d',
+                getBinSaveLocation(srcPath),
+                ...args,
+            ];
             break;
         }
         case 'hs': {
