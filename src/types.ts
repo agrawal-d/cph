@@ -103,6 +103,8 @@ export type Problem = {
     srcPath: string;
     local?: boolean;
     customCheckerPath?: string;
+    inputFileName?: string;
+    outputFileName?: string;
 };
 
 export type Case = {

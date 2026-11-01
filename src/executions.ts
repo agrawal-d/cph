@@ -9,6 +9,7 @@ import { onlineJudgeEnv } from './compiler';
 import telmetry from './telmetry';
 import localize from './i18n';
 import { executeCustomChecker } from './utils/customChecker';
+import * as fs from 'fs';
 
 export const runningBinaries: ChildProcessWithoutNullStreams[] = [];
 
@@ -33,6 +34,7 @@ export const runTestCase = (
     language: Language,
     binPath: string,
     input: string,
+    outputFileName?: string,
 ): Promise<Run> => {
     globalThis.logger.log('Running testcase', language, binPath, input);
     const result: Run = {
@@ -52,11 +54,11 @@ export const runTestCase = (
         },
     };
 
-    let process: ChildProcessWithoutNullStreams;
+    let childProc: ChildProcessWithoutNullStreams;
 
     const killer = setTimeout(() => {
         result.timeOut = true;
-        process.kill();
+        childProc.kill();
     }, getTimeOutPref());
 
     // HACK - On Windows, `python3` will be changed to `python`!
@@ -67,7 +69,7 @@ export const runTestCase = (
     // Start the binary or the interpreter.
     switch (language.name) {
         case 'python': {
-            process = spawn(
+            childProc = spawn(
                 language.compiler, // 'python3' or 'python' TBD
                 [binPath, ...language.args],
                 spawnOpts,
@@ -75,7 +77,7 @@ export const runTestCase = (
             break;
         }
         case 'ruby': {
-            process = spawn(
+            childProc = spawn(
                 language.compiler,
                 [binPath, ...language.args],
                 spawnOpts,
@@ -83,7 +85,7 @@ export const runTestCase = (
             break;
         }
         case 'js': {
-            process = spawn(
+            childProc = spawn(
                 language.compiler,
                 [binPath, ...language.args],
                 spawnOpts,
@@ -103,7 +105,7 @@ export const runTestCase = (
             const binFileName = path.parse(binPath).name.slice(0, -1);
             args.push(binFileName);
 
-            process = spawn('java', args);
+            childProc = spawn('java', args);
             break;
         }
         case 'kotlin': {
@@ -128,20 +130,20 @@ export const runTestCase = (
                 }
 
                 const binFilePath = path.join(binPath, binFileName);
-                process = spawn(binFilePath, ['/stack:67108864'], spawnOpts);
+                childProc = spawn(binFilePath, ['/stack:67108864'], spawnOpts);
             } else {
                 // Run with mono
-                process = spawn('mono', [binPath], spawnOpts);
+                childProc = spawn('mono', [binPath], spawnOpts);
             }
 
             break;
         }
         default: {
-            process = spawn(binPath, spawnOpts);
+            childProc = spawn(binPath, spawnOpts);
         }
     }
 
-    process.on('error', (err) => {
+    childProc.on('error', (err) => {
         globalThis.logger.error(err);
         vscode.window.showErrorMessage(
             localize(
@@ -154,32 +156,71 @@ export const runTestCase = (
 
     const begin = Date.now();
     const ret: Promise<Run> = new Promise((resolve) => {
-        runningBinaries.push(process);
-        process.on('exit', (code, signal) => {
+        runningBinaries.push(childProc);
+        childProc.on('exit', (code, signal) => {
             clearTimeout(killer);
             const end = Date.now();
             result.code = code;
             result.signal = signal;
             result.time = end - begin;
-            const idx = runningBinaries.indexOf(process);
+            const idx = runningBinaries.indexOf(childProc);
             if (idx > -1) {
                 runningBinaries.splice(idx, 1);
+            }
+            console.debug(`outputFileName:${outputFileName}`);
+            if (outputFileName && outputFileName.trim() !== '') {
+                const outputFileDir = path.join(process.cwd(), outputFileName);
+                if (fs.existsSync(outputFileDir)) {
+                    try {
+                        const fileOutput = fs.readFileSync(
+                            outputFileDir,
+                            'utf8',
+                        );
+                        result.stdout = fileOutput;
+                    } catch {
+                        vscode.window.showErrorMessage(
+                            localize(
+                                'cph.processRunSingle.readOutputFileError',
+                                'Read output file error.',
+                            ),
+                        );
+                    }
+                    try {
+                        console.log(`delete ${outputFileDir}`);
+                        if (fs.existsSync(outputFileDir)) {
+                            fs.unlinkSync(outputFileDir);
+                        }
+                    } catch (err) {
+                        globalThis.logger.error(
+                            'Error while deleting data files',
+                            err,
+                        );
+                    }
+                } else {
+                    vscode.window.showWarningMessage(
+                        localize(
+                            'cph.processRunSingle.outputFileDoesNotExist',
+                            'The output file does not exist. Please make sure your program created {0}',
+                            outputFileName,
+                        ),
+                    );
+                }
             }
             resolve(result);
         });
 
-        process.stdout.on('data', (data) => {
+        childProc.stdout.on('data', (data) => {
             result.stdout += data;
         });
-        process.stderr.on('data', (data) => (result.stderr += data));
+        childProc.stderr.on('data', (data) => (result.stderr += data));
 
-        process.on('error', (err) => {
+        childProc.on('error', (err) => {
             clearTimeout(killer);
             const end = Date.now();
             result.code = 1;
             result.signal = err.name;
             result.time = end - begin;
-            const idx = runningBinaries.indexOf(process);
+            const idx = runningBinaries.indexOf(childProc);
             if (idx > -1) {
                 runningBinaries.splice(idx, 1);
             }
@@ -188,12 +229,12 @@ export const runTestCase = (
 
         globalThis.logger.log('Wrote to STDIN');
         try {
-            process.stdin.write(input);
+            childProc.stdin.write(input);
         } catch (err) {
             globalThis.logger.error('WRITEERROR', err);
         }
 
-        process.stdin.end();
+        childProc.stdin.end();
     });
 
     return ret;
