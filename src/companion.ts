@@ -220,7 +220,7 @@ export const getProblemFileName = (problem: Problem, ext: string) => {
 };
 
 /** Handle the `problem` sent by Competitive Companion, such as showing the webview, opening an editor, managing layout etc. */
-const handleNewProblem = async (problem: Problem) => {
+export const handleNewProblem = async (problem: Problem) => {
     globalThis.reporter.sendTelemetryEvent(telmetry.GET_PROBLEM_FROM_COMPANION);
     // If webview may be focused, close it, to prevent layout bug.
     if (vscode.window.activeTextEditor == undefined) {
@@ -329,14 +329,10 @@ const handleNewProblem = async (problem: Problem) => {
                         for (const [key, value] of Object.entries(
                             templateVariables,
                         )) {
-                            let replaceWith = JSON.stringify(value);
-                            replaceWith = replaceWith.substring(
-                                1,
-                                replaceWith.length - 1,
-                            );
-                            templateContents = templateContents.replace(
+                            const replaceWith = String(value ?? "");
+                            templateContents = templateContents.replaceAll(
                                 `$${key}$`,
-                                replaceWith,
+                                replaceWith
                             );
                         }
                     }
