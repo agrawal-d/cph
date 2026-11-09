@@ -329,11 +329,11 @@ const handleNewProblem = async (problem: Problem) => {
                         for (const [key, value] of Object.entries(
                             templateVariables,
                         )) {
-                            let replaceWith = String(value ?? "");
-                            replaceWith = replaceWith.substring(0,replaceWith.length)
+                            let replaceWith = String(value ?? '');
+                            replaceWith = replaceWith.substring(0,replaceWith.length,)
                             templateContents = templateContents.replace(
                                 `$${key}$`,
-                                replaceWith
+                                replaceWith,
                             );
                         }
                     }
