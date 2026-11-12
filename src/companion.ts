@@ -158,7 +158,9 @@ export const setupCompanionServer = () => {
                     command: 'submit-server-failed',
                     port: config.port,
                 });
-            } catch (_) {}
+            } catch (_) {
+                // Ignore errors from the judge view provider when the UI is unavailable.
+            }
         });
         globalThis.logger.log(
             'Companion server listening on port',
@@ -173,7 +175,9 @@ export const setupCompanionServer = () => {
                 command: 'submit-server-failed',
                 port: config.port,
             });
-        } catch (_) {}
+        } catch (_) {
+            // Ignore errors from the judge view provider when the UI is unavailable.
+        }
     }
 };
 
@@ -330,7 +334,10 @@ const handleNewProblem = async (problem: Problem) => {
                             templateVariables,
                         )) {
                             let replaceWith = String(value ?? '');
-                            replaceWith = replaceWith.substring(0,replaceWith.length,)
+                            replaceWith = replaceWith.substring(
+                                0,
+                                replaceWith.length,
+                            );
                             templateContents = templateContents.replace(
                                 `$${key}$`,
                                 replaceWith,

@@ -3,7 +3,10 @@
         "module": "commonjs",
         "target": "es2017",
         "outDir": "out",
-        "lib": ["es2017", "DOM"],
+        "lib": [
+            "es2017",
+            "DOM"
+        ],
         "jsx": "react",
         "sourceMap": false,
         "rootDir": "src",
@@ -13,7 +16,15 @@
         // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
         "noUnusedParameters": true /* Report errors on unused parameters. */,
         "esModuleInterop": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "types": [
+            "node",
+            "jest"
+        ]
     },
-    "exclude": ["node_modules", ".vscode-test", "out"]
+    "exclude": [
+        "node_modules",
+        ".vscode-test",
+        "out"
+    ]
 }
