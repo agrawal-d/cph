@@ -158,7 +158,9 @@ export const setupCompanionServer = () => {
                     command: 'submit-server-failed',
                     port: config.port,
                 });
-            } catch (_) {}
+            } catch (_) {
+                // Ignore errors from the judge view provider when the UI is unavailable.
+            }
         });
         globalThis.logger.log(
             'Companion server listening on port',
@@ -173,7 +175,9 @@ export const setupCompanionServer = () => {
                 command: 'submit-server-failed',
                 port: config.port,
             });
-        } catch (_) {}
+        } catch (_) {
+            // Ignore errors from the judge view provider when the UI is unavailable.
+        }
     }
 };
 
@@ -326,19 +330,34 @@ const handleNewProblem = async (problem: Problem) => {
                             time,
                         };
 
-                        for (const [key, value] of Object.entries(
-                            templateVariables,
-                        )) {
-                            let replaceWith = JSON.stringify(value);
-                            replaceWith = replaceWith.substring(
-                                1,
-                                replaceWith.length - 1,
-                            );
-                            templateContents = templateContents.replace(
-                                `$${key}$`,
-                                replaceWith,
-                            );
-                        }
+                        const variablesMap = new Map(
+                            Object.entries(templateVariables).map(
+                                ([key, value]) => {
+                                    let replaceWith = '';
+
+                                    if (value !== null && value !== undefined) {
+                                        if (typeof value === 'string') {
+                                            replaceWith = JSON.stringify(
+                                                value,
+                                            ).slice(1, -1);
+                                        } else if (typeof value === 'object') {
+                                            replaceWith = JSON.stringify(value);
+                                        } else {
+                                            replaceWith = String(value);
+                                        }
+                                    }
+
+                                    return [key, replaceWith];
+                                },
+                            ),
+                        );
+
+                        templateContents = templateContents.replace(
+                            /\$([^$]+)\$/g,
+                            (placeholder, key: string) => {
+                                return variablesMap.get(key) ?? placeholder;
+                            },
+                        );
                     }
                     writeFileSync(srcPath, templateContents);
                 }
