@@ -3,10 +3,7 @@
         "module": "commonjs",
         "target": "es2017",
         "outDir": "out",
-        "lib": [
-            "es2017",
-            "DOM"
-        ],
+        "lib": ["es2017", "DOM"],
         "jsx": "react",
         "sourceMap": false,
         "rootDir": "src",
@@ -17,14 +14,7 @@
         "noUnusedParameters": true /* Report errors on unused parameters. */,
         "esModuleInterop": true,
         "resolveJsonModule": true,
-        "types": [
-            "node",
-            "jest"
-        ]
+        "types": ["node", "jest"]
     },
-    "exclude": [
-        "node_modules",
-        ".vscode-test",
-        "out"
-    ]
+    "exclude": ["node_modules", ".vscode-test", "out"]
 }
