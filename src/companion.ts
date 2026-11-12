@@ -333,14 +333,27 @@ const handleNewProblem = async (problem: Problem) => {
                         for (const [key, value] of Object.entries(
                             templateVariables,
                         )) {
-                            let replaceWith = String(value ?? '');
-                            replaceWith = replaceWith.substring(
-                                0,
-                                replaceWith.length,
-                            );
+                            let replaceWith = '';
+
+                            if (value !== null && value !== undefined) {
+                                if (typeof value === 'string') {
+                                    // Preserve string escaping without surrounding quotes.
+                                    replaceWith = JSON.stringify(value).slice(
+                                        1,
+                                        -1,
+                                    );
+                                } else if (typeof value === 'object') {
+                                    // Preserve complete JSON structure for arrays and objects.
+                                    replaceWith = JSON.stringify(value);
+                                } else {
+                                    // Handle numbers and booleans without truncation.
+                                    replaceWith = String(value);
+                                }
+                            }
+
                             templateContents = templateContents.replace(
                                 `$${key}$`,
-                                replaceWith,
+                                () => replaceWith,
                             );
                         }
                     }
