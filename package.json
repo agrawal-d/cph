@@ -469,8 +469,8 @@
         "test": "jest out/ --silent=false"
     },
     "devDependencies": {
-        "@types/jest": "^29.5.10",
-        "@types/node": "^20.9.5",
+        "@types/jest": "^29.5.14",
+        "@types/node": "^20.19.43",
         "@types/react": "^18.2.38",
         "@types/react-dom": "^18.2.17",
         "@types/vscode": "^1.52.0",
@@ -478,7 +478,7 @@
         "@typescript-eslint/parser": "^6.12.0",
         "@vscode/codicons": "^0.0.35",
         "copy-webpack-plugin": "^11.0.0",
-        "eslint": "^8.54.0",
+        "eslint": "^8.57.1",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-prettier": "^5.0.1",
         "eslint-plugin-react": "^7.33.2",

@@ -13,7 +13,8 @@
         // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
         "noUnusedParameters": true /* Report errors on unused parameters. */,
         "esModuleInterop": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "types": ["node", "jest"]
     },
     "exclude": ["node_modules", ".vscode-test", "out"]
 }
