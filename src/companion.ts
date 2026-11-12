@@ -330,32 +330,34 @@ const handleNewProblem = async (problem: Problem) => {
                             time,
                         };
 
-                        for (const [key, value] of Object.entries(
-                            templateVariables,
-                        )) {
-                            let replaceWith = '';
+                        const variablesMap = new Map(
+                            Object.entries(templateVariables).map(
+                                ([key, value]) => {
+                                    let replaceWith = '';
 
-                            if (value !== null && value !== undefined) {
-                                if (typeof value === 'string') {
-                                    // Preserve string escaping without surrounding quotes.
-                                    replaceWith = JSON.stringify(value).slice(
-                                        1,
-                                        -1,
-                                    );
-                                } else if (typeof value === 'object') {
-                                    // Preserve complete JSON structure for arrays and objects.
-                                    replaceWith = JSON.stringify(value);
-                                } else {
-                                    // Handle numbers and booleans without truncation.
-                                    replaceWith = String(value);
-                                }
-                            }
+                                    if (value !== null && value !== undefined) {
+                                        if (typeof value === 'string') {
+                                            replaceWith = JSON.stringify(
+                                                value,
+                                            ).slice(1, -1);
+                                        } else if (typeof value === 'object') {
+                                            replaceWith = JSON.stringify(value);
+                                        } else {
+                                            replaceWith = String(value);
+                                        }
+                                    }
 
-                            templateContents = templateContents.replace(
-                                `$${key}$`,
-                                () => replaceWith,
-                            );
-                        }
+                                    return [key, replaceWith];
+                                },
+                            ),
+                        );
+
+                        templateContents = templateContents.replace(
+                            /\$([^$]+)\$/g,
+                            (placeholder, key: string) => {
+                                return variablesMap.get(key) ?? placeholder;
+                            },
+                        );
                     }
                     writeFileSync(srcPath, templateContents);
                 }
