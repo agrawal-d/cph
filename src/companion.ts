@@ -158,7 +158,9 @@ export const setupCompanionServer = () => {
                     command: 'submit-server-failed',
                     port: config.port,
                 });
-            } catch (_) {}
+            } catch (_) {
+                // Ignore error if judge view provider is not ready
+            }
         });
         globalThis.logger.log(
             'Companion server listening on port',
@@ -173,7 +175,9 @@ export const setupCompanionServer = () => {
                 command: 'submit-server-failed',
                 port: config.port,
             });
-        } catch (_) {}
+        } catch (_) {
+            // Ignore error if judge view provider is not ready
+        }
     }
 };
 
