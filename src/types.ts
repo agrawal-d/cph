@@ -118,6 +118,7 @@ export type Run = {
     signal: string | null;
     time: number;
     timeOut: boolean;
+    launchError?: string;
 };
 
 export type CustomCheckerRun = {
@@ -148,7 +149,24 @@ export type RunResult = {
     id: number;
     diff?: DiffResult;
     checkerRun?: CustomCheckerRun;
+    failure?: RunFailure;
 } & Run;
+
+export type RunFailure = {
+    reason:
+        | 'timedOut'
+        | 'runLaunchError'
+        | 'runStackOverflow'
+        | 'runAccessViolation'
+        | 'runDivideByZero'
+        | 'runIllegalInstruction'
+        | 'runAborted'
+        | 'runTerminated'
+        | 'runArithmeticError'
+        | 'runExitCode'
+        | 'runStandardError';
+    detail?: string;
+};
 
 export type WebviewMessageCommon = {
     problem: Problem;

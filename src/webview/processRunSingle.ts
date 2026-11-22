@@ -8,8 +8,10 @@ import { diffOutput } from '../utils/diffOutput';
 import * as vscode from 'vscode';
 import { getJudgeViewProvider } from '../extension';
 import { getIgnoreSTDERRORPref } from '../preferences';
+import { getRunFailure } from '../utils/runFailure';
 import telmetry from '../telmetry';
 import * as fs from 'fs';
+import { platform } from 'os';
 import localize from '../i18n';
 
 export const runSingleAndSave = async (
@@ -52,19 +54,12 @@ export const runSingleAndSave = async (
         deleteBinary(language, binPath);
     }
 
-    const stderrorFailure = getIgnoreSTDERRORPref() ? false : run.stderr !== '';
-
-    const didError =
-        (run.code !== null && run.code !== 0) ||
-        run.signal !== null ||
-        stderrorFailure;
+    const failure = getRunFailure(run, platform(), !getIgnoreSTDERRORPref());
 
     let pass: boolean | null = null;
     let checkerRun: any = undefined;
 
-    if (run.signal === 'SIGTERM' || run.signal === 'SIGKILL') {
-        pass = false;
-    } else if (didError) {
+    if (failure) {
         pass = false;
     } else if (
         problem.customCheckerPath &&
@@ -106,9 +101,10 @@ export const runSingleAndSave = async (
     const result: RunResult = {
         ...run,
         pass,
+        failure,
         checkerRun,
         diff:
-            didError ||
+            failure ||
             (problem.customCheckerPath &&
                 problem.customCheckerPath.trim() !== '') ||
             run.signal === 'SIGTERM' ||

@@ -176,8 +176,8 @@ export const runTestCase = (
         process.on('error', (err) => {
             clearTimeout(killer);
             const end = Date.now();
-            result.code = 1;
-            result.signal = err.name;
+            result.launchError =
+                (err as NodeJS.ErrnoException).code || err.name;
             result.time = end - begin;
             const idx = runningBinaries.indexOf(process);
             if (idx > -1) {
