@@ -51,7 +51,7 @@ export const getHideStderrorWhenCompiledOK = (): boolean =>
 export const getDefaultOnlineJudge = (): boolean =>
     getPreference('general.defaultOnlineJudge');
 
-export const getIgnoreSTDERRORPref = (): string =>
+export const getIgnoreSTDERRORPref = (): boolean =>
     getPreference('general.ignoreSTDERROR');
 
 export const getTimeOutPref = (): number =>

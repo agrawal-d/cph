@@ -241,6 +241,13 @@ textarea:active {
     display: flex;
 }
 
+.run-failure {
+    color: var(--vscode-errorForeground, inherit);
+    margin-top: 8px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
 .help {
     position: absolute;
     top: 15px;

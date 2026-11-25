@@ -176,8 +176,8 @@ export const runTestCase = (
         process.on('error', (err) => {
             clearTimeout(killer);
             const end = Date.now();
-            result.code = 1;
-            result.signal = err.name;
+            result.launchError =
+                (err as NodeJS.ErrnoException).code || err.name;
             result.time = end - begin;
             const idx = runningBinaries.indexOf(process);
             if (idx > -1) {
@@ -186,14 +186,21 @@ export const runTestCase = (
             resolve(result);
         });
 
-        globalThis.logger.log('Wrote to STDIN');
+        // A process that exits before reading its input may close the pipe first.
+        process.stdin.on('error', (err: NodeJS.ErrnoException) => {
+            if (
+                err.code !== 'EPIPE' &&
+                err.code !== 'EOF' &&
+                err.code !== 'ERR_STREAM_DESTROYED'
+            ) {
+                globalThis.logger.error('WRITEERROR', err);
+            }
+        });
         try {
-            process.stdin.write(input);
+            process.stdin.end(input);
         } catch (err) {
             globalThis.logger.error('WRITEERROR', err);
         }
-
-        process.stdin.end();
     });
 
     return ret;

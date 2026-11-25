@@ -119,30 +119,12 @@ export default function CaseView(props: {
         });
     }, [props.case]);
 
-    let resultText = '';
+    const failure = running || checking ? undefined : result?.failure;
     const stderror = result?.stderr;
-    // Handle several cases for result text
-    if (result?.signal) {
-        resultText = result?.signal;
-    } else if (result?.stdout) {
-        const rawStdout = result.stdout || ' ';
-        if (rawStdout.endsWith('\r\n')) {
-            resultText = rawStdout.slice(0, -2);
-        } else if (rawStdout.endsWith('\n')) {
-            resultText = rawStdout.slice(0, -1);
-        } else {
-            resultText = rawStdout;
-        }
-        if (resultText === '') {
-            resultText = ' ';
-        }
-    }
-    if (!result) {
-        resultText = t('runToShowOutput');
-    }
-    if (running || checking) {
-        resultText = '...';
-    }
+    const resultText =
+        running || checking
+            ? '...'
+            : (result?.stdout ?? '').replace(/\r?\n$/, '');
     const passFailText = result
         ? result.pass
             ? t('passed')
@@ -150,7 +132,13 @@ export default function CaseView(props: {
         : '';
     const caseClassName =
         'case ' + (running || checking ? 'running' : passFailText);
-    const timeText = result?.timeOut ? t('timedOut') : result?.time + 'ms';
+    const failureReason = failure ? t(failure.reason) : '';
+    const failureDetail = failure?.detail;
+    const failureText = failureDetail
+        ? t('runFailureWithDetail').replace(/\{[01]\}/g, (placeholder) =>
+              placeholder === '{0}' ? failureReason : failureDetail,
+          )
+        : failureReason;
 
     return (
         <div className={caseClassName}>
@@ -192,7 +180,7 @@ export default function CaseView(props: {
                                     {result.pass ? t('Passed') : t('Failed')}
                                 </span>
                             </span>
-                            <span className="exec-time">{timeText}</span>
+                            <span className="exec-time">{result.time}ms</span>
                         </>
                     )}
                 </div>
@@ -230,6 +218,11 @@ export default function CaseView(props: {
                         </span>{' '}
                     </button>
                 </div>
+            </div>
+            <div role="status">
+                {failureText && (
+                    <div className="run-failure selectable">{failureText}</div>
+                )}
             </div>
             {!minimized && (
                 <>
@@ -273,7 +266,7 @@ export default function CaseView(props: {
                             value={output}
                         />
                     </div>
-                    {props.case.result != null && (
+                    {result && (!failure || result.stdout !== '') && (
                         <div className="textarea-container">
                             {t('receivedOutputLabel')}
                             <div
@@ -285,16 +278,18 @@ export default function CaseView(props: {
                             >
                                 {t('copy')}
                             </div>
-                            <div
-                                className="expectedoutput"
-                                onClick={() => {
-                                    setOutput(resultText);
-                                    props.notify(t('setAsExpectedOutput'));
-                                }}
-                                title={t('setAsExpectedOutput')}
-                            >
-                                {t('set')}
-                            </div>
+                            {!failure && (
+                                <div
+                                    className="expectedoutput"
+                                    onClick={() => {
+                                        setOutput(resultText);
+                                        props.notify(t('setAsExpectedOutput'));
+                                    }}
+                                    title={t('setAsExpectedOutput')}
+                                >
+                                    {t('set')}
+                                </div>
+                            )}
                             <>
                                 <TextareaAutosize
                                     className="selectable received-textarea"
